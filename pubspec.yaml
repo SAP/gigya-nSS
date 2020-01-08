@@ -82,5 +82,5 @@ flutter:
   # identifiers, which may be completely independent or the same as these.
   module:
     androidX: true
-    androidPackage: com.gigya.native.gigya_native_screensets_engine
-    iosBundleIdentifier: com.gigya.native.gigyaNativeScreensetsEngine
+    androidPackage: com.gigya.native_screensets_engine
+    iosBundleIdentifier: com.gigya.gigyaNativeScreensetsEngine
