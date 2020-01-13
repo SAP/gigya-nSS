@@ -15,11 +15,12 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-          ),
-          //TODO Initialization widget should actually wrap the main App widget.
-          home: EngineInitializationWidget()),
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        //TODO Initialization widget should actually wrap the main App widget.
+        home: EngineInitializationWidget(),
+      ),
     );
   }
 }
@@ -36,23 +37,29 @@ class _EngineInitializationWidgetState
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        child: Center(
-          child: FutureBuilder(
-              future: Provider.of<InitializationBloc>(context).initEngine(),
-              builder: (buildContext, snapshot) {
-                if (snapshot.hasData) {
-                  return Text(snapshot.data);
-                } else {
-                  return SizedBox(
-                    width: 36,
-                    height: 36,
-                    child: CircularProgressIndicator(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      strokeWidth: 4,
-                    ),
-                  );
-                }
-              }),
+        child: FutureBuilder(
+          future: Provider.of<InitializationBloc>(context).initEngine(),
+          builder: (buildContext, snapshot) {
+            if (snapshot.hasData) {
+              debugPrint(
+                  'Initialization response: ${snapshot.data.toString()}');
+              return Center(
+                child: Text(
+                  snapshot.data['responseId'],
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  strokeWidth: 4,
+                ),
+              );
+            }
+          },
         ),
       ),
     );
