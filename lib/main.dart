@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:gigya_native_screensets_engine/bloc/initialization.dart';
+import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
 
@@ -7,40 +8,47 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+    return MultiProvider(
+      providers: [
+        Provider<InitializationBloc>(
+          create: (_) => InitializationBloc(),
         ),
-        home: InfraTestWidget());
+      ],
+      child: MaterialApp(
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          //TODO Initialization widget should actually wrap the main App widget.
+          home: EngineInitializationWidget()),
+    );
   }
 }
 
-class InfraTestWidget extends StatefulWidget {
-
+class EngineInitializationWidget extends StatefulWidget {
   @override
-  _InfraTestWidgetState createState() => _InfraTestWidgetState();
+  _EngineInitializationWidgetState createState() =>
+      _EngineInitializationWidgetState();
 }
 
-class _InfraTestWidgetState extends State<InfraTestWidget> {
-
-  static const platform = const MethodChannel('gigya_nss_engine/method/platform');
-
+class _EngineInitializationWidgetState
+    extends State<EngineInitializationWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         child: Center(
           child: FutureBuilder(
-              future: infraInit(),
+              future: Provider.of<InitializationBloc>(context).initEngine(),
               builder: (buildContext, snapshot) {
                 if (snapshot.hasData) {
                   return Text(snapshot.data);
                 } else {
                   return SizedBox(
-                    width: 60,
-                    height: 60,
+                    width: 36,
+                    height: 36,
                     child: CircularProgressIndicator(
                       backgroundColor: Theme.of(context).primaryColor,
+                      strokeWidth: 4,
                     ),
                   );
                 }
@@ -48,10 +56,5 @@ class _InfraTestWidgetState extends State<InfraTestWidget> {
         ),
       ),
     );
-  }
-
-  Future<String> infraInit() async {
-    // Using main communication method channel to request initialization data.
-    return await platform.invokeMethod<String>("infraInit");
   }
 }
