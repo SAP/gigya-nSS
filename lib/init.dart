@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -5,21 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/main.dart';
 import 'package:gigya_native_screensets_engine/relay/logger.dart';
+import 'package:gigya_native_screensets_engine/util/assets.dart';
 import 'package:provider/provider.dart';
 
-/// Main initialization business logic component.
+/// Main initialization business logic component. Temporary.
 class InitializationBloc {
   //TODO String result is currently used for this development stage.
   Future<Map<dynamic, dynamic>> initEngine() {
     return ChannelRegistry.mainChannel.invokeMethod<Map<dynamic, dynamic>>("engineInit");
-  }
-
-  Map<dynamic, dynamic> parseJsonData(json) {
-    return null;
-  }
-
-  String loadMockJson() {
-    return '';
   }
 }
 
@@ -39,25 +33,39 @@ class EngineInitializationWidget extends StatefulWidget {
 }
 
 class _EngineInitializationWidgetState extends State<EngineInitializationWidget> {
-  var useMockData = true;
+  var useMockData = false;
 
   @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<InitializationBloc>(context);
     return Container(
       child: FutureBuilder(
-        future: provider.initEngine(),
+        future: _initEngine(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Logger.debugLog('', 'Initialization response: ${snapshot.data.toString()}');
 
-            // Parsing the Json data.
-            final String jsonData = useMockData ? provider.loadMockJson() : snapshot.data['json'];
-            provider.parseJsonData(jsonData);
+            // Is this screen set platform aware?
+            final platformAware = snapshot.data['platformAware'] ?? false;
 
-            // Building the AppWidget according to platform awareness.
-            final platformAware = snapshot.data['platformAware'];
-            return _createAppWidget(platformAware, widget.mainRoute);
+            Logger.debugLog('EngineInitializationWidget',
+                'Using Cupertino platform for iOS: ${platformAware.toString()}');
+            Logger.debugLog(
+                'EngineInitializationWidget', 'Markup String: ${snapshot.data['markup']}');
+
+            // Parse markup and provide App widget.
+            return FutureBuilder(
+                future: _parseMarkup(snapshot.data['markup']),
+                builder: (context, snapshot) {
+                  Logger.debugLog(
+                      'EngineInitializationWidget', 'Parsed markup: ${snapshot.data.toString()}');
+
+                  if (snapshot.hasData) {
+                    // Successfully loaded & parsed markup data.
+                    return _createAppWidget(platformAware, widget.mainRoute);
+                  } else {
+                    return Container();
+                  }
+                });
           } else {
             return Container();
           }
@@ -66,17 +74,31 @@ class _EngineInitializationWidgetState extends State<EngineInitializationWidget>
     );
   }
 
+  /// Begin engine initialization process with requesting the data from the native library.
+  Future<Map<dynamic, dynamic>> _initEngine() {
+    return useMockData
+        ? AssetUtils.jsonMapFromAssets('mock_1.json')
+        : ChannelRegistry.mainChannel.invokeMethod<Map<dynamic, dynamic>>("engineInit");
+  }
+
+  /// Parse markup json to a dynamic map.
+  Future<Map<dynamic, dynamic>> _parseMarkup(snapshot) async {
+    return jsonDecode(snapshot);
+  }
+
   /// Create main AppWidget according to initialization data.
   /// In case [platformAware] property is true, application will be determined via device platform.
   Widget _createAppWidget(platformAware, mainRoute) {
     // Currently ignoring platform awareness.
-    if (platformAware && Platform.isIOS) {
-      return NativeScreensCupertinoApp(mainRoute);
-    }
-    return NativeScreensMaterialApp(mainRoute);
+    return MultiProvider(
+        providers: [],
+        child: (platformAware && Platform.isIOS)
+            ? NativeScreensCupertinoApp(mainRoute)
+            : NativeScreensMaterialApp(mainRoute));
   }
 }
 
+/// Customized MaterialApp widget for Android/Global devices.
 class NativeScreensMaterialApp extends MaterialApp {
   final MainRoute mainRoute;
 
@@ -86,6 +108,7 @@ class NativeScreensMaterialApp extends MaterialApp {
   Widget get home => mainRoute();
 }
 
+/// Customized CupertinoApp for iOS devices.
 class NativeScreensCupertinoApp extends CupertinoApp {
   final MainRoute mainRoute;
 

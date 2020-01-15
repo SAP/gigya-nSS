@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gigya_native_screensets_engine/bloc/initialization.dart';
+import 'package:gigya_native_screensets_engine/init.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
@@ -29,6 +29,8 @@ class MyApp extends StatelessWidget {
 class ChannelRegistry {
 
   static const mainChannel = const MethodChannel('gigya_nss_engine/method/platform');
+  static const sdkChannel = const MethodChannel('gigya_nss_engine/method/sdk');
+  static const eventChannel = const EventChannel('gigya_nss_engine/event/set');
 
 }
 
