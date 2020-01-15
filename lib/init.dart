@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/main.dart';
 import 'package:gigya_native_screensets_engine/relay/logger.dart';
-import 'package:gigya_native_screensets_engine/util/assets.dart';
+import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:provider/provider.dart';
 
 /// Main initialization business logic component. Temporary.
@@ -23,17 +23,12 @@ typedef Widget MainRoute();
 /// The Main purpose of this widget is to open a channel to the native code in order to obtain all
 /// the necessary initialization data/configuration and determine the actual theme of the main app along
 /// with obtaining & parsing the main JSON data.
-class EngineInitializationWidget extends StatefulWidget {
+class EngineInitializationWidget extends StatelessWidget {
   final MainRoute mainRoute;
+  final bool useMockData;
 
-  const EngineInitializationWidget({Key key, this.mainRoute}) : super(key: key);
-
-  @override
-  _EngineInitializationWidgetState createState() => _EngineInitializationWidgetState();
-}
-
-class _EngineInitializationWidgetState extends State<EngineInitializationWidget> {
-  var useMockData = false;
+  EngineInitializationWidget({Key key, @required this.mainRoute, this.useMockData = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,30 +37,19 @@ class _EngineInitializationWidgetState extends State<EngineInitializationWidget>
         future: _initEngine(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            Logger.debugLog('', 'Initialization response: ${snapshot.data.toString()}');
+            Logger.d('Initialization response: ${snapshot.data.toString()}');
 
             // Is this screen set platform aware?
             final platformAware = snapshot.data['platformAware'] ?? false;
 
-            Logger.debugLog('EngineInitializationWidget',
-                'Using Cupertino platform for iOS: ${platformAware.toString()}');
-            Logger.debugLog(
-                'EngineInitializationWidget', 'Markup String: ${snapshot.data['markup']}');
+            Logger.d('Using Cupertino platform for iOS: ${platformAware.toString()}');
+            Logger.d('Markup String: ${snapshot.data['markup']}');
 
             // Parse markup and provide App widget.
-            return FutureBuilder(
-                future: _parseMarkup(snapshot.data['markup']),
-                builder: (context, snapshot) {
-                  Logger.debugLog(
-                      'EngineInitializationWidget', 'Parsed markup: ${snapshot.data.toString()}');
+            final Map<dynamic, dynamic> parsed = jsonDecode(snapshot.data['markup']);
 
-                  if (snapshot.hasData) {
-                    // Successfully loaded & parsed markup data.
-                    return _createAppWidget(platformAware, widget.mainRoute);
-                  } else {
-                    return Container();
-                  }
-                });
+            // Create application widget.
+            return _createAppWidget(platformAware, mainRoute);
           } else {
             return Container();
           }
@@ -79,11 +63,6 @@ class _EngineInitializationWidgetState extends State<EngineInitializationWidget>
     return useMockData
         ? AssetUtils.jsonMapFromAssets('mock_1.json')
         : ChannelRegistry.mainChannel.invokeMethod<Map<dynamic, dynamic>>("engineInit");
-  }
-
-  /// Parse markup json to a dynamic map.
-  Future<Map<dynamic, dynamic>> _parseMarkup(snapshot) async {
-    return jsonDecode(snapshot);
   }
 
   /// Create main AppWidget according to initialization data.
