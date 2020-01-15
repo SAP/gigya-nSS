@@ -2,18 +2,16 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/main.dart';
 import 'package:gigya_native_screensets_engine/relay/logger.dart';
 import 'package:provider/provider.dart';
 
 /// Main initialization business logic component.
 class InitializationBloc {
-  static const mainChannel = const MethodChannel('gigya_nss_engine/method/platform');
-
   //TODO String result is currently used for this development stage.
   Future<Map<dynamic, dynamic>> initEngine() {
-    return mainChannel.invokeMethod<Map<dynamic, dynamic>>("engineInit");
+    return ChannelRegistry.mainChannel.invokeMethod<Map<dynamic, dynamic>>("engineInit");
   }
 
   Map<dynamic, dynamic> parseJsonData(json) {

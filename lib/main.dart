@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/bloc/initialization.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +24,12 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
+
+class ChannelRegistry {
+
+  static const mainChannel = const MethodChannel('gigya_nss_engine/method/platform');
+
 }
 
 /// Testing initialization logic. This widget is redundant.
