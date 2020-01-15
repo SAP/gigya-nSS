@@ -19,20 +19,20 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         //TODO Initialization widget should actually wrap the main App widget.
-        home: EngineInitializationWidget(),
+        home: TestEngineInitializationWidget(),
       ),
     );
   }
 }
 
-class EngineInitializationWidget extends StatefulWidget {
+/// Testing initialization logic. This widget is redundant.
+/// Main Initialization will commence in the [EngineInitializationWidget].
+class TestEngineInitializationWidget extends StatefulWidget {
   @override
-  _EngineInitializationWidgetState createState() =>
-      _EngineInitializationWidgetState();
+  _TestEngineInitializationWidgetState createState() => _TestEngineInitializationWidgetState();
 }
 
-class _EngineInitializationWidgetState
-    extends State<EngineInitializationWidget> {
+class _TestEngineInitializationWidgetState extends State<TestEngineInitializationWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,8 +41,7 @@ class _EngineInitializationWidgetState
           future: Provider.of<InitializationBloc>(context).initEngine(),
           builder: (buildContext, snapshot) {
             if (snapshot.hasData) {
-              debugPrint(
-                  'Initialization response: ${snapshot.data.toString()}');
+              debugPrint('Initialization response: ${snapshot.data.toString()}');
               return Center(
                 child: Text(
                   snapshot.data['responseId'],
@@ -54,8 +53,7 @@ class _EngineInitializationWidgetState
             } else {
               return Center(
                 child: CircularProgressIndicator(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  strokeWidth: 4,
+                  strokeWidth: 2,
                 ),
               );
             }
