@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class DecorUtils {
+class ColorUtils {
   Color parseColor(String color, {bool platformAware}) {
     if (isHexColor(color))
       return parseColor(color);
@@ -48,4 +48,5 @@ class DecorUtils {
         return platformAware ? CupertinoColors.black : Colors.black;
     }
   }
+
 }
