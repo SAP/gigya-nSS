@@ -3,7 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/init.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(MyApp());
+@pragma('vm:entry-point')
+void main() => {
+      // Main function remains empty to insure we are correctly hooking the main
+      // platform channel.
+      //TODO We may need to initialize all the logic here before we initiate the UI rendering process.
+    };
+
+@pragma('vm:entry-point')
+void launch() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -27,21 +35,22 @@ class MyApp extends StatelessWidget {
 }
 
 class ChannelRegistry {
-
-  static const mainChannel = const MethodChannel('gigya_nss_engine/method/platform');
+  static const mainChannel =
+      const MethodChannel('gigya_nss_engine/method/platform');
   static const sdkChannel = const MethodChannel('gigya_nss_engine/method/sdk');
   static const eventChannel = const EventChannel('gigya_nss_engine/event/set');
-
 }
 
 /// Testing initialization logic. This widget is redundant.
 /// Main Initialization will commence in the [EngineInitializationWidget].
 class TestEngineInitializationWidget extends StatefulWidget {
   @override
-  _TestEngineInitializationWidgetState createState() => _TestEngineInitializationWidgetState();
+  _TestEngineInitializationWidgetState createState() =>
+      _TestEngineInitializationWidgetState();
 }
 
-class _TestEngineInitializationWidgetState extends State<TestEngineInitializationWidget> {
+class _TestEngineInitializationWidgetState
+    extends State<TestEngineInitializationWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +59,8 @@ class _TestEngineInitializationWidgetState extends State<TestEngineInitializatio
           future: Provider.of<InitializationBloc>(context).initEngine(),
           builder: (buildContext, snapshot) {
             if (snapshot.hasData) {
-              debugPrint('Initialization response: ${snapshot.data.toString()}');
+              debugPrint(
+                  'Initialization response: ${snapshot.data.toString()}');
               return Center(
                 child: Text(
                   snapshot.data['responseId'],
