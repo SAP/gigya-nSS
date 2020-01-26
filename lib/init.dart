@@ -15,18 +15,18 @@ typedef Widget Layout(Map markup);
 /// the necessary initialization data/configuration and determine the actual theme of the main app along
 /// with obtaining & parsing the main JSON data.
 class EngineInitializationWidget extends StatelessWidget {
-  final Layout layout;
+  final Layout layoutScreenSet;
   final bool useMockData;
 
   EngineInitializationWidget(
-      {Key key, @required this.layout, this.useMockData = false})
+      {Key key, @required this.layoutScreenSet, this.useMockData = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: FutureBuilder(
-        future: _initEngine(context),
+        future: initEngine(context),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Logger.d('Initialization response: ${snapshot.data.toString()}');
@@ -42,9 +42,9 @@ class EngineInitializationWidget extends StatelessWidget {
             var parsed = snapshot.data['markup'];
 
             // Create application widget.
-            return _createAppWidget(
+            return createAppWidget(
               platformAware,
-              layout,
+              layoutScreenSet,
               parsed,
             );
           } else {
@@ -56,7 +56,7 @@ class EngineInitializationWidget extends StatelessWidget {
   }
 
   /// Begin engine initialization process with requesting the data from the native library.
-  Future<Map<String, dynamic>> _initEngine(context) {
+  Future<Map<String, dynamic>> initEngine(context) {
     return useMockData
         ? AssetUtils.jsonMapFromAssets('assets/mock_1.json')
         : Provider.of<EngineRegistry>(context)
@@ -67,7 +67,7 @@ class EngineInitializationWidget extends StatelessWidget {
 
   /// Create main AppWidget according to initialization data.
   /// In case [platformAware] property is true, application will be determined via device platform.
-  Widget _createAppWidget(platformAware, layout, markup) {
+  Widget createAppWidget(platformAware, layout, markup) {
     // Currently ignoring platform awareness.
     return (platformAware && Platform.isIOS)
         ? NativeScreensCupertinoApp(layout, markup)

@@ -19,11 +19,11 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: EngineInitializationWidget(
-        layout: (map) {
+        layoutScreenSet: (markup) {
           //TODO Use the layout builder to create the screen
           return Container(
             child: Center(
-              child: Text('sdsd'),
+              child: Text(markup['screens'][0]['id']),
             ),
           );
         },
