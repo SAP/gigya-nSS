@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:gigya_native_screensets_engine/init.dart';
+import 'package:gigya_native_screensets_engine/initialization.dart';
+import 'package:gigya_native_screensets_engine/registry.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
+
+@pragma('vm:entry-point')
+void launch() => {};
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -11,65 +14,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<InitializationBloc>(
-          create: (_) => InitializationBloc(),
+        Provider<EngineRegistry>(
+          create: (_) => EngineRegistry(),
         ),
       ],
-      child: MaterialApp(
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        //TODO Initialization widget should actually wrap the main App widget.
-        home: TestEngineInitializationWidget(),
-      ),
-    );
-  }
-}
-
-class ChannelRegistry {
-
-  static const mainChannel = const MethodChannel('gigya_nss_engine/method/platform');
-  static const sdkChannel = const MethodChannel('gigya_nss_engine/method/sdk');
-  static const eventChannel = const EventChannel('gigya_nss_engine/event/set');
-
-}
-
-/// Testing initialization logic. This widget is redundant.
-/// Main Initialization will commence in the [EngineInitializationWidget].
-class TestEngineInitializationWidget extends StatefulWidget {
-  @override
-  _TestEngineInitializationWidgetState createState() => _TestEngineInitializationWidgetState();
-}
-
-class _TestEngineInitializationWidgetState extends State<TestEngineInitializationWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.black,
-        child: FutureBuilder(
-          future: Provider.of<InitializationBloc>(context).initEngine(),
-          builder: (buildContext, snapshot) {
-            if (snapshot.hasData) {
-              debugPrint('Initialization response: ${snapshot.data.toString()}');
-              return Center(
-                child: Text(
-                  snapshot.data['responseId'],
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.lightGreenAccent
-                  ),
-                ),
-              );
-            } else {
-              return Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                ),
-              );
-            }
-          },
-        ),
+      child: EngineInitializationWidget(
+        layoutScreenSet: (Map<dynamic, dynamic> markup) {
+          //TODO Use the layout builder to create the screen
+          return Container(
+            child: Center(
+              child: Text(markup['screens'][0]['id']),
+            ),
+          );
+        },
+        useMockData: false,
       ),
     );
   }
