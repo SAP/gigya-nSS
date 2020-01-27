@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/models/main.dart';
 import 'package:gigya_native_screensets_engine/registry.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +35,7 @@ class EngineInitializationWidget extends StatelessWidget {
             debugPrint('Using Cupertino platform for iOS: ${platformAware.toString()}');
 
             // Parse markup and provide App widget.
-            var parsed = snapshot.data['markup'];
+            Main parsed = Main.fromJson(snapshot.data['markup']);
 
             debugPrint('Markup String: $parsed');
 
@@ -74,12 +75,12 @@ class EngineInitializationWidget extends StatelessWidget {
   }
 }
 
-typedef Widget Layout(Map<dynamic, dynamic> markup);
+typedef Widget Layout(Main markup);
 
 /// Customized MaterialApp widget for Android/Global devices.
 class NativeScreensMaterialApp extends MaterialApp {
   final Layout layout;
-  final Map markup;
+  final Main markup;
 
   NativeScreensMaterialApp(this.layout, this.markup);
 
@@ -90,7 +91,7 @@ class NativeScreensMaterialApp extends MaterialApp {
 /// Customized CupertinoApp for iOS devices.
 class NativeScreensCupertinoApp extends CupertinoApp {
   final Layout layout;
-  final Map markup;
+  final Main markup;
 
   NativeScreensCupertinoApp(this.layout, this.markup);
 

@@ -33,3 +33,4 @@ class WidgetGeneralDecorationMixin {
 /// Input field decoration classes mixin.
 /// Support for both [TextField] & [CupertinoTextField].
 class InputDecorationMixin with WidgetGeneralDecorationMixin {}
+

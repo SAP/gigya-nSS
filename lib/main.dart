@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/initialization.dart';
+import 'package:gigya_native_screensets_engine/models/main.dart';
 import 'package:gigya_native_screensets_engine/registry.dart';
+import 'package:gigya_native_screensets_engine/ui/rendering.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
@@ -19,15 +21,11 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: EngineInitializationWidget(
-        layoutScreenSet: (Map<dynamic, dynamic> markup) {
+        layoutScreenSet: (Main markup) {
           //TODO Use the layout builder to create the screen
-          return Container(
-            child: Center(
-              child: Text(markup['screens'][0]['id']),
-            ),
-          );
+          return NSSLayoutBuilder('login').render(markup.screens);
         },
-        useMockData: false,
+        useMockData: true,
       ),
     );
   }
