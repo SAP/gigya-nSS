@@ -1,14 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/registry.dart';
-import 'package:gigya_native_screensets_engine/relay/logger.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:provider/provider.dart';
-
-typedef Widget Layout(Map markup);
 
 /// Engine initialization root widget.
 /// The Main purpose of this widget is to open a channel to the native code in order to obtain all
@@ -18,8 +16,7 @@ class EngineInitializationWidget extends StatelessWidget {
   final Layout layoutScreenSet;
   final bool useMockData;
 
-  EngineInitializationWidget(
-      {Key key, @required this.layoutScreenSet, this.useMockData = false})
+  EngineInitializationWidget({Key key, @required this.layoutScreenSet, this.useMockData = false})
       : super(key: key);
 
   @override
@@ -29,17 +26,17 @@ class EngineInitializationWidget extends StatelessWidget {
         future: initEngine(context),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            Logger.d('Initialization response: ${snapshot.data.toString()}');
+            debugPrint('Init engine has data');
 
             // Is this screen set platform aware?
             final platformAware = snapshot.data['platformAware'] ?? false;
 
-            Logger.d(
-                'Using Cupertino platform for iOS: ${platformAware.toString()}');
-            Logger.d('Markup String: ${snapshot.data['markup']}');
+            debugPrint('Using Cupertino platform for iOS: ${platformAware.toString()}');
 
             // Parse markup and provide App widget.
             var parsed = snapshot.data['markup'];
+
+            debugPrint('Markup String: $parsed');
 
             // Create application widget.
             return createAppWidget(
@@ -48,7 +45,9 @@ class EngineInitializationWidget extends StatelessWidget {
               parsed,
             );
           } else {
-            return Container();
+            return Container(
+              color: Color(0xFFFFFFFF),
+            );
           }
         },
       ),
@@ -56,13 +55,13 @@ class EngineInitializationWidget extends StatelessWidget {
   }
 
   /// Begin engine initialization process with requesting the data from the native library.
-  Future<Map<String, dynamic>> initEngine(context) {
+  Future<Map<dynamic, dynamic>> initEngine(context) {
     return useMockData
         ? AssetUtils.jsonMapFromAssets('assets/mock_1.json')
         : Provider.of<EngineRegistry>(context)
             .channels
             .mainChannel
-            .invokeMethod<Map<dynamic, dynamic>>("engineInit");
+            .invokeMethod<Map<dynamic, dynamic>>(MainAction.initialize.action);
   }
 
   /// Create main AppWidget according to initialization data.
@@ -74,6 +73,8 @@ class EngineInitializationWidget extends StatelessWidget {
         : NativeScreensMaterialApp(layout, markup);
   }
 }
+
+typedef Widget Layout(Map<dynamic, dynamic> markup);
 
 /// Customized MaterialApp widget for Android/Global devices.
 class NativeScreensMaterialApp extends MaterialApp {

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gigya_native_screensets_engine/init.dart';
+import 'package:gigya_native_screensets_engine/initialization.dart';
 
 void main() {
   group('Initialization tests', () {

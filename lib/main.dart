@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gigya_native_screensets_engine/init.dart';
+import 'package:gigya_native_screensets_engine/initialization.dart';
 import 'package:gigya_native_screensets_engine/registry.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: EngineInitializationWidget(
-        layoutScreenSet: (markup) {
+        layoutScreenSet: (Map<dynamic, dynamic> markup) {
           //TODO Use the layout builder to create the screen
           return Container(
             child: Center(
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
             ),
           );
         },
-        useMockData: true,
+        useMockData: false,
       ),
     );
   }
