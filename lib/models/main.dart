@@ -4,6 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'main.g.dart';
 @JsonSerializable()
 
+// TODO: run script for build the models - `flutter pub run build_runner build`
 class Main {
   Map<String, Screen> screens;
 

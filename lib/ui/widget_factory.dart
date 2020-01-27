@@ -4,25 +4,32 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/decoration/colors.dart';
 import 'package:gigya_native_screensets_engine/decoration/widget_decorations.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'package:gigya_native_screensets_engine/models/widget_bank.dart';
+
+enum WidgetType {
+  label,
+  input,
+  email,
+  password,
+  submit
+}
 
 class SoleWidgetFactory {
-  Widget create(WidgetBank name, NSSWidget data) {
+  Widget create(WidgetType name, NSSWidget data) {
     switch(name) {
-      case WidgetBank.label:
+      case WidgetType.label:
         // TODO: Handle this case.
       return DecoratedText(widgetData: data);
         break;
-      case WidgetBank.input:
+      case WidgetType.input:
         // TODO: Handle this case.
         break;
-      case WidgetBank.email:
+      case WidgetType.email:
         // TODO: Handle this case.
         break;
-      case WidgetBank.password:
+      case WidgetType.password:
         // TODO: Handle this case.
         break;
-      case WidgetBank.submit:
+      case WidgetType.submit:
         // TODO: Handle this case.
         break;
     }

@@ -8,20 +8,20 @@ part of 'widget.dart';
 
 NSSWidget _$NSSWidgetFromJson(Map<String, dynamic> json) {
   return NSSWidget(
-    _$enumDecodeNullable(_$WidgetBankEnumMap, json['type']),
+    _$enumDecodeNullable(_$WidgetTypeEnumMap, json['type']),
     json['textKey'] as String,
     children: (json['children'] as List)
         ?.map((e) =>
             e == null ? null : NSSWidget.fromJson(e as Map<String, dynamic>))
         ?.toList(),
-    stack: json['stack'] as String,
+    stack: _$enumDecodeNullable(_$AlignmentEnumMap, json['stack']),
   );
 }
 
 Map<String, dynamic> _$NSSWidgetToJson(NSSWidget instance) => <String, dynamic>{
-      'type': _$WidgetBankEnumMap[instance.type],
+      'type': _$WidgetTypeEnumMap[instance.type],
       'textKey': instance.textKey,
-      'stack': instance.stack,
+      'stack': _$AlignmentEnumMap[instance.stack],
       'children': instance.children,
     };
 
@@ -57,10 +57,15 @@ T _$enumDecodeNullable<T>(
   return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
 }
 
-const _$WidgetBankEnumMap = {
-  WidgetBank.label: 'label',
-  WidgetBank.input: 'input',
-  WidgetBank.email: 'email',
-  WidgetBank.password: 'password',
-  WidgetBank.submit: 'submit',
+const _$WidgetTypeEnumMap = {
+  WidgetType.label: 'label',
+  WidgetType.input: 'input',
+  WidgetType.email: 'email',
+  WidgetType.password: 'password',
+  WidgetType.submit: 'submit',
+};
+
+const _$AlignmentEnumMap = {
+  Alignment.vertical: 'vertical',
+  Alignment.horizontal: 'horizontal',
 };

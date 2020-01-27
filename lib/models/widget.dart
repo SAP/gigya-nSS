@@ -1,5 +1,4 @@
-import 'package:flutter/cupertino.dart';
-import 'package:gigya_native_screensets_engine/models/widget_bank.dart';
+import 'package:gigya_native_screensets_engine/ui/rendering.dart';
 import 'package:gigya_native_screensets_engine/ui/widget_factory.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -7,9 +6,9 @@ part 'widget.g.dart';
 @JsonSerializable()
 
 class NSSWidget {
-  WidgetBank type;
+  WidgetType type;
   String textKey;
-  String stack;
+  Alignment stack;
   List<NSSWidget> children;
 
   NSSWidget(this.type, this.textKey, { this.children , this.stack });
