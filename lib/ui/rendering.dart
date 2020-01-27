@@ -4,36 +4,44 @@ import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/ui/widget_factory.dart';
 
-class LayoutBuilder {
+class NSSLayoutBuilder {
   final String layoutName;
 
-  LayoutBuilder(this.layoutName);
+  NSSLayoutBuilder(this.layoutName);
 
   // The render method should be render the json to one Widget.
 
-  Widget render(Screen screen) {
+  Widget render(Map<String, Screen> screensList) {
+    if(!screensList.containsKey(this.layoutName)) {
+      return Container();
+    }
+
+    Screen screen = screensList[this.layoutName];
+
     if(screen.children.isEmpty) {
       return Container();
     }
 
     List<NSSWidget> listOfWidgets = screen.children;
 
-    List<Widget> widgets = renderWidgets(listOfWidgets);
+    List<Widget> widgets = _renderWidgets(listOfWidgets);
 
     if(screen.appBar.isNotEmpty) {
-      return renderWithAppBar(screen.appBar, widgets);
+      return _renderWithAppBar(screen, widgets);
     }
 
-    return renderByAlignment(screen.stack, widgets);
+    return _renderByAlignment(screen.stack, widgets);
   }
 
-  List<Widget> renderWidgets(List<NSSWidget> listOfWidgets) {
+  List<Widget> _renderWidgets(List<NSSWidget> listOfWidgets) {
     List<Widget> widgets = [];
 
     if(listOfWidgets.isNotEmpty) {
       listOfWidgets.forEach((widget) {
-        if(widget.children.isNotEmpty) {
-          widgets.add(renderByAlignment(widget.stack, renderWidgets(widget.children)));
+        bool isNotNull = widget.children ?? false;
+
+        if(isNotNull) {
+          widgets.add(_renderByAlignment(widget.stack, _renderWidgets(widget.children)));
         } else {
           widgets.add(SoleWidgetFactory().create(widget.type, widget));
         }
@@ -43,20 +51,21 @@ class LayoutBuilder {
     return widgets;
   }
 
-  Widget renderWithAppBar(Map<String, dynamic> map, List<Widget> list) {
+  // Render the widget with AppBar (Only in screen).
+  Widget _renderWithAppBar(Screen screen, List<Widget> list) {
     return Scaffold(
         appBar: AppBar(
-          title: map["textKey"],
+          title: Text(screen.appBar['textKey']),
         ),
         body: Container(
-          child: renderByAlignment(map["stack"], list),
+          child: _renderByAlignment(screen.stack, list),
         )
     );
   }
 
 
-  // Render the array by alignment.
-  Widget renderByAlignment(String alignment, List list) {
+  // Render the list by alignment.
+  Widget _renderByAlignment(String alignment, List list) {
     switch(alignment) {
       case "vertical":
         return Column(children: list);

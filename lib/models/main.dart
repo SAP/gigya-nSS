@@ -5,7 +5,7 @@ part 'main.g.dart';
 @JsonSerializable()
 
 class Main {
-  List<Screen> screens;
+  Map<String, Screen> screens;
 
   Main(this.screens);
 

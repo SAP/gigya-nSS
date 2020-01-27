@@ -1,19 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/initialization.dart';
+import 'package:gigya_native_screensets_engine/models/main.dart';
+import 'package:gigya_native_screensets_engine/models/screen.dart';
 
 void main() {
   group('Initialization tests', () {
     testWidgets('Testing engine intialization widget using mock data from assets/mock1_json file',
         (WidgetTester tester) async {
       await tester.pumpWidget(EngineInitializationWidget(
-        layoutScreenSet: (Map<dynamic, dynamic> markup) {
+        layoutScreenSet: (Main markup) {
           return Container(
             child: Center(
               child: Column(
                 children: <Widget>[
-                  Text(markup['screens'][0]['id']),
-                  Text(markup['screens'][1]['id']),
+                  Text(markup.screens['login'].id),
+                  Text(markup.screens['register'].id),
                 ],
               ),
             ),

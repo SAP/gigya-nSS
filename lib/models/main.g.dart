@@ -8,10 +8,10 @@ part of 'main.dart';
 
 Main _$MainFromJson(Map<String, dynamic> json) {
   return Main(
-    (json['screens'] as List)
-        ?.map((e) =>
-            e == null ? null : Screen.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['screens'] as Map<String, dynamic>)?.map(
+      (k, e) => MapEntry(
+          k, e == null ? null : Screen.fromJson(e as Map<String, dynamic>)),
+    ),
   );
 }
 
