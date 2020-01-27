@@ -46,6 +46,7 @@ class _TestEngineInitializationWidgetState extends State<TestEngineInitializatio
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        color: Colors.black,
         child: FutureBuilder(
           future: Provider.of<InitializationBloc>(context).initEngine(),
           builder: (buildContext, snapshot) {
@@ -56,6 +57,7 @@ class _TestEngineInitializationWidgetState extends State<TestEngineInitializatio
                   snapshot.data['responseId'],
                   style: TextStyle(
                     fontSize: 18,
+                    color: Colors.lightGreenAccent
                   ),
                 ),
               );
