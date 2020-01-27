@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
+import 'package:gigya_native_screensets_engine/ui/errors.dart';
 import 'package:gigya_native_screensets_engine/ui/widget_factory.dart';
 
-enum Alignment {
-  vertical,
-  horizontal
-}
+enum Alignment { vertical, horizontal }
 
 class NSSLayoutBuilder {
   final String layoutName;
@@ -18,15 +16,13 @@ class NSSLayoutBuilder {
 
   Widget render(Map<String, Screen> screensList) {
     if (!screensList.containsKey(this.layoutName)) {
-      // TODO: Error widget.
-      return Container();
+      return NssErrorWidget.missingRoute();
     }
 
     final Screen screen = screensList[this.layoutName];
 
     if (screen.children.isNullOrEmpty()) {
-      // TODO: Error widget.
-      return Container();
+      return NssErrorWidget.screenWithNotChildren();
     }
 
     final List<NSSWidget> children = screen.children;

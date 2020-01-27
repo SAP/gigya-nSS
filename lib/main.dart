@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
           //TODO Use the layout builder to create the screen
           return NSSLayoutBuilder('login').render(markup.screens);
         },
-        useMockData: true,
       ),
     );
   }
