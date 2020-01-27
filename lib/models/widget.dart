@@ -13,7 +13,7 @@ class NSSWidget {
 
   NSSWidget(this.type, this.textKey, { this.children , this.stack });
 
-  factory NSSWidget.fromJson(Map<String, dynamic> json) => _$NSSWidgetFromJson(json);
+  factory NSSWidget.fromJson(Map<dynamic, dynamic> json) => _$NSSWidgetFromJson(json);
   Map<String, dynamic> toJson() => _$NSSWidgetToJson(this);
 
 }

@@ -8,12 +8,12 @@ part 'screen.g.dart';
 class Screen {
   String id;
   Alignment stack;
-  Map<String, dynamic> appBar;
+  Map<dynamic, dynamic> appBar;
   List<NSSWidget> children;
 
   Screen(this.id, this.stack, this.children, { this.appBar });
 
-  factory Screen.fromJson(Map<String, dynamic> json) => _$ScreenFromJson(json);
+  factory Screen.fromJson(Map<dynamic, dynamic> json) => _$ScreenFromJson(json);
   Map<String, dynamic> toJson() => _$ScreenToJson(this);
 
 }

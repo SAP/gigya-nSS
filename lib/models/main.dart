@@ -5,11 +5,11 @@ part 'main.g.dart';
 
 @JsonSerializable()
 class Main {
-  Map<String, Screen> screens;
+  Map<dynamic, Screen> screens;
 
   Main(this.screens);
 
-  factory Main.fromJson(Map<String, dynamic> json) => _$MainFromJson(json);
+  factory Main.fromJson(Map<dynamic, dynamic> json) => _$MainFromJson(json);
 
   Map<String, dynamic> toJson() => _$MainToJson(this);
 }
