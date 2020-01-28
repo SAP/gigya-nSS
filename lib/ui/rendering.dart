@@ -4,7 +4,7 @@ import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/ui/widget_factory.dart';
 
-enum Alignment {
+enum NSSAlignment {
   vertical,
   horizontal
 }
@@ -69,11 +69,11 @@ class NSSLayoutBuilder {
   }
 
   // Render the list by alignment.
-  Widget _renderByAlignment(Alignment alignment, List list) {
+  Widget _renderByAlignment(NSSAlignment alignment, List list) {
     switch (alignment) {
-      case Alignment.vertical:
+      case NSSAlignment.vertical:
         return Column(children: list);
-      case Alignment.horizontal:
+      case NSSAlignment.horizontal:
         return Row(children: list);
       default:
         return Column(children: list);

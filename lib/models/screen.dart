@@ -3,11 +3,11 @@ import 'package:gigya_native_screensets_engine/ui/rendering.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'screen.g.dart';
-@JsonSerializable()
+@JsonSerializable(anyMap: true)
 
 class Screen {
   String id;
-  Alignment stack;
+  NSSAlignment stack;
   Map<String, dynamic> appBar;
   List<NSSWidget> children;
 
