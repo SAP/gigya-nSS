@@ -35,7 +35,8 @@ class EngineInitializationWidget extends StatelessWidget {
             debugPrint('Using Cupertino platform for iOS: ${platformAware.toString()}');
 
             // Parse markup and provide App widget.
-            Main parsed = Main.fromJson(snapshot.data['markup']);
+            Map<String, dynamic> dic = snapshot.data['markup'].cast<String, dynamic>();
+            Main parsed = Main.fromJson(dic);
 
             debugPrint('Markup String: $parsed');
 

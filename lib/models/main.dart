@@ -2,7 +2,7 @@ import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'main.g.dart';
-@JsonSerializable()
+@JsonSerializable(anyMap: true)
 
 // TODO: run script for build the models - `flutter pub run build_runner build`
 class Main {
@@ -11,6 +11,6 @@ class Main {
   Main(this.screens);
 
   factory Main.fromJson(Map<String, dynamic> json) => _$MainFromJson(json);
-  Map<String, dynamic> toJson() => _$MainToJson(this);
+  Map<dynamic, dynamic> toJson() => _$MainToJson(this);
 
 }
