@@ -25,7 +25,7 @@ class EngineInitializationWidget extends StatelessWidget {
     return Container(
       child: FutureBuilder(
         future: initEngine(context),
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot<Map<dynamic, dynamic>> snapshot) {
           if (snapshot.hasData) {
             debugPrint('Init engine has data');
 
@@ -35,7 +35,7 @@ class EngineInitializationWidget extends StatelessWidget {
             debugPrint('Using Cupertino platform for iOS: ${platformAware.toString()}');
 
             // Parse markup and provide App widget.
-            Main parsed = Main.fromJson(snapshot.data['markup']);
+            Main parsed = Main.fromJson(snapshot.data['markup'].cast<String, dynamic>());
 
             debugPrint('Markup String: $parsed');
 
@@ -59,10 +59,15 @@ class EngineInitializationWidget extends StatelessWidget {
   Future<Map<dynamic, dynamic>> initEngine(context) {
     return useMockData
         ? AssetUtils.jsonMapFromAssets('assets/mock_1.json')
-        : Provider.of<EngineRegistry>(context)
+        : getRegistry(context)
             .channels
             .mainChannel
             .invokeMethod<Map<dynamic, dynamic>>(MainAction.initialize.action);
+  }
+
+  @visibleForTesting
+  EngineRegistry getRegistry(context) {
+    return Provider.of<EngineRegistry>(context);
   }
 
   /// Create main AppWidget according to initialization data.
@@ -75,7 +80,7 @@ class EngineInitializationWidget extends StatelessWidget {
   }
 }
 
-typedef Widget Layout(Main markup);
+typedef Widget Layout(Main main);
 
 /// Customized MaterialApp widget for Android/Global devices.
 class NativeScreensMaterialApp extends MaterialApp {

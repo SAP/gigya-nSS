@@ -21,9 +21,8 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: EngineInitializationWidget(
-        layoutScreenSet: (Main markup) {
-          //TODO Use the layout builder to create the screen
-          return NSSLayoutBuilder('login').render(markup.screens);
+        layoutScreenSet: (Main main) {
+          return NSSLayoutBuilder('login').render(main.screens);
         },
       ),
     );
