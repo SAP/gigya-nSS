@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
 
+/// Customized Text widget.
 class NssLabelWidget extends StatelessWidget with NssWidgetDecorationMixin {
   final NssWidgetData widgetData;
 

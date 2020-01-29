@@ -29,7 +29,7 @@ class NssWidgetDecorationMixin {
     return EdgeInsets.zero;
   }
 
-  //region Colors
+  //region Coloring
 
   /// Request a [Color] instance given an multi optional identifier (named, hex).
   Color getColor(String color, {bool platformAware}) {
@@ -40,6 +40,7 @@ class NssWidgetDecorationMixin {
     }
   }
 
+  /// Get a [Color] instance after parsing the a color hext string.
   Color _getColorWithHex(String hexColorString) {
     if (hexColorString == null) {
       return null;
@@ -52,6 +53,8 @@ class NssWidgetDecorationMixin {
     return Color(colorInt);
   }
 
+  /// Get a [Color] instance given color name.
+  /// Method is platform aware.
   Color _getColorWithName(name, {bool platformAware}) {
     switch (name) {
       case 'blue':

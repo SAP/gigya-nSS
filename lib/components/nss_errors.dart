@@ -36,7 +36,7 @@ class NssErrorWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Render error:',
+                  'Native ScreenSets Render error:',
                   style: TextStyle(
                     fontSize: 24,
                     color: Colors.white,
