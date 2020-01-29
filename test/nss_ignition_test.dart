@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gigya_native_screensets_engine/initialization.dart';
+import 'package:gigya_native_screensets_engine/nss_ignition.dart';
 import 'package:gigya_native_screensets_engine/models/main.dart';
-import 'package:gigya_native_screensets_engine/registry.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
-class MockRegistry extends Mock implements EngineRegistry {}
+class MockRegistry extends Mock implements NssRegistryBloc {}
 
-class MockChannels extends Mock implements ChannelRegistry {}
+class MockChannels extends Mock implements NssChannelRegistry {}
 
 class MockMainChannel extends Mock implements MethodChannel {}
 
@@ -17,8 +17,8 @@ void main() {
   group('Initialization tests', () {
     testWidgets('Testing engine initialization with "useMockData" true',
         (WidgetTester tester) async {
-      await tester.pumpWidget(EngineInitializationWidget(
-        layoutScreenSet: (Main main) {
+      await tester.pumpWidget(NssIgnitionWidget(
+        layoutScreenSet: (Main main, String initialRoute) {
           return Container(
             child: Center(
               child: Column(
@@ -51,21 +51,21 @@ void main() {
 
       var widget = MultiProvider(
         providers: [
-          Provider<EngineRegistry>(
+          Provider<NssRegistryBloc>(
             create: (_) => registry,
           ),
         ],
-        child: EngineInitializationWidget(
-          layoutScreenSet: (Main main) {
+        child: NssIgnitionWidget(
+          layoutScreenSet: (Main main, String initialRoute) {
             return Container(
-              child: Text(main.screens['login'].id),
+              child: Text(main.screens[initialRoute].id),
             );
           },
         ),
       );
 
       when(channels.mainChannel).thenReturn(mainChannel);
-      when(mainChannel.invokeMethod(MainAction.initialize.action))
+      when(mainChannel.invokeMethod(NssAction.ignition.action))
           .thenAnswer((_) => Future<Map<String, dynamic>>(() {
                 final Map<String, dynamic> map = {};
                 map['platformAware'] = false;

@@ -1,19 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-class EngineRegistry {
-  final channels = ChannelRegistry();
+class NssRegistryBloc {
+  final channels = NssChannelRegistry();
 }
 
-class ChannelRegistry {
+class NssChannelRegistry {
   final MethodChannel mainChannel = const MethodChannel('gigya_nss_engine/method/main');
 }
 
-/// Main channel actions.
-enum MainAction { initialize }
+/// Engine actions enum.
+enum NssAction { ignition }
 
-extension MainActionExtension on MainAction {
-
+extension NssActionExtension on NssAction {
   String get action {
     return describeEnum(this);
   }

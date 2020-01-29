@@ -7,7 +7,7 @@ class NssErrorWidget extends StatelessWidget {
 
   const NssErrorWidget({Key key, @required this.message}) : super(key: key);
 
-  factory NssErrorWidget.missingRoute() {
+  factory NssErrorWidget.routeMissMatch() {
     return NssErrorWidget(
       message: 'Initial route missmatch.'
           '\nMarkup does not contain requested route.',
