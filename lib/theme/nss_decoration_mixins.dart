@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 
 /// General widget decoration mixin.
 /// Includes useful UI builders that correspond with the applied markup.
-class NssWidgetDecorationMixin {
+mixin NssWidgetDecorationMixin {
   /// Make sure this value will be treated as a double.
   /// Useful for JSON parsed elements
   /// which should be treated as double but are parsed as integer.
