@@ -42,7 +42,7 @@ class DecoratedText extends StatelessWidget with NssWidgetDecorationMixin {
         widgetData.textKey,
         style: TextStyle(
           fontSize: 14,
-          color: parseColor("blue"),
+          color: getColor("blue"),
         ),
       ),
     );

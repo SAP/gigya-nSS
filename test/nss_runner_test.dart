@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_runner.dart';
-import 'package:gigya_native_screensets_engine/nss_injection.dart';
+import 'package:gigya_native_screensets_engine/nss_injector.dart';
 
 void main() {
   group("Rendering test", () {

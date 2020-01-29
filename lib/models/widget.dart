@@ -1,5 +1,5 @@
 import 'package:gigya_native_screensets_engine/nss_runner.dart';
-import 'package:gigya_native_screensets_engine/nss_injection.dart';
+import 'package:gigya_native_screensets_engine/nss_injector.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'widget.g.dart';
