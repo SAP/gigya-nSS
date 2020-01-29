@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gigya_native_screensets_engine/initialization.dart';
+import 'package:gigya_native_screensets_engine/nss_ignition.dart';
 import 'package:gigya_native_screensets_engine/models/main.dart';
-import 'package:gigya_native_screensets_engine/registry.dart';
-import 'package:gigya_native_screensets_engine/ui/rendering.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
+import 'package:gigya_native_screensets_engine/nss_runner.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
@@ -16,14 +16,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<EngineRegistry>(
-          create: (_) => EngineRegistry(),
+        Provider<NssRegistryBloc>(
+          create: (_) => NssRegistryBloc(),
         ),
       ],
-      child: EngineInitializationWidget(
-        layoutScreenSet: (Main main) {
-          return NSSLayoutBuilder('login').render(main.screens);
+      child: NssIgnitionWidget(
+        layoutScreenSet: (Main main, String initialRoute) {
+          return NssLayoutBuilder(initialRoute).render(main.screens);
         },
+        useMockData: true,
       ),
     );
   }

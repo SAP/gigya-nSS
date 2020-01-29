@@ -1,19 +1,19 @@
-import 'package:gigya_native_screensets_engine/ui/rendering.dart';
-import 'package:gigya_native_screensets_engine/ui/widget_factory.dart';
+import 'package:gigya_native_screensets_engine/nss_runner.dart';
+import 'package:gigya_native_screensets_engine/nss_injection.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'widget.g.dart';
 
 @JsonSerializable(anyMap: true)
-class NSSWidget {
-  WidgetType type;
+class NssWidget {
+  NssWidgetType type;
   String textKey;
-  NSSAlignment stack;
-  List<NSSWidget> children;
+  NssAlignment stack;
+  List<NssWidget> children;
 
-  NSSWidget(this.type, this.textKey, {this.children, this.stack});
+  NssWidget(this.type, this.textKey, {this.children, this.stack});
 
-  factory NSSWidget.fromJson(Map<String, dynamic> json) => _$NSSWidgetFromJson(json);
+  factory NssWidget.fromJson(Map<String, dynamic> json) => _$NssWidgetFromJson(json);
 
-  Map<String, dynamic> toJson() => _$NSSWidgetToJson(this);
+  Map<String, dynamic> toJson() => _$NssWidgetToJson(this);
 }

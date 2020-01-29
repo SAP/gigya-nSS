@@ -2,24 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'package:gigya_native_screensets_engine/ui/errors.dart';
-import 'package:gigya_native_screensets_engine/ui/widget_factory.dart';
+import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
+import 'package:gigya_native_screensets_engine/nss_injection.dart';
 
-enum NSSAlignment {
-  vertical,
-  horizontal
-}
+enum NssAlignment { vertical, horizontal }
 
-class NSSLayoutBuilder {
+class NssLayoutBuilder {
   final String layoutName;
 
-  NSSLayoutBuilder(this.layoutName);
+  NssLayoutBuilder(this.layoutName);
 
   // The render method should be render the json to one Widget.
 
   Widget render(Map<String, Screen> screensList) {
     if (!screensList.containsKey(this.layoutName)) {
-      return NssErrorWidget.missingRoute();
+      return NssErrorWidget.routeMissMatch();
     }
 
     final Screen screen = screensList[this.layoutName];
@@ -28,12 +25,12 @@ class NSSLayoutBuilder {
       return NssErrorWidget.screenWithNotChildren();
     }
 
-    final List<NSSWidget> children = screen.children;
+    final List<NssWidget> children = screen.children;
 
     return _build(screen, _renderWidgets(children));
   }
 
-  List<Widget> _renderWidgets(List<NSSWidget> listOfWidgets) {
+  List<Widget> _renderWidgets(List<NssWidget> listOfWidgets) {
     List<Widget> widgets = [];
 
     if (listOfWidgets.isEmpty) {
@@ -46,7 +43,7 @@ class NSSLayoutBuilder {
       if (isNotNull) {
         widgets.add(_renderByAlignment(widget.stack, _renderWidgets(widget.children)));
       } else {
-        widgets.add(SoleWidgetFactory().create(widget.type, widget));
+        widgets.add(NssWidgetFactory().create(widget.type, widget));
       }
     });
 
@@ -68,11 +65,11 @@ class NSSLayoutBuilder {
   }
 
   // Render the list by alignment.
-  Widget _renderByAlignment(NSSAlignment alignment, List list) {
+  Widget _renderByAlignment(NssAlignment alignment, List list) {
     switch (alignment) {
-      case NSSAlignment.vertical:
+      case NssAlignment.vertical:
         return Column(children: list);
-      case NSSAlignment.horizontal:
+      case NssAlignment.horizontal:
         return Row(children: list);
       default:
         return Column(children: list);

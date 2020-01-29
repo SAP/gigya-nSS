@@ -1,6 +1,7 @@
 {
   "platformAware": false,
   "markup": {
+    "initialRoute": "login",
     "screens": {
       "login": {
         "id": "login",

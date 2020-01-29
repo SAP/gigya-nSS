@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gigya_native_screensets_engine/ui/errors.dart';
+import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 
 void main() {
   group('Error widget factory tests', () {
-    testWidgets('Testing missing route factory constructor', (WidgetTester tester) async {
-      var widget = MaterialApp(home: NssErrorWidget.missingRoute());
+    testWidgets('Testing route missmatch factory constructor', (WidgetTester tester) async {
+      var widget = MaterialApp(home: NssErrorWidget.routeMissMatch());
 
       await tester.pumpWidget(widget);
 
