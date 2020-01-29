@@ -22,9 +22,9 @@ void main() {
 
     testWidgets("render without screen", (WidgetTester tester) async {
       Map<String, Screen> mockData = {};
-      mockData["test"] = Screen("test", NSSAlignment.vertical, []);
+      mockData["test"] = Screen("test", NssAlignment.vertical, []);
 
-      await tester.pumpWidget(MaterialApp(home: NSSLayoutBuilder("").render(mockData)));
+      await tester.pumpWidget(MaterialApp(home: NssLayoutBuilder("").render(mockData)));
 
       await tester.pump(Duration(seconds: 2), EnginePhase.build);
 
@@ -36,9 +36,9 @@ void main() {
 
     testWidgets("render without chidren", (WidgetTester tester) async {
       Map<String, Screen> mockData = {};
-      mockData["test"] = Screen("test", NSSAlignment.vertical, []);
+      mockData["test"] = Screen("test", NssAlignment.vertical, []);
 
-      await tester.pumpWidget(MaterialApp(home: NSSLayoutBuilder("test").render(mockData)));
+      await tester.pumpWidget(MaterialApp(home: NssLayoutBuilder("test").render(mockData)));
 
       await tester.pump(Duration(seconds: 2), EnginePhase.build);
 
@@ -50,10 +50,10 @@ void main() {
 
     testWidgets("test AppBar widget", (WidgetTester tester) async {
       Map<String, Screen> mockData = {};
-      mockData['test'] = Screen('test', NSSAlignment.vertical, [NSSWidget(WidgetType.label, 'test label')]);
+      mockData['test'] = Screen('test', NssAlignment.vertical, [NssWidget(NssWidgetType.label, 'test label')]);
       mockData['test'].appBar = {'textKey': 'Test AppBar'};
 
-      await tester.pumpWidget(MaterialApp(home: NSSLayoutBuilder('test').render(mockData)));
+      await tester.pumpWidget(MaterialApp(home: NssLayoutBuilder('test').render(mockData)));
 
       await tester.pump(Duration(seconds: 2), EnginePhase.build);
 
