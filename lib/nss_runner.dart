@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 import 'package:gigya_native_screensets_engine/nss_injection.dart';
 
 enum NssAlignment { vertical, horizontal }
@@ -25,12 +25,12 @@ class NssLayoutBuilder {
       return NssErrorWidget.screenWithNotChildren();
     }
 
-    final List<NssWidget> children = screen.children;
+    final List<NssWidgetData> children = screen.children;
 
     return _build(screen, _renderWidgets(children));
   }
 
-  List<Widget> _renderWidgets(List<NssWidget> listOfWidgets) {
+  List<Widget> _renderWidgets(List<NssWidgetData> listOfWidgets) {
     List<Widget> widgets = [];
 
     if (listOfWidgets.isEmpty) {

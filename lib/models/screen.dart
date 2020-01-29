@@ -9,7 +9,7 @@ class Screen {
   String id;
   NssAlignment stack;
   Map<String, dynamic> appBar;
-  List<NssWidget> children;
+  List<NssWidgetData> children;
 
   Screen(this.id, this.stack, this.children, {this.appBar});
 

@@ -4,7 +4,7 @@ import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
 
 class NssSubmitWidget extends StatelessWidget with NssWidgetDecorationMixin {
-  final NssWidget widgetData;
+  final NssWidgetData widgetData;
 
   const NssSubmitWidget({Key key, this.widgetData}) : super(key: key);
 
@@ -16,9 +16,7 @@ class NssSubmitWidget extends StatelessWidget with NssWidgetDecorationMixin {
         onPressed: () {
           // TODO: Need implementing the pressed logic.
         },
-        child: Text(
-            widgetData.textKey
-        ),
+        child: Text(widgetData.textKey),
       ),
     );
   }
