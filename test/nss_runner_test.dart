@@ -9,7 +9,7 @@ void main() {
   group("Rendering test", () {
     testWidgets("test rander elemnt", (WidgetTester tester) async {
       Map<String, Screen> mockData = {};
-      mockData["test"] = Screen("test", NssAlignment.vertical, [NssWidget(NssWidgetType.label, "test label")]);
+      mockData["test"] = Screen("test", NssAlignment.vertical, [NssWidgetData(NssWidgetType.label, "test label")]);
 
       await tester.pumpWidget(MaterialApp(home: NssLayoutBuilder("test").render(mockData)));
 
@@ -50,7 +50,7 @@ void main() {
 
     testWidgets("test AppBar widget", (WidgetTester tester) async {
       Map<String, Screen> mockData = {};
-      mockData['test'] = Screen('test', NssAlignment.vertical, [NssWidget(NssWidgetType.label, 'test label')]);
+      mockData['test'] = Screen('test', NssAlignment.vertical, [NssWidgetData(NssWidgetType.label, 'test label')]);
       mockData['test'].appBar = {'textKey': 'Test AppBar'};
 
       await tester.pumpWidget(MaterialApp(home: NssLayoutBuilder('test').render(mockData)));

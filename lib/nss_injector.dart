@@ -1,50 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/components/nss_action_widgets.dart';
+import 'package:gigya_native_screensets_engine/components/nss_input_widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
+
+import 'components/nss_label_widgets.dart';
 
 enum NssWidgetType { label, input, email, password, submit }
 
 class NssWidgetFactory {
-  Widget create(NssWidgetType name, NssWidget data) {
-    switch (name) {
+  // TODO: Add formKey to create.
+  Widget create(NssWidgetType type, NssWidgetData data) {
+    switch (type) {
       case NssWidgetType.label:
         // TODO: Handle this case.
-        return DecoratedText(widgetData: data);
-        break;
+        return NssLabelWidget(widgetData: data);
       case NssWidgetType.input:
-        // TODO: Handle this case.
-        break;
       case NssWidgetType.email:
-        // TODO: Handle this case.
-        break;
       case NssWidgetType.password:
-        // TODO: Handle this case.
-        break;
+        return NssTextInputWidget(formKey: GlobalKey(), widgetData: data);
       case NssWidgetType.submit:
-        // TODO: Handle this case.
+        return NssSubmitWidget(widgetData: data);
         break;
     }
     return Container();
-  }
-}
-
-class DecoratedText extends StatelessWidget with NssWidgetDecorationMixin {
-  final NssWidget widgetData;
-
-  const DecoratedText({Key key, this.widgetData}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: withPadding(16),
-      child: Text(
-        widgetData.textKey,
-        style: TextStyle(
-          fontSize: 14,
-          color: getColor("blue"),
-        ),
-      ),
-    );
   }
 }
