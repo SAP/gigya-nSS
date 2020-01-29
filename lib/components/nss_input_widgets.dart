@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'package:gigya_native_screensets_engine/nss_injection.dart';
+import 'package:gigya_native_screensets_engine/nss_injector.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
 
+/// Customized TextFormField widget.
 class NssTextInputWidget extends StatelessWidget with NssWidgetDecorationMixin {
   final NssWidgetData widgetData;
   final Key formKey;

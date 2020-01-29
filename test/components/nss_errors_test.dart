@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
+import '../test_extensions.dart';
 
 void main() {
   group('Error widget factory tests', () {
@@ -9,8 +10,7 @@ void main() {
 
       await tester.pumpWidget(widget);
 
-      final textFinder = find.text('Initial route missmatch.'
-          '\nMarkup does not contain requested route.');
+      final textFinder = find.textContains('Initial route missmatch');
 
       expect(textFinder, findsOneWidget);
     });
@@ -20,9 +20,7 @@ void main() {
       var widget = MaterialApp(home: NssErrorWidget.screenWithNotChildren());
 
       await tester.pumpWidget(widget);
-
-      final textFinder = find.text('Screen must contain children.'
-          '\nMarkup tag \"screen\" must contain children.');
+      final textFinder = find.textContains('Screen must contain children');
 
       expect(textFinder, findsOneWidget);
     });

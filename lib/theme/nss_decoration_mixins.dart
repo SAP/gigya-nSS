@@ -18,32 +18,30 @@ class NssWidgetDecorationMixin {
     if (padding is double) {
       return EdgeInsets.all(padding);
     } else if (padding is int) {
-      return EdgeInsets.all(padding.toDouble());
+      return EdgeInsets.all(ensureDouble(padding));
     } else if (padding is List<dynamic>) {
       return EdgeInsets.only(
           left: ensureDouble(padding[0]),
-          right: ensureDouble(padding[1]),
-          top: ensureDouble(padding[2]),
+          top: ensureDouble(padding[1]),
+          right: ensureDouble(padding[2]),
           bottom: ensureDouble(padding[3]));
     }
-    return EdgeInsets.all(0);
+    return EdgeInsets.zero;
   }
 
-  //region Colors
+  //region Coloring
 
-  Color parseColor(String color, {bool platformAware}) {
-    if (_isHexColor(color))
-      return _parseHexColor(color);
+  /// Request a [Color] instance given an multi optional identifier (named, hex).
+  Color getColor(String color, {bool platformAware}) {
+    if (color.contains("#"))
+      return _getColorWithHex(color);
     else {
-      return getColorBy(color, platformAware: platformAware ?? false);
+      return _getColorWithName(color, platformAware: platformAware ?? false);
     }
   }
 
-  bool _isHexColor(String color) {
-    return (color.contains("#"));
-  }
-
-  Color _parseHexColor(String hexColorString) {
+  /// Get a [Color] instance after parsing the a color hext string.
+  Color _getColorWithHex(String hexColorString) {
     if (hexColorString == null) {
       return null;
     }
@@ -55,7 +53,9 @@ class NssWidgetDecorationMixin {
     return Color(colorInt);
   }
 
-  Color getColorBy(name, {bool platformAware}) {
+  /// Get a [Color] instance given color name.
+  /// Method is platform aware.
+  Color _getColorWithName(name, {bool platformAware}) {
     switch (name) {
       case 'blue':
         return platformAware ? CupertinoColors.systemBlue : Colors.blue;

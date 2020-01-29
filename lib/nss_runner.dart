@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'package:gigya_native_screensets_engine/nss_injection.dart';
+import 'package:gigya_native_screensets_engine/nss_injector.dart';
 
 enum NssAlignment { vertical, horizontal }
 
