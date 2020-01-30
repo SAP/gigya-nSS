@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
+import 'package:gigya_native_screensets_engine/components/nss_form.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_injector.dart';
@@ -41,7 +42,7 @@ class NssLayoutBuilder {
       bool isNotNull = widget.children != null ? true : false;
 
       if (isNotNull) {
-        widgets.add(_renderByAlignment(widget.stack, _renderWidgets(widget.children)));
+        widgets.add(_groupBy(widget.stack, _renderWidgets(widget.children)));
       } else {
         widgets.add(NssWidgetFactory().create(widget.type, widget));
       }
@@ -58,14 +59,15 @@ class NssLayoutBuilder {
               )
             : null,
         body: SafeArea(
-          child: Container(
-            child: _renderByAlignment(screen.stack, list),
+          child: NssForm(
+            screenId: screen.id,
+            layoutForm: () => _groupBy(screen.align, list),
           ),
         ));
   }
 
   // Render the list by alignment.
-  Widget _renderByAlignment(NssAlignment alignment, List list) {
+  Widget _groupBy(NssAlignment alignment, List list) {
     switch (alignment) {
       case NssAlignment.vertical:
         return Column(children: list);
