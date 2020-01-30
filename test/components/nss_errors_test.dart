@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
+
 import '../test_extensions.dart';
 
 void main() {
-  group('Error widget factory tests', () {
-    testWidgets('Testing route missmatch factory constructor', (WidgetTester tester) async {
+  group('NssErorrWidget: ', () {
+    testWidgets('With routeMissMatch', (WidgetTester tester) async {
       var widget = MaterialApp(home: NssErrorWidget.routeMissMatch());
 
       await tester.pumpWidget(widget);
@@ -15,7 +16,7 @@ void main() {
       expect(textFinder, findsOneWidget);
     });
 
-    testWidgets('Testing missing children in screen factory constructor',
+    testWidgets('With screenWithNotChildren',
         (WidgetTester tester) async {
       var widget = MaterialApp(home: NssErrorWidget.screenWithNotChildren());
 

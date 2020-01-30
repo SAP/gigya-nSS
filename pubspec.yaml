@@ -31,10 +31,10 @@ dependencies:
   cupertino_icons: ^0.1.2
 
 dev_dependencies:
-  test:
-  mockito:
   flutter_test:
     sdk: flutter
+  test:
+  mockito:
   build_runner: ^1.7.3
   json_serializable: ^3.2.5
 

@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_form.dart';
 import 'package:provider/provider.dart';
+
 import '../test_extensions.dart';
 
 class TextChildWidget extends StatelessWidget {
@@ -11,18 +12,14 @@ class TextChildWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint('building child');
     return Container(
-      child: Text(Provider
-          .of<NssRegistryBloc>(context)
-          .forms
-          .formKeyFor('some-id')
-          .toString()),
+      child: Text(Provider.of<NssRegistryBloc>(context).forms.formKeyFor('some-id').toString()),
     );
   }
 }
 
 void main() {
-  group('NssForm widget tests', () {
-    testWidgets('Testing NssForm instantiation & registration', (WidgetTester tester) async {
+  group('NssFormWidget: ', () {
+    testWidgets('Init & register', (WidgetTester tester) async {
       var widget = MultiProvider(
         providers: [
           Provider<NssRegistryBloc>(

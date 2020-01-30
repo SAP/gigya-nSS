@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gigya_native_screensets_engine/nss_ignition.dart';
-import 'package:gigya_native_screensets_engine/models/main.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
+import 'package:gigya_native_screensets_engine/models/main.dart';
+import 'package:gigya_native_screensets_engine/nss_ignition.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
@@ -14,12 +14,12 @@ class MockChannels extends Mock implements NssChannelRegistry {}
 class MockMainChannel extends Mock implements MethodChannel {}
 
 void main() {
-  group('Initialization tests', () {
+  group('Ignition: ', () {
     final registry = MockRegistry();
     final channels = MockChannels();
     final mainChannel = MockMainChannel();
 
-    testWidgets('Testing engine initialization with "useMockData" true',
+    testWidgets('With "useMockData" true',
         (WidgetTester tester) async {
       await tester.pumpWidget(NssIgnitionWidget(
         layoutScreenSet: (Main main, String initialRoute) {
@@ -47,7 +47,7 @@ void main() {
       expect(id2TextFinder, findsOneWidget);
     });
 
-    testWidgets('Testing engine initialization with "useMockData" false',
+    testWidgets('With "useMockData" false',
         (WidgetTester tester) async {
       var widget = MultiProvider(
         providers: [
