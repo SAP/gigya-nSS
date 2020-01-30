@@ -21,10 +21,11 @@ class _NssFormState extends State<NssForm> {
   void initState() {
     super.initState();
 
-    debugPrint('$runtimeType with id: ${widget.screenId} onInitState called');
+    debugPrint('$runtimeType with id: ${widget.screenId} form initState() called');
+
+    // Create form global key.
     _formKey = GlobalKey<FormState>(debugLabel: '$runtimeType with screenId : ${widget.screenId}');
 
-    debugPrint('$runtimeType with id: ${widget.screenId} onFirstLayout called');
     // Register key in Form registry.
     Provider.of<NssRegistryBloc>(context, listen: false)
         .forms

@@ -1,17 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_runner.dart';
 import 'package:gigya_native_screensets_engine/nss_injector.dart';
+import 'package:mockito/mockito.dart';
+import 'package:provider/provider.dart';
+
+class MockRegistry extends Mock implements NssRegistryBloc {}
+
+class MockForms extends Mock implements NssFormRegistry {}
 
 void main() {
   group("Rendering test", () {
+    final registry = MockRegistry();
+    final forms = MockForms();
+
+    when(registry.forms).thenReturn(forms);
+    when(forms.formKeyFor('test')).thenReturn(GlobalKey<FormState>());
+
     testWidgets("test rander elemnt", (WidgetTester tester) async {
       Map<String, Screen> mockData = {};
-      mockData["test"] = Screen("test", NssAlignment.vertical, [NssWidgetData(NssWidgetType.label, "test label")]);
+      mockData["test"] =
+          Screen("test", NssAlignment.vertical, [NssWidgetData(NssWidgetType.label, "test label")]);
 
-      await tester.pumpWidget(MaterialApp(home: NssLayoutBuilder("test").render(mockData)));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider<NssRegistryBloc>(
+              create: (_) => registry,
+            ),
+          ],
+          child: MaterialApp(
+            home: NssLayoutBuilder("test").render(mockData),
+          ),
+        ),
+      );
 
       await tester.pump(Duration(seconds: 2), EnginePhase.build);
 
@@ -24,7 +49,18 @@ void main() {
       Map<String, Screen> mockData = {};
       mockData["test"] = Screen("test", NssAlignment.vertical, []);
 
-      await tester.pumpWidget(MaterialApp(home: NssLayoutBuilder("").render(mockData)));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider<NssRegistryBloc>(
+              create: (_) => registry,
+            ),
+          ],
+          child: MaterialApp(
+            home: NssLayoutBuilder("").render(mockData),
+          ),
+        ),
+      );
 
       await tester.pump(Duration(seconds: 2), EnginePhase.build);
 
@@ -38,7 +74,18 @@ void main() {
       Map<String, Screen> mockData = {};
       mockData["test"] = Screen("test", NssAlignment.vertical, []);
 
-      await tester.pumpWidget(MaterialApp(home: NssLayoutBuilder("test").render(mockData)));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider<NssRegistryBloc>(
+              create: (_) => registry,
+            ),
+          ],
+          child: MaterialApp(
+            home: NssLayoutBuilder("test").render(mockData),
+          ),
+        ),
+      );
 
       await tester.pump(Duration(seconds: 2), EnginePhase.build);
 
@@ -50,10 +97,22 @@ void main() {
 
     testWidgets("test AppBar widget", (WidgetTester tester) async {
       Map<String, Screen> mockData = {};
-      mockData['test'] = Screen('test', NssAlignment.vertical, [NssWidgetData(NssWidgetType.label, 'test label')]);
+      mockData['test'] =
+          Screen('test', NssAlignment.vertical, [NssWidgetData(NssWidgetType.label, 'test label')]);
       mockData['test'].appBar = {'textKey': 'Test AppBar'};
 
-      await tester.pumpWidget(MaterialApp(home: NssLayoutBuilder('test').render(mockData)));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider<NssRegistryBloc>(
+              create: (_) => registry,
+            ),
+          ],
+          child: MaterialApp(
+            home: NssLayoutBuilder('test').render(mockData),
+          ),
+        ),
+      );
 
       await tester.pump(Duration(seconds: 2), EnginePhase.build);
 
