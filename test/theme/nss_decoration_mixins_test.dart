@@ -4,21 +4,19 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
 
-class UsesMixin with NssWidgetDecorationMixin { }
+class UsesMixin with NssWidgetDecorationMixin {}
 
 void main() {
   group('Testing decoration mixins', () {
-    test('Testing ensureDouble() mehtod', () {
-      var mixin = UsesMixin();
+    var mixin = UsesMixin();
 
+    test('Testing ensureDouble() mehtod', () {
       expect(mixin.ensureDouble(0), 0.0);
       expect(mixin.ensureDouble(1), 1.0);
       expect(mixin.ensureDouble(0.1), 0.1);
     });
 
     test('Testing withPadding() method', () {
-      var mixin = UsesMixin();
-
       expect(mixin.withPadding(2), EdgeInsets.all(2.0));
       expect(mixin.withPadding(2.0), EdgeInsets.all(2.0));
       expect(mixin.withPadding([1, 1, 1, 1]), EdgeInsets.all(1.0));
@@ -28,8 +26,6 @@ void main() {
     });
 
     test('Testing getColor() method', () {
-      var mixin = UsesMixin();
-
       // Named colors.
       expect(mixin.getColor('blue'), Colors.blue);
       expect(mixin.getColor('blue', platformAware: true), CupertinoColors.systemBlue);

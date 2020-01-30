@@ -15,6 +15,10 @@ class MockMainChannel extends Mock implements MethodChannel {}
 
 void main() {
   group('Initialization tests', () {
+    final registry = MockRegistry();
+    final channels = MockChannels();
+    final mainChannel = MockMainChannel();
+
     testWidgets('Testing engine initialization with "useMockData" true',
         (WidgetTester tester) async {
       await tester.pumpWidget(NssIgnitionWidget(
@@ -45,10 +49,6 @@ void main() {
 
     testWidgets('Testing engine initialization with "useMockData" false',
         (WidgetTester tester) async {
-      final registry = MockRegistry();
-      final channels = MockChannels();
-      final mainChannel = MockMainChannel();
-
       var widget = MultiProvider(
         providers: [
           Provider<NssRegistryBloc>(
