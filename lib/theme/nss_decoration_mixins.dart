@@ -40,14 +40,15 @@ mixin NssWidgetDecorationMixin {
     }
   }
 
-  /// Get a [Color] instance after parsing the a color hext string.
-  Color _getColorWithHex(String hexColorString) {
+  /// Get a [Color] instance after parsing the a color hex string.
+  /// and [opacity] optional value is available using common opacity two letter pattern.
+  Color _getColorWithHex(String hexColorString, {String opacity}) {
     if (hexColorString == null) {
       return null;
     }
     hexColorString = hexColorString.toUpperCase().replaceAll("#", "");
     if (hexColorString.length == 6) {
-      hexColorString = "FF" + hexColorString;
+      hexColorString = (opacity ?? "FF") + hexColorString;
     }
     int colorInt = int.parse(hexColorString, radix: 16);
     return Color(colorInt);

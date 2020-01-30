@@ -9,65 +9,72 @@ import 'package:gigya_native_screensets_engine/nss_injector.dart';
 enum NssAlignment { vertical, horizontal }
 
 class NssLayoutBuilder {
-  final String layoutName;
+  final String _screenId;
 
-  NssLayoutBuilder(this.layoutName);
+  NssLayoutBuilder(this._screenId);
 
-  // The render method should be render the json to one Widget.
-
-  Widget render(Map<String, Screen> screensList) {
-    if (!screensList.containsKey(this.layoutName)) {
+  /// Main rendering action providing screen map & requested screen id.
+  Widget render(Map<String, Screen> screenMap) {
+    if (screenMap.unavailable(_screenId)) {
       return NssErrorWidget.routeMissMatch();
     }
 
-    final Screen screen = screensList[this.layoutName];
-
+    final Screen screen = screenMap[_screenId];
     if (screen.children.isNullOrEmpty()) {
       return NssErrorWidget.screenWithNotChildren();
     }
 
     final List<NssWidgetData> children = screen.children;
-
-    return _build(screen, _renderWidgets(children));
-  }
-
-  List<Widget> _renderWidgets(List<NssWidgetData> listOfWidgets) {
-    List<Widget> widgets = [];
-
-    if (listOfWidgets.isEmpty) {
-      return widgets;
-    }
-
-    listOfWidgets.forEach((widget) {
-      bool isNotNull = widget.children != null ? true : false;
-
-      if (isNotNull) {
-        widgets.add(_groupBy(widget.stack, _renderWidgets(widget.children)));
-      } else {
-        widgets.add(NssWidgetFactory().create(widget.type, widget));
-      }
-    });
-
-    return widgets;
+    return _build(
+      screen,
+      _renderWidgets(children),
+    );
   }
 
   Widget _build(Screen screen, List<Widget> list) {
+    //TODO: Hardcoded to Material!!!
     return Scaffold(
-        appBar: screen.appBar != null
-            ? AppBar(
-                title: Text(screen.appBar['textKey']),
-              )
-            : null,
-        body: SafeArea(
-          child: NssForm(
-            screenId: screen.id,
-            layoutForm: () => _groupBy(screen.align, list),
-          ),
-        ));
+      appBar: screen.appBar != null
+          ? AppBar(
+              title: Text(screen.appBar['textKey']),
+            )
+          : null,
+      body: SafeArea(
+        child: NssForm(
+          screenId: screen.id,
+          layoutForm: () => _groupBy(screen.align, list,),
+        ),
+      ),
+    );
   }
 
-  // Render the list by alignment.
+  List<Widget> _renderWidgets(List<NssWidgetData> children) {
+    List<Widget> widgets = [];
+
+    if (children.isEmpty) {
+      return widgets;
+    }
+
+    children.forEach((widget) {
+      if (widget.children != null) {
+        widgets.add(
+          _groupBy(
+            widget.stack,
+            _renderWidgets(widget.children),
+          ),
+        );
+      } else {
+        widgets.add(
+          NssWidgetFactory().create(widget.type, widget),
+        );
+      }
+    });
+    return widgets;
+  }
+
+  /// Render list according to provided alignment property.
   Widget _groupBy(NssAlignment alignment, List list) {
+    //TODO: Row & Column widgets are highly customizable. Don't forget.
     switch (alignment) {
       case NssAlignment.vertical:
         return Column(children: list);
@@ -79,8 +86,16 @@ class NssLayoutBuilder {
   }
 }
 
+//TODO: Move extensions to an extension specific file?
+
 extension IterableExt on Iterable {
   bool isNullOrEmpty() {
     return this == null || this.isEmpty;
+  }
+}
+
+extension MapExt<T, V> on Map<T, V> {
+  bool unavailable(T key) {
+    return !this.containsKey(key);
   }
 }

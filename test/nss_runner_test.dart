@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'package:gigya_native_screensets_engine/nss_injector.dart';
 import 'package:gigya_native_screensets_engine/nss_runner.dart';
+import 'package:gigya_native_screensets_engine/nss_injector.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
@@ -13,20 +13,17 @@ class MockRegistry extends Mock implements NssRegistryBloc {}
 class MockForms extends Mock implements NssFormRegistry {}
 
 void main() {
-  group('NssLayoutBuilder: ', () {
+  group("Rendering test", () {
     final registry = MockRegistry();
     final forms = MockForms();
 
     when(registry.forms).thenReturn(forms);
     when(forms.formKeyFor('test')).thenReturn(GlobalKey<FormState>());
 
-    Map<String, Screen> mockData = {};
-
-    testWidgets('Rendering element', (WidgetTester tester) async {
-      mockData.clear();
-
-      mockData['test'] =
-          Screen('test', NssAlignment.vertical, [NssWidgetData(NssWidgetType.label, 'test label')]);
+    testWidgets("test rander elemnt", (WidgetTester tester) async {
+      Map<String, Screen> mockData = {};
+      mockData["test"] =
+          Screen("test", NssAlignment.vertical, [NssWidgetData(NssWidgetType.label, "test label")]);
 
       await tester.pumpWidget(
         MultiProvider(
@@ -36,7 +33,7 @@ void main() {
             ),
           ],
           child: MaterialApp(
-            home: NssLayoutBuilder('test').render(mockData),
+            home: NssLayoutBuilder("test").render(mockData),
           ),
         ),
       );
@@ -48,10 +45,9 @@ void main() {
       expect(id1TextFinder, findsOneWidget);
     });
 
-    testWidgets('Missing screen', (WidgetTester tester) async {
-      mockData.clear();
-
-      mockData['test'] = Screen('test', NssAlignment.vertical, []);
+    testWidgets("render without screen", (WidgetTester tester) async {
+      Map<String, Screen> mockData = {};
+      mockData["test"] = Screen("test", NssAlignment.vertical, []);
 
       await tester.pumpWidget(
         MultiProvider(
@@ -61,7 +57,7 @@ void main() {
             ),
           ],
           child: MaterialApp(
-            home: NssLayoutBuilder('').render(mockData),
+            home: NssLayoutBuilder("").render(mockData),
           ),
         ),
       );
@@ -74,10 +70,9 @@ void main() {
       expect(id1TextFinder, findsOneWidget);
     });
 
-    testWidgets('Missing children', (WidgetTester tester) async {
-      mockData.clear();
-
-      mockData['test'] = Screen('test', NssAlignment.vertical, []);
+    testWidgets("render without chidren", (WidgetTester tester) async {
+      Map<String, Screen> mockData = {};
+      mockData["test"] = Screen("test", NssAlignment.vertical, []);
 
       await tester.pumpWidget(
         MultiProvider(
@@ -87,7 +82,7 @@ void main() {
             ),
           ],
           child: MaterialApp(
-            home: NssLayoutBuilder('test').render(mockData),
+            home: NssLayoutBuilder("test").render(mockData),
           ),
         ),
       );
@@ -100,9 +95,8 @@ void main() {
       expect(id1TextFinder, findsOneWidget);
     });
 
-    testWidgets('With appBar', (WidgetTester tester) async {
-      mockData.clear();
-
+    testWidgets("test AppBar widget", (WidgetTester tester) async {
+      Map<String, Screen> mockData = {};
       mockData['test'] =
           Screen('test', NssAlignment.vertical, [NssWidgetData(NssWidgetType.label, 'test label')]);
       mockData['test'].appBar = {'textKey': 'Test AppBar'};

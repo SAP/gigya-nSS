@@ -81,8 +81,8 @@ class NssIgnitionWidget extends StatelessWidget {
   Widget createAppWidget(platformAware, markup, initialRoute, layout) {
     // Currently ignoring platform awareness.
     return (platformAware && Platform.isIOS)
-        ? NativeScreensCupertinoApp(markup, initialRoute, layout)
-        : NativeScreensMaterialApp(markup, initialRoute, layout);
+        ? NativeScreensCupertinoApp(markup, initialRoute, layout, useMockData)
+        : NativeScreensMaterialApp(markup, initialRoute, layout, useMockData);
   }
 }
 
@@ -93,15 +93,22 @@ class NativeScreensMaterialApp extends MaterialApp {
   final Layout layout;
   final Main markup;
   final String initialRoute;
+  final bool isMock;
 
   NativeScreensMaterialApp(
     this.markup,
     this.initialRoute,
     this.layout,
+    this.isMock,
   );
 
   @override
-  Widget get home => layout(markup, initialRoute);
+  Widget get home {
+    if (isMock) {
+      return _homeMockProtector(layout(markup, initialRoute));
+    }
+    return layout(markup, initialRoute);
+  }
 }
 
 /// Customized CupertinoApp for iOS devices.
@@ -109,13 +116,53 @@ class NativeScreensCupertinoApp extends CupertinoApp {
   final Layout layout;
   final Main markup;
   final String initialRoute;
+  final bool isMock;
 
   NativeScreensCupertinoApp(
     this.markup,
     this.initialRoute,
     this.layout,
+    this.isMock,
   );
 
   @override
-  Widget get home => layout(markup, initialRoute);
+  Widget get home {
+    if (isMock) {
+      return _homeMockProtector(layout(markup, initialRoute));
+    }
+    return layout(markup, initialRoute);
+  }
+}
+
+/// Helper function that will place a "Uses mock" tag in the bottom right if the screen
+/// when using development mocks.
+Widget _homeMockProtector(childLayout) {
+  return Stack(
+    children: <Widget>[
+      childLayout,
+      Align(
+        alignment: Alignment.bottomRight,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Container(
+            decoration: new BoxDecoration(
+              color: Color(0x66c1c1c1),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text(
+                'Uses mock',
+                style: TextStyle(
+                  decoration: TextDecoration.none,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xff3f6f79),
+                ),
+              ),
+            ),
+          ),
+        ),
+      )
+    ],
+  );
 }
