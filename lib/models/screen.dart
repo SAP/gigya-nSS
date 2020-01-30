@@ -7,11 +7,12 @@ part 'screen.g.dart';
 @JsonSerializable(anyMap: true)
 class Screen {
   String id;
-  NssAlignment stack;
+  @JsonKey(name: 'stack')
+  NssAlignment align;
   Map<String, dynamic> appBar;
   List<NssWidgetData> children;
 
-  Screen(this.id, this.stack, this.children, {this.appBar});
+  Screen(this.id, this.align, this.children, {this.appBar});
 
   factory Screen.fromJson(Map<String, dynamic> json) => _$ScreenFromJson(json);
 
