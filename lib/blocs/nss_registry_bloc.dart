@@ -16,6 +16,8 @@ class NssRegistryBloc {
     if (_formRegistry == null) _formRegistry = NssFormRegistry();
     return _formRegistry;
   }
+
+  bool isPlatformAware = false;
 }
 
 class NssChannelRegistry {
