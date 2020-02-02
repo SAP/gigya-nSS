@@ -4,17 +4,17 @@ import 'package:provider/provider.dart';
 
 typedef Widget LayoutNssForm();
 
-class NssForm extends StatefulWidget {
+class NssFormWidget extends StatefulWidget {
   final String screenId;
   final LayoutNssForm layoutForm;
 
-  const NssForm({Key key, @required this.screenId, @required this.layoutForm}) : super(key: key);
+  const NssFormWidget({Key key, @required this.screenId, @required this.layoutForm}) : super(key: key);
 
   @override
-  _NssFormState createState() => _NssFormState();
+  _NssFormWidgetState createState() => _NssFormWidgetState();
 }
 
-class _NssFormState extends State<NssForm> {
+class _NssFormWidgetState extends State<NssFormWidget> {
   GlobalKey<FormState> _formKey;
 
   @override

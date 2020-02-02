@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/components/nss_error.dart';
+import 'package:gigya_native_screensets_engine/components/nss_render_error.dart';
 import 'package:gigya_native_screensets_engine/models/main.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';

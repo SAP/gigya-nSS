@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gigya_native_screensets_engine/components/nss_error.dart';
+import 'package:gigya_native_screensets_engine/components/nss_render_error.dart';
 import '../test_extensions.dart';
 
 void main() {
