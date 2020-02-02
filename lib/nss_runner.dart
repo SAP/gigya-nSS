@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/components/nss_error.dart';
-import 'package:gigya_native_screensets_engine/components/nss_form.dart';
+import 'package:gigya_native_screensets_engine/components/nss_render_error.dart';
+import 'package:gigya_native_screensets_engine/components/parent/nss_form.dart';
+import 'package:gigya_native_screensets_engine/components/parent/nss_screen.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_injector.dart';
@@ -34,15 +35,21 @@ class NssLayoutBuilder {
   Widget _build(Screen screen, List<Widget> list) {
     //TODO: Hardcoded to Material!!!
     return Scaffold(
+      //TODO: Customize appbar widget according to platform.
       appBar: screen.appBar != null
           ? AppBar(
               title: Text(screen.appBar['textKey']),
             )
           : null,
       body: SafeArea(
-        child: NssForm(
-          screenId: screen.id,
-          layoutForm: () => _groupBy(screen.align, list,),
+        child: NssScreenWidget(
+          layoutScreen: () => NssFormWidget(
+            screenId: screen.id,
+            layoutForm: () => _groupBy(
+              screen.align,
+              list,
+            ),
+          ),
         ),
       ),
     );
