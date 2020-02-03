@@ -6,6 +6,8 @@ import 'package:gigya_native_screensets_engine/components/parent/nss_form.dart';
 import 'package:provider/provider.dart';
 import '../test_extensions.dart';
 
+//TODO: Migrate to form block.
+
 class TextChildWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
