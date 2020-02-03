@@ -10,6 +10,8 @@ import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:provider/provider.dart';
 
+import 'main.dart';
+
 /// Engine initialization root widget.
 /// The Main purpose of this widget is to open a channel to the native code in order to obtain all
 /// the necessary initialization data/configuration and determine the actual theme of the main app along
@@ -27,24 +29,21 @@ class NssIgnitionWidget extends StatelessWidget {
       future: requestMarkup(context),
       builder: (context, AsyncSnapshot<Map<dynamic, dynamic>> snapshot) {
         if (snapshot.hasData) {
-          debugPrint('Init engine has data');
-
           // Is this screen set platform aware? Register value.
           final platformAware = snapshot.data['platformAware'] ?? false;
           Provider.of<NssRegistryBloc>(context).isPlatformAware = platformAware;
 
-          debugPrint('Using Cupertino platform for iOS: ${platformAware.toString()}');
+          nssLogger.d('Using Cupertino platform for iOS: ${platformAware.toString()}');
 
           // Parse markup and provide App widget.
           Main parsed = Main.fromJson(snapshot.data['markup'].cast<String, dynamic>());
-
           // Check initial route. If not set in the provided markup choose the first provided screen.
           final initialRoute =
               snapshot.data['markup']['initialRoute'] ?? parsed.screens.entries.first.value.id;
           if (initialRoute == null) {
             return NssErrorWidget.routeMissMatch();
           }
-          debugPrint('Initial route = $initialRoute');
+          nssLogger.d('Initial route = $initialRoute');
 
           // Create application widget.
           return createAppWidget(

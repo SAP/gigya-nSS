@@ -3,6 +3,7 @@ import 'package:gigya_native_screensets_engine/nss_ignition.dart';
 import 'package:gigya_native_screensets_engine/models/main.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
 import 'package:gigya_native_screensets_engine/nss_runner.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
@@ -27,3 +28,14 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+/// Global logger instance.
+Logger nssLogger = Logger(
+  printer: PrettyPrinter(
+      methodCount: 2,
+      errorMethodCount: 8,
+      lineLength: 120,
+      colors: true,
+      printEmojis: true,
+      printTime: true),
+);
