@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
-import 'package:gigya_native_screensets_engine/components/parent/nss_form.dart';
+import 'package:gigya_native_screensets_engine/components/nss_form.dart';
 import 'package:provider/provider.dart';
 import '../test_extensions.dart';
 

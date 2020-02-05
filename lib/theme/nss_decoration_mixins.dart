@@ -29,6 +29,8 @@ mixin NssWidgetDecorationMixin {
     return EdgeInsets.zero;
   }
 
+  defaultPadding() => withPadding(24.0);
+
   //region Coloring
 
   /// Request a [Color] instance given an multi optional identifier (named, hex).

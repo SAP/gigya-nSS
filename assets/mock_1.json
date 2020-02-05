@@ -11,18 +11,22 @@
         "stack": "vertical",
         "children": [
           {
+            "id": "login-text-title",
             "type": "label",
             "textKey": "login with site creds:"
           },
           {
+            "id": "login-input-email",
             "type": "email",
             "textKey": "Email"
           },
           {
+            "id": "login-input-password",
             "type": "password",
             "textKey": "Password"
           },
           {
+            "id": "login-submit",
             "type": "submit",
             "textKey": "Submit"
           }
@@ -36,18 +40,22 @@
         "stack": "vertical",
         "children": [
           {
+            "id": "register-text-title",
             "type": "label",
             "textKey": "Register with site creds:"
           },
           {
+            "id": "register-input-email",
             "type": "email",
             "textKey": "Email"
           },
           {
+            "id": "register-input-password",
             "type": "password",
             "textKey": "Password"
           },
           {
+            "id": "register-submit",
             "type": "submit",
             "textKey": "Submit"
           }

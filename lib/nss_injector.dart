@@ -1,24 +1,28 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/components/child/nss_action_widgets.dart';
-import 'package:gigya_native_screensets_engine/components/child/nss_input_widgets.dart';
+import 'package:gigya_native_screensets_engine/components/nss_actions.dart';
+import 'package:gigya_native_screensets_engine/components/nss_inputs.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'components/child/nss_label_widgets.dart';
+import 'components/nss_labels.dart';
 
 enum NssWidgetType { label, input, email, password, submit }
+
+extension NssWidgetTypeExt on NssWidgetType {
+  String get name => describeEnum(this);
+}
 
 class NssWidgetFactory {
   Widget create(NssWidgetType type, NssWidgetData data) {
     switch (type) {
       case NssWidgetType.label:
-        return NssLabelWidget(widgetData: data);
+        return NssLabelWidget(data: data);
       case NssWidgetType.input:
       case NssWidgetType.email:
       case NssWidgetType.password:
-        //TODO GlobalKey should be fetched from the FormRegistry. Remove from constructor.
-        return NssTextInputWidget(formKey: GlobalKey(), widgetData: data);
+        return NssTextInputWidget(data: data);
       case NssWidgetType.submit:
-        return NssSubmitWidget(widgetData: data);
+        return NssSubmitWidget(data: data);
         break;
     }
     return Container();

@@ -4,13 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/components/nss_render_error.dart';
+import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 import 'package:gigya_native_screensets_engine/models/main.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:provider/provider.dart';
-
-import 'main.dart';
 
 /// Engine initialization root widget.
 /// The Main purpose of this widget is to open a channel to the native code in order to obtain all

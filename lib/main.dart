@@ -3,7 +3,6 @@ import 'package:gigya_native_screensets_engine/nss_ignition.dart';
 import 'package:gigya_native_screensets_engine/models/main.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
 import 'package:gigya_native_screensets_engine/nss_runner.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
@@ -25,17 +24,40 @@ class MyApp extends StatelessWidget {
         //TODO: Set this value as false when building frameworks!!
         useMockData: true,
       ),
+//      child: TestWidget(),
     );
   }
 }
 
-/// Global logger instance.
-Logger nssLogger = Logger(
-  printer: PrettyPrinter(
-      methodCount: 2,
-      errorMethodCount: 8,
-      lineLength: 120,
-      colors: true,
-      printEmojis: true,
-      printTime: true),
-);
+class TestWidget extends StatefulWidget {
+  @override
+  _TestWidgetState createState() => _TestWidgetState();
+}
+
+class _TestWidgetState extends State<TestWidget> {
+  GlobalKey gKey = GlobalKey(debugLabel: 'sss');
+  var controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Container(
+          child: Column(
+            children: <Widget>[
+              TextField(
+                controller: controller,
+                key: gKey,
+              ),
+              RaisedButton(
+                onPressed: () {
+                  debugPrint((gKey.currentWidget as TextField).controller.text);
+                },
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

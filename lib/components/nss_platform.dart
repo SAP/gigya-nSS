@@ -21,3 +21,18 @@ abstract class NssStatelessPlatformWidget extends StatelessWidget {
 
   Widget buildMaterialWidget(BuildContext context);
 }
+
+abstract class NssStatefulPlatformWidgetState<T extends StatefulWidget> extends State<T> {
+  @override
+  Widget build(BuildContext context) {
+    bool aware = Provider.of<NssRegistryBloc>(context)?.isPlatformAware ?? false;
+    if (aware && Platform.isIOS) {
+      return buildCupertinoWidget(context);
+    }
+    return buildMaterialWidget(context);
+  }
+
+  Widget buildCupertinoWidget(BuildContext context);
+
+  Widget buildMaterialWidget(BuildContext context);
+}
