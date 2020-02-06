@@ -18,8 +18,7 @@ class NssSubmitWidget extends StatefulWidget {
   _NssSubmitWidgetState createState() => _NssSubmitWidgetState();
 }
 
-class _NssSubmitWidgetState extends NssStatefulPlatformWidgetState<NssSubmitWidget>
-    with NssWidgetDecorationMixin {
+class _NssSubmitWidgetState extends NssStatefulPlatformWidgetState<NssSubmitWidget> with NssWidgetDecorationMixin {
   @override
   void initState() {
     super.initState();
@@ -38,25 +37,28 @@ class _NssSubmitWidgetState extends NssStatefulPlatformWidgetState<NssSubmitWidg
     return Padding(
       //TODO: Using default padding.
       padding: defaultPadding(),
-      child: ButtonTheme(
-        //TODO: Update theme decorations here.
-        child: RaisedButton(
-          child: Text(widget.data.textKey),
-          onPressed: () {
-            _onSubmit();
-          },
-        ),
+      child: RaisedButton(
+        child: Text(widget.data.textKey),
+        onPressed: () {
+          _onSubmit();
+
+          //TODO: Should we create focus handling mixin?
+          // Dismiss the keyboard. Important.
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
       ),
     );
   }
 
-  /// Perform pre-submission actions.
+  /// Request form submission.
   _onSubmit() {
-    // Trigger form validation.
-    var formBloc = Provider.of<NssFormBloc>(context, listen: false);
-    if (formBloc.validateForm()) {
-      return;
-    }
+    // Trigger form submission.
+    Provider.of<NssFormBloc>(context, listen: false).onSubmissionWith(
+      action: widget.data.api,
+    );
   }
 }
 

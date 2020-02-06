@@ -3,14 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/nss_ignition.dart';
 import 'package:gigya_native_screensets_engine/models/main.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
+import 'package:gigya_native_screensets_engine/nss_registry.dart';
 import 'package:mockito/mockito.dart';
-import 'package:provider/provider.dart';
 
-class MockRegistry extends Mock implements NssRegistryBloc {}
-
+class MockRegistry extends Mock implements NssRegistry {}
 class MockChannels extends Mock implements NssChannelRegistry {}
-
 class MockMainChannel extends Mock implements MethodChannel {}
 
 void main() {
@@ -49,22 +46,15 @@ void main() {
 
     testWidgets('Testing engine initialization with "useMockData" false',
         (WidgetTester tester) async {
-      var widget = MultiProvider(
-        providers: [
-          Provider<NssRegistryBloc>(
-            create: (_) => registry,
-          ),
-        ],
-        child: NssIgnitionWidget(
-          layoutScreenSet: (Main main, String initialRoute) {
-            return Container(
-              child: Text(main.screens[initialRoute].id),
-            );
-          },
-        ),
+      var widget = NssIgnitionWidget(
+        layoutScreenSet: (Main main, String initialRoute) {
+          return Container(
+            child: Text(main.screens[initialRoute].id),
+          );
+        },
       );
 
-      when(channels.mainChannel).thenReturn(mainChannel);
+      when(registry.channels.mainChannel).thenReturn(mainChannel);
       when(mainChannel.invokeMethod(NssAction.ignition.action))
           .thenAnswer((_) => Future<Map<String, dynamic>>(() {
                 final Map<String, dynamic> map = {};
