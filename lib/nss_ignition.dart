@@ -4,13 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/components/nss_render_error.dart';
+import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 import 'package:gigya_native_screensets_engine/models/main.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
+import 'package:gigya_native_screensets_engine/models/spark.dart';
+import 'package:gigya_native_screensets_engine/nss_registry.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
-import 'package:provider/provider.dart';
-
-import 'main.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 /// Engine initialization root widget.
 /// The Main purpose of this widget is to open a channel to the native code in order to obtain all
@@ -26,20 +25,18 @@ class NssIgnitionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: requestMarkup(context),
-      builder: (context, AsyncSnapshot<Map<dynamic, dynamic>> snapshot) {
+      future: spark(context),
+      builder: (context, AsyncSnapshot<Spark> snapshot) {
         if (snapshot.hasData) {
           // Is this screen set platform aware? Register value.
-          final platformAware = snapshot.data['platformAware'] ?? false;
-          Provider.of<NssRegistryBloc>(context).isPlatformAware = platformAware;
+          final platformAware = snapshot.data.platformAware ?? false;
+          registry.isPlatformAware = platformAware;
 
           nssLogger.d('Using Cupertino platform for iOS: ${platformAware.toString()}');
 
-          // Parse markup and provide App widget.
-          Main parsed = Main.fromJson(snapshot.data['markup'].cast<String, dynamic>());
           // Check initial route. If not set in the provided markup choose the first provided screen.
-          final initialRoute =
-              snapshot.data['markup']['initialRoute'] ?? parsed.screens.entries.first.value.id;
+          final initialRoute = snapshot.data.markup.initialRoute ??
+              snapshot.data.markup.screens.entries.first.value.id;
           if (initialRoute == null) {
             return NssErrorWidget.routeMissMatch();
           }
@@ -48,7 +45,7 @@ class NssIgnitionWidget extends StatelessWidget {
           // Create application widget.
           return createAppWidget(
             platformAware,
-            parsed,
+            snapshot.data.markup,
             initialRoute,
             layoutScreenSet,
           );
@@ -61,19 +58,12 @@ class NssIgnitionWidget extends StatelessWidget {
     );
   }
 
-  /// Begin engine initialization process with requesting the data from the native library.
-  Future<Map<dynamic, dynamic>> requestMarkup(context) {
-    return useMockData
-        ? AssetUtils.jsonMapFromAssets('assets/mock_1.json')
-        : getRegistryBloc(context)
-            .channels
-            .mainChannel
+  Future<Spark> spark(context) async {
+    var fetchData = useMockData
+        ? await AssetUtils.jsonMapFromAssets('assets/mock_1.json')
+        : await registry.channels.mainChannel
             .invokeMethod<Map<dynamic, dynamic>>(NssAction.ignition.action);
-  }
-
-  @visibleForTesting
-  NssRegistryBloc getRegistryBloc(context) {
-    return Provider.of<NssRegistryBloc>(context);
+    return compute(ignite, fetchData);
   }
 
   /// Create main AppWidget according to initialization data.
@@ -84,6 +74,22 @@ class NssIgnitionWidget extends StatelessWidget {
         ? NativeScreensCupertinoApp(markup, initialRoute, layout, useMockData)
         : NativeScreensMaterialApp(markup, initialRoute, layout, useMockData);
   }
+}
+
+/// Engine actions.
+enum NssAction { ignition }
+
+extension NssActionExtension on NssAction {
+  String get action {
+    return describeEnum(this);
+  }
+}
+
+
+/// Top level function for the spark computation.
+/// Compute can only take top-level functions in order to correctly open the isolate.
+Spark ignite(Map<dynamic, dynamic> map) {
+  return Spark.fromJson(map.cast<String, dynamic>());
 }
 
 typedef Widget Layout(Main main, String initialRoute);
@@ -105,7 +111,7 @@ class NativeScreensMaterialApp extends MaterialApp {
   @override
   Widget get home {
     if (isMock) {
-      return _homeMockProtector(layout(markup, initialRoute));
+      return _decorMockIndicator(layout(markup, initialRoute));
     }
     return layout(markup, initialRoute);
   }
@@ -128,7 +134,7 @@ class NativeScreensCupertinoApp extends CupertinoApp {
   @override
   Widget get home {
     if (isMock) {
-      return _homeMockProtector(layout(markup, initialRoute));
+      return _decorMockIndicator(layout(markup, initialRoute));
     }
     return layout(markup, initialRoute);
   }
@@ -136,7 +142,7 @@ class NativeScreensCupertinoApp extends CupertinoApp {
 
 /// Helper function that will place a "Uses mock" tag in the bottom right if the screen
 /// when using development mocks.
-Widget _homeMockProtector(childLayout) {
+Widget _decorMockIndicator(childLayout) {
   return Stack(
     children: <Widget>[
       childLayout,

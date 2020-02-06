@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/components/nss_render_error.dart';
-import 'package:gigya_native_screensets_engine/components/parent/nss_form.dart';
-import 'package:gigya_native_screensets_engine/components/parent/nss_screen.dart';
+import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
+import 'package:gigya_native_screensets_engine/components/nss_form.dart';
+import 'package:gigya_native_screensets_engine/components/nss_screen.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_injector.dart';

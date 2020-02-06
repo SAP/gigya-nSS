@@ -10,20 +10,14 @@ import 'package:provider/provider.dart';
 
 class MockRegistry extends Mock implements NssRegistryBloc {}
 
-class MockForms extends Mock implements NssFormRegistry {}
-
 void main() {
-  group("Rendering test", () {
+  group('Rendering test', () {
     final registry = MockRegistry();
-    final forms = MockForms();
 
-    when(registry.forms).thenReturn(forms);
-    when(forms.formKeyFor('test')).thenReturn(GlobalKey<FormState>());
-
-    testWidgets("test rander elemnt", (WidgetTester tester) async {
+    testWidgets('test rander elemnt', (WidgetTester tester) async {
       Map<String, Screen> mockData = {};
-      mockData["test"] =
-          Screen("test", NssAlignment.vertical, [NssWidgetData(NssWidgetType.label, "test label")]);
+      mockData['test'] = Screen(
+          'test', NssAlignment.vertical, [NssWidgetData('test label', type: NssWidgetType.label)]);
 
       await tester.pumpWidget(
         MultiProvider(
@@ -97,8 +91,8 @@ void main() {
 
     testWidgets("test AppBar widget", (WidgetTester tester) async {
       Map<String, Screen> mockData = {};
-      mockData['test'] =
-          Screen('test', NssAlignment.vertical, [NssWidgetData(NssWidgetType.label, 'test label')]);
+      mockData['test'] = Screen(
+          'test', NssAlignment.vertical, [NssWidgetData('test label', type: NssWidgetType.label)]);
       mockData['test'].appBar = {'textKey': 'Test AppBar'};
 
       await tester.pumpWidget(

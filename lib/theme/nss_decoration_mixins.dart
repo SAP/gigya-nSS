@@ -8,9 +8,7 @@ mixin NssWidgetDecorationMixin {
   /// Make sure this value will be treated as a double.
   /// Useful for JSON parsed elements
   /// which should be treated as double but are parsed as integer.
-  double ensureDouble(num) {
-    return (num is int) ? num.toDouble() : num;
-  }
+  double ensureDouble(num) => (num is int) ? num.toDouble() : num;
 
   /// parse padding value.
   /// Optional input can be a double, integer or a number array (left, right, top, bottom).
@@ -29,7 +27,10 @@ mixin NssWidgetDecorationMixin {
     return EdgeInsets.zero;
   }
 
-  //region Coloring
+  /// Use as a default padding value for all widgets that dd not contain a padding style parameter.
+  defaultPadding() => withPadding(24.0);
+
+//region Coloring
 
   /// Request a [Color] instance given an multi optional identifier (named, hex).
   Color getColor(String color, {bool platformAware}) {
@@ -56,6 +57,7 @@ mixin NssWidgetDecorationMixin {
 
   /// Get a [Color] instance given color name.
   /// Method is platform aware.
+  //TODO: Need to research relevant colors used with Apple's cupertino pattern.
   Color _getColorWithName(name, {bool platformAware}) {
     switch (name) {
       case 'blue':
@@ -82,4 +84,6 @@ mixin NssWidgetDecorationMixin {
 
 /// Input field decoration classes mixin.
 /// Support for both [TextField] & [CupertinoTextField].
-class NssInputDecorationMixin with NssWidgetDecorationMixin {}
+class NssInputDecorationMixin with NssWidgetDecorationMixin {
+
+}
