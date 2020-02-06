@@ -16,12 +16,12 @@ class NssTextInputWidget extends StatefulWidget {
   const NssTextInputWidget({Key key, @required this.data}) : super(key: key);
 
   @override
-  NssTextInputWidgetState createState() => NssTextInputWidgetState();
+  _NssTextInputWidgetState createState() => _NssTextInputWidgetState();
 }
 
-class NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInputWidget>
-    with NssWidgetDecorationMixin {
-  final TextEditingController controller = TextEditingController();
+class _NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInputWidget> with NssWidgetDecorationMixin {
+
+  final TextEditingController _textEditingController = TextEditingController();
 
   GlobalKey wKey;
 
@@ -36,6 +36,12 @@ class NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInpu
   }
 
   @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget buildCupertinoWidget(BuildContext context) {
     // TODO: implement buildCupertinoWidget
     return buildMaterialWidget(context);
@@ -43,13 +49,13 @@ class NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInpu
 
   @override
   Widget buildMaterialWidget(BuildContext context) {
-    _registerReferenceToForm();
+    _registerReference();
     return Padding(
       //TODO: Using default padding.
       padding: defaultPadding(),
       child: TextFormField(
         key: wKey,
-        controller: controller,
+        controller: _textEditingController,
         decoration: InputDecoration(hintText: widget.data.textKey),
         validator: (input) {
           //TODO: Take in mind that we will need to think how we will be injecting custom field validations here as well.
@@ -61,28 +67,26 @@ class NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInpu
 
   /// Register the widget's global key/id to the form block to allow reference tracking.
   /// This is intended for submission logic usage.
-  _registerReferenceToForm() {
+  _registerReference() {
     Provider.of<NssFormBloc>(context).addInputWith(wKey, forId: widget.data.id);
   }
 
   /// Validate input according to instance type.
   String _validateField(input) {
-    var validated = Provider.of<NssFormBloc>(context, listen: false)
-        .validate(input, forType: widget.data.type.name);
-    if (validated == NssInputValidation.failed) {
-      //TODO: Validation errors should be injected via the localization map.
-      return 'Validation faild for type: ${widget.data.type.name}';
-    } else if (validated == NssInputValidation.na) {
-      //TODO: Not available validator error should be injected via the localization map.
-      nssLogger.d('Validator not specified for input widget type');
+    var validated = Provider.of<NssFormBloc>(context, listen: false).validate(input, forType: widget.data.type.name);
+
+    switch (validated) {
+      case NssInputValidation.failed:
+        //TODO: Validation errors should be injected via the localization map.
+        return 'Validation faild for type: ${widget.data.type.name}';
+      case NssInputValidation.na:
+        //TODO: Not available validator error should be injected via the localization map.
+        nssLogger.d('Validator not specified for input widget type');
+        break;
+      case NssInputValidation.passed:
+        break;
     }
     return null;
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
   }
 }
 

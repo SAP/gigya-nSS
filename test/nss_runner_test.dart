@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
+import 'package:gigya_native_screensets_engine/nss_registry.dart';
 import 'package:gigya_native_screensets_engine/nss_runner.dart';
 import 'package:gigya_native_screensets_engine/nss_injector.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
-class MockRegistry extends Mock implements NssRegistryBloc {}
+class MockRegistry extends Mock implements NssRegistry {}
 
 void main() {
   group('Rendering test', () {
@@ -20,15 +20,8 @@ void main() {
           'test', NssAlignment.vertical, [NssWidgetData('test label', type: NssWidgetType.label)]);
 
       await tester.pumpWidget(
-        MultiProvider(
-          providers: [
-            Provider<NssRegistryBloc>(
-              create: (_) => registry,
-            ),
-          ],
-          child: MaterialApp(
-            home: NssLayoutBuilder("test").render(mockData),
-          ),
+        MaterialApp(
+          home: NssLayoutBuilder("test").render(mockData),
         ),
       );
 
@@ -44,15 +37,8 @@ void main() {
       mockData["test"] = Screen("test", NssAlignment.vertical, []);
 
       await tester.pumpWidget(
-        MultiProvider(
-          providers: [
-            Provider<NssRegistryBloc>(
-              create: (_) => registry,
-            ),
-          ],
-          child: MaterialApp(
-            home: NssLayoutBuilder("").render(mockData),
-          ),
+        MaterialApp(
+          home: NssLayoutBuilder("").render(mockData),
         ),
       );
 
@@ -69,15 +55,8 @@ void main() {
       mockData["test"] = Screen("test", NssAlignment.vertical, []);
 
       await tester.pumpWidget(
-        MultiProvider(
-          providers: [
-            Provider<NssRegistryBloc>(
-              create: (_) => registry,
-            ),
-          ],
-          child: MaterialApp(
-            home: NssLayoutBuilder("test").render(mockData),
-          ),
+        MaterialApp(
+          home: NssLayoutBuilder("test").render(mockData),
         ),
       );
 
@@ -96,15 +75,8 @@ void main() {
       mockData['test'].appBar = {'textKey': 'Test AppBar'};
 
       await tester.pumpWidget(
-        MultiProvider(
-          providers: [
-            Provider<NssRegistryBloc>(
-              create: (_) => registry,
-            ),
-          ],
-          child: MaterialApp(
-            home: NssLayoutBuilder('test').render(mockData),
-          ),
+        MaterialApp(
+          home: NssLayoutBuilder('test').render(mockData),
         ),
       );
 

@@ -15,4 +15,5 @@ class NssChannelRegistry {
   final MethodChannel mainChannel = const MethodChannel('gigya_nss_engine/method/main');
 }
 
+// Global access.
 NssRegistry registry = NssRegistry();

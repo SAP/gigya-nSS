@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 class NssFormBloc with ChangeNotifier {
   final String _screenId;
@@ -30,16 +32,48 @@ class NssFormBloc with ChangeNotifier {
   NssInputValidation validate(String input, {String forType}) {
     switch (forType) {
       case 'email':
-        return NssEmailInputValidator().validate(input)
-            ? NssInputValidation.passed
-            : NssInputValidation.failed;
+        return NssEmailInputValidator().validate(input) ? NssInputValidation.passed : NssInputValidation.failed;
       default:
         return NssInputValidation.na;
     }
   }
+
+  /// Form submission trigger.
+  /// This is available to every submission widget.
+  /// Will first trigger form validation and move on to collect all relevant data for the screen
+  /// action provided in the [action] parameter.
+  onSubmissionWith({String action}) {
+    nssLogger.d('Submission request with action $action');
+    if (_formKey.currentState.validate()) {
+      nssLogger.d('Form validations passed');
+
+      Map<String, String> submission = {};
+
+      if (_inputKeyMap.isNotEmpty) {
+        _populateInputSubmissions(submission);
+      }
+
+      nssLogger.d('submission map forwarded to screen: ${submission.toString()}');
+    }
+  }
+
+  /// Populate [submission] map with all relevant text inputs.
+  _populateInputSubmissions(Map submission) {
+    _inputKeyMap.forEach((id, key) {
+      submission[id] = (key.currentWidget as TextFormField).controller?.text?.trim();
+    });
+  }
+
+  @override
+  void dispose() {
+    _inputKeyMap.clear();
+    super.dispose();
+  }
 }
 
 //region From Validations
+
+//TODO: Validations will move to independent file later on.
 
 /// Validation options.
 enum NssInputValidation { passed, failed, na }
@@ -52,8 +86,7 @@ abstract class NssInputValidator {
 /// Lenient email validations (accepting "+" sign for instance) using regular expressions.
 class NssEmailInputValidator extends NssInputValidator {
   @override
-  bool validate(text) =>
-      RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(text);
+  bool validate(text) => RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(text);
 }
 
 //endregion
