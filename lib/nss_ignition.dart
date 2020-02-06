@@ -6,11 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 import 'package:gigya_native_screensets_engine/models/main.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
 import 'package:gigya_native_screensets_engine/models/spark.dart';
+import 'package:gigya_native_screensets_engine/nss_registry.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
-import 'package:provider/provider.dart';
 
 /// Engine initialization root widget.
 /// The Main purpose of this widget is to open a channel to the native code in order to obtain all
@@ -31,7 +30,7 @@ class NssIgnitionWidget extends StatelessWidget {
         if (snapshot.hasData) {
           // Is this screen set platform aware? Register value.
           final platformAware = snapshot.data.platformAware ?? false;
-          Provider.of<NssRegistryBloc>(context).isPlatformAware = platformAware;
+          registry.isPlatformAware = platformAware;
 
           nssLogger.d('Using Cupertino platform for iOS: ${platformAware.toString()}');
 
@@ -62,16 +61,9 @@ class NssIgnitionWidget extends StatelessWidget {
   Future<Spark> spark(context) async {
     var fetchData = useMockData
         ? await AssetUtils.jsonMapFromAssets('assets/mock_1.json')
-        : await getRegistryBloc(context)
-            .channels
-            .mainChannel
+        : await registry.channels.mainChannel
             .invokeMethod<Map<dynamic, dynamic>>(NssAction.ignition.action);
     return compute(ignite, fetchData);
-  }
-
-  @visibleForTesting
-  NssRegistryBloc getRegistryBloc(context) {
-    return Provider.of<NssRegistryBloc>(context);
   }
 
   /// Create main AppWidget according to initialization data.
@@ -83,6 +75,16 @@ class NssIgnitionWidget extends StatelessWidget {
         : NativeScreensMaterialApp(markup, initialRoute, layout, useMockData);
   }
 }
+
+/// Engine actions.
+enum NssAction { ignition }
+
+extension NssActionExtension on NssAction {
+  String get action {
+    return describeEnum(this);
+  }
+}
+
 
 /// Top level function for the spark computation.
 /// Compute can only take top-level functions in order to correctly open the isolate.

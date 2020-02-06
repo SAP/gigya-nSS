@@ -2,15 +2,14 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_registry_bloc.dart';
-import 'package:provider/provider.dart';
+import 'package:gigya_native_screensets_engine/nss_registry.dart';
 
 abstract class NssStatelessPlatformWidget extends StatelessWidget {
   NssStatelessPlatformWidget({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool aware = Provider.of<NssRegistryBloc>(context)?.isPlatformAware ?? false;
+    bool aware = registry.isPlatformAware ?? false;
     if (aware && Platform.isIOS) {
       return buildCupertinoWidget(context);
     }
@@ -25,7 +24,7 @@ abstract class NssStatelessPlatformWidget extends StatelessWidget {
 abstract class NssStatefulPlatformWidgetState<T extends StatefulWidget> extends State<T> {
   @override
   Widget build(BuildContext context) {
-    bool aware = Provider.of<NssRegistryBloc>(context)?.isPlatformAware ?? false;
+    bool aware = registry.isPlatformAware ?? false;
     if (aware && Platform.isIOS) {
       return buildCupertinoWidget(context);
     }

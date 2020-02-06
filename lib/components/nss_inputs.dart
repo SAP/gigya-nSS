@@ -30,7 +30,6 @@ class NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInpu
     super.initState();
 
     nssLogger.d('Rendering NssTextInputWidget with id: ${widget.data.id}');
-    _mapTypeToId();
 
     // Create and register a global key for input field in order to allow global editing reference.
     wKey = GlobalKey(debugLabel: '$runtimeType with widget id : ${widget.data.id}');
@@ -58,14 +57,6 @@ class NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInpu
         },
       ),
     );
-  }
-
-  /// Input pre-defined types will override the widgets id data field.
-  /// This is required to correctly map the filed id to the corresponding submission flow.
-  _mapTypeToId() {
-    if (widget.data.type != null) {
-      widget.data.id = widget.data.type.name;
-    }
   }
 
   /// Register the widget's global key/id to the form block to allow reference tracking.
