@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_screen_state_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:provider/provider.dart';
+
+//region Submit Widget
 
 class NssSubmitWidget extends StatefulWidget {
   final NssWidgetData data;
@@ -35,6 +36,7 @@ class _NssSubmitWidgetState extends NssStatefulPlatformWidgetState<NssSubmitWidg
   @override
   Widget buildMaterialWidget(BuildContext context) {
     return Padding(
+      //TODO: Using default padding.
       padding: defaultPadding(),
       child: ButtonTheme(
         //TODO: Update theme decorations here.
@@ -48,22 +50,14 @@ class _NssSubmitWidgetState extends NssStatefulPlatformWidgetState<NssSubmitWidg
     );
   }
 
-  /// Perform per submission actions.
+  /// Perform pre-submission actions.
   _onSubmit() {
     // Trigger form validation.
     var formBloc = Provider.of<NssFormBloc>(context, listen: false);
     if (formBloc.validateForm()) {
-      //TODO: From validated.
-
-      // Action submitted.
-      _onActionSubmitted();
+      return;
     }
   }
-
-  /// Submission (action) widget has the option to request a screen loading state.
-  /// When an action is submitted it is required to update the form state to a "loading" state.
-  /// Setting the form back to its idle state is handled higher in the hierarchy.
-  _onActionSubmitted() {
-    Provider.of<NssScreenStateBloc>(context).setProgress();
-  }
 }
+
+//endregion

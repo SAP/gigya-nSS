@@ -6,8 +6,9 @@ part 'main.g.dart';
 @JsonSerializable(anyMap: true)
 class Main {
   Map<String, Screen> screens;
+  String initialRoute;
 
-  Main(this.screens);
+  Main(this.screens, this.initialRoute);
 
   factory Main.fromJson(Map<String, dynamic> json) => _$MainFromJson(json);
 

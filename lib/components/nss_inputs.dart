@@ -3,10 +3,12 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
+import 'package:gigya_native_screensets_engine/nss_injector.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:provider/provider.dart';
-import 'package:gigya_native_screensets_engine/nss_injector.dart';
+
+//region TextInput
 
 class NssTextInputWidget extends StatefulWidget {
   final NssWidgetData data;
@@ -14,10 +16,10 @@ class NssTextInputWidget extends StatefulWidget {
   const NssTextInputWidget({Key key, @required this.data}) : super(key: key);
 
   @override
-  _NssTextInputWidgetState createState() => _NssTextInputWidgetState();
+  NssTextInputWidgetState createState() => NssTextInputWidgetState();
 }
 
-class _NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInputWidget>
+class NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInputWidget>
     with NssWidgetDecorationMixin {
   final TextEditingController controller = TextEditingController();
 
@@ -28,8 +30,9 @@ class _NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInp
     super.initState();
 
     nssLogger.d('Rendering NssTextInputWidget with id: ${widget.data.id}');
+    _mapTypeToId();
 
-    /// Create and register a global key for input field in order to allow global editing reference.
+    // Create and register a global key for input field in order to allow global editing reference.
     wKey = GlobalKey(debugLabel: '$runtimeType with widget id : ${widget.data.id}');
   }
 
@@ -41,8 +44,9 @@ class _NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInp
 
   @override
   Widget buildMaterialWidget(BuildContext context) {
-    Provider.of<NssFormBloc>(context).addChildWith(wKey, forId: widget.data.id);
+    _registerReferenceToForm();
     return Padding(
+      //TODO: Using default padding.
       padding: defaultPadding(),
       child: TextFormField(
         key: wKey,
@@ -56,14 +60,29 @@ class _NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInp
     );
   }
 
+  /// Input pre-defined types will override the widgets id data field.
+  /// This is required to correctly map the filed id to the corresponding submission flow.
+  _mapTypeToId() {
+    if (widget.data.type != null) {
+      widget.data.id = widget.data.type.name;
+    }
+  }
+
+  /// Register the widget's global key/id to the form block to allow reference tracking.
+  /// This is intended for submission logic usage.
+  _registerReferenceToForm() {
+    Provider.of<NssFormBloc>(context).addInputWith(wKey, forId: widget.data.id);
+  }
+
   /// Validate input according to instance type.
   String _validateField(input) {
-    var validated =
-        Provider.of<NssFormBloc>(context, listen: false).validate(input, forType: widget.data.type.name);
+    var validated = Provider.of<NssFormBloc>(context, listen: false)
+        .validate(input, forType: widget.data.type.name);
     if (validated == NssInputValidation.failed) {
       //TODO: Validation errors should be injected via the localization map.
       return 'Validation faild for type: ${widget.data.type.name}';
     } else if (validated == NssInputValidation.na) {
+      //TODO: Not available validator error should be injected via the localization map.
       nssLogger.d('Validator not specified for input widget type');
     }
     return null;
@@ -75,3 +94,5 @@ class _NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInp
     super.dispose();
   }
 }
+
+//endregion

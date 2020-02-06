@@ -12,7 +12,7 @@ class NssWidgetData {
   NssAlignment stack;
   List<NssWidgetData> children;
 
-  NssWidgetData(this.type, this.textKey, {this.id, this.children, this.stack});
+  NssWidgetData(this.textKey, {this.type, this.id, this.children, this.stack});
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);
 

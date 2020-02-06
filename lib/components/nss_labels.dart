@@ -4,6 +4,8 @@ import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
+//region Label Widget (Simple)
+
 class NssLabelWidget extends NssStatelessPlatformWidget with NssWidgetDecorationMixin {
   final NssWidgetData data;
 
@@ -27,3 +29,5 @@ class NssLabelWidget extends NssStatelessPlatformWidget with NssWidgetDecoration
     );
   }
 }
+
+//endregion

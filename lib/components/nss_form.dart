@@ -25,13 +25,14 @@ class _NssFormWidgetState extends State<NssFormWidget> {
 
     debugPrint('$runtimeType with id: ${widget.screenId} form initState() called');
     // Create form global key. Will be registered in bloc.
-    _formKey = GlobalKey<FormState>(debugLabel: '$runtimeType with screenId : ${widget.screenId}');
+    _formKey = GlobalKey<FormState>(debugLabel: '$runtimeType with screen id : ${widget.screenId}');
   }
 
   @override
   Widget build(BuildContext context) {
+    //TODO: Not sure a change notifier provider is the right approach here.
     return ChangeNotifierProvider(
-      create: (_) => NssFormBloc(_formKey),
+      create: (_) => NssFormBloc(_formKey, widget.screenId),
       child: Form(
         key: _formKey,
         child: widget.layoutForm(),
