@@ -33,6 +33,10 @@ class _NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInp
 
     // Create and register a global key for input field in order to allow global editing reference.
     wKey = GlobalKey(debugLabel: '$runtimeType with widget id : ${widget.data.id}');
+
+    // Register the widget's global key/id to the form block to allow reference tracking.
+    // This is intended for submission logic usage.
+    Provider.of<NssFormBloc>(context, listen: false).addInputWith(wKey, forId: widget.data.id);
   }
 
   @override
@@ -49,7 +53,6 @@ class _NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInp
 
   @override
   Widget buildMaterialWidget(BuildContext context) {
-    _registerReference();
     return Padding(
       //TODO: Using default padding.
       padding: defaultPadding(),
@@ -63,12 +66,6 @@ class _NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInp
         },
       ),
     );
-  }
-
-  /// Register the widget's global key/id to the form block to allow reference tracking.
-  /// This is intended for submission logic usage.
-  _registerReference() {
-    Provider.of<NssFormBloc>(context).addInputWith(wKey, forId: widget.data.id);
   }
 
   /// Validate input according to instance type.

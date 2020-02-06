@@ -56,7 +56,7 @@ class _NssSubmitWidgetState extends NssStatefulPlatformWidgetState<NssSubmitWidg
   /// Request form submission.
   _onSubmit() {
     // Trigger form submission.
-    Provider.of<NssFormBloc>(context, listen: false).onSubmissionWith(
+    Provider.of<NssFormBloc>(context, listen: false).onFormSubmissionWith(
       action: widget.data.api,
     );
   }

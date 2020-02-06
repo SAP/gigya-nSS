@@ -57,7 +57,7 @@ class NssIgnitionWidget extends StatelessWidget {
   Future<Spark> _spark(context) async {
     var fetchData = useMockData
         ? await AssetUtils.jsonMapFromAssets('assets/mock_1.json')
-        : await registry.channels.mainChannel.invokeMethod<Map<dynamic, dynamic>>(NssAction.ignition.action);
+        : await registry.channels.mainChannel.invokeMethod<Map<dynamic, dynamic>>(NssMainAction.ignition.action);
     return compute(ignite, fetchData);
   }
 }
@@ -68,11 +68,3 @@ Spark ignite(Map<dynamic, dynamic> map) {
   return Spark.fromJson(map.cast<String, dynamic>());
 }
 
-/// Engine actions.
-enum NssAction { ignition }
-
-extension NssActionExtension on NssAction {
-  String get action {
-    return describeEnum(this);
-  }
-}

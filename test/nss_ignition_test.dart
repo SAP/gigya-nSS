@@ -55,7 +55,7 @@ void main() {
       );
 
       when(registry.channels.mainChannel).thenReturn(mainChannel);
-      when(mainChannel.invokeMethod(NssAction.ignition.action))
+      when(mainChannel.invokeMethod(NssMainAction.ignition.action))
           .thenAnswer((_) => Future<Map<String, dynamic>>(() {
                 final Map<String, dynamic> map = {};
                 map['platformAware'] = false;
