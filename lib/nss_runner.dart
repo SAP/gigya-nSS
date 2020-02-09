@@ -34,22 +34,13 @@ class NssLayoutBuilder {
 
   Widget _build(Screen screen, List<Widget> list) {
     //TODO: Hardcoded to Material!!!
-    return Scaffold(
-      //TODO: Customize appbar widget according to platform.
-      appBar: screen.appBar != null
-          ? AppBar(
-              title: Text(screen.appBar['textKey']),
-            )
-          : null,
-      body: SafeArea(
-        child: NssScreenWidget(
-          layoutScreen: () => NssFormWidget(
-            screenId: screen.id,
-            layoutForm: () => _groupBy(
-              screen.align,
-              list,
-            ),
-          ),
+    return NssScreenWidget(
+      appBarTitle: screen.appBar['textKey'] ?? '',
+      layoutScreen: () => NssFormWidget(
+        screenId: screen.id,
+        layoutForm: () => _groupBy(
+          screen.align,
+          list,
         ),
       ),
     );

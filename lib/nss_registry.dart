@@ -13,6 +13,8 @@ class NssRegistry {
 
 class NssChannelRegistry {
   final MethodChannel mainChannel = const MethodChannel('gigya_nss_engine/method/main');
+
+  final MethodChannel apiChannel = const MethodChannel('gigya_nss_engine/method/api');
 }
 
 NssRegistry registry = NssRegistry();
