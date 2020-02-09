@@ -20,4 +20,3 @@ class NssWidgetData {
   Map<String, dynamic> toJson() => _$NssWidgetDataToJson(this);
 
 }
-
