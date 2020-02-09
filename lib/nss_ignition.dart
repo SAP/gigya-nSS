@@ -28,7 +28,6 @@ class NssIgnitionWidget extends StatelessWidget {
           // Is this screen set platform aware? Register value.
           final platformAware = snapshot.data.platformAware ?? false;
           registry.isPlatformAware = platformAware;
-
           nssLogger.d('Using Cupertino platform for iOS: ${platformAware.toString()}');
 
           // Check initial route. If not set in the provided markup choose the first provided screen.
@@ -67,4 +66,3 @@ class NssIgnitionWidget extends StatelessWidget {
 Spark ignite(Map<dynamic, dynamic> map) {
   return Spark.fromJson(map.cast<String, dynamic>());
 }
-

@@ -9,8 +9,7 @@ class NssFormWidget extends StatefulWidget {
   final String screenId;
   final LayoutNssForm layoutForm;
 
-  const NssFormWidget({Key key, @required this.screenId, @required this.layoutForm})
-      : super(key: key);
+  const NssFormWidget({Key key, @required this.screenId, @required this.layoutForm}) : super(key: key);
 
   @override
   _NssFormWidgetState createState() => _NssFormWidgetState();
@@ -30,8 +29,8 @@ class _NssFormWidgetState extends State<NssFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: Not sure a change notifier provider is the right approach here.
-    return ChangeNotifierProvider(
+    //TODO: Need to pass the screen action sink to the form block to allow it to communicate with the screen bloc.
+    return Provider(
       create: (_) => NssFormBloc(_formKey, widget.screenId),
       child: Form(
         key: _formKey,

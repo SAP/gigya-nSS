@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
-class NssFormBloc with ChangeNotifier {
+class NssFormBloc {
   final String _screenId;
   final GlobalKey<FormState> _formKey;
 
@@ -57,9 +57,6 @@ class NssFormBloc with ChangeNotifier {
 
       nssLogger.d('submission map forwarded to screen: ${submission.toString()}');
 
-      //TODO: Not sure we need to notify the decedent widgets in this case.
-      notifyListeners();
-
       //TODO: Need to notify the ScreenBloc to begin action.
     }
   }
@@ -69,12 +66,6 @@ class NssFormBloc with ChangeNotifier {
     _inputKeyMap.forEach((id, key) {
       submission[id] = (key.currentWidget as TextFormField).controller?.text?.trim();
     });
-  }
-
-  @override
-  void dispose() {
-    _inputKeyMap.clear();
-    super.dispose();
   }
 }
 

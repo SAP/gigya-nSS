@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
+import 'package:gigya_native_screensets_engine/components/nss_actions_mixin.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
@@ -18,7 +19,8 @@ class NssSubmitWidget extends StatefulWidget {
   _NssSubmitWidgetState createState() => _NssSubmitWidgetState();
 }
 
-class _NssSubmitWidgetState extends NssStatefulPlatformWidgetState<NssSubmitWidget> with NssWidgetDecorationMixin {
+class _NssSubmitWidgetState extends NssStatefulPlatformWidgetState<NssSubmitWidget>
+    with NssWidgetDecorationMixin, NssActionsMixin {
   @override
   void initState() {
     super.initState();
@@ -41,13 +43,8 @@ class _NssSubmitWidgetState extends NssStatefulPlatformWidgetState<NssSubmitWidg
         child: Text(widget.data.textKey),
         onPressed: () {
           _onSubmit();
-
-          //TODO: Should we create focus handling mixin?
           // Dismiss the keyboard. Important.
-          FocusScopeNode currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
+          dismissKeyboardWith(context);
         },
       ),
     );
