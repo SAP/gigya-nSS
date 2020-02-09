@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_screen_state_bloc.dart';
+import 'package:provider/provider.dart';
 
 class NssErrorWidget extends StatelessWidget {
   final String message;
@@ -62,4 +64,42 @@ class NssErrorWidget extends StatelessWidget {
   }
 
   //endregion
+}
+
+/// Error widget for Form. (Bottom of the screen)
+class NssFormErrorWidget extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedOpacity(
+      opacity: Provider.of<NssScreenStateBloc>(context).isError() ? 0.7 : 0.0,
+      duration: Duration(milliseconds: 200),
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          color: Colors.red,
+          width: double.infinity,
+          height: 44.0,
+          child: Stack(
+            children: <Widget>[
+              Align(
+                  alignment: Alignment.center,
+                  child: Text(Provider.of<NssScreenStateBloc>(context).error ?? '')
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: () {
+                    Provider.of<NssScreenStateBloc>(context, listen: false).setIdle();
+                  },
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
 }

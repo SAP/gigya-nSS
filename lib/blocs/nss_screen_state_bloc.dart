@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_api_service_bloc.dart';
 import 'package:gigya_native_screensets_engine/models/api.dart';
@@ -6,15 +8,32 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 enum NssScreenState { idle, progress, error }
 
 class NssScreenStateBloc with ChangeNotifier {
-  ApiServiceBloc apiBloc = ApiServiceBloc();
+  final ApiServiceBloc apiBloc = ApiServiceBloc();
 
+  final StreamController _screenEvents = StreamController<ScreenEvent>();
+
+  Sink get streamEventSink => _screenEvents.sink;
+
+  /// State definition
   NssScreenState _state = NssScreenState.idle;
-
-  NssScreenStateBloc();
 
   String _errorText;
 
   String get error => _errorText;
+
+  ///Constructor
+  NssScreenStateBloc() {
+    _registerForScreenActions();
+  }
+
+  /// Register for streamer
+  _registerForScreenActions() {
+    _screenEvents.stream.listen((event) {
+      nssLogger.d('Event received with data: ${event.data.toString()}');
+
+      sendApi(event.data['api'], event.data['params']);
+    });
+  }
 
   /// Send api.
   sendApi(String method, Map<String, dynamic> params) {
@@ -23,7 +42,8 @@ class NssScreenStateBloc with ChangeNotifier {
     apiBloc.mock = ApiBaseResult(200, "test", "Email is empty", null, 42516);
 
     nssLogger.d('Screen state is: progress');
-    _state = NssScreenState.progress;
+
+    setProgress();
 
     nssLogger.d('Start api request:' + method + '\n params: '+ params.toString());
 
@@ -65,4 +85,22 @@ class NssScreenStateBloc with ChangeNotifier {
   }
 
   isProgress() => _state == NssScreenState.progress;
+
+
+  /// Streamer dispose
+  @override
+  void dispose() {
+    _screenEvents.close();
+
+    super.dispose();
+  }
+}
+
+enum ScreenAction { submit, refresh }
+
+class ScreenEvent {
+  final ScreenAction action;
+  final Map<String, dynamic> data;
+
+  ScreenEvent(this.action, this.data);
 }

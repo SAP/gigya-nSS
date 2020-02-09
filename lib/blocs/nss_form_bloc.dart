@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_screen_state_bloc.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 class NssFormBloc {
   final String _screenId;
   final GlobalKey<FormState> _formKey;
+  final Sink<ScreenEvent> _screenSink;
 
-  NssFormBloc(this._formKey, this._screenId);
+  NssFormBloc(this._formKey, this._screenId, this._screenSink);
 
   String get screenId => _screenId;
 
@@ -32,7 +34,9 @@ class NssFormBloc {
   NssInputValidation validate(String input, {String forType}) {
     switch (forType) {
       case 'email':
-        return NssEmailInputValidator().validate(input) ? NssInputValidation.passed : NssInputValidation.failed;
+        return NssEmailInputValidator().validate(input)
+            ? NssInputValidation.passed
+            : NssInputValidation.failed;
       default:
         return NssInputValidation.na;
     }
@@ -58,6 +62,9 @@ class NssFormBloc {
       nssLogger.d('submission map forwarded to screen: ${submission.toString()}');
 
       //TODO: Need to notify the ScreenBloc to begin action.
+      _screenSink.add(
+        ScreenEvent(ScreenAction.submit, {'api': action, 'params': submission}),
+      );
     }
   }
 
@@ -84,7 +91,8 @@ abstract class NssInputValidator {
 /// Lenient email validations (accepting "+" sign for instance) using regular expressions.
 class NssEmailInputValidator extends NssInputValidator {
   @override
-  bool validate(text) => RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(text);
+  bool validate(text) =>
+      RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(text);
 }
 
 //endregion
