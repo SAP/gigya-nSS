@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
-class NssFormBloc with ChangeNotifier {
+class NssFormBloc {
   final String _screenId;
   final GlobalKey<FormState> _formKey;
 
@@ -42,18 +42,22 @@ class NssFormBloc with ChangeNotifier {
   /// This is available to every submission widget.
   /// Will first trigger form validation and move on to collect all relevant data for the screen
   /// action provided in the [action] parameter.
-  onSubmissionWith({String action}) {
+  onFormSubmissionWith({String action}) {
     nssLogger.d('Submission request with action $action');
     if (_formKey.currentState.validate()) {
       nssLogger.d('Form validations passed');
 
       Map<String, String> submission = {};
 
+      // Gather inputs.
       if (_inputKeyMap.isNotEmpty) {
         _populateInputSubmissions(submission);
       }
+      //TODO: Gather additional input from future widgets here.
 
       nssLogger.d('submission map forwarded to screen: ${submission.toString()}');
+
+      //TODO: Need to notify the ScreenBloc to begin action.
     }
   }
 
@@ -62,12 +66,6 @@ class NssFormBloc with ChangeNotifier {
     _inputKeyMap.forEach((id, key) {
       submission[id] = (key.currentWidget as TextFormField).controller?.text?.trim();
     });
-  }
-
-  @override
-  void dispose() {
-    _inputKeyMap.clear();
-    super.dispose();
   }
 }
 

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class NssRegistry {
@@ -15,5 +16,16 @@ class NssChannelRegistry {
   final MethodChannel mainChannel = const MethodChannel('gigya_nss_engine/method/main');
 }
 
+/// Engine main actions.
+enum NssMainAction { ignition }
+
+extension NssMainActionExtension on NssMainAction {
+  String get action {
+    return describeEnum(this);
+  }
+}
+
 // Global access.
 NssRegistry registry = NssRegistry();
+
+

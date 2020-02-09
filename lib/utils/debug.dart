@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// Widget is used to add a "watermark" like tag on the bottom right of the screen that indicates
+/// That the engine is using mock markup setup.
 class NssDebugDecorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -9,7 +11,7 @@ class NssDebugDecorWidget extends StatelessWidget {
         padding: const EdgeInsets.all(12.0),
         child: Container(
           decoration: new BoxDecoration(
-            color: Color(0x66c1c1c1),
+            color: Colors.grey.withOpacity(0.7),
           ),
           child: Padding(
             padding: const EdgeInsets.all(4.0),
@@ -19,7 +21,7 @@ class NssDebugDecorWidget extends StatelessWidget {
                 decoration: TextDecoration.none,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: Color(0xff3f6f79),
+                color: Colors.indigo[400],
               ),
             ),
           ),
