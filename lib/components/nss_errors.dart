@@ -71,28 +71,42 @@ class NssFormErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedOpacity(
-      opacity: Provider.of<NssScreenStateBloc>(context).isError() ? 0.7 : 0.0,
-      duration: Duration(milliseconds: 200),
-      child: Align(
-        alignment: Alignment.bottomCenter,
+    return AnimatedContainer(
+      alignment: Provider.of<NssScreenStateBloc>(context).isError() ? Alignment(0.0, 1.0) : Alignment(0.0, 1.5),
+      duration: Duration(milliseconds: 450),
+      curve: Curves.easeInOut,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
         child: Container(
-          color: Colors.red,
+          decoration: BoxDecoration(
+            color: Colors.red,
+            border: Border.all(
+              color: Colors.red[900],
+              width: 3.0
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(10.0))
+          ),
           width: double.infinity,
-          height: 44.0,
+          height: 38.0,
           child: Stack(
             children: <Widget>[
               Align(
                   alignment: Alignment.center,
-                  child: Text(Provider.of<NssScreenStateBloc>(context).error ?? '')
+                  child: Text(Provider.of<NssScreenStateBloc>(context).error ?? '', style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),)
               ),
               Align(
                 alignment: Alignment.centerRight,
-                child: IconButton(
-                  icon: Icon(Icons.close),
-                  onPressed: () {
-                    Provider.of<NssScreenStateBloc>(context, listen: false).setIdle();
-                  },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: InkWell(
+                    child: Icon(Icons.close, color: Colors.white),
+                    onTap: () {
+                      Provider.of<NssScreenStateBloc>(context, listen: false).setIdle();
+                    },
+                  ),
                 ),
               )
             ],
