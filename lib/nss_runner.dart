@@ -35,7 +35,7 @@ class NssLayoutBuilder {
   Widget _build(Screen screen, List<Widget> list) {
     //TODO: Hardcoded to Material!!!
     return NssScreenWidget(
-      appBarTitle: screen.appBar['textKey'] ?? '',
+      appBarTitle: screen.appBar != null ? screen.appBar['textKey'] ?? '' : '',
       layoutScreen: () => NssFormWidget(
         screenId: screen.id,
         layoutForm: () => _groupBy(

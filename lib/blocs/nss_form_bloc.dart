@@ -50,7 +50,7 @@ class NssFormBloc {
   /// action provided in the [action] parameter.
   onFormSubmissionWith({String action}) {
     nssLogger.d('Submission request with action $action');
-    if (_formKey.currentState.validate()) {
+    if (validateForm()) {
       nssLogger.d('Form validations passed');
 
       Map<String, String> submission = {};

@@ -8,6 +8,8 @@
 .vagrant/
 .sconsign.dblite
 .svn/
+*.iml
+*.metadata
 
 *.swp
 profile

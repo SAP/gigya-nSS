@@ -2,77 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'package:gigya_native_screensets_engine/nss_registry.dart';
-import 'package:gigya_native_screensets_engine/nss_runner.dart';
 import 'package:gigya_native_screensets_engine/nss_injector.dart';
-import 'package:mockito/mockito.dart';
-import 'package:provider/provider.dart';
+import 'package:gigya_native_screensets_engine/nss_runner.dart';
 
-class MockRegistry extends Mock implements NssRegistry {}
+import './test_extensions.dart';
 
 void main() {
-  group('Rendering test', () {
-    final registry = MockRegistry();
+  group('NssLayoutBuilder tests', () {
+    testWidgets('NssLayoutBuilder simple element', (WidgetTester tester) async {
+      Map<String, Screen> mockData = {
+        'test': Screen('test', NssAlignment.vertical, [
+          NssWidgetData(textKey: 'test label', type: NssWidgetType.label),
+        ])
+      };
 
-    testWidgets('test rander elemnt', (WidgetTester tester) async {
-      Map<String, Screen> mockData = {};
-      mockData['test'] = Screen(
-          'test', NssAlignment.vertical, [NssWidgetData('test label', type: NssWidgetType.label)]);
+      await tester.pumpWidget(
+        MaterialApp(home: NssLayoutBuilder('test').render(mockData)),
+      );
+
+      await tester.pump(Duration(seconds: 2), EnginePhase.build);
+
+      final textFinder = find.text('test label');
+
+      expect(textFinder, findsOneWidget);
+    });
+
+    testWidgets('NssLayoutBuilder without screen', (WidgetTester tester) async {
+      Map<String, Screen> mockData = {'test': Screen('test', NssAlignment.vertical, [])};
 
       await tester.pumpWidget(
         MaterialApp(
-          home: NssLayoutBuilder("test").render(mockData),
+          home: NssLayoutBuilder('').render(mockData),
         ),
       );
 
       await tester.pump(Duration(seconds: 2), EnginePhase.build);
 
-      final id1TextFinder = find.text('test label');
+      final textFinder = find.textContains('Initial route missmatch');
 
-      expect(id1TextFinder, findsOneWidget);
+      expect(textFinder, findsOneWidget);
     });
 
-    testWidgets("render without screen", (WidgetTester tester) async {
-      Map<String, Screen> mockData = {};
-      mockData["test"] = Screen("test", NssAlignment.vertical, []);
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: NssLayoutBuilder("").render(mockData),
-        ),
-      );
-
-      await tester.pump(Duration(seconds: 2), EnginePhase.build);
-
-      final id1TextFinder = find.text('Initial route missmatch.'
-          '\nMarkup does not contain requested route.');
-
-      expect(id1TextFinder, findsOneWidget);
-    });
-
-    testWidgets("render without chidren", (WidgetTester tester) async {
-      Map<String, Screen> mockData = {};
-      mockData["test"] = Screen("test", NssAlignment.vertical, []);
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: NssLayoutBuilder("test").render(mockData),
-        ),
-      );
-
-      await tester.pump(Duration(seconds: 2), EnginePhase.build);
-
-      final id1TextFinder = find.text('Screen must contain children.'
-          '\nMarkup tag \"screen\" must contain children.');
-
-      expect(id1TextFinder, findsOneWidget);
-    });
-
-    testWidgets("test AppBar widget", (WidgetTester tester) async {
-      Map<String, Screen> mockData = {};
-      mockData['test'] = Screen(
-          'test', NssAlignment.vertical, [NssWidgetData('test label', type: NssWidgetType.label)]);
-      mockData['test'].appBar = {'textKey': 'Test AppBar'};
+    testWidgets('NssLayoutBuilder screen without children', (WidgetTester tester) async {
+      Map<String, Screen> mockData = {'test': Screen('test', NssAlignment.vertical, [])};
 
       await tester.pumpWidget(
         MaterialApp(
@@ -82,9 +54,28 @@ void main() {
 
       await tester.pump(Duration(seconds: 2), EnginePhase.build);
 
-      final id1TextFinder = find.text('Test AppBar');
+      final textFinder = find.textContains('Screen must contain children');
 
-      expect(id1TextFinder, findsOneWidget);
+      expect(textFinder, findsOneWidget);
+    });
+
+    testWidgets('NssLayoutBuilder with appbar', (WidgetTester tester) async {
+      var mockData = {
+        'test': Screen('test', NssAlignment.vertical, [NssWidgetData(textKey: 'test label', type: NssWidgetType.label)],
+            appBar: {'textKey': 'Test AppBar'})
+      };
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: NssLayoutBuilder('test').render(mockData),
+        ),
+      );
+
+      await tester.pump(Duration(seconds: 2), EnginePhase.build);
+
+      final textFinder = find.text('Test AppBar');
+
+      expect(textFinder, findsOneWidget);
     });
   });
 }
