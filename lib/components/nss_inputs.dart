@@ -19,8 +19,8 @@ class NssTextInputWidget extends StatefulWidget {
   _NssTextInputWidgetState createState() => _NssTextInputWidgetState();
 }
 
-class _NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInputWidget> with NssWidgetDecorationMixin {
-
+class _NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInputWidget>
+    with NssWidgetDecorationMixin {
   final TextEditingController _textEditingController = TextEditingController();
 
   GlobalKey wKey;
@@ -58,6 +58,7 @@ class _NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInp
       padding: defaultPadding(),
       child: TextFormField(
         key: wKey,
+        obscureText: widget.data.type == NssWidgetType.password,
         controller: _textEditingController,
         decoration: InputDecoration(hintText: widget.data.textKey),
         validator: (input) {
