@@ -8,10 +8,10 @@ import 'package:gigya_native_screensets_engine/nss_registry.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:mockito/mockito.dart';
 
-class MockWorker extends Mock implements IgnitionWorker {}
+import './test_extensions.dart';
 
 void main() {
-  group('IgnitionWorker tests', () {
+  group('IgnitionWorker unit tests', () {
     var worker = IgnitionWorker();
 
     test('IgnitionWorker with using mock from assets file', () async {
@@ -49,7 +49,7 @@ void main() {
     });
   });
 
-  group('NssIgnitionWidget tests', () {
+  group('NssIgnitionWidget widget tests', () {
     // Mock the ignition worker.
     var worker = MockWorker();
 

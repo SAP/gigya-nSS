@@ -9,7 +9,7 @@ class NssFormBloc {
   /// Reference saved to trigger form validation.
   final GlobalKey<FormState> _formKey;
 
-  /// Stream sink used to communicate (one way) with the screen bloc.
+  /// Stream sink used to communicate (one way) with the screen bloc. Can be null.
   final Sink<ScreenEvent> _screenSink;
 
   NssFormBloc(this._formKey, this._screenId, this._screenSink);
@@ -61,7 +61,7 @@ class NssFormBloc {
       }
       //TODO: Gather additional input from future widgets here.
 
-      _screenSink.add(
+      _screenSink?.add(
         ScreenEvent(
           ScreenAction.submit,
           {'api': action, 'params': submission},

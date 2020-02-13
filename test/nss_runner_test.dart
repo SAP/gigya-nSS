@@ -8,7 +8,7 @@ import 'package:gigya_native_screensets_engine/nss_runner.dart';
 import './test_extensions.dart';
 
 void main() {
-  group('NssLayoutBuilder tests', () {
+  group('NssLayoutBuilder widget tests', () {
     testWidgets('NssLayoutBuilder simple element', (WidgetTester tester) async {
       Map<String, Screen> mockData = {
         'test': Screen('test', NssAlignment.vertical, [
@@ -28,7 +28,9 @@ void main() {
     });
 
     testWidgets('NssLayoutBuilder without screen', (WidgetTester tester) async {
-      Map<String, Screen> mockData = {'test': Screen('test', NssAlignment.vertical, [])};
+      Map<String, Screen> mockData = {
+        'test': Screen('test', NssAlignment.vertical, []),
+      };
 
       await tester.pumpWidget(
         MaterialApp(
@@ -44,7 +46,9 @@ void main() {
     });
 
     testWidgets('NssLayoutBuilder screen without children', (WidgetTester tester) async {
-      Map<String, Screen> mockData = {'test': Screen('test', NssAlignment.vertical, [])};
+      Map<String, Screen> mockData = {
+        'test': Screen('test', NssAlignment.vertical, []),
+      };
 
       await tester.pumpWidget(
         MaterialApp(
@@ -61,8 +65,8 @@ void main() {
 
     testWidgets('NssLayoutBuilder with appbar', (WidgetTester tester) async {
       var mockData = {
-        'test': Screen('test', NssAlignment.vertical, [NssWidgetData(textKey: 'test label', type: NssWidgetType.label)],
-            appBar: {'textKey': 'Test AppBar'})
+        'test': Screen('test', NssAlignment.vertical, [NssWidgetData(textKey: 'test label', type: NssWidgetType.label),],
+            appBar: {'textKey': 'Test AppBar'}),
       };
 
       await tester.pumpWidget(
