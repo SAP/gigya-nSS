@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 
+class DebugUtils {
+  static void postDelayed(seconds, Function action) {
+    Future.delayed(Duration(seconds: seconds), () {
+      action();
+    });
+  }
+}
+
 /// Widget is used to add a "watermark" like tag on the bottom right of the screen that indicates
 /// That the engine is using mock markup setup.
 class NssDebugDecorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.bottomRight,
+      alignment: Alignment.bottomLeft,
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Container(

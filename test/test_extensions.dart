@@ -1,5 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gigya_native_screensets_engine/nss_ignition.dart';
+import 'package:mockito/mockito.dart';
+
+//region Test extensions
 
 extension CommonFindersExtension on CommonFinders {
   /// Custom [Finder] for partial text matching.
@@ -12,3 +16,10 @@ extension CommonFindersExtension on CommonFinders {
         return false;
       });
 }
+
+//endregion
+
+//region Mock classes
+class MockWorker extends Mock implements IgnitionWorker {}
+
+//endregion

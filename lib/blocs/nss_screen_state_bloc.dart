@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_api_service_bloc.dart';
 import 'package:gigya_native_screensets_engine/models/api.dart';
+import 'package:gigya_native_screensets_engine/utils/debug.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 enum NssScreenState { idle, progress, error }
@@ -37,7 +38,6 @@ class NssScreenStateBloc with ChangeNotifier {
 
   /// Send api.
   sendApi(String method, Map<String, dynamic> params) {
-
     // TODO: mock for testing.
     apiBloc.mock = ApiBaseResult(200, "test", "Email is empty", null, 42516);
 
@@ -45,19 +45,22 @@ class NssScreenStateBloc with ChangeNotifier {
 
     setProgress();
 
-    nssLogger.d('Start api request:' + method + '\n params: '+ params.toString());
+    nssLogger.d('Start api request:' + method + '\n params: ' + params.toString());
 
-    apiBloc.send(method, params).then((result) {
-      if(result.isSuccess()) {
-        //TODO: What need to do with the data?
-        setIdle();
+    //TODO Using debug post delayed for demonstration.
+    DebugUtils.postDelayed(3, () {
+      apiBloc.send(method, params).then((result) {
+        if (result.isSuccess()) {
+          //TODO: What need to do with the data?
+          setIdle();
 
-        nssLogger.d('Api request success: ' + result.data.toString());
-      } else {
-        setError(result.errorMessage);
+          nssLogger.d('Api request success: ' + result.data.toString());
+        } else {
+          setError(result.errorMessage);
 
-        nssLogger.d('Api request error: ' + result.errorMessage);
-      }
+          nssLogger.d('Api request error: ' + result.errorMessage);
+        }
+      });
     });
   }
 
@@ -85,7 +88,6 @@ class NssScreenStateBloc with ChangeNotifier {
   }
 
   isProgress() => _state == NssScreenState.progress;
-
 
   /// Streamer dispose
   @override

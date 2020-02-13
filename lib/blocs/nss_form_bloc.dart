@@ -5,7 +5,11 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 class NssFormBloc {
   final String _screenId;
+
+  /// Reference saved to trigger form validation.
   final GlobalKey<FormState> _formKey;
+
+  /// Stream sink used to communicate (one way) with the screen bloc. Can be null.
   final Sink<ScreenEvent> _screenSink;
 
   NssFormBloc(this._formKey, this._screenId, this._screenSink);
@@ -34,9 +38,7 @@ class NssFormBloc {
   NssInputValidation validate(String input, {String forType}) {
     switch (forType) {
       case 'email':
-        return NssEmailInputValidator().validate(input)
-            ? NssInputValidation.passed
-            : NssInputValidation.failed;
+        return NssEmailInputValidator().validate(input) ? NssInputValidation.passed : NssInputValidation.failed;
       default:
         return NssInputValidation.na;
     }
@@ -48,7 +50,7 @@ class NssFormBloc {
   /// action provided in the [action] parameter.
   onFormSubmissionWith({String action}) {
     nssLogger.d('Submission request with action $action');
-    if (_formKey.currentState.validate()) {
+    if (validateForm()) {
       nssLogger.d('Form validations passed');
 
       Map<String, String> submission = {};
@@ -59,20 +61,25 @@ class NssFormBloc {
       }
       //TODO: Gather additional input from future widgets here.
 
-      nssLogger.d('submission map forwarded to screen: ${submission.toString()}');
-
-      //TODO: Need to notify the ScreenBloc to begin action.
-      _screenSink.add(
-        ScreenEvent(ScreenAction.submit, {'api': action, 'params': submission}),
+      _screenSink?.add(
+        ScreenEvent(
+          ScreenAction.submit,
+          {'api': action, 'params': submission},
+        ),
       );
     }
   }
 
   /// Populate [submission] map with all relevant text inputs.
   _populateInputSubmissions(Map submission) {
-    _inputKeyMap.forEach((id, key) {
-      submission[id] = (key.currentWidget as TextFormField).controller?.text?.trim();
-    });
+    _inputKeyMap.forEach(
+      (id, key) {
+        // Just in case.
+        if (key.currentWidget is TextFormField) {
+          submission[id] = (key.currentWidget as TextFormField).controller?.text?.trim();
+        }
+      },
+    );
   }
 }
 
@@ -91,8 +98,7 @@ abstract class NssInputValidator {
 /// Lenient email validations (accepting "+" sign for instance) using regular expressions.
 class NssEmailInputValidator extends NssInputValidator {
   @override
-  bool validate(text) =>
-      RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(text);
+  bool validate(text) => RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(text);
 }
 
 //endregion
