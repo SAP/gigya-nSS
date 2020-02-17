@@ -16,9 +16,7 @@ class ApiServiceBloc {
     }
 
     return await _apiChannel.invokeMapMethod(method, params).then((map) {
-      final result = ApiBaseResult.fromJson(map);
-
-      // Implementation the result of success.
+      final result = ApiBaseResult.fromJson(map.cast<String, dynamic>());
       return result;
 
     }).catchError((error) {

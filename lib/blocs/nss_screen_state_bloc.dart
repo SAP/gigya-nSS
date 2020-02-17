@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_api_service_bloc.dart';
 import 'package:gigya_native_screensets_engine/models/api.dart';
 import 'package:gigya_native_screensets_engine/utils/debug.dart';
+import 'package:gigya_native_screensets_engine/nss_registry.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 enum NssScreenState { idle, progress, error }
