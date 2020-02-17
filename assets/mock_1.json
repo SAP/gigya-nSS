@@ -34,7 +34,7 @@
       "register": {
         "id": "register",
         "appBar": {
-          "textKey": "register"
+          "textKey": "Register"
         },
         "stack": "vertical",
         "children": [

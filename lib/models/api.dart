@@ -9,6 +9,7 @@ class ApiBaseResult {
   int errorCode;
   String callId;
   String errorMessage;
+  //TODO: Thinking about the 'data' name.
   Map<String, dynamic> data;
 
   ApiBaseResult(this.statusCode, this.callId, this.errorMessage, this.data, this.errorCode);
