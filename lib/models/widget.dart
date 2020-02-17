@@ -13,7 +13,7 @@ class NssWidgetData {
   List<NssWidgetData> children;
   String api;
 
-  NssWidgetData(this.textKey, {this.type, this.id, this.children, this.stack, this.api});
+  NssWidgetData({this.textKey, this.type, this.id, this.children, this.stack, this.api});
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);
 

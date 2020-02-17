@@ -10,14 +10,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NssIgnitionWidget(
-      layoutScreenSet: (
-        Main main,
-        String initialRoute,
-      ) {
+      layoutScreenSet: (Main main, String initialRoute) {
         return NssLayoutBuilder(initialRoute).render(
           main.screens,
         );
       },
+      worker: IgnitionWorker(),
       //TODO: Set this value as false when building frameworks!!
       useMockData: true,
     );

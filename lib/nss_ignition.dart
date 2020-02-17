@@ -16,13 +16,22 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 class NssIgnitionWidget extends StatelessWidget {
   final Layout layoutScreenSet;
   final bool useMockData;
+  final IgnitionWorker worker;
 
-  NssIgnitionWidget({Key key, @required this.layoutScreenSet, this.useMockData = false}) : super(key: key);
+  NssIgnitionWidget({
+    Key key,
+    @required this.layoutScreenSet,
+    @required this.worker,
+    this.useMockData = false,
+  }) : super(key: key) {
+    // Set mock global value.
+    registry.isMock = useMockData;
+  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _spark(context),
+      future: worker.spark(),
       builder: (context, AsyncSnapshot<Spark> snapshot) {
         if (snapshot.hasData) {
           // Is this screen set platform aware? Register value.
@@ -38,12 +47,7 @@ class NssIgnitionWidget extends StatelessWidget {
           nssLogger.d('Initial route = $initialRoute');
 
           // Create application widget.
-          return NssApp(
-            layoutScreenSet,
-            snapshot.data.markup,
-            initialRoute,
-            useMockData,
-          );
+          return NssApp(layoutScreenSet, snapshot.data.markup, initialRoute);
         } else {
           return Container(
             color: Color(0xFFFFFFFF),
@@ -52,12 +56,24 @@ class NssIgnitionWidget extends StatelessWidget {
       },
     );
   }
+}
 
-  Future<Spark> _spark(context) async {
-    var fetchData = useMockData
-        ? await AssetUtils.jsonMapFromAssets('assets/mock_1.json')
-        : await registry.channels.mainChannel.invokeMethod<Map<dynamic, dynamic>>(NssMainAction.ignition.action);
+//TODO: Check if compute can actually perform method channel operations.
+class IgnitionWorker {
+
+  /// Compute functions are ignored in widget testing. Make sure you mock them until a workaround is available.
+  @visibleForTesting
+  Future<Spark> spark() async {
+    var fetchData = registry.isMock ? await _ignitionFromMock() : await _ignitionFromChannel();
     return compute(ignite, fetchData);
+  }
+
+  Future<Map<String, dynamic>> _ignitionFromMock() async {
+    return AssetUtils.jsonMapFromAssets('assets/mock_1.json');
+  }
+
+  Future<Map<dynamic, dynamic>> _ignitionFromChannel() async {
+    return registry.channels.mainChannel.invokeMethod<Map<dynamic, dynamic>>(NssMainAction.ignition.action);
   }
 }
 

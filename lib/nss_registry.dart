@@ -10,6 +10,8 @@ class NssRegistry {
   }
 
   bool isPlatformAware = false;
+
+  bool isMock = false;
 }
 
 class NssChannelRegistry {

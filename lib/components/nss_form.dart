@@ -10,8 +10,7 @@ class NssFormWidget extends StatefulWidget {
   final String screenId;
   final LayoutNssForm layoutForm;
 
-  const NssFormWidget({Key key, @required this.screenId, @required this.layoutForm})
-      : super(key: key);
+  const NssFormWidget({Key key, @required this.screenId, @required this.layoutForm}) : super(key: key);
 
   @override
   _NssFormWidgetState createState() => _NssFormWidgetState();

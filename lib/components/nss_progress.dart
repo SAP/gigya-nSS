@@ -19,6 +19,7 @@ class NssProgressWidget extends NssStatelessPlatformWidget with NssWidgetDecorat
   Widget buildMaterialWidget(BuildContext context) {
     // TODO: Decoration needs to be set from the data style object.
     return Material(
+      color: Colors.transparent,
       child: CircularProgressIndicator(),
     );
   }
@@ -48,7 +49,7 @@ class _NssScreenProgressWidgetState extends NssStatefulPlatformWidgetState<NssSc
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
         //TODO: Temporary color for background opacity. Should receive it from data style object.
-        color: Colors.grey.withOpacity(0.6),
+        color: Colors.grey.withOpacity(0.4),
       ),
       child: Center(
         child: NssProgressWidget(data: widget.data),
