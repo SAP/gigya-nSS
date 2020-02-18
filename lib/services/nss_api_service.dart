@@ -1,26 +1,18 @@
 import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/models/api.dart';
 import 'package:gigya_native_screensets_engine/nss_registry.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 class ApiService {
-  final MethodChannel _apiChannel = registry.channels.apiChannel;
-
-  // TODO: would need to remove option to mocked api?
-  // mock for testing
-  ApiBaseResult mock;
+  final MethodChannel _api = registry.channels.apiChannel;
 
   Future<ApiBaseResult> send(String method, Map<String, dynamic> params) async {
-    //TODO: Do not forget to remove it.
-    if (mock != null) {
-      return mock;
-    }
-
-    return await _apiChannel.invokeMapMethod(method, params).then((map) {
+    return await _api.invokeMapMethod(method, params).then((map) {
       final result = ApiBaseResult.fromJson(map.cast<String, dynamic>());
       return result;
     }).catchError((error) {
-      //TODO: Handler error.
-      return error;
+      nssLogger.d('Invocation error with: ${error.message}');
+      return ApiBaseResult.platformException(error);
     });
   }
 }

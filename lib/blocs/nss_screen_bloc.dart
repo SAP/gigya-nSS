@@ -10,6 +10,8 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 enum NssScreenState { idle, progress, error }
 
 class NssScreenViewModel with ChangeNotifier {
+  final String id;
+
   final ApiService apiBloc = ApiService();
 
   NssScreenState _state = NssScreenState.idle;
@@ -22,7 +24,7 @@ class NssScreenViewModel with ChangeNotifier {
 
   Sink get streamEventSink => _screenEvents.sink;
 
-  NssScreenViewModel() {
+  NssScreenViewModel(this.id) {
     _registerScreenActionsStream();
   }
 
@@ -35,12 +37,14 @@ class NssScreenViewModel with ChangeNotifier {
   isError() => _state == NssScreenState.error;
 
   setIdle() {
+    nssLogger.d('Screen with id: $id setIdle');
     _state = NssScreenState.idle;
     _errorText = null;
     notifyListeners();
   }
 
   setProgress() {
+    nssLogger.d('Screen with id: $id setProgress');
     _state = NssScreenState.progress;
     _errorText = null;
     notifyListeners();
@@ -48,6 +52,7 @@ class NssScreenViewModel with ChangeNotifier {
 
   /// State management
   setError(String error) {
+    nssLogger.d('Screen with id: $id setError with $error');
     _state = NssScreenState.error;
     _errorText = error;
     notifyListeners();
@@ -68,29 +73,20 @@ class NssScreenViewModel with ChangeNotifier {
   /// Send requested API request given a String [method] and base [parameters] map.
   /// [parameter] map is not signed.
   sendApi(String method, Map<String, dynamic> parameters) {
-    // TODO: mock for testing.
-    apiBloc.mock = ApiBaseResult(200, "test", "Email is empty", null, 42516);
-
-    nssLogger.d('Screen state is: progress');
-
     setProgress();
 
-    nssLogger.d('Start api request:' + method + '\n params: ' + parameters.toString());
+    apiBloc.send(method, parameters).then((result) {
+      if (result.isSuccess()) {
+        setIdle();
 
-    //TODO Using debug post delayed for demonstration.
-    DebugUtils.postDelayed(3, () {
-      apiBloc.send(method, parameters).then((result) {
-        if (result.isSuccess()) {
-          //TODO: What need to do with the data?
-          setIdle();
+        nssLogger.d('Api request success: ${result.data.toString()}');
+      } else {
+        setError(result.errorMessage);
 
-          nssLogger.d('Api request success: ' + result.data.toString());
-        } else {
-          setError(result.errorMessage);
-
-          nssLogger.d('Api request error: ' + result.errorMessage);
-        }
-      });
+        nssLogger.d('Api request error: ${result.errorMessage}');
+      }
+    }).catchError((error) {
+      setError(error.errorMessage);
     });
   }
 

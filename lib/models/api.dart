@@ -1,4 +1,4 @@
-
+import 'package:flutter/services.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'api.g.dart';
@@ -9,10 +9,10 @@ class ApiBaseResult {
   int errorCode;
   String callId;
   String errorMessage;
-  //TODO: Thinking about the 'data' name.
+
   Map<String, dynamic> data;
 
-  ApiBaseResult(this.statusCode, this.callId, this.errorMessage, this.data, this.errorCode);
+  ApiBaseResult({this.statusCode, this.callId, this.errorMessage, this.data, this.errorCode});
 
   factory ApiBaseResult.fromJson(Map<String, dynamic> json) => _$ApiBaseResultFromJson(json);
 
@@ -20,4 +20,13 @@ class ApiBaseResult {
 
   /// check the result status.
   bool isSuccess() => errorCode == 0;
+
+  factory ApiBaseResult.platformException(PlatformException error) {
+    return ApiBaseResult(
+      statusCode: 500,
+      errorCode: int.parse(error.code),
+      errorMessage: error.message,
+      data: error.details.cast<String, dynamic>(),
+    );
+  }
 }

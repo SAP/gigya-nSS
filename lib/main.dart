@@ -16,8 +16,7 @@ class MyApp extends StatelessWidget {
         );
       },
       worker: IgnitionWorker(),
-      //TODO: Set this value as false when building frameworks!!
-      useMockData: true,
+      useMockData: false,
     );
   }
 }

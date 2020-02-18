@@ -23,7 +23,7 @@ class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorat
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<NssScreenViewModel>(
-      create: (_) => NssScreenViewModel(),
+      create: (_) => NssScreenViewModel(widget.screen.id),
       child: NssScaffoldWidget(
         appBarTitle: widget.screen.appBar != null ? widget.screen.appBar['textKey'] ?? '' : '',
         body: NssFormWidget(
