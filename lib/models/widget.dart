@@ -1,4 +1,4 @@
-import 'package:gigya_native_screensets_engine/nss_injector.dart';
+import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:gigya_native_screensets_engine/nss_runner.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -19,4 +19,5 @@ class NssWidgetData {
 
   Map<String, dynamic> toJson() => _$NssWidgetDataToJson(this);
 
+  bool hasChildren() => children != null;
 }

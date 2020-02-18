@@ -2,7 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/models/api.dart';
 import 'package:gigya_native_screensets_engine/nss_registry.dart';
 
-class ApiServiceBloc {
+class ApiService {
   final MethodChannel _apiChannel = registry.channels.apiChannel;
 
   // TODO: would need to remove option to mocked api?
@@ -11,18 +11,16 @@ class ApiServiceBloc {
 
   Future<ApiBaseResult> send(String method, Map<String, dynamic> params) async {
     //TODO: Do not forget to remove it.
-    if(mock != null) {
+    if (mock != null) {
       return mock;
     }
 
     return await _apiChannel.invokeMapMethod(method, params).then((map) {
       final result = ApiBaseResult.fromJson(map.cast<String, dynamic>());
       return result;
-
     }).catchError((error) {
       //TODO: Handler error.
       return error;
     });
   }
-
 }

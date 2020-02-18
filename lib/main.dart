@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return NssIgnitionWidget(
       layoutScreenSet: (Main main, String initialRoute) {
-        return NssLayoutBuilder(initialRoute).render(
+        return NssScreenBuilder(initialRoute).build(
           main.screens,
         );
       },

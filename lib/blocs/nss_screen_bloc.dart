@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_api_service_bloc.dart';
+import 'package:gigya_native_screensets_engine/services/nss_api_service.dart';
 import 'package:gigya_native_screensets_engine/models/api.dart';
 import 'package:gigya_native_screensets_engine/utils/debug.dart';
 import 'package:gigya_native_screensets_engine/nss_registry.dart';
@@ -9,70 +9,28 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 enum NssScreenState { idle, progress, error }
 
-class NssScreenStateBloc with ChangeNotifier {
-  final ApiServiceBloc apiBloc = ApiServiceBloc();
+class NssScreenViewModel with ChangeNotifier {
+  final ApiService apiBloc = ApiService();
 
-  final StreamController _screenEvents = StreamController<ScreenEvent>();
-
-  Sink get streamEventSink => _screenEvents.sink;
-
-  /// State definition
   NssScreenState _state = NssScreenState.idle;
 
   String _errorText;
 
   String get error => _errorText;
 
-  ///Constructor
-  NssScreenStateBloc() {
-    _registerForScreenActions();
+  final StreamController _screenEvents = StreamController<ScreenEvent>();
+
+  Sink get streamEventSink => _screenEvents.sink;
+
+  NssScreenViewModel() {
+    _registerScreenActionsStream();
   }
 
-  /// Register for streamer
-  _registerForScreenActions() {
-    _screenEvents.stream.listen((event) {
-      nssLogger.d('Event received with data: ${event.data.toString()}');
-
-      sendApi(event.data['api'], event.data['params']);
-    });
-  }
-
-  /// Send api.
-  sendApi(String method, Map<String, dynamic> params) {
-    // TODO: mock for testing.
-    apiBloc.mock = ApiBaseResult(200, "test", "Email is empty", null, 42516);
-
-    nssLogger.d('Screen state is: progress');
-
-    setProgress();
-
-    nssLogger.d('Start api request:' + method + '\n params: ' + params.toString());
-
-    //TODO Using debug post delayed for demonstration.
-    DebugUtils.postDelayed(3, () {
-      apiBloc.send(method, params).then((result) {
-        if (result.isSuccess()) {
-          //TODO: What need to do with the data?
-          setIdle();
-
-          nssLogger.d('Api request success: ' + result.data.toString());
-        } else {
-          setError(result.errorMessage);
-
-          nssLogger.d('Api request error: ' + result.errorMessage);
-        }
-      });
-    });
-  }
-
-  /// State management
-  setError(String error) {
-    _state = NssScreenState.error;
-    _errorText = error;
-    notifyListeners();
-  }
+  //region State management
 
   isIdle() => _state == NssScreenState.idle;
+
+  isProgress() => _state == NssScreenState.progress;
 
   isError() => _state == NssScreenState.error;
 
@@ -88,13 +46,58 @@ class NssScreenStateBloc with ChangeNotifier {
     notifyListeners();
   }
 
-  isProgress() => _state == NssScreenState.progress;
+  /// State management
+  setError(String error) {
+    _state = NssScreenState.error;
+    _errorText = error;
+    notifyListeners();
+  }
 
-  /// Streamer dispose
+  //endregion
+
+  /// Start listening for [ScreenEvent] action [ScreenAction] events.
+  /// Events are propagated bottom up and are available for all child components.
+  _registerScreenActionsStream() {
+    _screenEvents.stream.listen((event) {
+      nssLogger.d('Event received with data: ${event.data.toString()}');
+
+      sendApi(event.data['api'], event.data['params']);
+    });
+  }
+
+  /// Send requested API request given a String [method] and base [parameters] map.
+  /// [parameter] map is not signed.
+  sendApi(String method, Map<String, dynamic> parameters) {
+    // TODO: mock for testing.
+    apiBloc.mock = ApiBaseResult(200, "test", "Email is empty", null, 42516);
+
+    nssLogger.d('Screen state is: progress');
+
+    setProgress();
+
+    nssLogger.d('Start api request:' + method + '\n params: ' + parameters.toString());
+
+    //TODO Using debug post delayed for demonstration.
+    DebugUtils.postDelayed(3, () {
+      apiBloc.send(method, parameters).then((result) {
+        if (result.isSuccess()) {
+          //TODO: What need to do with the data?
+          setIdle();
+
+          nssLogger.d('Api request success: ' + result.data.toString());
+        } else {
+          setError(result.errorMessage);
+
+          nssLogger.d('Api request error: ' + result.errorMessage);
+        }
+      });
+    });
+  }
+
   @override
   void dispose() {
+    // Close screen event stream to avoid leaks.
     _screenEvents.close();
-
     super.dispose();
   }
 }

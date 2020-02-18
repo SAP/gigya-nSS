@@ -2,15 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_api_service_bloc.dart';
 import 'package:gigya_native_screensets_engine/nss_registry.dart';
+import 'package:gigya_native_screensets_engine/services/nss_api_service.dart';
 import 'package:mockito/mockito.dart';
-
-import '../nss_ignition_test.dart';
 
 class MockApiChannel extends Mock implements MethodChannel {}
 
 void main() {
+
   group('Request with api channel tests', () {
     test('Tes successfuly request', () {
       runApp(MaterialApp(home: Container()));
@@ -26,7 +25,7 @@ void main() {
 
       final method = 'test';
 
-      final apiService = ApiServiceBloc();
+      final apiService = ApiService();
 
       registry.channels.apiChannel.setMockMethodCallHandler((MethodCall methodCall) async {
         log.add(methodCall);
@@ -45,15 +44,15 @@ void main() {
       final List<MethodCall> log = <MethodCall>[];
 
       final Map<dynamic, dynamic> params = {
-        'statusCode': 200061,
-        'errorCode': 0,
+        'statusCode': 200,
+        'errorCode': 200061,
         'callId': '1234',
         'errorMessage': 'error'
       };
 
       final method = 'test';
 
-      final apiService = ApiServiceBloc();
+      final apiService = ApiService();
 
       registry.channels.apiChannel.setMockMethodCallHandler((MethodCall methodCall) async {
         log.add(methodCall);
@@ -61,7 +60,7 @@ void main() {
       });
 
       apiService.send(method, {}).then((result) {
-        expect(result.statusCode, 200061);
+        expect(result.statusCode, 200);
         expect(result.isSuccess(), false);
       });
     });
@@ -77,7 +76,7 @@ void main() {
 
       final method = 'test';
 
-      final apiService = ApiServiceBloc();
+      final apiService = ApiService();
 
       registry.channels.apiChannel.setMockMethodCallHandler((MethodCall methodCall) async {
         log.add(methodCall);

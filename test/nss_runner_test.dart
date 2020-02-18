@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'package:gigya_native_screensets_engine/nss_injector.dart';
+import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:gigya_native_screensets_engine/nss_runner.dart';
 
 import './test_extensions.dart';
@@ -17,7 +17,7 @@ void main() {
       };
 
       await tester.pumpWidget(
-        MaterialApp(home: NssLayoutBuilder('test').render(mockData)),
+        MaterialApp(home: NssScreenBuilder('test').build(mockData)),
       );
 
       await tester.pump(Duration(seconds: 2), EnginePhase.build);
@@ -34,7 +34,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: NssLayoutBuilder('').render(mockData),
+          home: NssScreenBuilder('').build(mockData),
         ),
       );
 
@@ -52,7 +52,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: NssLayoutBuilder('test').render(mockData),
+          home: NssScreenBuilder('test').build(mockData),
         ),
       );
 
@@ -71,7 +71,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: NssLayoutBuilder('test').render(mockData),
+          home: NssScreenBuilder('test').build(mockData),
         ),
       );
 

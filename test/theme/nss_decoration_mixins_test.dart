@@ -7,6 +7,7 @@ import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart'
 class UsesMixin with NssWidgetDecorationMixin {}
 
 void main() {
+
   group('NssWidgetDecorationMixin tests', () {
     var mixin = UsesMixin();
 

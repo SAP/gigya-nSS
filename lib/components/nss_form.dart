@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_screen_state_bloc.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
 import 'package:provider/provider.dart';
 
 typedef Widget LayoutNssForm();
@@ -35,7 +35,7 @@ class _NssFormWidgetState extends State<NssFormWidget> {
       create: (_) => NssFormBloc(
         _formKey,
         widget.screenId,
-        Provider.of<NssScreenStateBloc>(context).streamEventSink,
+        Provider.of<NssScreenViewModel>(context).streamEventSink,
       ),
       child: Form(
         key: _formKey,

@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_api_service_bloc.dart';
 import 'package:gigya_native_screensets_engine/nss_registry.dart';
 
 void main() {
+
   group('Screen bloc tests', () {
     test('Tes successfuly request', () {
       runApp(MaterialApp(home: Container()));

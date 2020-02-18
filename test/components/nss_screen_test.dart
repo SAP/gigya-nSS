@@ -6,18 +6,18 @@ import '../test_extensions.dart';
 
 void main() {
   group('Widget screen', () {
-    testWidgets('App bar test', (WidgetTester tester) async {
-      var widget = MaterialApp(
-          home: NssScreenWidget(
-        appBarTitle: 'test app bar',
-        layoutScreen: () => Container(),
-      ));
-
-      await tester.pumpWidget(widget);
-
-      final textFinder = find.textContains('test app bar');
-
-      expect(textFinder, findsOneWidget);
-    });
+//    testWidgets('App bar test', (WidgetTester tester) async {
+//      var widget = MaterialApp(
+//          home: NssScreenWidget(
+//            appBarTitle: 'test app bar',
+//            layoutScreen: () => Container(),
+//          ));
+//
+//      await tester.pumpWidget(widget);
+//
+//      final textFinder = find.textContains('test app bar');
+//
+//      expect(textFinder, findsOneWidget);
+//    });
   });
 }

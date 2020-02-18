@@ -19,7 +19,5 @@ class ApiBaseResult {
   Map<String, dynamic> toJson() => _$ApiBaseResultToJson(this);
 
   /// check the result status.
-  bool isSuccess() {
-    return statusCode == 0 ? true : false;
-  }
+  bool isSuccess() => errorCode == 0;
 }

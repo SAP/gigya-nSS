@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_screen_state_bloc.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import '../test_extensions.dart';
 
-class MockScreenStateBloc extends Mock implements NssScreenStateBloc { }
+class MockScreenStateBloc extends Mock implements NssScreenViewModel { }
 
 void main() {
+
   final screenStateBloc = MockScreenStateBloc();
 
   group('Error widget factory tests', () {
     testWidgets('Testing route missmatch factory constructor', (WidgetTester tester) async {
-      var widget = MaterialApp(home: NssErrorWidget.routeMissMatch());
+      var widget = MaterialApp(home: NssRenderingErrorWidget.routeMissMatch());
 
       await tester.pumpWidget(widget);
 
@@ -24,7 +25,7 @@ void main() {
 
     testWidgets('Testing missing children in screen factory constructor',
         (WidgetTester tester) async {
-      var widget = MaterialApp(home: NssErrorWidget.screenWithNotChildren());
+      var widget = MaterialApp(home: NssRenderingErrorWidget.screenWithNotChildren());
 
       await tester.pumpWidget(widget);
       final textFinder = find.textContains('Screen must contain children');
@@ -37,7 +38,7 @@ void main() {
       
       var widget = MultiProvider(
         providers: [
-          Provider<NssScreenStateBloc>(create: (_) => screenStateBloc),
+          Provider<NssScreenViewModel>(create: (_) => screenStateBloc),
         ],
         child: MaterialApp(home: Scaffold(body: NssFormErrorWidget())),
       );

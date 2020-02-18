@@ -1,10 +1,9 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/components/nss_actions.dart';
 import 'package:gigya_native_screensets_engine/components/nss_inputs.dart';
+import 'package:gigya_native_screensets_engine/components/nss_labels.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'components/nss_labels.dart';
 
 enum NssWidgetType { label, input, email, password, submit }
 

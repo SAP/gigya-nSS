@@ -42,7 +42,7 @@ class NssIgnitionWidget extends StatelessWidget {
           // Check initial route. If not set in the provided markup choose the first provided screen.
           final initialRoute = snapshot.data.markup.initialRoute ?? snapshot.data.markup.screens.entries.first.value.id;
           if (initialRoute == null) {
-            return NssErrorWidget.routeMissMatch();
+            return NssRenderingErrorWidget.routeMissMatch();
           }
           nssLogger.d('Initial route = $initialRoute');
 
