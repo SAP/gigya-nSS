@@ -1,27 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/nss_registry.dart';
 import 'package:gigya_native_screensets_engine/services/nss_api_service.dart';
 import 'package:mockito/mockito.dart';
+import 'package:test/test.dart';
 
 class MockApiChannel extends Mock implements MethodChannel {}
 
 void main() {
-
   group('Request with api channel tests', () {
     test('Tes successfuly request', () {
       runApp(MaterialApp(home: Container()));
 
       final List<MethodCall> log = <MethodCall>[];
 
-      final Map<dynamic, dynamic> params = {
-        'statusCode': 200,
-        'errorCode': 0,
-        'callId': '1234',
-        'errorMessage': 'ok'
-      };
+      final Map<dynamic, dynamic> params = {'statusCode': 200, 'errorCode': 0, 'callId': '1234', 'errorMessage': 'ok'};
 
       final method = 'test';
 
@@ -70,9 +64,7 @@ void main() {
 
       final List<MethodCall> log = <MethodCall>[];
 
-      final Map<dynamic, dynamic> params = {
-        'test': 200061
-      };
+      final Map<dynamic, dynamic> params = {'test': 200061};
 
       final method = 'test';
 
@@ -83,10 +75,9 @@ void main() {
         return params;
       });
 
-      apiService.send(method, {}).then((result) {
-      }).catchError((error) {
-        expect(error.toString(), isNotEmpty);
-      });
+      apiService.send(method, {}).then((result) {}).catchError((error) {
+            expect(error.toString(), isNotEmpty);
+          });
     });
   });
 }

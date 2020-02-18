@@ -4,7 +4,7 @@ import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-import '../test_extensions.dart';
+import '../nss_test_extensions.dart';
 
 class MockScreenStateBloc extends Mock implements NssScreenViewModel { }
 

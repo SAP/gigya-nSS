@@ -14,20 +14,6 @@ import 'package:provider/provider.dart';
 void main() {
   var formKey = GlobalKey<FormState>();
 
-  /// Unit group.
-  group('NssFormBlock unit tests', () {
-    test('Input map tests', () async {
-      var bloc = NssFormBloc(formKey, 'screen-id', null);
-
-      expect(bloc.inputMap, isNotNull);
-
-      final key = GlobalKey(debugLabel: 'testKey');
-      bloc.addInputWith(key, forId: 'email');
-
-      expect(bloc.keyFor('email'), key);
-    });
-  });
-
   /// Widget group.
   group('NssForm widget tests', () {
     var inputEmail = NssTextInputWidget(

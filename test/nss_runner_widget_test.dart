@@ -5,7 +5,7 @@ import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:gigya_native_screensets_engine/nss_runner.dart';
 
-import './test_extensions.dart';
+import './nss_test_extensions.dart';
 
 void main() {
   group('NssLayoutBuilder widget tests', () {

@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
+import 'package:test/test.dart';
 
 class UsesMixin with NssWidgetDecorationMixin {}
 
 void main() {
-
   group('NssWidgetDecorationMixin tests', () {
     var mixin = UsesMixin();
 
@@ -21,8 +20,7 @@ void main() {
       expect(mixin.withPadding(2), EdgeInsets.all(2.0));
       expect(mixin.withPadding(2.0), EdgeInsets.all(2.0));
       expect(mixin.withPadding([1, 1, 1, 1]), EdgeInsets.all(1.0));
-      expect(mixin.withPadding([2, 0.0, 1, 0.1]),
-          EdgeInsets.only(left: 2.0, top: 0.0, right: 1.0, bottom: 0.1));
+      expect(mixin.withPadding([2, 0.0, 1, 0.1]), EdgeInsets.only(left: 2.0, top: 0.0, right: 1.0, bottom: 0.1));
       expect(mixin.withPadding(''), EdgeInsets.all(0));
     });
 
