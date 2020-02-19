@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -58,9 +60,7 @@ class NssIgnitionWidget extends StatelessWidget {
   }
 }
 
-//TODO: Check if compute can actually perform method channel operations.
 class IgnitionWorker {
-
   /// Compute functions are ignored in widget testing. Make sure you mock them until a workaround is available.
   @visibleForTesting
   Future<Spark> spark() async {
@@ -68,17 +68,17 @@ class IgnitionWorker {
     return compute(ignite, fetchData);
   }
 
-  Future<Map<String, dynamic>> _ignitionFromMock() async {
-    return AssetUtils.jsonMapFromAssets('assets/mock_1.json');
+  Future<String> _ignitionFromMock() async {
+    return AssetUtils.jsonFromAssets('assets/mock_1.json');
   }
 
-  Future<Map<dynamic, dynamic>> _ignitionFromChannel() async {
-    return registry.channels.mainChannel.invokeMethod<Map<dynamic, dynamic>>(NssMainAction.ignition.action);
+  Future<String> _ignitionFromChannel() async {
+    return registry.channels.mainChannel.invokeMethod<String>(NssMainAction.ignition.action);
   }
 }
 
 /// Top level function for the spark computation.
 /// Compute can only take top-level functions in order to correctly open the isolate.
-Spark ignite(Map<dynamic, dynamic> map) {
-  return Spark.fromJson(map.cast<String, dynamic>());
+Spark ignite(String json) {
+  return Spark.fromJson(jsonDecode(json));
 }

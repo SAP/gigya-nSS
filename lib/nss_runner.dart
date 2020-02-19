@@ -17,14 +17,19 @@ class NssScreenBuilder {
 
   /// Main rendering action providing screen map & requested screen id.
   Widget build(Map<String, Screen> screenMap) {
-    // Modeled markup must contain the screen unique id.
+    // Must contain the screen unique id.
     if (screenMap.unavailable(_screenId)) {
       return NssRenderingErrorWidget.routeMissMatch();
     }
 
-    // Modeled screen must contain the children tag.
+    // Must contain the children tag.
     if (screenMap[_screenId].children.isNullOrEmpty()) {
       return NssRenderingErrorWidget.screenWithNotChildren();
+    }
+
+    // Must contain a flow.
+    if (screenMap[_screenId].flow.isNullOrEmpty()) {
+      return NssRenderingErrorWidget.missingFlow();
     }
 
     return _buildScreen(

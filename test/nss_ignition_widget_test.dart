@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,16 +12,15 @@ import 'package:mockito/mockito.dart';
 import './nss_test_extensions.dart';
 
 void main() {
-
   group('NssIgnitionWidget widget tests', () {
     // Mock the ignition worker.
     var worker = MockWorker();
 
     testWidgets('Testing engine initialization with "useMockData" true & mocked worker Json asset',
         (WidgetTester tester) async {
-      var mockMarkup = await AssetUtils.jsonMapFromAssets('assets/mock_1.json');
+      var mockMarkup = await AssetUtils.jsonFromAssets('assets/mock_1.json');
       when(worker.spark()).thenAnswer((_) => Future<Spark>(() {
-            return Spark.fromJson(mockMarkup);
+            return Spark.fromJson(jsonDecode(mockMarkup));
           }));
 
       await tester.pumpWidget(

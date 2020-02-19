@@ -11,7 +11,7 @@ void main() {
   group('NssLayoutBuilder widget tests', () {
     testWidgets('NssLayoutBuilder simple element', (WidgetTester tester) async {
       Map<String, Screen> mockData = {
-        'test': Screen('test', NssAlignment.vertical, [
+        'test': Screen('test', 'test_flow', NssAlignment.vertical, [
           NssWidgetData(textKey: 'test label', type: NssWidgetType.label),
         ])
       };
@@ -29,7 +29,7 @@ void main() {
 
     testWidgets('NssLayoutBuilder without screen', (WidgetTester tester) async {
       Map<String, Screen> mockData = {
-        'test': Screen('test', NssAlignment.vertical, []),
+        'test': Screen('test', 'test_flow', NssAlignment.vertical, []),
       };
 
       await tester.pumpWidget(
@@ -47,7 +47,7 @@ void main() {
 
     testWidgets('NssLayoutBuilder screen without children', (WidgetTester tester) async {
       Map<String, Screen> mockData = {
-        'test': Screen('test', NssAlignment.vertical, []),
+        'test': Screen('test', 'test_flow', NssAlignment.vertical, []),
       };
 
       await tester.pumpWidget(
@@ -65,7 +65,7 @@ void main() {
 
     testWidgets('NssLayoutBuilder with appbar', (WidgetTester tester) async {
       var mockData = {
-        'test': Screen('test', NssAlignment.vertical, [NssWidgetData(textKey: 'test label', type: NssWidgetType.label),],
+        'test': Screen('test', 'test_flow', NssAlignment.vertical, [NssWidgetData(textKey: 'test label', type: NssWidgetType.label),],
             appBar: {'textKey': 'Test AppBar'}),
       };
 

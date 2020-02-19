@@ -21,7 +21,7 @@ class NssChannelRegistry {
 }
 
 /// Engine main actions.
-enum NssMainAction { ignition }
+enum NssMainAction { ignition, flow }
 
 extension NssMainActionExtension on NssMainAction {
   String get action {

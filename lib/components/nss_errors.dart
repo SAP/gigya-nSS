@@ -23,6 +23,12 @@ class NssRenderingErrorWidget extends StatelessWidget {
     );
   }
 
+  factory NssRenderingErrorWidget.missingFlow() {
+    return NssRenderingErrorWidget(
+      message: 'Screen must contain a flow.',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(

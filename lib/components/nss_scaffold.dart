@@ -37,6 +37,8 @@ class NssScaffoldWidget extends NssStatelessPlatformWidget {
   }
 
   Widget activityIndicator(context) {
-    return Provider.of<NssScreenViewModel>(context).isProgress() ? NssScreenProgressWidget() : Container();
+    return Provider.of<NssScreenViewModel>(context).isProgress()
+        ? NssScreenProgressWidget()
+        : Container();
   }
 }

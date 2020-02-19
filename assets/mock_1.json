@@ -5,6 +5,7 @@
     "screens": {
       "login": {
         "id": "login",
+        "flow": "login",
         "appBar": {
           "textKey": "login"
         },
@@ -33,6 +34,7 @@
       },
       "register": {
         "id": "register",
+        "flow": "register",
         "appBar": {
           "textKey": "Register"
         },
