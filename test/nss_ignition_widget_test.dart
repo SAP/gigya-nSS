@@ -12,6 +12,7 @@ import 'package:mockito/mockito.dart';
 import './nss_test_extensions.dart';
 
 void main() {
+
   group('NssIgnitionWidget widget tests', () {
     // Mock the ignition worker.
     var worker = MockWorker();

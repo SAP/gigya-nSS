@@ -1,3 +1,4 @@
+import 'package:gigya_native_screensets_engine/models/route.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_runner.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -12,8 +13,9 @@ class Screen {
   NssAlignment align;
   Map<String, dynamic> appBar;
   List<NssWidgetData> children;
+  Routing routing;
 
-  Screen(this.id, this.flow, this.align, this.children, {this.appBar});
+  Screen(this.id, this.flow, this.align, this.children, this.routing, {this.appBar});
 
   factory Screen.fromJson(Map<String, dynamic> json) => _$ScreenFromJson(json);
 

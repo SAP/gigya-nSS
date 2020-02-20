@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/nss_registry.dart';
 import 'package:gigya_native_screensets_engine/services/nss_api_service.dart';
-import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-class MockApiChannel extends Mock implements MethodChannel {}
-
 void main() {
+
   group('Request with api channel tests', () {
     test('Tes successfuly request', () {
       runApp(MaterialApp(home: Container()));

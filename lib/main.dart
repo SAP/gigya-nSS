@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         );
       },
       worker: IgnitionWorker(),
-      useMockData: false,
+      useMockData: true,
     );
   }
 }

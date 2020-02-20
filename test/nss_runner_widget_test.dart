@@ -8,12 +8,19 @@ import 'package:gigya_native_screensets_engine/nss_runner.dart';
 import './nss_test_extensions.dart';
 
 void main() {
+  final routing = MockRouting();
+
   group('NssLayoutBuilder widget tests', () {
     testWidgets('NssLayoutBuilder simple element', (WidgetTester tester) async {
       Map<String, Screen> mockData = {
-        'test': Screen('test', 'test_flow', NssAlignment.vertical, [
-          NssWidgetData(textKey: 'test label', type: NssWidgetType.label),
-        ])
+        'test': Screen(
+            'test',
+            'test_flow',
+            NssAlignment.vertical,
+            [
+              NssWidgetData(textKey: 'test label', type: NssWidgetType.label),
+            ],
+            routing)
       };
 
       await tester.pumpWidget(
@@ -29,7 +36,13 @@ void main() {
 
     testWidgets('NssLayoutBuilder without screen', (WidgetTester tester) async {
       Map<String, Screen> mockData = {
-        'test': Screen('test', 'test_flow', NssAlignment.vertical, []),
+        'test': Screen(
+          'test',
+          'test_flow',
+          NssAlignment.vertical,
+          [],
+          routing,
+        ),
       };
 
       await tester.pumpWidget(
@@ -47,7 +60,13 @@ void main() {
 
     testWidgets('NssLayoutBuilder screen without children', (WidgetTester tester) async {
       Map<String, Screen> mockData = {
-        'test': Screen('test', 'test_flow', NssAlignment.vertical, []),
+        'test': Screen(
+          'test',
+          'test_flow',
+          NssAlignment.vertical,
+          [],
+          routing,
+        ),
       };
 
       await tester.pumpWidget(
@@ -65,7 +84,14 @@ void main() {
 
     testWidgets('NssLayoutBuilder with appbar', (WidgetTester tester) async {
       var mockData = {
-        'test': Screen('test', 'test_flow', NssAlignment.vertical, [NssWidgetData(textKey: 'test label', type: NssWidgetType.label),],
+        'test': Screen(
+            'test',
+            'test_flow',
+            NssAlignment.vertical,
+            [
+              NssWidgetData(textKey: 'test label', type: NssWidgetType.label),
+            ],
+            routing,
             appBar: {'textKey': 'Test AppBar'}),
       };
 

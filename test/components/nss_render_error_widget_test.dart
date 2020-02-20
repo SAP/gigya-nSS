@@ -6,10 +6,7 @@ import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import '../nss_test_extensions.dart';
 
-class MockScreenStateBloc extends Mock implements NssScreenViewModel { }
-
 void main() {
-
   final screenStateBloc = MockScreenStateBloc();
 
   group('Error widget factory tests', () {
@@ -23,8 +20,7 @@ void main() {
       expect(textFinder, findsOneWidget);
     });
 
-    testWidgets('Testing missing children in screen factory constructor',
-        (WidgetTester tester) async {
+    testWidgets('Testing missing children in screen factory constructor', (WidgetTester tester) async {
       var widget = MaterialApp(home: NssRenderingErrorWidget.screenWithNotChildren());
 
       await tester.pumpWidget(widget);
@@ -35,7 +31,7 @@ void main() {
 
     testWidgets('Testing error in screen', (WidgetTester tester) async {
       Provider.debugCheckInvalidValueType = null;
-      
+
       var widget = MultiProvider(
         providers: [
           Provider<NssScreenViewModel>(create: (_) => screenStateBloc),
