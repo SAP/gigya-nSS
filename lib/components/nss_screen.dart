@@ -27,20 +27,16 @@ class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorat
     super.initState();
 
     _requestFlowCoordinationSupport();
+    _registerToNavigationStream();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<NssScreenViewModel>(
-      create: (_) => NssScreenViewModel(
-        widget.screen.id,
-      ),
-      child: NssScaffoldWidget(
-        appBarTitle: widget.screen.appBar != null ? widget.screen.appBar['textKey'] ?? '' : '',
-        body: NssFormWidget(
-          screenId: widget.screen.id,
-          layoutForm: widget.layoutScreen,
-        ),
+    return NssScaffoldWidget(
+      appBarTitle: widget.screen.appBar != null ? widget.screen.appBar['textKey'] ?? '' : '',
+      body: NssFormWidget(
+        screenId: widget.screen.id,
+        layoutForm: widget.layoutScreen,
       ),
     );
   }
@@ -51,5 +47,11 @@ class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorat
     if (!coordinated) {
       nssLogger.d('Failed to initiate flow coordination');
     }
+  }
+
+  _registerToNavigationStream() {
+    Provider.of<NssScreenViewModel>(context, listen: false).navigationStream.stream.listen((route) {
+      Navigator.pushNamed(context, route);
+    });
   }
 }

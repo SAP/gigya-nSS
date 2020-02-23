@@ -2,17 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
 import 'package:gigya_native_screensets_engine/models/main.dart';
-import 'package:gigya_native_screensets_engine/nss_registry.dart';
-import 'package:gigya_native_screensets_engine/utils/debug.dart';
-
-typedef Widget Layout(Main main, String initialRoute);
+import 'package:gigya_native_screensets_engine/nss_router.dart';
 
 class NssApp extends NssStatelessPlatformWidget {
-  final Layout layout;
   final Main markup;
-  final String initialRoute;
 
-  NssApp(this.layout, this.markup, this.initialRoute);
+  NssApp(this.markup);
 
   @override
   Widget buildCupertinoWidget(BuildContext context) {
@@ -23,14 +18,8 @@ class NssApp extends NssStatelessPlatformWidget {
   @override
   Widget buildMaterialWidget(BuildContext context) {
     return MaterialApp(
-      home: registry.isMock
-          ? Stack(
-              children: <Widget>[
-                layout(markup, initialRoute),
-                NssDebugDecorWidget(),
-              ],
-            )
-          : layout(markup, initialRoute),
+      initialRoute: markup.initialRoute,
+      onGenerateRoute: Router(main: markup).generateRoute,
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/components/nss_app.dart';
 import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
+import 'package:gigya_native_screensets_engine/models/routing.dart';
 import 'package:gigya_native_screensets_engine/models/spark.dart';
 import 'package:gigya_native_screensets_engine/nss_registry.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
@@ -16,13 +17,11 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 /// the necessary initialization data/configuration and determine the actual theme of the main app along
 /// with obtaining & parsing the main JSON data.
 class NssIgnitionWidget extends StatelessWidget {
-  final Layout layoutScreenSet;
   final bool useMockData;
   final IgnitionWorker worker;
 
   NssIgnitionWidget({
     Key key,
-    @required this.layoutScreenSet,
     @required this.worker,
     this.useMockData = false,
   }) : super(key: key) {
@@ -49,7 +48,7 @@ class NssIgnitionWidget extends StatelessWidget {
           nssLogger.d('Initial route = $initialRoute');
 
           // Create application widget.
-          return NssApp(layoutScreenSet, snapshot.data.markup, initialRoute);
+          return NssApp(snapshot.data.markup);
         } else {
           return Container(
             color: Color(0xFFFFFFFF),
@@ -58,6 +57,8 @@ class NssIgnitionWidget extends StatelessWidget {
       },
     );
   }
+
+  createGeneratedRoutes(Map<String, Routing> routingMap) {}
 }
 
 class IgnitionWorker {
@@ -69,7 +70,7 @@ class IgnitionWorker {
   }
 
   Future<String> _ignitionFromMock() async {
-    return AssetUtils.jsonFromAssets('assets/mock_1.json');
+    return AssetUtils.jsonFromAssets('assets/mock_2.json');
   }
 
   Future<String> _ignitionFromChannel() async {

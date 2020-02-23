@@ -1,49 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 import 'package:gigya_native_screensets_engine/components/nss_screen.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_factory.dart';
+import 'package:provider/provider.dart';
 
 import './utils/extensions.dart';
 
 enum NssAlignment { vertical, horizontal }
 
 class NssScreenBuilder {
-  final String _screenId;
+  final Screen screen;
 
-  NssScreenBuilder(this._screenId);
+  NssScreenBuilder(this.screen);
 
   /// Main rendering action providing screen map & requested screen id.
-  Widget build(Map<String, Screen> screenMap) {
-    // Must contain the screen unique id.
-    if (screenMap.unavailable(_screenId)) {
-      return NssRenderingErrorWidget.routeMissMatch();
-    }
-
+  Widget build() {
     // Must contain the children tag.
-    if (screenMap[_screenId].children.isNullOrEmpty()) {
+    if (screen.children.isNullOrEmpty()) {
       return NssRenderingErrorWidget.screenWithNotChildren();
     }
 
     // Must contain a flow.
-    if (screenMap[_screenId].flow.isNullOrEmpty()) {
+    if (screen.flow.isNullOrEmpty()) {
       return NssRenderingErrorWidget.missingFlow();
     }
 
     return _buildScreen(
-      screenMap[_screenId], // Screen instance.
-      _buildWidgets(screenMap[_screenId].children), // List<Widget> children.
+      screen, // Screen instance.
+      _buildWidgets(screen.children), // List<Widget> children.
     );
   }
 
   /// Layout the screen widget.
   /// Create the root [NssScreenWidget] screen instance.
   Widget _buildScreen(Screen screen, List<Widget> list) {
-    return NssScreenWidget(
-      screen: screen,
-      layoutScreen: () => _groupBy(screen.align, list), // Form layout must begin with a view group.
+    return ChangeNotifierProvider<NssScreenViewModel>(
+      create: (_) => NssScreenViewModel(
+        screen.id,
+      ),
+      child: NssScreenWidget(
+        screen: screen,
+        layoutScreen: () => _groupBy(screen.align, list), // Form layout must begin with a view group.
+      ),
     );
   }
 
