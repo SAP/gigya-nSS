@@ -17,17 +17,12 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 /// the necessary initialization data/configuration and determine the actual theme of the main app along
 /// with obtaining & parsing the main JSON data.
 class NssIgnitionWidget extends StatelessWidget {
-  final bool useMockData;
   final IgnitionWorker worker;
 
   NssIgnitionWidget({
     Key key,
     @required this.worker,
-    this.useMockData = false,
-  }) : super(key: key) {
-    // Set mock global value.
-    registry.isMock = useMockData;
-  }
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
