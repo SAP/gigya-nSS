@@ -4,13 +4,15 @@ import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
 import 'package:provider/provider.dart';
 
-typedef Widget LayoutNssForm();
-
 class NssFormWidget extends StatefulWidget {
   final String screenId;
-  final LayoutNssForm layoutForm;
+  final Widget child;
 
-  const NssFormWidget({Key key, @required this.screenId, @required this.layoutForm}) : super(key: key);
+  const NssFormWidget({
+    Key key,
+    @required this.screenId,
+    @required this.child,
+  }) : super(key: key);
 
   @override
   _NssFormWidgetState createState() => _NssFormWidgetState();
@@ -30,7 +32,6 @@ class _NssFormWidgetState extends State<NssFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: Need to pass the screen action sink to the form block to allow it to communicate with the screen bloc.
     return Provider(
       create: (_) => NssFormBloc(
         _formKey,
@@ -39,7 +40,7 @@ class _NssFormWidgetState extends State<NssFormWidget> {
       ),
       child: Form(
         key: _formKey,
-        child: widget.layoutForm(),
+        child: widget.child,
       ),
     );
   }

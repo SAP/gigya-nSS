@@ -8,22 +8,7 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    _registerDependencies();
-    return NssIgnitionWidget(
-      worker: IgnitionWorker(),
-    );
+    NssContainer().register();
+    return NssInjector().use<NssIgnitionWidget>(NssIgnitionWidget);
   }
-}
-
-_registerDependencies() {
-  NssInjector()
-      .register(
-        NssConfig,
-        (inj) => NssConfig(isMock: true), // Don't forget to update remove this val when compiling the library!!.
-      )
-      .register(
-        NssChannels,
-        (inj) => NssChannels(),
-      )
-      .register(NssIgnitionWidget, (inj) {}, singleton: false);
 }

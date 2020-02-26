@@ -9,6 +9,10 @@ extension StringExt on String {
   bool isNullOrEmpty() {
     return this == null || this.isEmpty;
   }
+
+  bool isAvailable() {
+    return !isNullOrEmpty();
+  }
 }
 
 /// Extension for [Map] !containsKey

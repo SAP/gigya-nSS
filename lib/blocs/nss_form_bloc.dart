@@ -6,6 +6,8 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 class NssFormBloc {
   final String _screenId;
 
+  String get screenId => _screenId;
+
   /// Reference saved to trigger form validation.
   final GlobalKey<FormState> _formKey;
 
@@ -14,10 +16,14 @@ class NssFormBloc {
 
   NssFormBloc(this._formKey, this._screenId, this._screenSink);
 
-  String get screenId => _screenId;
+  final NssFormModel _inputModel = NssFormModel();
+
+  NssFormModel get model => _inputModel;
 
   /// Trigger cross form validation.
   bool validateForm() => _formKey.currentState.validate();
+
+  void _saveForm() => _formKey.currentState.save();
 
   /// A map that will hold all relevant widget global keys.
   /// This way any widget in the form tree can access its adjacent widgets.
@@ -53,13 +59,11 @@ class NssFormBloc {
     if (validateForm()) {
       nssLogger.d('Form validations passed');
 
-      Map<String, String> submission = {};
+      // Request form save state.
+      _saveForm();
 
       // Gather inputs.
-      if (_inputKeyMap.isNotEmpty) {
-        _populateInputSubmissions(submission);
-      }
-      //TODO: Gather additional input from future widgets here.
+      Map<String, String> submission = _inputModel._inputData;
 
       _screenSink?.add(
         ScreenEvent(
@@ -69,17 +73,17 @@ class NssFormBloc {
       );
     }
   }
+}
 
-  /// Populate [submission] map with all relevant text inputs.
-  _populateInputSubmissions(Map submission) {
-    _inputKeyMap.forEach(
-      (id, key) {
-        // Just in case.
-        if (key.currentWidget is TextFormField) {
-          submission[id] = (key.currentWidget as TextFormField).controller?.text?.trim();
-        }
-      },
-    );
+class NssFormModel {
+  final _inputData = Map<String, String>();
+
+  addInput(key, String input) {
+    _inputData[key] = input;
+  }
+
+  String getInputFor(key) {
+    return _inputData[key];
   }
 }
 

@@ -1,27 +1,46 @@
-//TODO: Placeholder class for dynamic routing generation using "onGenerateRoute" option.
-//TODO: reference: "https://medium.com/flutter-community/clean-navigation-in-flutter-using-generated-routes-891bd6e000df"
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/models/main.dart';
-import 'package:gigya_native_screensets_engine/nss_registry.dart';
-import 'package:gigya_native_screensets_engine/nss_runner.dart';
+import 'package:gigya_native_screensets_engine/models/screen.dart';
+import 'package:gigya_native_screensets_engine/nss_configuration.dart';
+import 'package:gigya_native_screensets_engine/nss_factory.dart';
 
 class Router {
-  final Main main;
+  final NssConfig config;
+  final NssChannels channels;
+  final NssWidgetFactory widgetFactory;
 
-  Router({@required this.main});
+  Router({
+    @required this.config,
+    @required this.channels,
+    @required this.widgetFactory,
+  });
 
   Route<dynamic> generateRoute(RouteSettings settings) {
-    var urlSplit = settings.name.split('/');
-    var nextRoute = urlSplit.length > 1 ? main.routing[urlSplit[0]].routes[urlSplit[1]] : urlSplit[0];
+    var nextRoute = getNextRoute(settings.name);
 
-    if (nextRoute == 'dismiss') {
-      registry.channels.mainChannel.invokeMethod('dismiss');
-      return null;
+    if (shouldDismiss(nextRoute)) {
+      return dismissEngine();
     }
+    return MaterialPageRoute(builder: (_) => widgetFactory.createScreen(nextScreen(nextRoute)));
+  }
 
-    var screen = main.screens[nextRoute];
+  String getNextRoute(String name) {
+    var urlSplit = name.split('/');
+    return urlSplit.length > 1 ? config.main.routing[urlSplit[0]].routes[urlSplit[1]] : urlSplit[0];
+  }
+
+  bool shouldDismiss(String nextRoute) {
+    return nextRoute == 'dismiss';
+  }
+
+  MaterialPageRoute dismissEngine() {
+    channels.mainChannel.invokeMethod('dismiss');
+    return MaterialPageRoute(builder: (_) => Container());
+  }
+
+  Screen nextScreen(String nextRoute) {
+    var screen = config.main.screens[nextRoute];
     screen.id = nextRoute;
-    return MaterialPageRoute(builder: (_) => NssScreenBuilder(screen).build());
+    return screen;
   }
 }

@@ -7,8 +7,8 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 enum NssScreenState { idle, progress, error }
 
 class NssScreenViewModel with ChangeNotifier {
-  final String id;
-  final ApiService apiBloc = ApiService();
+  String id;
+  final ApiService apiService;
 
   NssScreenState _state = NssScreenState.idle;
 
@@ -21,7 +21,7 @@ class NssScreenViewModel with ChangeNotifier {
 
   Sink get streamEventSink => _screenEvents.sink;
 
-  NssScreenViewModel(this.id) {
+  NssScreenViewModel(this.apiService) {
     // Register action steam.
     _registerScreenActionsStream();
   }
@@ -76,7 +76,7 @@ class NssScreenViewModel with ChangeNotifier {
   sendApi(String method, Map<String, dynamic> parameters) {
     setProgress();
 
-    apiBloc.send(method, parameters).then((result) {
+    apiService.send(method, parameters).then((result) {
       if (result.isSuccess()) {
         setIdle();
         nssLogger.d('Api request success: ${result.data.toString()}');

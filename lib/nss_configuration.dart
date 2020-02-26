@@ -1,10 +1,13 @@
 import 'package:flutter/services.dart';
 
+import 'models/main.dart';
+
 class NssConfig {
   bool isMock = false;
   bool isPlatformAware = false;
+  Main main;
 
-  NssConfig({this.isMock, this.isPlatformAware});
+  NssConfig({this.isMock, this.isPlatformAware, this.main});
 }
 
 class NssChannels {
