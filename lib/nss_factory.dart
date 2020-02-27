@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_actions.dart';
 import 'package:gigya_native_screensets_engine/components/nss_form.dart';
@@ -33,7 +34,7 @@ class NssWidgetFactory {
   Widget createScreen(Screen screen) {
     return ChangeNotifierProvider<NssScreenViewModel>(
       create: (_) {
-        NssScreenViewModel viewModel = NssInjector().use(NssScreenViewModel);
+        final NssScreenViewModel viewModel = NssInjector().use(NssScreenViewModel);
         viewModel.id = screen.id;
         return viewModel;
       },
@@ -59,7 +60,12 @@ class NssWidgetFactory {
   }
 
   Widget createForm(Screen screen) {
-    return NssFormWidget(screenId: screen.id, child: _buildScreenRootWidget(screen));
+    final NssFormBloc formBloc = NssInjector().use(NssFormBloc);
+    return NssFormWidget(
+      screenId: screen.id,
+      child: _buildScreenRootWidget(screen),
+      bloc: formBloc,
+    );
   }
 
   Widget create(NssWidgetType type, NssWidgetData data) {

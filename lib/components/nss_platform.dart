@@ -2,7 +2,6 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/nss_registry.dart';
 
 /// Abstract platform aware [StatelessWidget] for Material & Cupertino.
 abstract class NssPlatformWidget extends StatelessWidget {

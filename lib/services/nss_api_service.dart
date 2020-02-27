@@ -1,15 +1,19 @@
-import 'package:flutter/services.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:gigya_native_screensets_engine/models/api.dart';
-import 'package:gigya_native_screensets_engine/nss_registry.dart';
+import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 class ApiService {
-  final MethodChannel _api = registry.channels.apiChannel;
+  final NssChannels channels;
 
-  final _defaultTimeout = 60;
+  final _defaultTimeout = 30;
+
+  ApiService({
+    @required this.channels,
+  });
 
   Future<ApiBaseResult> send(String method, Map<String, dynamic> params) async {
-    return await _api.invokeMapMethod(method, params).then((map) {
+    return await channels.apiChannel.invokeMapMethod(method, params).then((map) {
       //TODO: Add try/catch for parsing error.
       final dataMap = map.cast<String, dynamic>();
       final result = ApiBaseResult.fromJson(dataMap);

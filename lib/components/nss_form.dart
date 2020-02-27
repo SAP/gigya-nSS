@@ -7,11 +7,13 @@ import 'package:provider/provider.dart';
 class NssFormWidget extends StatefulWidget {
   final String screenId;
   final Widget child;
+  final NssFormBloc bloc;
 
   const NssFormWidget({
     Key key,
     @required this.screenId,
     @required this.child,
+    @required this.bloc,
   }) : super(key: key);
 
   @override
@@ -33,15 +35,18 @@ class _NssFormWidgetState extends State<NssFormWidget> {
   @override
   Widget build(BuildContext context) {
     return Provider(
-      create: (_) => NssFormBloc(
-        _formKey,
-        widget.screenId,
-        Provider.of<NssScreenViewModel>(context).streamEventSink,
-      ),
+      create: (_) => _provideBloc(),
       child: Form(
         key: _formKey,
         child: widget.child,
       ),
     );
+  }
+
+  NssFormBloc _provideBloc() {
+    widget.bloc.formKey = _formKey;
+    widget.bloc.screenId = widget.screenId;
+    widget.bloc.screenSink = Provider.of<NssScreenViewModel>(context).streamEventSink;
+    return widget.bloc;
   }
 }

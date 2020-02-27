@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/services.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -28,7 +30,7 @@ class ApiBaseResult {
       statusCode: 500,
       errorCode: int.parse(error.code),
       errorMessage: error.message,
-      data: error.details.cast<String, dynamic>(),
+      data: jsonDecode(error.details).cast<String, dynamic>(),
     );
   }
 

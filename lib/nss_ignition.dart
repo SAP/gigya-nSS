@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/components/nss_app.dart';
 import 'package:gigya_native_screensets_engine/models/spark.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
-import 'package:gigya_native_screensets_engine/nss_registry.dart';
 import 'package:gigya_native_screensets_engine/nss_router.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
@@ -20,12 +20,14 @@ import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 class NssIgnitionWidget extends StatelessWidget {
   final IgnitionWorker worker;
   final NssConfig config;
+  final NssChannels channels;
   final Router router;
 
   NssIgnitionWidget({
     Key key,
     @required this.worker,
     @required this.config,
+    @required this.channels,
     @required this.router,
   }) : super(key: key);
 
@@ -53,6 +55,10 @@ class NssIgnitionWidget extends StatelessWidget {
     if (spark.initialRoute.isAvailable()) {
       config.main.initialRoute = spark.initialRoute;
     }
+
+    // Notify native that we are ready to display. Pre-warm up done.
+    readyForDisplay();
+
     return NssApp(config: config, router: router);
   }
 
@@ -62,6 +68,17 @@ class NssIgnitionWidget extends StatelessWidget {
       color: Colors.white,
       child: Center(child: CircularProgressIndicator()),
     ));
+  }
+
+  void readyForDisplay() {
+    if (config.isMock) {
+      return;
+    }
+    try {
+      channels.ignitionChannel.invokeMethod<void>(IgnitionChannelAction.ready_for_display.action);
+    } on MissingPluginException catch (ex) {
+      nssLogger.e('Missing channel connection: check mock state?');
+    }
   }
 }
 
@@ -73,8 +90,12 @@ Spark ignite(String json) {
 
 class IgnitionWorker {
   final NssConfig config;
+  final NssChannels channels;
 
-  IgnitionWorker(this.config);
+  IgnitionWorker({
+    @required this.config,
+    @required this.channels,
+  });
 
   @visibleForTesting
   Future<Spark> spark() async {
@@ -87,6 +108,6 @@ class IgnitionWorker {
   }
 
   Future<String> _ignitionFromChannel() async {
-    return registry.channels.mainChannel.invokeMethod<String>(NssMainAction.ignition.action);
+    return channels.ignitionChannel.invokeMethod<String>(IgnitionChannelAction.ignition.action);
   }
 }

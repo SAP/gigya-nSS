@@ -8,7 +8,6 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    NssContainer().register();
-    return NssInjector().use<NssIgnitionWidget>(NssIgnitionWidget);
+    return NssContainer().startEngine();
   }
 }

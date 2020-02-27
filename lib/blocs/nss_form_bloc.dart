@@ -4,40 +4,24 @@ import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 class NssFormBloc {
-  final String _screenId;
+  final NssFormModel model;
 
-  String get screenId => _screenId;
+  NssFormBloc({
+    @required this.model,
+  });
+
+  String screenId;
 
   /// Reference saved to trigger form validation.
-  final GlobalKey<FormState> _formKey;
+  GlobalKey<FormState> formKey;
 
   /// Stream sink used to communicate (one way) with the screen bloc. Can be null.
-  final Sink<ScreenEvent> _screenSink;
-
-  NssFormBloc(this._formKey, this._screenId, this._screenSink);
-
-  final NssFormModel _inputModel = NssFormModel();
-
-  NssFormModel get model => _inputModel;
+  Sink<ScreenEvent> screenSink;
 
   /// Trigger cross form validation.
-  bool validateForm() => _formKey.currentState.validate();
+  bool validateForm() => formKey.currentState.validate();
 
-  void _saveForm() => _formKey.currentState.save();
-
-  /// A map that will hold all relevant widget global keys.
-  /// This way any widget in the form tree can access its adjacent widgets.
-  /// Simple example is the submission action.
-  final Map<String, GlobalKey> _inputKeyMap = {};
-
-  Map<String, GlobalKey> get inputMap => _inputKeyMap;
-
-  GlobalKey keyFor(id) => _inputKeyMap[id];
-
-  /// Add id/globalKey pair of the form's child widget.
-  /// This is used to keep track of the current state of the child widget and allow global
-  /// access for business logic.
-  addInputWith(key, {String forId}) => _inputKeyMap[forId] = key;
+  void _saveForm() => formKey.currentState.save();
 
   /// Instantiate and validate a specific input value.
   /// Validation [forType] is set using the widget's type parameter.
@@ -63,9 +47,9 @@ class NssFormBloc {
       _saveForm();
 
       // Gather inputs.
-      Map<String, String> submission = _inputModel._inputData;
+      Map<String, String> submission = model._inputData;
 
-      _screenSink?.add(
+      screenSink?.add(
         ScreenEvent(
           ScreenAction.submit,
           {'api': action, 'params': submission},

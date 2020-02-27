@@ -1,5 +1,5 @@
+import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
-import 'package:gigya_native_screensets_engine/components/nss_app.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:gigya_native_screensets_engine/nss_ignition.dart';
@@ -46,18 +46,24 @@ class NssInjector {
 }
 
 class NssContainer {
-  void register() {
+  NssIgnitionWidget startEngine() {
     NssInjector()
-        .register(NssConfig, (ioc) => NssConfig(isMock: true), singleton: true)
+        .register(NssConfig, (ioc) => NssConfig(isMock: false), singleton: true)
         .register(NssChannels, (ioc) => NssChannels(), singleton: true)
-        .register(ApiService, (ioc) => ApiService());
-    NssInjector().register(NssWidgetFactory, (ioc) {
+        .register(NssFormModel, (ioc) => NssFormModel());
+    NssInjector().register(NssFormBloc, (ioc) {
+      NssFormModel model = ioc.use(NssFormModel);
+      return NssFormBloc(model: model);
+    }).register(NssWidgetFactory, (ioc) {
       NssConfig config = ioc.use(NssConfig);
       NssChannels channels = ioc.use(NssChannels);
       return NssWidgetFactory(
         config: config,
         channels: channels,
       );
+    }).register(ApiService, (ioc) {
+      NssChannels channels = ioc.use(NssChannels);
+      return ApiService(channels: channels);
     }).register(
       NssScreenViewModel,
       (ioc) {
@@ -76,20 +82,26 @@ class NssContainer {
       IgnitionWorker,
       (ioc) {
         NssConfig config = ioc.use(NssConfig);
-        return IgnitionWorker(config);
+        NssChannels channels = ioc.use(NssChannels);
+        return IgnitionWorker(config: config, channels: channels);
       },
     ).register(
       NssIgnitionWidget,
       (ioc) {
         NssConfig config = ioc.use(NssConfig);
         IgnitionWorker iw = ioc.use(IgnitionWorker);
+        NssChannels channels = ioc.use(NssChannels);
         Router router = ioc.use(Router);
         return NssIgnitionWidget(
           worker: iw,
           config: config,
+          channels: channels,
           router: router,
         );
       },
     );
+
+    // Return ignition.
+    return NssInjector().use(NssIgnitionWidget);
   }
 }

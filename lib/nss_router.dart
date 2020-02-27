@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_factory.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 class Router {
   final NssConfig config;
@@ -34,7 +36,14 @@ class Router {
   }
 
   MaterialPageRoute dismissEngine() {
-    channels.mainChannel.invokeMethod('dismiss');
+    if (config.isMock) {
+      return MaterialPageRoute(builder: (_) => Container());
+    }
+    try {
+      channels.screenChannel.invokeMethod('dismiss');
+    } on MissingPluginException catch (ex) {
+      nssLogger.e('Missing channel connection: check mock state?');
+    }
     return MaterialPageRoute(builder: (_) => Container());
   }
 

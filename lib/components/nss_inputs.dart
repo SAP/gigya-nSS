@@ -78,7 +78,7 @@ class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget> with
   }
 
   void _onSave({String input}) {
-    bloc.model.addInput(widget.data.id, input);
+    bloc.model.addInput(widget.data.id, input.trim());
   }
 
   /// Validate input according to instance type.
