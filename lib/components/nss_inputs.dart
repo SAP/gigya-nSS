@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
+import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
@@ -11,32 +12,38 @@ import 'package:provider/provider.dart';
 //region TextInput
 
 class NssTextInputWidget extends StatefulWidget {
+  final NssConfig config;
   final NssWidgetData data;
 
-  const NssTextInputWidget({Key key, @required this.data}) : super(key: key);
+  const NssTextInputWidget({
+    Key key,
+    @required this.config,
+    @required this.data,
+  }) : super(key: key);
 
   @override
-  _NssTextInputWidgetState createState() => _NssTextInputWidgetState();
+  _NssTextInputWidgetState createState() => _NssTextInputWidgetState(
+        isPlatformAware: config.isPlatformAware,
+      );
 }
 
-class _NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInputWidget>
-    with NssWidgetDecorationMixin {
+class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget> with NssWidgetDecorationMixin {
+  _NssTextInputWidgetState({
+    @required this.isPlatformAware,
+  }) : super(isPlatformAware: isPlatformAware);
+
+  final bool isPlatformAware;
   final TextEditingController _textEditingController = TextEditingController();
 
   GlobalKey wKey;
+  NssFormBloc bloc;
 
   @override
   void initState() {
     super.initState();
 
     nssLogger.d('Rendering NssTextInputWidget with id: ${widget.data.id}');
-
-    // Create and register a global key for input field in order to allow global editing reference.
-    wKey = GlobalKey(debugLabel: '$runtimeType with widget id : ${widget.data.id}');
-
-    // Register the widget's global key/id to the form block to allow reference tracking.
-    // This is intended for submission logic usage.
-    Provider.of<NssFormBloc>(context, listen: false).addInputWith(wKey, forId: widget.data.id);
+    bloc = Provider.of<NssFormBloc>(context, listen: false);
   }
 
   @override
@@ -54,10 +61,8 @@ class _NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInp
   @override
   Widget buildMaterialWidget(BuildContext context) {
     return Padding(
-      //TODO: Using default padding.
       padding: defaultPadding(),
       child: TextFormField(
-        key: wKey,
         obscureText: widget.data.type == NssWidgetType.password,
         controller: _textEditingController,
         decoration: InputDecoration(hintText: widget.data.textKey),
@@ -65,13 +70,20 @@ class _NssTextInputWidgetState extends NssStatefulPlatformWidgetState<NssTextInp
           //TODO: Take in mind that we will need to think how we will be injecting custom field validations here as well.
           return _validateField(input);
         },
+        onSaved: (s) {
+          _onSave(input: s);
+        },
       ),
     );
   }
 
+  void _onSave({String input}) {
+    bloc.model.addInput(widget.data.id, input.trim());
+  }
+
   /// Validate input according to instance type.
   String _validateField(input) {
-    var validated = Provider.of<NssFormBloc>(context, listen: false).validate(input, forType: widget.data.type.name);
+    var validated = bloc.validate(input, forType: widget.data.type.name);
 
     switch (validated) {
       case NssInputValidation.failed:

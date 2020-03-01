@@ -4,13 +4,19 @@ import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
 import 'package:gigya_native_screensets_engine/components/nss_progress.dart';
+import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:provider/provider.dart';
 
-class NssScaffoldWidget extends NssStatelessPlatformWidget {
+class NssScaffoldWidget extends NssPlatformWidget {
+  final NssConfig config;
   final String appBarTitle;
   final Widget body;
 
-  NssScaffoldWidget({this.appBarTitle, this.body});
+  NssScaffoldWidget({
+    @required this.config,
+    @required this.appBarTitle,
+    @required this.body,
+  }): super(isPlatformAware: config.isPlatformAware);
 
   @override
   Widget buildCupertinoWidget(BuildContext context) {
@@ -38,7 +44,7 @@ class NssScaffoldWidget extends NssStatelessPlatformWidget {
 
   Widget activityIndicator(context) {
     return Provider.of<NssScreenViewModel>(context).isProgress()
-        ? NssScreenProgressWidget()
+        ? NssScreenProgressWidget(config: config)
         : Container();
   }
 }

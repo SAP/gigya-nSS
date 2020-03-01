@@ -1,5 +1,5 @@
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'package:gigya_native_screensets_engine/nss_runner.dart';
+import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'screen.g.dart';
@@ -12,8 +12,9 @@ class Screen {
   NssAlignment align;
   Map<String, dynamic> appBar;
   List<NssWidgetData> children;
+  Map<String, String> routing;
 
-  Screen(this.id, this.flow, this.align, this.children,  {this.appBar});
+  Screen(this.id, this.flow, this.align, this.children,  {this.appBar, this.routing});
 
   factory Screen.fromJson(Map<String, dynamic> json) => _$ScreenFromJson(json);
 

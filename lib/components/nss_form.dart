@@ -4,13 +4,17 @@ import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
 import 'package:provider/provider.dart';
 
-typedef Widget LayoutNssForm();
-
 class NssFormWidget extends StatefulWidget {
   final String screenId;
-  final LayoutNssForm layoutForm;
+  final Widget child;
+  final NssFormBloc bloc;
 
-  const NssFormWidget({Key key, @required this.screenId, @required this.layoutForm}) : super(key: key);
+  const NssFormWidget({
+    Key key,
+    @required this.screenId,
+    @required this.child,
+    @required this.bloc,
+  }) : super(key: key);
 
   @override
   _NssFormWidgetState createState() => _NssFormWidgetState();
@@ -30,17 +34,19 @@ class _NssFormWidgetState extends State<NssFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: Need to pass the screen action sink to the form block to allow it to communicate with the screen bloc.
     return Provider(
-      create: (_) => NssFormBloc(
-        _formKey,
-        widget.screenId,
-        Provider.of<NssScreenViewModel>(context).streamEventSink,
-      ),
+      create: (_) => _provideBloc(),
       child: Form(
         key: _formKey,
-        child: widget.layoutForm(),
+        child: widget.child,
       ),
     );
+  }
+
+  NssFormBloc _provideBloc() {
+    widget.bloc.formKey = _formKey;
+    widget.bloc.screenId = widget.screenId;
+    widget.bloc.screenSink = Provider.of<NssScreenViewModel>(context).streamEventSink;
+    return widget.bloc;
   }
 }

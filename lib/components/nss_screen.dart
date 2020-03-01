@@ -1,30 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
-import 'package:gigya_native_screensets_engine/components/nss_form.dart';
-import 'package:gigya_native_screensets_engine/components/nss_scaffold.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
-import 'package:gigya_native_screensets_engine/nss_registry.dart';
+import 'package:gigya_native_screensets_engine/nss_configuration.dart';
+import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:provider/provider.dart';
 
-typedef Widget LayoutNssScreen();
-
 class NssScreenWidget extends StatefulWidget {
-  final LayoutNssScreen layoutScreen;
   final Screen screen;
+  final NssConfig config;
+  final NssChannels channels;
+  final NssWidgetFactory widgetFactory;
 
-  const NssScreenWidget({Key key, @required this.screen, @required this.layoutScreen}) : super(key: key);
+  const NssScreenWidget({
+    Key key,
+    @required this.screen,
+    @required this.config,
+    @required this.channels,
+    @required this.widgetFactory,
+  }) : super(key: key);
 
   @override
   _NssScreenWidgetState createState() => _NssScreenWidgetState();
 }
 
 class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorationMixin {
+  NssScreenViewModel viewModel;
+
   @override
   void initState() {
     super.initState();
+
+    // Reference view model.
+    viewModel = Provider.of<NssScreenViewModel>(context, listen: false);
 
     _requestFlowCoordinationSupport();
     _registerToNavigationStream();
@@ -32,25 +43,29 @@ class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorat
 
   @override
   Widget build(BuildContext context) {
-    return NssScaffoldWidget(
-      appBarTitle: widget.screen.appBar != null ? widget.screen.appBar['textKey'] ?? '' : '',
-      body: NssFormWidget(
-        screenId: widget.screen.id,
-        layoutForm: widget.layoutScreen,
-      ),
-    );
+    return widget.widgetFactory.createScaffold(widget.screen);
   }
 
   /// Every screen requires a flow coordinator to be initiated in the native side.
   _requestFlowCoordinationSupport() async {
-    bool coordinated = await registry.channels.mainChannel.invokeMethod<bool>('flow', {"flowId": widget.screen.flow});
-    if (!coordinated) {
-      nssLogger.d('Failed to initiate flow coordination');
+    if (widget.config.isMock) {
+      return;
+    }
+    try {
+      bool coordinated = await widget.channels.screenChannel.invokeMethod<bool>(
+        'flow',
+        {'flowId': widget.screen.flow},
+      );
+      if (!coordinated) {
+        nssLogger.d('Failed to initiate flow coordination');
+      }
+    } on MissingPluginException catch (ex) {
+      nssLogger.e('Missing channel connection: check mock state?');
     }
   }
 
   _registerToNavigationStream() {
-    Provider.of<NssScreenViewModel>(context, listen: false).navigationStream.stream.listen((route) {
+    viewModel.navigationStream.stream.listen((route) {
       Navigator.pushNamed(context, route);
     });
   }

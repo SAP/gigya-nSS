@@ -4,34 +4,24 @@ import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 class NssFormBloc {
-  final String _screenId;
+  final NssFormModel model;
+
+  NssFormBloc({
+    @required this.model,
+  });
+
+  String screenId;
 
   /// Reference saved to trigger form validation.
-  final GlobalKey<FormState> _formKey;
+  GlobalKey<FormState> formKey;
 
   /// Stream sink used to communicate (one way) with the screen bloc. Can be null.
-  final Sink<ScreenEvent> _screenSink;
-
-  NssFormBloc(this._formKey, this._screenId, this._screenSink);
-
-  String get screenId => _screenId;
+  Sink<ScreenEvent> screenSink;
 
   /// Trigger cross form validation.
-  bool validateForm() => _formKey.currentState.validate();
+  bool validateForm() => formKey.currentState.validate();
 
-  /// A map that will hold all relevant widget global keys.
-  /// This way any widget in the form tree can access its adjacent widgets.
-  /// Simple example is the submission action.
-  final Map<String, GlobalKey> _inputKeyMap = {};
-
-  Map<String, GlobalKey> get inputMap => _inputKeyMap;
-
-  GlobalKey keyFor(id) => _inputKeyMap[id];
-
-  /// Add id/globalKey pair of the form's child widget.
-  /// This is used to keep track of the current state of the child widget and allow global
-  /// access for business logic.
-  addInputWith(key, {String forId}) => _inputKeyMap[forId] = key;
+  void _saveForm() => formKey.currentState.save();
 
   /// Instantiate and validate a specific input value.
   /// Validation [forType] is set using the widget's type parameter.
@@ -53,15 +43,13 @@ class NssFormBloc {
     if (validateForm()) {
       nssLogger.d('Form validations passed');
 
-      Map<String, String> submission = {};
+      // Request form save state.
+      _saveForm();
 
       // Gather inputs.
-      if (_inputKeyMap.isNotEmpty) {
-        _populateInputSubmissions(submission);
-      }
-      //TODO: Gather additional input from future widgets here.
+      Map<String, String> submission = model._inputData;
 
-      _screenSink?.add(
+      screenSink?.add(
         ScreenEvent(
           ScreenAction.submit,
           {'api': action, 'params': submission},
@@ -69,17 +57,17 @@ class NssFormBloc {
       );
     }
   }
+}
 
-  /// Populate [submission] map with all relevant text inputs.
-  _populateInputSubmissions(Map submission) {
-    _inputKeyMap.forEach(
-      (id, key) {
-        // Just in case.
-        if (key.currentWidget is TextFormField) {
-          submission[id] = (key.currentWidget as TextFormField).controller?.text?.trim();
-        }
-      },
-    );
+class NssFormModel {
+  final _inputData = Map<String, String>();
+
+  addInput(key, String input) {
+    _inputData[key] = input;
+  }
+
+  String getInputFor(key) {
+    return _inputData[key];
   }
 }
 

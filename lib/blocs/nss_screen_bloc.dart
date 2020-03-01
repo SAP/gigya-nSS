@@ -7,9 +7,16 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 enum NssScreenState { idle, progress, error }
 
 class NssScreenViewModel with ChangeNotifier {
-  final String id;
-  final ApiService apiBloc = ApiService();
+  final ApiService apiService;
 
+  NssScreenViewModel(this.apiService) {
+    // Register action steam.
+    _registerScreenActionsStream();
+  }
+
+  String id;
+
+  // Screen state.
   NssScreenState _state = NssScreenState.idle;
 
   String _errorText;
@@ -20,11 +27,6 @@ class NssScreenViewModel with ChangeNotifier {
   final StreamController navigationStream = StreamController<String>();
 
   Sink get streamEventSink => _screenEvents.sink;
-
-  NssScreenViewModel(this.id) {
-    // Register action steam.
-    _registerScreenActionsStream();
-  }
 
   /// Start listening for [ScreenEvent] action [ScreenAction] events.
   /// Events are propagated bottom up and are available for all child components.
@@ -51,7 +53,6 @@ class NssScreenViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-
   setProgress() {
     nssLogger.d('Screen with id: $id setProgress');
     _state = NssScreenState.progress;
@@ -76,13 +77,12 @@ class NssScreenViewModel with ChangeNotifier {
   sendApi(String method, Map<String, dynamic> parameters) {
     setProgress();
 
-    apiBloc.send(method, parameters).then((result) {
+    apiService.send(method, parameters).then((result) {
       if (result.isSuccess()) {
         setIdle();
         nssLogger.d('Api request success: ${result.data.toString()}');
 
         navigationStream.sink.add('$id/success');
-
       } else {
         setError(result.errorMessage);
         nssLogger.d('Api request error: ${result.errorMessage}');
