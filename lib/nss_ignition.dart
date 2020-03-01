@@ -31,20 +31,22 @@ class NssIgnitionWidget extends StatelessWidget {
     @required this.router,
   }) : super(key: key);
 
-  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: worker.spark(),
       builder: (context, AsyncSnapshot<Spark> snapshot) {
         if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-          nssLogger.d('connection state - done');
+          nssLogger.d('ignition - state - done');
           return prepareApp(snapshot.data);
         } else {
-          nssLogger.d('connection state - else');
           return onPreparingApp();
         }
       },
     );
+  }
+
+  getSpark() async {
+    Spark spark = await worker.spark();
   }
 
   Widget prepareApp(Spark spark) {
@@ -55,25 +57,25 @@ class NssIgnitionWidget extends StatelessWidget {
     if (spark.initialRoute.isAvailable()) {
       config.main.initialRoute = spark.initialRoute;
     }
-
     // Notify native that we are ready to display. Pre-warm up done.
     readyForDisplay();
-
-    return NssApp(config: config, router: router);
+    return Container(
+      color: Colors.white,
+      child: NssApp(config: config, router: router),
+    );
   }
 
   Widget onPreparingApp() {
-    return Material(
-        child: Container(
-      color: Colors.white,
-      child: Center(child: CircularProgressIndicator()),
-    ));
+    return Container(
+      color: Colors.transparent,
+    );
   }
 
   void readyForDisplay() {
     if (config.isMock) {
       return;
     }
+    nssLogger.d('Ignition - invoke ready for display');
     try {
       channels.ignitionChannel.invokeMethod<void>(IgnitionChannelAction.ready_for_display.action);
     } on MissingPluginException catch (ex) {
@@ -104,7 +106,7 @@ class IgnitionWorker {
   }
 
   Future<String> _ignitionFromMock() async {
-    return AssetUtils.jsonFromAssets('assets/mock_2.json');
+    return AssetUtils.jsonFromAssets('assets/mock_1.json');
   }
 
   Future<String> _ignitionFromChannel() async {

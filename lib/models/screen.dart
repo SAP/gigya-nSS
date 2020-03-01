@@ -12,8 +12,9 @@ class Screen {
   NssAlignment align;
   Map<String, dynamic> appBar;
   List<NssWidgetData> children;
+  Map<String, String> routing;
 
-  Screen(this.id, this.flow, this.align, this.children,  {this.appBar});
+  Screen(this.id, this.flow, this.align, this.children,  {this.appBar, this.routing});
 
   factory Screen.fromJson(Map<String, dynamic> json) => _$ScreenFromJson(json);
 

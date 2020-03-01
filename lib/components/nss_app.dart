@@ -23,6 +23,7 @@ class NssApp extends NssPlatformWidget {
   @override
   Widget buildMaterialWidget(BuildContext context) {
     return MaterialApp(
+      color: Colors.white,
       initialRoute: config.main.initialRoute,
       onGenerateRoute: router.generateRoute,
     );

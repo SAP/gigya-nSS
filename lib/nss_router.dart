@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -20,16 +22,47 @@ class Router {
   Route<dynamic> generateRoute(RouteSettings settings) {
     var nextRoute = getNextRoute(settings.name);
 
+    if (nextRoute == null) {
+      //TODO: Should show a rendering error for the client.
+      nssLogger.e('Failed to parse routing for name: ${settings.name}');
+    }
+
     if (shouldDismiss(nextRoute)) {
       return dismissEngine();
     }
+
     return MaterialPageRoute(builder: (_) => widgetFactory.createScreen(nextScreen(nextRoute)));
   }
 
   String getNextRoute(String name) {
     var urlSplit = name.split('/');
-    return urlSplit.length > 1 ? config.main.routing[urlSplit[0]].routes[urlSplit[1]] : urlSplit[0];
+    if (urlSplit.length > 1) {
+      // Look for routing in the routing map of the screen.
+      // If value does not exist use default routing.
+      Screen screen = config.main.screens[urlSplit[0]];
+      if (screen == null) {
+        // In this case we must display and error to the client.
+        return null;
+      }
+      Map screenRouting = screen.routing;
+      if (screenRouting == null) {
+        // Search for route in default routing map.
+        return getNextRouteFromDefaultRouting(urlSplit[1]);
+      }
+      String route = screenRouting[urlSplit[1]];
+      if (route == null) {
+        // Search for route in default routing map.
+        return getNextRouteFromDefaultRouting(urlSplit[1]);
+      }
+      return route;
+    }
+    return urlSplit[0];
   }
+
+  String getNextRouteFromDefaultRouting(String name) {
+    return config.main.defaultRouting[name];
+  }
+
 
   bool shouldDismiss(String nextRoute) {
     return nextRoute == 'dismiss';
@@ -52,4 +85,5 @@ class Router {
     screen.id = nextRoute;
     return screen;
   }
+
 }
