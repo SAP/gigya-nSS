@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:gigya_native_screensets_engine/models/screen.dart';
+import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:gigya_native_screensets_engine/nss_router.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -60,6 +63,15 @@ void main() {
       when(config.main).thenReturn(main);
       when(main.screens).thenReturn({'login': screen});
       when(main.defaultRouting).thenReturn({'fail': 'dismiss'});
+      when(screen.routing).thenReturn(null);
+      nextRoute = router.getNextRoute('login/fail');
+      expect('dismiss', nextRoute);
+    });
+
+    test('getNextRoute: 2 level success (backup default routing)', () async {
+      when(config.main).thenReturn(main);
+      when(main.screens).thenReturn({'login': screen});
+      when(main.defaultRouting).thenReturn({'fail': 'dismiss'});
       when(screen.routing).thenReturn({'success': 'dismiss'});
       nextRoute = router.getNextRoute('login/fail');
       expect('dismiss', nextRoute);
@@ -97,6 +109,28 @@ void main() {
       when(config.isMock).thenReturn(true);
       MaterialPageRoute route = router.generateRoute(settings);
       expect(route.settings.name, 'dismiss');
+    });
+
+    test('generateRoute: nextRoute = dismiss, isMock = false', () async {
+      var settings = RouteSettings(
+        arguments: null,
+        isInitialRoute: false,
+        name: 'dismiss',
+      );
+      when(config.isMock).thenReturn(false);
+      when(channels.screenChannel).thenReturn(channel);
+      when(channel.invokeMethod('dismiss')).thenThrow(MissingPluginException);
+      expect(() => router.generateRoute(settings), throwsA(MissingPluginException));
+    });
+
+    test('nextScreen: ', () async {
+      // Creating fake Screen instance.
+      var fakeScreen = Screen(null, 'flow', NssAlignment.vertical, [], appBar: {}, routing: {});
+      when(config.main).thenReturn(main);
+      when(main.screens).thenReturn({'login': fakeScreen});
+      var nextRoute = 'login';
+      var sc = router.nextScreen(nextRoute);
+      expect(sc.id, 'login');
     });
   });
 }

@@ -18,7 +18,6 @@ class Router {
     @required this.widgetFactory,
   });
 
-  @visibleForTesting
   Route<dynamic> generateRoute(RouteSettings settings) {
     var nextRoute = getNextRoute(settings.name);
 
@@ -100,6 +99,7 @@ class Router {
     );
   }
 
+  @visibleForTesting
   Screen nextScreen(String nextRoute) {
     var screen = config.main.screens[nextRoute];
     screen.id = nextRoute;

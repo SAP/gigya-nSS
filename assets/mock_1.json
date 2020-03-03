@@ -3,12 +3,12 @@
   "markup": {
     "initialRoute" : "register",
     "defaultRouting": {
-
+      "success" : "dismiss"
     },
     "screens": {
       "login": {
         "routing" : {
-
+          "success": "dismiss"
         },
         "flow": "login",
         "appBar": {

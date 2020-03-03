@@ -6,10 +6,9 @@ part 'spark.g.dart';
 @JsonSerializable(anyMap: true)
 class Spark {
   bool platformAware;
-  String initialRoute;
   Main markup;
 
-  Spark(this.platformAware, this.markup, {this.initialRoute});
+  Spark(this.platformAware, this.markup);
 
   factory Spark.fromJson(Map<String, dynamic> json) => _$SparkFromJson(json);
 

@@ -11,7 +11,6 @@ import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_router.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
-import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 
 /// Engine initialization root widget.
 /// The Main purpose of this widget is to open a channel to the native code in order to obtain all
@@ -49,11 +48,6 @@ class NssIgnitionWidget extends StatelessWidget {
   Widget prepareApp(Spark spark) {
     config.main = spark.markup;
     config.isPlatformAware = spark.platformAware ?? false;
-    // Check spark object for initialRoute. If exists, it should overwrite the initial route
-    // set in the markup object which is used to generate the dynamic routes.
-    if (spark.initialRoute.isAvailable()) {
-      config.main.initialRoute = spark.initialRoute;
-    }
     // Notify native that we are ready to display. Pre-warm up done.
     readyForDisplay();
     return Container(
@@ -82,12 +76,6 @@ class NssIgnitionWidget extends StatelessWidget {
   }
 }
 
-/// Top level function for the spark computation.
-/// Compute can only take top-level functions in order to correctly open the isolate.
-Spark ignite(String json) {
-  return Spark.fromJson(jsonDecode(json));
-}
-
 class IgnitionWorker {
   final NssConfig config;
   final NssChannels channels;
@@ -100,14 +88,14 @@ class IgnitionWorker {
   @visibleForTesting
   Future<Spark> spark() async {
     var fetchData = config.isMock ? await _ignitionFromMock() : await _ignitionFromChannel();
-    return compute(ignite, fetchData);
+    return Spark.fromJson(fetchData.cast<String, dynamic>());
   }
 
-  Future<String> _ignitionFromMock() async {
-    return AssetUtils.jsonFromAssets('assets/mock_1.json');
+  Future<Map<dynamic, dynamic>> _ignitionFromMock() async {
+    return jsonDecode(await AssetUtils.jsonFromAssets('assets/mock_1.json'));
   }
 
-  Future<String> _ignitionFromChannel() async {
-    return channels.ignitionChannel.invokeMethod<String>(IgnitionChannelAction.ignition.action);
+  Future<Map<dynamic, dynamic>> _ignitionFromChannel() async {
+    return channels.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(IgnitionChannelAction.ignition.action);
   }
 }
