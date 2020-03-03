@@ -1,5 +1,4 @@
 import 'package:gigya_native_screensets_engine/nss_ignition.dart';
-import 'package:gigya_native_screensets_engine/nss_registry.dart';
 import 'package:test/test.dart';
 
 void main() {

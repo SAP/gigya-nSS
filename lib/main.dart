@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gigya_native_screensets_engine/nss_configuration.dart';
-import 'package:gigya_native_screensets_engine/nss_ignition.dart';
 import 'package:gigya_native_screensets_engine/nss_injector.dart';
 
 void main() => runApp(MyApp());
