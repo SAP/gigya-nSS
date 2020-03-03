@@ -1,137 +1,40 @@
-import 'dart:async';
-
-import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
-import 'package:gigya_native_screensets_engine/components/nss_actions.dart';
-import 'package:gigya_native_screensets_engine/components/nss_inputs.dart';
-import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'package:gigya_native_screensets_engine/nss_factory.dart';
+import 'package:gigya_native_screensets_engine/components/nss_form.dart';
+import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
+import '../nss_test_extensions.dart';
+
 void main() {
-  var formKey = GlobalKey<FormState>();
+  MockFormBloc bloc = MockFormBloc();
+  MockNssScreenViewModel viewModel = MockNssScreenViewModel();
+  var mockScreenId = "mockId";
 
-  /// Widget group.
-  group('NssForm widget tests', () {
-    var inputEmail = NssTextInputWidget(
-      data: NssWidgetData(
-        id: 'email',
-        type: NssWidgetType.email,
-        textKey: 'email',
-      ),
-    );
+  var child = Container(
+    child: Center(
+      child: Text('Mock text', textDirection: TextDirection.ltr),
+    ),
+  );
 
-    var inputPassword = NssTextInputWidget(
-      data: NssWidgetData(
-        id: 'password',
-        type: NssWidgetType.password,
-        textKey: 'password',
-      ),
-    );
+  group('NssForm: ', () {
 
-    testWidgets('NssForm build test', (WidgetTester tester) async {
-      var bloc = NssFormBloc(formKey, 'screen-id', null);
-
-      var widget = Provider(
-        create: (_) => bloc,
-        child: Form(
-          key: formKey,
-          child: Column(
-            children: <Widget>[
-              inputEmail,
-              inputPassword,
-            ],
-          ),
+    testWidgets('Instantiation: ', (WidgetTester tester) async {
+      // Instantiate.
+      var form = ChangeNotifierProvider(
+        create: (_) => viewModel,
+        child: NssFormWidget(
+          child: child,
+          screenId: mockScreenId,
+          bloc: bloc,
         ),
       );
 
-      await tester.pumpWidget(MaterialApp(home: Scaffold(body: widget)));
+      when(viewModel.streamEventSink).thenReturn(null);
+      await tester.pumpWidget(form);
 
-      expect(bloc.keyFor('email'), isNotNull);
-      expect(bloc.keyFor('password'), isNotNull);
-    });
-
-    testWidgets('NssForm build, interact and submit test', (WidgetTester tester) async {
-      var screenSteamMock = StreamController<ScreenEvent>();
-      var bloc = NssFormBloc(formKey, 'screen-id', screenSteamMock.sink);
-
-      var widget = Provider(
-        create: (_) => bloc,
-        child: Form(
-          key: formKey,
-          child: Column(
-            children: <Widget>[
-              inputEmail,
-              inputPassword,
-            ],
-          ),
-        ),
-      );
-
-      await tester.pumpWidget(MaterialApp(home: Scaffold(body: widget)));
-
-      final emailKey = bloc.keyFor('email');
-      final passwordKey = bloc.keyFor('password');
-
-      await tester.enterText(find.byKey(emailKey), 'test@email.com');
-      await tester.enterText(find.byKey(passwordKey), 'iossucks');
-
-      screenSteamMock.stream.listen((event) {
-        print(event.action.toString());
-        expect(event.data['api'], 'accounts.register');
-        expect(event.data['params'], {'email': 'test@email.com', 'password': 'iossucks'});
-
-        // Close the stream.
-        screenSteamMock.close();
-      });
-
-      bloc.onFormSubmissionWith(action: 'accounts.register');
-    });
-
-    testWidgets('NssForm build, interact and submit with action widget test', (WidgetTester tester) async {
-      var screenSteamMock = StreamController<ScreenEvent>();
-      var bloc = NssFormBloc(formKey, 'screen-id', screenSteamMock.sink);
-
-      var action = NssSubmitWidget(
-        data: NssWidgetData(
-          id: 'email',
-          api: 'accounts.login',
-          textKey: 'email',
-        ),
-      );
-
-      var widget = Provider(
-        create: (_) => bloc,
-        child: Form(
-          key: formKey,
-          child: Column(
-            children: <Widget>[
-              inputEmail,
-              action
-            ],
-          ),
-        ),
-      );
-
-      await tester.pumpWidget(MaterialApp(home: Scaffold(body: widget)));
-
-      final emailKey = bloc.keyFor('email');
-
-      await tester.enterText(find.byKey(emailKey), 'test@email.com');
-
-      await tester.tap(find.byWidget(action));
-
-      screenSteamMock.stream.listen((event) {
-        print(event.action.toString());
-        expect(event.data['api'], 'accounts.login');
-        expect(event.data['params'], {'email': 'test@email.com'});
-
-        // Close the stream.
-        screenSteamMock.close();
-      });
+      final textFinder = find.textContains('Mock text');
+      expect(textFinder, findsOneWidget);
     });
   });
 }

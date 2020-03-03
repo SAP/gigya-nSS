@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/nss_router.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
-import './nss_test_extensions.dart';
+
+import 'nss_test_extensions.dart';
 
 void main() {
   group('Router unit: ', () {

@@ -45,10 +45,7 @@ class NssIgnitionWidget extends StatelessWidget {
     );
   }
 
-  getSpark() async {
-    Spark spark = await worker.spark();
-  }
-
+  @visibleForTesting
   Widget prepareApp(Spark spark) {
     config.main = spark.markup;
     config.isPlatformAware = spark.platformAware ?? false;
@@ -65,6 +62,7 @@ class NssIgnitionWidget extends StatelessWidget {
     );
   }
 
+  @visibleForTesting
   Widget onPreparingApp() {
     return Container(
       color: Colors.transparent,

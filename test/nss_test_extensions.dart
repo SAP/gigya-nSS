@@ -8,6 +8,7 @@ import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:gigya_native_screensets_engine/nss_ignition.dart';
+import 'package:gigya_native_screensets_engine/nss_router.dart';
 import 'package:mockito/mockito.dart';
 
 //region Test extensions
@@ -34,7 +35,7 @@ class MockNssChannels extends Mock implements NssChannels {}
 
 class MockWidgetFactory extends Mock implements NssWidgetFactory {}
 
-class MockWorker extends Mock implements IgnitionWorker {}
+class MockIgnitionWorker extends Mock implements IgnitionWorker {}
 
 class MockApiChannel extends Mock implements MethodChannel {}
 
@@ -48,7 +49,11 @@ class MockScreen extends Mock implements Screen {}
 
 class MockMethodChannel extends Mock implements MethodChannel {}
 
+class MockRouter extends Mock implements Router {}
+
+class MockNssScreenViewModel extends Mock implements NssScreenViewModel {}
+
 // ignore: must_be_immutable
-class MockRouteSettings extends Mock implements RouteSettings { }
+class MockRouteSettings extends Mock implements RouteSettings {}
 
 //endregion
