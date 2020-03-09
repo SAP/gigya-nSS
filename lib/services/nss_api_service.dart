@@ -21,7 +21,7 @@ class ApiService {
       return result;
     }).catchError((error) {
       nssLogger.d('Invocation error with: ${error.message}');
-      return ApiBaseResult.platformException(error);
+      return throw ApiBaseResult.platformException(error);
     }).timeout(Duration(seconds: _defaultTimeout), onTimeout: () {
       return ApiBaseResult.timedOut();
     });

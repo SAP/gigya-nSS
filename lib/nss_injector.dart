@@ -48,7 +48,7 @@ class NssInjector {
 class NssContainer {
   NssIgnitionWidget startEngine() {
     NssInjector()
-        .register(NssConfig, (ioc) => NssConfig(isMock: false), singleton: true)
+        .register(NssConfig, (ioc) => NssConfig(isMock: true), singleton: true)
         .register(NssChannels, (ioc) => NssChannels(), singleton: true)
         .register(NssFormModel, (ioc) => NssFormModel());
     NssInjector().register(NssFormBloc, (ioc) {

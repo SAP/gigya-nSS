@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
@@ -16,7 +18,7 @@ class NssScaffoldWidget extends NssPlatformWidget {
     @required this.config,
     @required this.appBarTitle,
     @required this.body,
-  }): super(isPlatformAware: config.isPlatformAware);
+  }) : super(isPlatformAware: config.isPlatformAware);
 
   @override
   Widget buildCupertinoWidget(BuildContext context) {
@@ -29,6 +31,10 @@ class NssScaffoldWidget extends NssPlatformWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(appBarTitle),
+        leading:  Platform.isIOS ? IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pushNamed(context, "dismiss"),
+        ) : null,
       ),
       body: SafeArea(
         child: Stack(

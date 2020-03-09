@@ -21,9 +21,6 @@ class ApiBaseResult {
 
   Map<String, dynamic> toJson() => _$ApiBaseResultToJson(this);
 
-  /// check the result status.
-  bool isSuccess() => errorCode == 0;
-
   /// Platform exception factory constructor.
   factory ApiBaseResult.platformException(PlatformException error) {
     return ApiBaseResult(

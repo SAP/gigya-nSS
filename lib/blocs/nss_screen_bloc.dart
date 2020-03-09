@@ -78,17 +78,13 @@ class NssScreenViewModel with ChangeNotifier {
     setProgress();
 
     apiService.send(method, parameters).then((result) {
-      if (result.isSuccess()) {
-        setIdle();
-        nssLogger.d('Api request success: ${result.data.toString()}');
+      setIdle();
+      nssLogger.d('Api request success: ${result.data.toString()}');
 
-        navigationStream.sink.add('$id/success');
-      } else {
-        setError(result.errorMessage);
-        nssLogger.d('Api request error: ${result.errorMessage}');
-      }
+      navigationStream.sink.add('$id/success');
     }).catchError((error) {
       setError(error.errorMessage);
+      nssLogger.d('Api request error: ${error.errorMessage}');
     });
   }
 
