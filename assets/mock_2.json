@@ -1,22 +1,16 @@
 {
   "platformAware": false,
   "markup": {
-    "initialRoute" : "register",
-    "routing": {
-      "login": {
-        "routes": {
-          "success": "dismiss"
-        }
-      },
-      "register": {
-        "routes" : {
-          "success": "dismiss"
-        }
-      }
+    "initialRoute": "register",
+    "defaultRouting": {
+      "success": "dismiss"
     },
     "screens": {
       "login": {
-        "flow": "login",
+        "routing": {
+          "success": "dismiss"
+        },
+        "action": "login",
         "appBar": {
           "textKey": "login"
         },
@@ -27,24 +21,26 @@
             "textKey": "login with site credentials:"
           },
           {
-            "id": "loginID",
+            "bind": "loginID",
             "type": "email",
             "textKey": "Email"
           },
           {
-            "id": "password",
+            "bind": "password",
             "type": "password",
             "textKey": "Password"
           },
           {
             "type": "submit",
-            "textKey": "Submit",
-            "api": "accounts.login"
+            "textKey": "Submit"
           }
         ]
       },
       "register": {
-        "flow": "registration",
+        "routing": {
+          "success": "dismiss"
+        },
+        "action": "register",
         "appBar": {
           "textKey": "Register"
         },
@@ -55,29 +51,18 @@
             "textKey": "Register with site credentials:"
           },
           {
-            "id": "email",
+            "bind": "email",
             "type": "email",
             "textKey": "Email"
           },
           {
-            "id": "password",
+            "bind": "password",
             "type": "password",
             "textKey": "Password"
           },
           {
             "type": "submit",
-            "textKey": "Submit",
-            "api": "accounts.register"
-          }
-        ]
-      },
-      "test": {
-        "flow": "test",
-        "stack": "vertical",
-        "children": [
-          {
-            "type": "label",
-            "textKey": "Test routing widget"
+            "textKey": "Submit"
           }
         ]
       }

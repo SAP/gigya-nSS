@@ -1,13 +1,13 @@
 {
   "platformAware": false,
   "markup": {
-    "initialRoute" : "register",
+    "initialRoute": "register",
     "defaultRouting": {
-      "success" : "dismiss"
+      "success": "dismiss"
     },
     "screens": {
       "login": {
-        "routing" : {
+        "routing": {
           "success": "dismiss"
         },
         "flow": "login",
@@ -38,7 +38,7 @@
         ]
       },
       "register": {
-        "routing" : {
+        "routing": {
           "success": "dismiss"
         },
         "flow": "register",
@@ -60,6 +60,11 @@
             "id": "password",
             "type": "password",
             "textKey": "Password"
+          },
+          {
+            "id": "password",
+            "type": "password",
+            "textKey": "Verify password"
           },
           {
             "type": "submit",

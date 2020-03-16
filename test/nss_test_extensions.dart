@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
-import 'package:gigya_native_screensets_engine/models/main.dart';
+import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_factory.dart';
@@ -44,7 +44,7 @@ class MockScreenStateBloc extends Mock implements NssScreenViewModel {}
 
 class MockFormBloc extends Mock implements NssFormBloc {}
 
-class MockMain extends Mock implements Main {}
+class MockMain extends Mock implements Markup {}
 
 class MockScreen extends Mock implements Screen {}
 

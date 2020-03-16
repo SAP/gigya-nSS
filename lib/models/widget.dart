@@ -5,14 +5,14 @@ part 'widget.g.dart';
 
 @JsonSerializable(anyMap: true)
 class NssWidgetData {
-  String id;
+  String bind;
   NssWidgetType type;
   String textKey;
   NssAlignment stack;
   List<NssWidgetData> children;
   String api;
 
-  NssWidgetData({this.textKey, this.type, this.id, this.children, this.stack, this.api});
+  NssWidgetData({this.textKey, this.type, this.bind, this.children, this.stack, this.api});
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);
 

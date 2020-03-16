@@ -46,25 +46,34 @@ class NssInjector {
 }
 
 class NssContainer {
-  NssIgnitionWidget startEngine() {
+  NssIgnitionWidget startEngine({bool asMock = false}) {
     NssInjector()
-        .register(NssConfig, (ioc) => NssConfig(isMock: true), singleton: true)
+        .register(NssConfig, (ioc) => NssConfig(isMock: asMock), singleton: true)
         .register(NssChannels, (ioc) => NssChannels(), singleton: true)
         .register(NssFormModel, (ioc) => NssFormModel());
-    NssInjector().register(NssFormBloc, (ioc) {
-      NssFormModel model = ioc.use(NssFormModel);
-      return NssFormBloc(model: model);
-    }).register(NssWidgetFactory, (ioc) {
-      NssConfig config = ioc.use(NssConfig);
-      NssChannels channels = ioc.use(NssChannels);
-      return NssWidgetFactory(
-        config: config,
-        channels: channels,
-      );
-    }).register(ApiService, (ioc) {
-      NssChannels channels = ioc.use(NssChannels);
-      return ApiService(channels: channels);
-    }).register(
+    NssInjector().register(
+      NssFormBloc,
+      (ioc) {
+        NssFormModel model = ioc.use(NssFormModel);
+        return NssFormBloc(model: model);
+      },
+    ).register(
+      NssWidgetFactory,
+      (ioc) {
+        NssConfig config = ioc.use(NssConfig);
+        NssChannels channels = ioc.use(NssChannels);
+        return NssWidgetFactory(
+          config: config,
+          channels: channels,
+        );
+      },
+    ).register(
+      ApiService,
+      (ioc) {
+        NssChannels channels = ioc.use(NssChannels);
+        return ApiService(channels: channels);
+      },
+    ).register(
       NssScreenViewModel,
       (ioc) {
         ApiService api = ioc.use(ApiService);

@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-import 'models/main.dart';
+import 'models/markup.dart';
 
 class NssConfig {
   bool isMock = false;
   bool isPlatformAware = false;
-  Main main;
+  Markup main;
 
   NssConfig({this.isMock, this.isPlatformAware, this.main});
 }

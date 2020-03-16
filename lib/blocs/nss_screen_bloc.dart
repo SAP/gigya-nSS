@@ -1,10 +1,24 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/services/nss_api_service.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 enum NssScreenState { idle, progress, error }
+
+enum ScreenAction { submit, api }
+
+extension ScreenActionExt on ScreenAction {
+  String get name => describeEnum(this);
+}
+
+class ScreenEvent {
+  final ScreenAction action;
+  final Map<String, dynamic> data;
+
+  ScreenEvent(this.action, this.data);
+}
 
 class NssScreenViewModel with ChangeNotifier {
   final ApiService apiService;
@@ -23,22 +37,27 @@ class NssScreenViewModel with ChangeNotifier {
 
   String get error => _errorText;
 
-  final StreamController _screenEvents = StreamController<ScreenEvent>();
+  final StreamController<ScreenEvent> _screenEvents = StreamController<ScreenEvent>();
   final StreamController navigationStream = StreamController<String>();
 
   Sink get streamEventSink => _screenEvents.sink;
 
+  @override
+  void dispose() {
+    // Close screen event stream to avoid leaks.
+    _screenEvents.close();
+    navigationStream.close();
+    super.dispose();
+  }
+
   /// Start listening for [ScreenEvent] action [ScreenAction] events.
   /// Events are propagated bottom up and are available for all child components.
   _registerScreenActionsStream() {
-    _screenEvents.stream.listen((event) {
-      nssLogger.d('Event received with data: ${event.data.toString()}');
-
-      sendApi(event.data['api'], event.data['params']);
+    _screenEvents.stream.listen((ScreenEvent event) {
+      nssLogger.d('ScreenEvent received with action: ${event.action.name} and data: ${event.data.toString()}');
+      sendApi(event.action.name, event.data);
     });
   }
-
-  //region State management
 
   isIdle() => _state == NssScreenState.idle;
 
@@ -68,10 +87,6 @@ class NssScreenViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  //endregion
-
-  //region API handling
-
   /// Send requested API request given a String [method] and base [parameters] map.
   /// [parameter] map is not signed.
   sendApi(String method, Map<String, dynamic> parameters) {
@@ -87,23 +102,4 @@ class NssScreenViewModel with ChangeNotifier {
       nssLogger.d('Api request error: ${error.errorMessage}');
     });
   }
-
-  //endregion
-
-  @override
-  void dispose() {
-    // Close screen event stream to avoid leaks.
-    _screenEvents.close();
-    navigationStream.close();
-    super.dispose();
-  }
-}
-
-enum ScreenAction { submit, refresh }
-
-class ScreenEvent {
-  final ScreenAction action;
-  final Map<String, dynamic> data;
-
-  ScreenEvent(this.action, this.data);
 }

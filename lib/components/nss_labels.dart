@@ -23,7 +23,6 @@ class NssLabelWidget extends NssPlatformWidget with NssWidgetDecorationMixin {
 
   @override
   Widget buildMaterialWidget(BuildContext context) {
-    nssLogger.d('Rendering NssTextInputWidget with id: ${data.id}');
     return Padding(
       padding: defaultPadding(),
       child: Text(

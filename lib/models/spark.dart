@@ -1,4 +1,4 @@
-import 'package:gigya_native_screensets_engine/models/main.dart';
+import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'spark.g.dart';
@@ -6,7 +6,7 @@ part 'spark.g.dart';
 @JsonSerializable(anyMap: true)
 class Spark {
   bool platformAware;
-  Main markup;
+  Markup markup;
 
   Spark(this.platformAware, this.markup);
 

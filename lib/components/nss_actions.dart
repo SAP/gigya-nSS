@@ -39,7 +39,7 @@ class _NssSubmitWidgetState extends NssPlatformState<NssSubmitWidget> with NssWi
     super.initState();
 
     bloc = Provider.of<NssFormBloc>(context, listen: false);
-    nssLogger.d('Rendering NssSubmitWidget with id: ${widget.data.id}');
+    nssLogger.d('Rendering NssSubmitWidget with id: ${widget.data.bind}');
   }
 
   @override
@@ -67,7 +67,7 @@ class _NssSubmitWidgetState extends NssPlatformState<NssSubmitWidget> with NssWi
   /// Request form submission.
   _onSubmit() {
     // Trigger form submission.
-    bloc.onFormSubmissionWith(action: widget.data.api);
+    bloc.onFormSubmission();
   }
 }
 

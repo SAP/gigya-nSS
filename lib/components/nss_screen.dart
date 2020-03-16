@@ -54,7 +54,7 @@ class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorat
     try {
       bool coordinated = await widget.channels.screenChannel.invokeMethod<bool>(
         'flow',
-        {'flowId': widget.screen.flow},
+        {'flowId': widget.screen.action},
       );
       if (!coordinated) {
         nssLogger.d('Failed to initiate flow coordination');

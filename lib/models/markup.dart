@@ -1,17 +1,17 @@
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'main.g.dart';
+part 'markup.g.dart';
 
 @JsonSerializable(anyMap: true)
-class Main {
+class Markup {
   Map<String, Screen> screens;
   String initialRoute;
   Map<String, String> defaultRouting;
 
-  Main(this.screens, this.initialRoute, this.defaultRouting);
+  Markup(this.screens, this.initialRoute, this.defaultRouting);
 
-  factory Main.fromJson(Map<String, dynamic> json) => _$MainFromJson(json);
+  factory Markup.fromJson(Map<String, dynamic> json) => _$MarkupFromJson(json);
 
-  Map<String, dynamic> toJson() => _$MainToJson(this);
+  Map<String, dynamic> toJson() => _$MarkupToJson(this);
 }

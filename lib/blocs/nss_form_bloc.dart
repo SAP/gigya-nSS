@@ -38,8 +38,8 @@ class NssFormBloc {
   /// This is available to every submission widget.
   /// Will first trigger form validation and move on to collect all relevant data for the screen
   /// action provided in the [action] parameter.
-  onFormSubmissionWith({String action}) {
-    nssLogger.d('Submission request with action $action');
+  void onFormSubmission() {
+    nssLogger.d('Submission request for screen: $screenId');
     if (validateForm()) {
       nssLogger.d('Form validations passed');
 
@@ -52,7 +52,7 @@ class NssFormBloc {
       screenSink?.add(
         ScreenEvent(
           ScreenAction.submit,
-          {'api': action, 'params': submission},
+          {'params': submission},
         ),
       );
     }

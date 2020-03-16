@@ -42,7 +42,7 @@ class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget> with
   void initState() {
     super.initState();
 
-    nssLogger.d('Rendering NssTextInputWidget with id: ${widget.data.id}');
+    nssLogger.d('Rendering NssTextInputWidget with id: ${widget.data.bind}');
     bloc = Provider.of<NssFormBloc>(context, listen: false);
   }
 
@@ -78,7 +78,7 @@ class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget> with
   }
 
   void _onSave({String input}) {
-    bloc.model.addInput(widget.data.id, input.trim());
+    bloc.model.addInput(widget.data.bind, input.trim());
   }
 
   /// Validate input according to instance type.
