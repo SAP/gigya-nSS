@@ -5,6 +5,8 @@ import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:gigya_native_screensets_engine/nss_ignition.dart';
 import 'package:gigya_native_screensets_engine/nss_router.dart';
 import 'package:gigya_native_screensets_engine/services/nss_api_service.dart';
+import 'package:gigya_native_screensets_engine/services/nss_screen_service.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:ioc/ioc.dart';
 
 /// Wrapping an Ioc container package to avoid hard coupling the nss dependency injection.
@@ -52,6 +54,12 @@ class NssContainer {
         .register(NssChannels, (ioc) => NssChannels(), singleton: true)
         .register(NssFormModel, (ioc) => NssFormModel());
     NssInjector().register(
+      NssLogger,
+      (ioc) {
+        NssChannels channels = ioc.use(NssChannels);
+        return NssLogger(channels: channels);
+      },
+    ).register(
       NssFormBloc,
       (ioc) {
         NssFormModel model = ioc.use(NssFormModel);
@@ -74,10 +82,17 @@ class NssContainer {
         return ApiService(channels: channels);
       },
     ).register(
+      ScreenService,
+      (ioc) {
+        NssChannels channels = ioc.use(NssChannels);
+        return ScreenService(channels: channels);
+      },
+    ).register(
       NssScreenViewModel,
       (ioc) {
-        ApiService api = ioc.use(ApiService);
-        return NssScreenViewModel(api);
+        ApiService apiService = ioc.use(ApiService);
+        ScreenService screenService = ioc.use(ScreenService);
+        return NssScreenViewModel(apiService, screenService);
       },
     ).register(
       Router,

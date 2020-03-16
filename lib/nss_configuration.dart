@@ -15,6 +15,7 @@ class NssChannels {
   final MethodChannel ignitionChannel = const MethodChannel('gigya_nss_engine/method/ignition');
   final MethodChannel screenChannel = const MethodChannel('gigya_nss_engine/method/screen');
   final MethodChannel apiChannel = const MethodChannel('gigya_nss_engine/method/api');
+  final MethodChannel logChannel = const MethodChannel('gigya_nss_engine/method/log');
 }
 
 enum IgnitionChannelAction { ignition , ready_for_display }

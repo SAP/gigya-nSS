@@ -52,13 +52,7 @@ class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorat
       return;
     }
     try {
-      bool coordinated = await widget.channels.screenChannel.invokeMethod<bool>(
-        'flow',
-        {'flowId': widget.screen.action},
-      );
-      if (!coordinated) {
-        nssLogger.d('Failed to initiate flow coordination');
-      }
+      viewModel.registerFlow(widget.screen.action);
     } on MissingPluginException catch (ex) {
       nssLogger.e('Missing channel connection: check mock state?');
     }

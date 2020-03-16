@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/services/nss_api_service.dart';
+import 'package:gigya_native_screensets_engine/services/nss_screen_service.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 enum NssScreenState { idle, progress, error }
@@ -15,17 +16,22 @@ extension ScreenActionExt on ScreenAction {
 
 class ScreenEvent {
   final ScreenAction action;
-  final Map<String, dynamic> data;
+  Map<String, dynamic> data;
 
   ScreenEvent(this.action, this.data);
 }
 
 class NssScreenViewModel with ChangeNotifier {
   final ApiService apiService;
+  final ScreenService screenService;
+  Map<String, dynamic> dataMap;
 
-  NssScreenViewModel(this.apiService) {
+  NssScreenViewModel(
+    this.apiService,
+    this.screenService,
+  ) {
     // Register action steam.
-    _registerScreenActionsStream();
+    registerScreenActionsStream();
   }
 
   String id;
@@ -37,26 +43,30 @@ class NssScreenViewModel with ChangeNotifier {
 
   String get error => _errorText;
 
-  final StreamController<ScreenEvent> _screenEvents = StreamController<ScreenEvent>();
+  final StreamController<ScreenEvent> screenEvents = StreamController<ScreenEvent>();
   final StreamController navigationStream = StreamController<String>();
 
-  Sink get streamEventSink => _screenEvents.sink;
+  Sink get streamEventSink => screenEvents.sink;
 
   @override
   void dispose() {
     // Close screen event stream to avoid leaks.
-    _screenEvents.close();
+    screenEvents.close();
     navigationStream.close();
     super.dispose();
   }
 
   /// Start listening for [ScreenEvent] action [ScreenAction] events.
   /// Events are propagated bottom up and are available for all child components.
-  _registerScreenActionsStream() {
-    _screenEvents.stream.listen((ScreenEvent event) {
+  void registerScreenActionsStream() {
+    screenEvents.stream.listen((ScreenEvent event) {
       nssLogger.d('ScreenEvent received with action: ${event.action.name} and data: ${event.data.toString()}');
       sendApi(event.action.name, event.data);
     });
+  }
+
+  void registerFlow(String withAction) async {
+    dataMap = await screenService.requestFlow(withAction);
   }
 
   isIdle() => _state == NssScreenState.idle;
@@ -65,14 +75,14 @@ class NssScreenViewModel with ChangeNotifier {
 
   isError() => _state == NssScreenState.error;
 
-  setIdle() {
+  void setIdle() {
     nssLogger.d('Screen with id: $id setIdle');
     _state = NssScreenState.idle;
     _errorText = null;
     notifyListeners();
   }
 
-  setProgress() {
+  void setProgress() {
     nssLogger.d('Screen with id: $id setProgress');
     _state = NssScreenState.progress;
     _errorText = null;
@@ -80,7 +90,7 @@ class NssScreenViewModel with ChangeNotifier {
   }
 
   /// State management
-  setError(String error) {
+  void setError(String error) {
     nssLogger.d('Screen with id: $id setError with $error');
     _state = NssScreenState.error;
     _errorText = error;
@@ -89,7 +99,7 @@ class NssScreenViewModel with ChangeNotifier {
 
   /// Send requested API request given a String [method] and base [parameters] map.
   /// [parameter] map is not signed.
-  sendApi(String method, Map<String, dynamic> parameters) {
+  void sendApi(String method, Map<String, dynamic> parameters) {
     setProgress();
 
     apiService.send(method, parameters).then((result) {
