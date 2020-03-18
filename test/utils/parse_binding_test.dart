@@ -1,4 +1,4 @@
-import 'package:gigya_native_screensets_engine/blocs/nss_binding.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_binding_bloc.dart';
 import 'package:test/test.dart';
 
 
