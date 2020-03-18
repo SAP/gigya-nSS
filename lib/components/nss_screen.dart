@@ -53,14 +53,14 @@ class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorat
     }
     try {
       viewModel.registerFlow(widget.screen.action);
-    } on MissingPluginException catch (ex) {
+    } on MissingPluginException {
       nssLogger.e('Missing channel connection: check mock state?');
     }
   }
 
   _registerToNavigationStream() {
     viewModel.navigationStream.stream.listen((route) {
-      Navigator.pushNamed(context, route);
+      Navigator.pushReplacementNamed(context, route);
     });
   }
 }

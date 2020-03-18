@@ -26,7 +26,7 @@ class NssLabelWidget extends NssPlatformWidget with NssWidgetDecorationMixin {
     return Padding(
       padding: defaultPadding(),
       child: Text(
-        data.textKey,
+        data.textKey ?? '',
         //TODO: Style text here.
         style: TextStyle(),
       ),

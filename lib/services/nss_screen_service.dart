@@ -19,6 +19,6 @@ class ScreenService {
     }).timeout(Duration(seconds: _defaultTimeout), onTimeout: () {
       return {};
     });
-    return map;
+    return map.cast<String, dynamic>();
   }
 }

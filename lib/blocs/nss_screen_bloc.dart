@@ -36,13 +36,6 @@ class NssScreenViewModel with ChangeNotifier {
 
   String id;
 
-  // Screen state.
-  NssScreenState _state = NssScreenState.idle;
-
-  String _errorText;
-
-  String get error => _errorText;
-
   final StreamController<ScreenEvent> screenEvents = StreamController<ScreenEvent>();
   final StreamController navigationStream = StreamController<String>();
 
@@ -56,18 +49,28 @@ class NssScreenViewModel with ChangeNotifier {
     super.dispose();
   }
 
-  /// Start listening for [ScreenEvent] action [ScreenAction] events.
-  /// Events are propagated bottom up and are available for all child components.
   void registerScreenActionsStream() {
     screenEvents.stream.listen((ScreenEvent event) {
       nssLogger.d('ScreenEvent received with action: ${event.action.name} and data: ${event.data.toString()}');
-      sendApi(event.action.name, event.data);
+      switch (event.action) {
+        case ScreenAction.submit:
+        case ScreenAction.api:
+          sendApi(event.action.name, event.data);
+          break;
+      }
     });
   }
 
-  void registerFlow(String withAction) async {
-    dataMap = await screenService.requestFlow(withAction);
+  void registerFlow(String action) async {
+    dataMap = await screenService.requestFlow(action);
+    nssLogger.d('Flow initialized with data map');
   }
+
+  NssScreenState _state = NssScreenState.idle;
+
+  String _errorText;
+
+  String get error => _errorText;
 
   isIdle() => _state == NssScreenState.idle;
 
