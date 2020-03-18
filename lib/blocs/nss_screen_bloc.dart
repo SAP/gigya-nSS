@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_binding.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_binding_bloc.dart';
 import 'package:gigya_native_screensets_engine/services/nss_api_service.dart';
 import 'package:gigya_native_screensets_engine/services/nss_screen_service.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';

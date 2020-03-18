@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_binding.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_binding_bloc.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
