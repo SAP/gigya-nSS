@@ -44,9 +44,10 @@ class _NssFormWidgetState extends State<NssFormWidget> {
   }
 
   NssFormBloc _provideBloc() {
+    var viewModel =  Provider.of<NssScreenViewModel>(context);
     widget.bloc.formKey = _formKey;
     widget.bloc.screenId = widget.screenId;
-    widget.bloc.screenSink = Provider.of<NssScreenViewModel>(context).streamEventSink;
+    widget.bloc.screenSink = viewModel.streamEventSink;
     return widget.bloc;
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_binding.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_factory.dart';
@@ -27,7 +28,8 @@ class NssTextInputWidget extends StatefulWidget {
       );
 }
 
-class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget> with NssWidgetDecorationMixin {
+class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget>
+    with NssWidgetDecorationMixin, BindingMixin {
   _NssTextInputWidgetState({
     @required this.isPlatformAware,
   }) : super(isPlatformAware: isPlatformAware);
@@ -42,7 +44,7 @@ class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget> with
   void initState() {
     super.initState();
 
-    nssLogger.d('Rendering NssTextInputWidget with id: ${widget.data.bind}');
+    nssLogger.d('Rendering NssTextInputWidget with bind: ${widget.data.bind}');
     bloc = Provider.of<NssFormBloc>(context, listen: false);
   }
 
@@ -62,16 +64,20 @@ class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget> with
   Widget buildMaterialWidget(BuildContext context) {
     return Padding(
       padding: defaultPadding(),
-      child: TextFormField(
-        obscureText: widget.data.type == NssWidgetType.password,
-        controller: _textEditingController,
-        decoration: InputDecoration(hintText: widget.data.textKey),
-        validator: (input) {
-          //TODO: Take in mind that we will need to think how we will be injecting custom field validations here as well.
-          return _validateField(input);
-        },
-        onSaved: (s) {
-          _onSave(input: s);
+      child: Consumer<BindingModel>(
+        builder: (context, bindings, child) {
+          return TextFormField(
+            obscureText: widget.data.type == NssWidgetType.password,
+            controller: _textEditingController,
+            decoration: InputDecoration(hintText: getText(widget.data, bindings)),
+            validator: (input) {
+              //TODO: Take in mind that we will need to think how we will be injecting custom field validations here as well.
+              return _validateField(input);
+            },
+            onSaved: (s) {
+              _onSave(input: s);
+            },
+          );
         },
       ),
     );

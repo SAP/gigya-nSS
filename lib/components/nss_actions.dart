@@ -6,10 +6,7 @@ import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
-import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:provider/provider.dart';
-
-//region Submit Widget
 
 class NssSubmitWidget extends StatefulWidget {
   final NssConfig config;
@@ -39,7 +36,6 @@ class _NssSubmitWidgetState extends NssPlatformState<NssSubmitWidget> with NssWi
     super.initState();
 
     bloc = Provider.of<NssFormBloc>(context, listen: false);
-    nssLogger.d('Rendering NssSubmitWidget with id: ${widget.data.bind}');
   }
 
   @override
@@ -70,5 +66,3 @@ class _NssSubmitWidgetState extends NssPlatformState<NssSubmitWidget> with NssWi
     bloc.onFormSubmission();
   }
 }
-
-//endregion

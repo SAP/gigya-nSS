@@ -1,10 +1,9 @@
-import 'package:gigya_native_screensets_engine/helpers/binding.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_binding.dart';
 import 'package:test/test.dart';
 
-class BindMixin with BindingMixin {}
 
 void main() {
-  BindingMixin bindUtils = BindMixin();
+  BindingModel bindUtils = BindingModel();
   bindUtils.bindingData = {"UID": "123" ,"profile": {"firstName": "sagi", "lastName": "shmuel", "details": {"address": "test"}, "array": ["1stItem", "2ndItem", "3rdItem", {"props": "fuck","array": ["test", {"props": {"more": ["test","fuckagain"]}}]} ]}};
 
   group("parse value from key", () {
