@@ -11,7 +11,7 @@ class ScreenService {
   });
 
   Future<Map<String, dynamic>> requestFlow(String flowId) async {
-    var map = await channels.screenChannel.invokeMethod<Map<String, dynamic>>(
+    var map = await channels.screenChannel.invokeMethod<Map<dynamic, dynamic>>(
       'flow',
       {'flowId': flowId},
     ).catchError((error) {

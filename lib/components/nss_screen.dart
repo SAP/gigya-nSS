@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_binding.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
-import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:provider/provider.dart';
 
 class NssScreenWidget extends StatefulWidget {
@@ -29,6 +28,7 @@ class NssScreenWidget extends StatefulWidget {
 
 class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorationMixin {
   NssScreenViewModel viewModel;
+  BindingModel bindings = BindingModel();
 
   @override
   void initState() {
@@ -36,31 +36,24 @@ class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorat
 
     // Reference view model.
     viewModel = Provider.of<NssScreenViewModel>(context, listen: false);
-
-    _requestFlowCoordinationSupport();
     _registerToNavigationStream();
+    _registerFlow();
   }
 
   @override
   Widget build(BuildContext context) {
-    return widget.widgetFactory.createScaffold(widget.screen);
-  }
-
-  /// Every screen requires a flow coordinator to be initiated in the native side.
-  _requestFlowCoordinationSupport() async {
-    if (widget.config.isMock) {
-      return;
-    }
-    try {
-      viewModel.registerFlow(widget.screen.action);
-    } on MissingPluginException {
-      nssLogger.e('Missing channel connection: check mock state?');
-    }
+    return ChangeNotifierProvider<BindingModel>(
+        create: (_) => bindings, child: widget.widgetFactory.createScaffold(widget.screen));
   }
 
   _registerToNavigationStream() {
     viewModel.navigationStream.stream.listen((route) {
       Navigator.pushReplacementNamed(context, route);
     });
+  }
+
+  _registerFlow() async {
+    var screenDataMap = await viewModel.registerFlow(widget.screen.action);
+    bindings.updateWith(screenDataMap);
   }
 }

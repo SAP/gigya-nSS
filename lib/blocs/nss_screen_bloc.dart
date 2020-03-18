@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:flutter/services.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_binding.dart';
 import 'package:gigya_native_screensets_engine/services/nss_api_service.dart';
 import 'package:gigya_native_screensets_engine/services/nss_screen_service.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
@@ -24,7 +26,6 @@ class ScreenEvent {
 class NssScreenViewModel with ChangeNotifier {
   final ApiService apiService;
   final ScreenService screenService;
-  Map<String, dynamic> dataMap;
 
   NssScreenViewModel(
     this.apiService,
@@ -61,9 +62,15 @@ class NssScreenViewModel with ChangeNotifier {
     });
   }
 
-  void registerFlow(String action) async {
-    dataMap = await screenService.requestFlow(action);
-    nssLogger.d('Flow initialized with data map');
+  Future<Map<String, dynamic>> registerFlow(String action) async {
+    try {
+      var map = await screenService.requestFlow(action);
+      nssLogger.d('Screen $id flow initialized with data map');
+      return map;
+    } on MissingPluginException {
+      nssLogger.e('Missing channel connection: check mock state?');
+      return {};
+    }
   }
 
   NssScreenState _state = NssScreenState.idle;
