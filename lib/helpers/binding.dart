@@ -1,5 +1,5 @@
 
-class ParseBindingHelper {
+mixin BindingMixin {
   final int _limit = 10;
   final regExp = new RegExp(r"^(.*)[[0-9]]$");
 

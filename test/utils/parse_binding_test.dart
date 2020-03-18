@@ -1,8 +1,10 @@
-import 'package:gigya_native_screensets_engine/helpers/parse_binding.dart';
+import 'package:gigya_native_screensets_engine/helpers/binding.dart';
 import 'package:test/test.dart';
 
+class BindMixin with BindingMixin {}
+
 void main() {
-  ParseBindingHelper bindUtils = ParseBindingHelper();
+  BindingMixin bindUtils = BindMixin();
   bindUtils.bindingData = {"UID": "123" ,"profile": {"firstName": "sagi", "lastName": "shmuel", "details": {"address": "test"}, "array": ["1stItem", "2ndItem", "3rdItem", {"props": "fuck","array": ["test", {"props": {"more": ["test","fuckagain"]}}]} ]}};
 
   group("parse value from key", () {
@@ -96,7 +98,7 @@ void main() {
       expect(value, "tel aviv");
     });
 
-    test("test ds", () {
+    test("test add new value", () {
       bindUtils.bindingData = {};
 
       bindUtils.save("profile.firstName", "sagi");
