@@ -8,6 +8,7 @@ import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
+import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:provider/provider.dart';
 
 //region TextInput

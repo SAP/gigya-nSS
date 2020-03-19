@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
+import 'package:gigya_native_screensets_engine/utils/validation.dart';
 
 class NssFormBloc {
   final NssFormModel model;
@@ -21,6 +22,7 @@ class NssFormBloc {
   /// Trigger cross form validation.
   bool validateForm() => formKey.currentState.validate();
 
+  /// Trigger cross form data save.
   void _saveForm() => formKey.currentState.save();
 
   /// Instantiate and validate a specific input value.
@@ -59,6 +61,8 @@ class NssFormBloc {
   }
 }
 
+/// Form submission data model.
+/// Data will be accumulated once form [onSaved] method will be called.
 class NssFormModel {
   final _inputData = Map<String, String>();
 
@@ -70,23 +74,3 @@ class NssFormModel {
     return _inputData[key];
   }
 }
-
-//region From Validations
-
-//TODO: Validations will move to independent file later on.
-
-/// Validation options.
-enum NssInputValidation { passed, failed, na }
-
-/// Base class for all custom input validators.
-abstract class NssInputValidator {
-  bool validate(text);
-}
-
-/// Lenient email validations (accepting "+" sign for instance) using regular expressions.
-class NssEmailInputValidator extends NssInputValidator {
-  @override
-  bool validate(text) => RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(text);
-}
-
-//endregion
