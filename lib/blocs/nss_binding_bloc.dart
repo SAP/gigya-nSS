@@ -40,6 +40,10 @@ class BindingModel with ChangeNotifier {
         keys[nextKey] = arrayKey;
       } else {
         nextKey++;
+        if(nextKey > keys.length-1) {
+          return '';
+        }
+
         if (nextData[keys[nextKey]] != null) {
           nextData = nextData[keys[nextKey]];
         }
@@ -97,7 +101,8 @@ class BindingModel with ChangeNotifier {
 mixin BindingMixin {
   String getText(NssWidgetData data, BindingModel bindings) {
     if (data.bind.isAvailable()) {
-      return bindings.getValue(data.bind);
+      final value = bindings.getValue(data.bind);
+      return value.isEmpty ? data.textKey ?? '': value;
     }
     return data.textKey ?? '';
   }

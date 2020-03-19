@@ -91,7 +91,19 @@ void main() {
     });
 
     test('test item not found', () {
-      String value = bindUtils.getValue('xxx.xxx.dsds.fs');
+      String value = bindUtils.getValue('profile.xxx');
+
+      expect(value, '');
+    });
+
+    test('test item not found 2', () {
+      String value = bindUtils.getValue('sx.xxx');
+
+      expect(value, '');
+    });
+
+    test('test item not found 3', () {
+      String value = bindUtils.getValue('profile.details.csd');
 
       expect(value, '');
     });
