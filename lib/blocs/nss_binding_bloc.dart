@@ -22,13 +22,13 @@ class BindingModel with ChangeNotifier {
     var keys = key.split('.');
     var nextKey = 0;
     var nextData = bindingData[keys[nextKey]];
-    dynamic value = '';
+    dynamic value;
 
     if (keys.length >= _limit || nextData == null) {
-      return 'key not found';
+      return '';
     }
 
-    while (value.isEmpty) {
+    while (value == null) {
       if (nextData is String) {
         value = nextData;
       } else if (regExp.hasMatch(keys[nextKey])) {
@@ -36,7 +36,7 @@ class BindingModel with ChangeNotifier {
         var arrayKey = arrayKeyData[0];
         var arrayIndex = int.parse(arrayKeyData[1].replaceAll(']', ''));
 
-        nextData = arrayIndex < (nextData[arrayKey] as List).length ? nextData[arrayKey][arrayIndex] : 'key not found';
+        nextData = arrayIndex < (nextData[arrayKey] as List).length ? nextData[arrayKey][arrayIndex] : '';
         keys[nextKey] = arrayKey;
       } else {
         nextKey++;
