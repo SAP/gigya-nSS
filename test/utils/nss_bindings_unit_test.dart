@@ -3,7 +3,8 @@ import 'package:test/test.dart';
 
 void main() {
   BindingModel bindUtils = BindingModel();
-  bindUtils.bindingData = {
+
+  bindUtils.updateWith({
     'UID': '123',
     'profile': {
       'firstName': 'sagi',
@@ -26,7 +27,7 @@ void main() {
         }
       ]
     }
-  };
+  });
 
   group('parse value from key', () {
     test('get 1st value', () {
@@ -80,19 +81,19 @@ void main() {
     test('item not found in array', () {
       String value = bindUtils.getValue('profile.array[15]');
 
-      expect(value, 'key not found');
+      expect(value, '');
     });
 
     test('test limits', () {
       String value = bindUtils.getValue('profile.details.address.a.b.d.c.e.f.g.j');
 
-      expect(value, 'key not found');
+      expect(value, '');
     });
 
     test('test item not found', () {
       String value = bindUtils.getValue('xxx.xxx.dsds.fs');
 
-      expect(value, 'key not found');
+      expect(value, '');
     });
 
     test('test change 1st value', () {
@@ -120,7 +121,7 @@ void main() {
     });
 
     test('test add new value', () {
-      bindUtils.bindingData = {};
+      bindUtils.updateWith({});
 
       bindUtils.save('profile.firstName', 'sagi');
 
