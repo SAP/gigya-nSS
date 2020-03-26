@@ -67,10 +67,12 @@ class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget>
       padding: defaultPadding(),
       child: Consumer<BindingModel>(
         builder: (context, bindings, child) {
+          _textEditingController.text = getText(widget.data, bindings);
+
           return TextFormField(
             obscureText: widget.data.type == NssWidgetType.password,
             controller: _textEditingController,
-            decoration: InputDecoration(hintText: getText(widget.data, bindings)),
+            decoration: InputDecoration(hintText: widget.data.textKey),
             validator: (input) {
               //TODO: Take in mind that we will need to think how we will be injecting custom field validations here as well.
               return _validateField(input);

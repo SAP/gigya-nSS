@@ -1,7 +1,7 @@
 {
   "platformAware": false,
   "markup": {
-    "initialRoute": "register",
+    "initialRoute": "accountUpdate",
     "defaultRouting": {
       "success": "dismiss"
     },
@@ -77,13 +77,52 @@
         "stack": "vertical",
         "children": [
           {
-            "bind": "profile.firstName",
-            "type": "label"
+            "stack": "horizontal",
+            "children": [
+              {
+                "type": "label",
+                "textKey": "Hi "
+              },
+              {
+                "type": "label",
+                "bind": "profile.firstName",
+                "textKey": "name"
+              },
+              {
+                "type": "label",
+                "textKey": ""
+              }
+            ]
           },
           {
-            "bind": "profile.lastName",
+            "stack": "horizontal",
+            "children": [
+              {
+                "bind": "profile.firstName",
+                "type": "input",
+                "textKey": "First name"
+              },
+              {
+                "bind": "profile.lastName",
+                "type": "input",
+                "textKey": "Last name"
+              }
+            ]
+          },
+          {
+            "bind": "profile.email",
             "type": "input",
-            "textKey": "Last name"
+            "textKey": "Email"
+          },
+          {
+            "bind": "profile.zipcode",
+            "type": "input",
+            "textKey": "Zipcode"
+          },
+          {
+            "bind": "profile.country",
+            "type": "input",
+            "textKey": "Country"
           },
           {
             "type": "submit",

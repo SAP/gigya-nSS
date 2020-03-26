@@ -102,8 +102,8 @@ mixin BindingMixin {
   String getText(NssWidgetData data, BindingModel bindings) {
     if (data.bind.isAvailable()) {
       final value = bindings.getValue(data.bind);
-      return value.isEmpty ? data.textKey ?? '': value;
+      return value.isEmpty ?  '': value;
     }
-    return data.textKey ?? '';
+    return '';
   }
 }
