@@ -4,32 +4,38 @@ import 'package:test/test.dart';
 void main() {
   BindingModel bindUtils = BindingModel();
 
-  bindUtils.updateWith({
-    'UID': '123',
-    'profile': {
-      'firstName': 'sagi',
-      'lastName': 'shmuel',
-      'details': {'address': 'test'},
-      'array': [
-        '1stItem',
-        '2ndItem',
-        '3rdItem',
-        {
-          'props': 'fuck',
-          'array': [
-            'test',
-            {
-              'props': {
-                'more': ['test', 'fuckagain']
-              }
-            }
-          ]
-        }
-      ]
-    }
+  group('BindingModel: empty ', () {
+    bindUtils.updateWith({});
+
+    test('save new value', () {});
   });
 
-  group('parse value from key', () {
+  group('BindingModel: with preset ', () {
+    bindUtils.updateWith({
+      'UID': '123',
+      'profile': {
+        'firstName': 'sagi',
+        'lastName': 'shmuel',
+        'details': {'address': 'test'},
+        'array': [
+          '1stItem',
+          '2ndItem',
+          '3rdItem',
+          {
+            'props': 'fuck',
+            'array': [
+              'test',
+              {
+                'props': {
+                  'more': ['test', 'fuckagain']
+                }
+              }
+            ]
+          }
+        ]
+      }
+    });
+
     test('get 1st value', () {
       String value = bindUtils.getValue('UID');
 
