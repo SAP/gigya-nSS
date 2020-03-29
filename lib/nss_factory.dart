@@ -48,7 +48,7 @@ class NssWidgetFactory {
   }
 
   Widget _buildScreenRootWidget(Screen screen) {
-    return _groupBy(screen.align, _buildWidgets(screen.children, screen.align));
+    return _groupBy(screen.align, _buildWidgets(screen.children));
   }
 
   Widget createScaffold(Screen screen) {
@@ -68,7 +68,7 @@ class NssWidgetFactory {
     );
   }
 
-  Widget create(NssWidgetType type, NssWidgetData data, NssAlignment align) {
+  Widget create(NssWidgetType type, NssWidgetData data) {
     switch (type) {
       case NssWidgetType.screen:
       case NssWidgetType.label:
@@ -76,8 +76,7 @@ class NssWidgetFactory {
       case NssWidgetType.input:
       case NssWidgetType.email:
       case NssWidgetType.password:
-        var input = NssTextInputWidget(config: config, data: data);
-        return align == NssAlignment.horizontal ? Expanded(child: input) : input;
+        return NssTextInputWidget(config: config, data: data);
       case NssWidgetType.submit:
         return NssSubmitWidget(config: config, data: data);
         break;
@@ -87,7 +86,7 @@ class NssWidgetFactory {
 
   /// Dynamically create component widget or components view group according to children parameter
   /// of the [NssWidgetData] provided.
-  List<Widget> _buildWidgets(List<NssWidgetData> children, NssAlignment align) {
+  List<Widget> _buildWidgets(List<NssWidgetData> children) {
     if (children.isEmpty) {
       return [];
     }
@@ -97,11 +96,11 @@ class NssWidgetFactory {
       if (widget.hasChildren()) {
         // View group required.
         widgets.add(
-          _groupBy(widget.stack, _buildWidgets(widget.children, widget.stack)),
+          _groupBy(widget.stack, _buildWidgets(widget.children)),
         );
       } else {
         widgets.add(
-          create(widget.type, widget, align),
+          create(widget.type, widget),
         );
       }
     });
