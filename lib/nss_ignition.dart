@@ -92,7 +92,7 @@ class IgnitionWorker {
   }
 
   Future<Map<dynamic, dynamic>> _ignitionFromMock() async {
-    return jsonDecode(await AssetUtils.jsonFromAssets('assets/mock_1.json'));
+    return jsonDecode(await AssetUtils.jsonFromAssets('assets/mock_2.json'));
   }
 
   Future<Map<dynamic, dynamic>> _ignitionFromChannel() async {
