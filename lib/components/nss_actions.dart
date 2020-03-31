@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/blocs/nss_binding_bloc.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
-import 'package:gigya_native_screensets_engine/components/nss_actions_mixin.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
 import 'package:provider/provider.dart';
+
+mixin NssActionsMixin {
+  /// Call to dismiss keyboard from current focusable input component.
+  dismissKeyboardWith(context) {
+    FocusScopeNode currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
+  }
+}
 
 class NssSubmitWidget extends StatefulWidget {
   final NssConfig config;
@@ -49,12 +59,16 @@ class _NssSubmitWidgetState extends NssPlatformState<NssSubmitWidget> with NssWi
     return Padding(
       //TODO: Using default padding.
       padding: defaultPadding(),
-      child: RaisedButton(
-        child: Text(widget.data.textKey),
-        onPressed: () {
-          _onSubmit();
-          // Dismiss the keyboard. Important.
-          dismissKeyboardWith(context);
+      child: Consumer<BindingModel>(
+        builder: (context, bindings, child) {
+          return RaisedButton(
+            child: Text(widget.data.textKey),
+            onPressed: () {
+              _onSubmit();
+              // Dismiss the keyboard. Important.
+              dismissKeyboardWith(context);
+            },
+          );
         },
       ),
     );

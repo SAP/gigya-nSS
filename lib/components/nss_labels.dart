@@ -25,7 +25,6 @@ class NssLabelWidget extends NssPlatformWidget with NssWidgetDecorationMixin, Bi
     return Padding(
       padding: defaultPadding(),
       child: Consumer<BindingModel>(builder: (context, bindings, child) {
-
         final bindingText = getText(data, bindings);
         return Text(
           bindingText.isEmpty ? data.textKey : bindingText,

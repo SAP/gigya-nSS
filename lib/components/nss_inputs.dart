@@ -11,8 +11,6 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:provider/provider.dart';
 
-//region TextInput
-
 class NssTextInputWidget extends StatefulWidget {
   final NssConfig config;
   final NssWidgetData data;
@@ -92,7 +90,7 @@ class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget>
 
   /// Validate input according to instance type.
   String _validateField(input) {
-    var validated = bloc.validate(input, forType: widget.data.type.name);
+    var validated = NssValidations.validate(input, forType: widget.data.type.name);
 
     switch (validated) {
       case NssInputValidation.failed:
@@ -108,5 +106,3 @@ class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget>
     return null;
   }
 }
-
-//endregion

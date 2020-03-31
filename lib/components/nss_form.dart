@@ -36,15 +36,18 @@ class _NssFormWidgetState extends State<NssFormWidget> {
   Widget build(BuildContext context) {
     return Provider(
       create: (_) => _provideBloc(),
-      child: Form(
-        key: _formKey,
-        child: widget.child,
+      // Using SingleChildScrollView parent to avoid keyboard overflow errors.
+      child: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: widget.child,
+        ),
       ),
     );
   }
 
   NssFormBloc _provideBloc() {
-    var viewModel =  Provider.of<NssScreenViewModel>(context);
+    var viewModel = Provider.of<NssScreenViewModel>(context);
     widget.bloc.formKey = _formKey;
     widget.bloc.screenId = widget.screenId;
     widget.bloc.screenSink = viewModel.streamEventSink;

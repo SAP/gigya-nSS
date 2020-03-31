@@ -34,26 +34,34 @@ class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorat
   void initState() {
     super.initState();
 
-    // Reference view model.
+    // Reference screen view model.
     viewModel = Provider.of<NssScreenViewModel>(context, listen: false);
-    _registerToNavigationStream();
-    _registerFlow();
+    _attachScreenAction();
+    _registerNavigationSteam();
   }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<BindingModel>(
-        create: (_) => bindings, child: widget.widgetFactory.createScaffold(widget.screen));
+      create: (_) => bindings,
+      child: widget.widgetFactory.createScaffold(widget.screen),
+    );
   }
 
-  _registerToNavigationStream() {
+  /// Register view model instance to a navigation steam controller.
+  /// Only the current context contains the main Navigator instance. Therefore we must communicate back to the
+  /// screen widget in order to perform navigation actions.
+  _registerNavigationSteam() {
     viewModel.navigationStream.stream.listen((route) {
       Navigator.pushReplacementNamed(context, route);
     });
   }
 
-  _registerFlow() async {
-    var screenDataMap = await viewModel.registerFlow(widget.screen.action);
+  /// Attach the relevant screen action.
+  /// This will result in the instantiation of the native controller action model which will handle all
+  /// the native SDK logic.
+  _attachScreenAction() async {
+    var screenDataMap = await viewModel.attachAction(widget.screen.action);
     bindings.updateWith(screenDataMap);
   }
 }

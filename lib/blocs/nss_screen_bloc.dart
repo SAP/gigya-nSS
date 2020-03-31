@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'package:flutter/services.dart';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_binding_bloc.dart';
 import 'package:gigya_native_screensets_engine/services/nss_api_service.dart';
 import 'package:gigya_native_screensets_engine/services/nss_screen_service.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
@@ -62,7 +61,7 @@ class NssScreenViewModel with ChangeNotifier {
     });
   }
 
-  Future<Map<String, dynamic>> registerFlow(String action) async {
+  Future<Map<String, dynamic>> attachAction(String action) async {
     try {
       var map = await screenService.requestFlow(action);
       nssLogger.d('Screen $id flow initialized with data map');

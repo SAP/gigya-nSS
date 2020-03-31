@@ -25,17 +25,6 @@ class NssFormBloc {
   /// Trigger cross form data save.
   void _saveForm() => formKey.currentState.save();
 
-  /// Instantiate and validate a specific input value.
-  /// Validation [forType] is set using the widget's type parameter.
-  NssInputValidation validate(String input, {String forType}) {
-    switch (forType) {
-      case 'email':
-        return NssEmailInputValidator().validate(input) ? NssInputValidation.passed : NssInputValidation.failed;
-      default:
-        return NssInputValidation.na;
-    }
-  }
-
   /// Form submission trigger.
   /// This is available to every submission widget.
   /// Will first trigger form validation and move on to collect all relevant data for the screen

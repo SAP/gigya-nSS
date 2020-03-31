@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
 import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
@@ -14,14 +15,17 @@ import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_injector.dart';
 import 'package:provider/provider.dart';
 
+/// Available widget types supported by the Nss engine.
 enum NssWidgetType { screen, label, input, email, password, submit }
 
 extension NssWidgetTypeExt on NssWidgetType {
   String get name => describeEnum(this);
 }
 
+/// Directional alignment widget for "stack" markup property.
 enum NssAlignment { vertical, horizontal }
 
+/// Main engine widget creation factory class.
 class NssWidgetFactory {
   final NssConfig config;
   final NssChannels channels;
@@ -31,10 +35,14 @@ class NssWidgetFactory {
     @required this.channels,
   });
 
+  /// Create screen widget.
+  /// Every [NssScreenWidget] must be paired with enclosing [NssScreenViewModel] provider that is responsible to handle
+  /// the state of the current screen and provide service/repository connections for communication logic.
   Widget createScreen(Screen screen) {
     return ChangeNotifierProvider<NssScreenViewModel>(
       create: (_) {
         final NssScreenViewModel viewModel = NssInjector().use(NssScreenViewModel);
+        // Inject screen id to view model.
         viewModel.id = screen.id;
         return viewModel;
       },
@@ -47,27 +55,31 @@ class NssWidgetFactory {
     );
   }
 
-  Widget _buildScreenRootWidget(Screen screen) {
-    return _groupBy(screen.align, _buildWidgets(screen.children));
-  }
-
+  /// Create a new instance of the [NssScaffoldWidget] the will contain the main construct of every
+  /// displayed screen.
   Widget createScaffold(Screen screen) {
     return NssScaffoldWidget(
       config: config,
-      appBarTitle: screen.appBar != null ? screen.appBar['textKey'] ?? '' : '',
-      body: createForm(screen),
+      appBarData: screen.appBar != null
+          ? NssAppBarData(
+              screen.appBar['textKey'] ?? '',
+            )
+          : null,
+      screenBody: createForm(screen),
     );
   }
 
+  /// Create a new instance of the [NssFormWidget] for the relevant [Screen] data.
   Widget createForm(Screen screen) {
     final NssFormBloc formBloc = NssInjector().use(NssFormBloc);
     return NssFormWidget(
       screenId: screen.id,
-      child: _buildScreenRootWidget(screen),
+      child: _groupBy(screen.align, _buildWidgets(screen.children)),
       bloc: formBloc,
     );
   }
 
+  /// Create a new instance widget according to provided [NssWidgetType] and [NssWidgetData] parameters.
   Widget create(NssWidgetType type, NssWidgetData data) {
     switch (type) {
       case NssWidgetType.screen:
@@ -107,6 +119,8 @@ class NssWidgetFactory {
     return widgets;
   }
 
+  /// Group provided widget list according to [NssAlignment] directional parameter.
+  /// Currently supports only [Column] and [Row] group widgets.
   Widget _groupBy(NssAlignment alignment, List<Widget> list) {
     switch (alignment) {
       case NssAlignment.vertical:

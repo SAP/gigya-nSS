@@ -44,6 +44,7 @@ class NssIgnitionWidget extends StatelessWidget {
     );
   }
 
+  /// Commence Flutter application buildup according to provided [Spark] markup.
   @visibleForTesting
   Widget prepareApp(Spark spark) {
     config.main = spark.markup;
@@ -56,6 +57,7 @@ class NssIgnitionWidget extends StatelessWidget {
     );
   }
 
+  /// Indication state shown when Flutter application is pre/during buildup.
   @visibleForTesting
   Widget onPreparingApp() {
     return Container(
@@ -63,6 +65,8 @@ class NssIgnitionWidget extends StatelessWidget {
     );
   }
 
+  /// Trigger native side that the Flutter UI is ready for display. This is used to minimize any
+  /// Jitter caused from widget buildup during initial flow.
   void readyForDisplay() {
     if (config.isMock) {
       return;
@@ -76,6 +80,7 @@ class NssIgnitionWidget extends StatelessWidget {
   }
 }
 
+/// Async worker used to fetch the JSON markup from the native controller.
 class IgnitionWorker {
   final NssConfig config;
   final NssChannels channels;
@@ -91,10 +96,12 @@ class IgnitionWorker {
     return Spark.fromJson(fetchData.cast<String, dynamic>());
   }
 
+  /// Get the [Spark] markup from asset JSON file.
   Future<Map<dynamic, dynamic>> _ignitionFromMock() async {
     return jsonDecode(await AssetUtils.jsonFromAssets('assets/mock_2.json'));
   }
 
+  /// Get the [Spark] markup from native component using the ignition channel.
   Future<Map<dynamic, dynamic>> _ignitionFromChannel() async {
     return channels.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(IgnitionChannelAction.ignition.action);
   }

@@ -28,7 +28,7 @@ mixin NssWidgetDecorationMixin {
   }
 
   /// Use as a default padding value for all widgets that dd not contain a padding style parameter.
-  defaultPadding() => withPadding([24, 12, 24, 12]);
+  defaultPadding() => withPadding(12);
 
 //region Coloring
 

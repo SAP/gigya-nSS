@@ -3,6 +3,8 @@ import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_injector.dart';
 import 'package:flutter/services.dart';
 
+/// Logging is directed to the native controller using the static log method channel.
+/// Default pattern uses the tag/message construct.
 class NssLogger {
   final NssChannels channels;
 
