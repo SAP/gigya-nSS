@@ -15,13 +15,9 @@ extension ScreenActionExt on ScreenAction {
   String get name => describeEnum(this);
 }
 
-class ScreenEvent {
-  final ScreenAction action;
-  Map<String, dynamic> data;
-
-  ScreenEvent(this.action, this.data);
-}
-
+/// The view model class acts as the coordinator to the currently displayed screen.
+/// It will handle the current screen visual state and its adjacent form and is responsible for service/repository
+/// action triggering.
 class NssScreenViewModel with ChangeNotifier {
   final ApiService apiService;
   final ScreenService screenService;
@@ -29,39 +25,37 @@ class NssScreenViewModel with ChangeNotifier {
   NssScreenViewModel(
     this.apiService,
     this.screenService,
-  ) {
-    // Register action steam.
-    registerScreenActionsStream();
-  }
+  );
 
+  /// Screen unique identifier.
   String id;
 
-  final StreamController<ScreenEvent> screenEvents = StreamController<ScreenEvent>();
-  final StreamController navigationStream = StreamController<String>();
+  /// Create new globalKey which is important to trigger all form specific actions.
+  /// Only one form can exist in one screen.
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  Sink get streamEventSink => screenEvents.sink;
+  /// Trigger cross form validation.
+  bool validateForm() => formKey.currentState.validate();
+
+  /// Trigger cross form data save.
+  void _saveForm() => formKey.currentState.save();
+
+  /// Stream controller responsible for triggering navigation events.
+  /// The [NssScreenWidget] holds the correct [BuildContext] which can access the [Navigator]. Therefore it will
+  /// be the only one listening to this stream.
+  final StreamController navigationStream = StreamController<String>();
 
   @override
   void dispose() {
     // Close screen event stream to avoid leaks.
-    screenEvents.close();
     navigationStream.close();
     super.dispose();
   }
 
-  void registerScreenActionsStream() {
-    screenEvents.stream.listen((ScreenEvent event) {
-      nssLogger.d('ScreenEvent received with action: ${event.action.name} and data: ${event.data.toString()}');
-      switch (event.action) {
-        case ScreenAction.submit:
-        case ScreenAction.api:
-          sendApi(event.action.name, event.data);
-          break;
-      }
-    });
-  }
-
-  Future<Map<String, dynamic>> attachAction(String action) async {
+  /// Attach screen action.
+  /// Method will use the [ScreenService] to send the correct action to the native to initialize the correct
+  /// native logic object.
+  Future<Map<String, dynamic>> attachScreenAction(String action) async {
     try {
       var map = await screenService.requestFlow(action);
       nssLogger.d('Screen $id flow initialized with data map');
@@ -72,6 +66,8 @@ class NssScreenViewModel with ChangeNotifier {
     }
   }
 
+  /// Current screen [NssScreenState] state.
+  /// Available states: idle, progress, error.
   NssScreenState _state = NssScreenState.idle;
 
   String _errorText;
@@ -98,7 +94,6 @@ class NssScreenViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// State management
   void setError(String error) {
     nssLogger.d('Screen with id: $id setError with $error');
     _state = NssScreenState.error;
@@ -106,19 +101,37 @@ class NssScreenViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Request form submission. Form will try to validate first. If validation succeeds than the submission action
+  /// will be sent to the native container.
+  void submitScreenForm(Map<String, dynamic> submission) {
+    if (validateForm()) {
+      nssLogger.d('Form validations passed');
+
+      // Request form save state.
+      _saveForm();
+
+      sendApi(ScreenAction.submit.name, submission);
+    }
+  }
+
   /// Send requested API request given a String [method] and base [parameters] map.
   /// [parameter] map is not signed.
   void sendApi(String method, Map<String, dynamic> parameters) {
     setProgress();
 
-    apiService.send(method, parameters).then((result) {
-      setIdle();
-      nssLogger.d('Api request success: ${result.data.toString()}');
+    apiService.send(method, parameters).then(
+      (result) {
+        setIdle();
+        nssLogger.d('Api request success: ${result.data.toString()}');
 
-      navigationStream.sink.add('$id/success');
-    }).catchError((error) {
-      setError(error.errorMessage);
-      nssLogger.d('Api request error: ${error.errorMessage}');
-    });
+        // Trigger navigation.
+        navigationStream.sink.add('$id/success');
+      },
+    ).catchError(
+      (error) {
+        setError(error.errorMessage);
+        nssLogger.d('Api request error: ${error.errorMessage}');
+      },
+    );
   }
 }

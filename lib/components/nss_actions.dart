@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_binding_bloc.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
+import 'package:gigya_native_screensets_engine/providers//nss_binding_bloc.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
@@ -35,18 +35,9 @@ class NssSubmitWidget extends StatefulWidget {
 class _NssSubmitWidgetState extends NssPlatformState<NssSubmitWidget> with NssWidgetDecorationMixin, NssActionsMixin {
   final bool isPlatformAware;
 
-  NssFormBloc bloc;
-
   _NssSubmitWidgetState({
     @required this.isPlatformAware,
   }) : super(isPlatformAware: isPlatformAware);
-
-  @override
-  void initState() {
-    super.initState();
-
-    bloc = Provider.of<NssFormBloc>(context, listen: false);
-  }
 
   @override
   Widget buildCupertinoWidget(BuildContext context) {
@@ -59,12 +50,12 @@ class _NssSubmitWidgetState extends NssPlatformState<NssSubmitWidget> with NssWi
     return Padding(
       //TODO: Using default padding.
       padding: defaultPadding(),
-      child: Consumer<BindingModel>(
-        builder: (context, bindings, child) {
+      child: Consumer2<BindingModel, NssScreenViewModel>(
+        builder: (context, bindings, viewModel, child) {
           return RaisedButton(
             child: Text(widget.data.textKey),
             onPressed: () {
-              _onSubmit();
+              viewModel.submitScreenForm(bindings.bindingData);
               // Dismiss the keyboard. Important.
               dismissKeyboardWith(context);
             },
@@ -72,11 +63,5 @@ class _NssSubmitWidgetState extends NssPlatformState<NssSubmitWidget> with NssWi
         },
       ),
     );
-  }
-
-  /// Request form submission.
-  _onSubmit() {
-    // Trigger form submission.
-    bloc.onFormSubmission();
   }
 }

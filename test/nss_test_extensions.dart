@@ -1,8 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
@@ -41,8 +40,6 @@ class MockIgnitionWorker extends Mock implements IgnitionWorker {}
 class MockApiChannel extends Mock implements MethodChannel {}
 
 class MockScreenStateBloc extends Mock implements NssScreenViewModel {}
-
-class MockFormBloc extends Mock implements NssFormBloc {}
 
 class MockMain extends Mock implements Markup {}
 

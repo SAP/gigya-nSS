@@ -1,5 +1,4 @@
-import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:gigya_native_screensets_engine/nss_ignition.dart';
@@ -51,19 +50,12 @@ class NssContainer {
   NssIgnitionWidget startEngine({bool asMock = false}) {
     NssInjector()
         .register(NssConfig, (ioc) => NssConfig(isMock: asMock), singleton: true)
-        .register(NssChannels, (ioc) => NssChannels(), singleton: true)
-        .register(NssFormModel, (ioc) => NssFormModel());
+        .register(NssChannels, (ioc) => NssChannels(), singleton: true);
     NssInjector().register(
       NssLogger,
       (ioc) {
         NssChannels channels = ioc.use(NssChannels);
         return NssLogger(channels: channels);
-      },
-    ).register(
-      NssFormBloc,
-      (ioc) {
-        NssFormModel model = ioc.use(NssFormModel);
-        return NssFormBloc(model: model);
       },
     ).register(
       NssWidgetFactory,

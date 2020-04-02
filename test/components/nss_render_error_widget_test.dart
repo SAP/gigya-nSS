@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';

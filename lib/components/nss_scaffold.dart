@@ -2,14 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
 import 'package:gigya_native_screensets_engine/components/nss_progress.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:provider/provider.dart';
 
-/// Screen navigation bar data used to build the [AppBar] for Material style or [CupertinoNavigationBar] for Cupertino.l
+/// Screen navigation bar data used to build the [AppBar] for Material style
+/// or [CupertinoNavigationBar] for Cupertino.
 class NssAppBarData {
   final String title;
 
@@ -70,8 +71,6 @@ class NssScaffoldWidget extends NssPlatformWidget {
   /// on top of the screen content.
   Widget _displayActivityIndication(context) {
     var viewModel = Provider.of<NssScreenViewModel>(context);
-    return viewModel.isProgress()
-        ? NssScreenProgressWidget(config: config)
-        : Container();
+    return viewModel.isProgress() ? NssScreenProgressWidget(config: config) : Container();
   }
 }

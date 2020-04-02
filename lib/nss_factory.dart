@@ -1,8 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_actions.dart';
 import 'package:gigya_native_screensets_engine/components/nss_form.dart';
 import 'package:gigya_native_screensets_engine/components/nss_inputs.dart';
@@ -71,11 +70,9 @@ class NssWidgetFactory {
 
   /// Create a new instance of the [NssFormWidget] for the relevant [Screen] data.
   Widget createForm(Screen screen) {
-    final NssFormBloc formBloc = NssInjector().use(NssFormBloc);
     return NssFormWidget(
       screenId: screen.id,
       child: _groupBy(screen.align, _buildWidgets(screen.children)),
-      bloc: formBloc,
     );
   }
 

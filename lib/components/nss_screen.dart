@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_binding_bloc.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_binding_bloc.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_factory.dart';
@@ -61,7 +61,7 @@ class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorat
   /// This will result in the instantiation of the native controller action model which will handle all
   /// the native SDK logic.
   _attachScreenAction() async {
-    var screenDataMap = await viewModel.attachAction(widget.screen.action);
+    var screenDataMap = await viewModel.attachScreenAction(widget.screen.action);
     bindings.updateWith(screenDataMap);
   }
 }

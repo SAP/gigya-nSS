@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_screen.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
@@ -57,13 +57,6 @@ void main() {
         return params;
       });
 
-      screen.streamEventSink.add(
-        ScreenEvent(
-          ScreenAction.submit,
-          {'api': 'test', 'params': params},
-        ),
-      );
-
       screen.navigationStream.stream.listen((e) {
         expect(e, 'test/success');
       });
@@ -105,13 +98,6 @@ void main() {
       screen.apiService.channels.apiChannel.setMockMethodCallHandler((MethodCall methodCall) async {
         return throw PlatformException(code: '500', message: 'error', details: '{}');
       });
-
-      screen.streamEventSink.add(
-        ScreenEvent(
-          ScreenAction.submit,
-          {'api': 'test', 'params': params},
-        ),
-      );
 
       await tester.pumpWidget(testWidget);
 
