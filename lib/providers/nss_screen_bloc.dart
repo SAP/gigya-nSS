@@ -34,12 +34,6 @@ class NssScreenViewModel with ChangeNotifier {
   /// Only one form can exist in one screen.
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  /// Trigger cross form validation.
-  bool validateForm() => formKey.currentState.validate();
-
-  /// Trigger cross form data save.
-  void _saveForm() => formKey.currentState.save();
-
   /// Stream controller responsible for triggering navigation events.
   /// The [NssScreenWidget] holds the correct [BuildContext] which can access the [Navigator]. Therefore it will
   /// be the only one listening to this stream.
@@ -104,12 +98,12 @@ class NssScreenViewModel with ChangeNotifier {
   /// Request form submission. Form will try to validate first. If validation succeeds than the submission action
   /// will be sent to the native container.
   void submitScreenForm(Map<String, dynamic> submission) {
-    if (validateForm()) {
-      nssLogger.d('Form validations passed');
+    var validated = formKey.currentState.validate();
+    if (validated) {
+      nssLogger.d('Form validations success - submission requested.');
 
-      // Request form save state.
-      _saveForm();
-
+      // Request form save state. This will update the binding map with the required data for submission.
+      formKey.currentState.save();
       sendApi(ScreenAction.submit.name, submission);
     }
   }

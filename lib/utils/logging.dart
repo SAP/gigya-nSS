@@ -16,7 +16,7 @@ class NssLogger {
     try {
       channels.logChannel.invokeMethod<void>('debug', {'tag': tag, 'message': message});
     } on MissingPluginException catch (ex) {
-      print(ex.message);
+      // No need to print the exception here.
     }
   }
 
@@ -24,7 +24,7 @@ class NssLogger {
     try {
       channels.logChannel.invokeMethod<void>('error', {'tag': tag, 'message': message});
     } on MissingPluginException catch (ex) {
-      print(ex.message);
+      // No need to print the exception here.
     }
   }
 }

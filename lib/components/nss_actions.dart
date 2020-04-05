@@ -50,12 +50,13 @@ class _NssSubmitWidgetState extends NssPlatformState<NssSubmitWidget> with NssWi
     return Padding(
       //TODO: Using default padding.
       padding: defaultPadding(),
-      child: Consumer2<BindingModel, NssScreenViewModel>(
-        builder: (context, bindings, viewModel, child) {
+      child: Consumer2<NssScreenViewModel, BindingModel>(
+        builder: (context, viewModel, bindings, child) {
           return RaisedButton(
             child: Text(widget.data.textKey),
             onPressed: () {
               viewModel.submitScreenForm(bindings.bindingData);
+
               // Dismiss the keyboard. Important.
               dismissKeyboardWith(context);
             },

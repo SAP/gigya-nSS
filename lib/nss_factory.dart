@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_actions.dart';
 import 'package:gigya_native_screensets_engine/components/nss_form.dart';
 import 'package:gigya_native_screensets_engine/components/nss_inputs.dart';
@@ -12,6 +11,7 @@ import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_injector.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:provider/provider.dart';
 
 /// Available widget types supported by the Nss engine.
@@ -38,19 +38,12 @@ class NssWidgetFactory {
   /// Every [NssScreenWidget] must be paired with enclosing [NssScreenViewModel] provider that is responsible to handle
   /// the state of the current screen and provide service/repository connections for communication logic.
   Widget createScreen(Screen screen) {
-    return ChangeNotifierProvider<NssScreenViewModel>(
-      create: (_) {
-        final NssScreenViewModel viewModel = NssInjector().use(NssScreenViewModel);
-        // Inject screen id to view model.
-        viewModel.id = screen.id;
-        return viewModel;
-      },
-      child: NssScreenWidget(
-        screen: screen,
-        config: config,
-        channels: channels,
-        widgetFactory: this,
-      ),
+    return NssScreenWidget(
+      screen: screen,
+      config: config,
+      channels: channels,
+      factory: this,
+      viewModel: NssInjector().use(NssScreenViewModel),
     );
   }
 

@@ -51,25 +51,27 @@ class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget>
 
   @override
   Widget buildMaterialWidget(BuildContext context) {
-    return Padding(
-      padding: defaultPadding(),
-      child: Consumer<BindingModel>(
-        builder: (context, bindings, child) {
-          _textEditingController.text = getText(widget.data, bindings);
+    return Flexible(
+      child: Padding(
+        padding: defaultPadding(),
+        child: Consumer<BindingModel>(
+          builder: (context, bindings, child) {
+            _textEditingController.text = getText(widget.data, bindings);
 
-          return TextFormField(
-            obscureText: widget.data.type == NssWidgetType.password,
-            controller: _textEditingController,
-            decoration: InputDecoration(hintText: widget.data.textKey),
-            validator: (input) {
-              //TODO: Take in mind that we will need to think how we will be injecting custom field validations here as well.
-              return _validateField(input.trim());
-            },
-            onSaved: (s) {
-              bindings.save(widget.data.bind, s.trim());
-            },
-          );
-        },
+            return TextFormField(
+              obscureText: widget.data.type == NssWidgetType.password,
+              controller: _textEditingController,
+              decoration: InputDecoration(hintText: widget.data.textKey),
+              validator: (input) {
+                //TODO: Take in mind that we will need to think how we will be injecting custom field validations here as well.
+                return _validateField(input.trim());
+              },
+              onSaved: (s) {
+                bindings.save(widget.data.bind, s.trim());
+              },
+            );
+          },
+        ),
       ),
     );
   }
