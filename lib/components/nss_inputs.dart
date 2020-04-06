@@ -56,7 +56,9 @@ class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget>
         padding: defaultPadding(),
         child: Consumer<BindingModel>(
           builder: (context, bindings, child) {
-            _textEditingController.text = getText(widget.data, bindings);
+            final placeHolder = getText(widget.data, bindings);
+
+            _textEditingController.text = placeHolder;
 
             return TextFormField(
               obscureText: widget.data.type == NssWidgetType.password,
@@ -66,8 +68,12 @@ class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget>
                 //TODO: Take in mind that we will need to think how we will be injecting custom field validations here as well.
                 return _validateField(input.trim());
               },
-              onSaved: (s) {
-                bindings.save(widget.data.bind, s.trim());
+              onSaved: (value) {
+                if(value.trim().isEmpty && placeHolder.isEmpty) {
+                  return;
+                }
+
+                bindings.save(widget.data.bind, value.trim());
               },
             );
           },
