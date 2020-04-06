@@ -98,7 +98,7 @@ class IgnitionWorker {
 
   /// Get the [Spark] markup from asset JSON file.
   Future<Map<dynamic, dynamic>> _ignitionFromMock() async {
-    return jsonDecode(await AssetUtils.jsonFromAssets('assets/mock_2.json'));
+    return jsonDecode(await AssetUtils.jsonFromAssets('assets/mock_login.json'));
   }
 
   /// Get the [Spark] markup from native component using the ignition channel.

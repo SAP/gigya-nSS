@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/providers//nss_binding_bloc.dart';
-import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_binding_bloc.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
 import 'package:provider/provider.dart';
 
@@ -47,21 +46,22 @@ class _NssSubmitWidgetState extends NssPlatformState<NssSubmitWidget> with NssWi
 
   @override
   Widget buildMaterialWidget(BuildContext context) {
-    return Padding(
-      //TODO: Using default padding.
-      padding: defaultPadding(),
-      child: Consumer2<NssScreenViewModel, BindingModel>(
-        builder: (context, viewModel, bindings, child) {
-          return RaisedButton(
-            child: Text(widget.data.textKey),
-            onPressed: () {
-              viewModel.submitScreenForm(bindings.bindingData);
+    return Flexible(
+      child: Padding(
+        padding: defaultPadding(),
+        child: Consumer2<NssScreenViewModel, BindingModel>(
+          builder: (context, viewModel, bindings, child) {
+            return RaisedButton(
+              child: Text(widget.data.textKey),
+              onPressed: () {
+                viewModel.submitScreenForm(bindings.bindingData);
 
-              // Dismiss the keyboard. Important.
-              dismissKeyboardWith(context);
-            },
-          );
-        },
+                // Dismiss the keyboard. Important.
+                dismissKeyboardWith(context);
+              },
+            );
+          },
+        ),
       ),
     );
   }

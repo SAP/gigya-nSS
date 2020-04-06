@@ -11,18 +11,37 @@ import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_injector.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_binding_bloc.dart';
 import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
-import 'package:provider/provider.dart';
 
 /// Available widget types supported by the Nss engine.
-enum NssWidgetType { screen, label, input, email, password, submit }
+enum NssWidgetType {
+  screen,
+  label,
+  input,
+  email,
+  password,
+  submit,
+  checkbox,
+}
 
 extension NssWidgetTypeExt on NssWidgetType {
   String get name => describeEnum(this);
 }
 
 /// Directional alignment widget for "stack" markup property.
-enum NssAlignment { vertical, horizontal }
+enum NssAlignment {
+  vertical,
+  vertical_start,
+  vertical_end,
+  vertical_equal_spacing,
+  vertical_spread,
+  horizontal,
+  horizontal_start,
+  horizontal_end,
+  horizontal_equal_spacing,
+  horizontal_spread,
+}
 
 /// Main engine widget creation factory class.
 class NssWidgetFactory {
@@ -42,8 +61,9 @@ class NssWidgetFactory {
       screen: screen,
       config: config,
       channels: channels,
-      factory: this,
       viewModel: NssInjector().use(NssScreenViewModel),
+      scaffold: createScaffold(screen),
+      bindings: NssInjector().use(BindingModel),
     );
   }
 
@@ -82,6 +102,8 @@ class NssWidgetFactory {
       case NssWidgetType.submit:
         return NssSubmitWidget(config: config, data: data);
         break;
+      case NssWidgetType.checkbox:
+        break;
     }
     return Container();
   }
@@ -114,9 +136,15 @@ class NssWidgetFactory {
   Widget _groupBy(NssAlignment alignment, List<Widget> list) {
     switch (alignment) {
       case NssAlignment.vertical:
-        return Column(children: list);
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: list,
+        );
       case NssAlignment.horizontal:
-        return Row(children: list);
+        return Row(
+          mainAxisSize: MainAxisSize.max,
+          children: list,
+        );
       default:
         return Column(children: list);
     }

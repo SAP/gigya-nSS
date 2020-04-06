@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/components/nss_scaffold.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
-import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:gigya_native_screensets_engine/providers/nss_binding_bloc.dart';
 import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
@@ -14,24 +13,24 @@ class NssScreenWidget extends StatefulWidget {
   final NssConfig config;
   final NssChannels channels;
   final NssScreenViewModel viewModel;
-  final NssWidgetFactory factory;
+  final NssScaffoldWidget scaffold;
+  final BindingModel bindings;
 
-  const NssScreenWidget(
-      {Key key,
-      @required this.screen,
-      @required this.config,
-      @required this.channels,
-      @required this.viewModel,
-      @required this.factory})
-      : super(key: key);
+  const NssScreenWidget({
+    Key key,
+    @required this.screen,
+    @required this.config,
+    @required this.channels,
+    @required this.viewModel,
+    @required this.scaffold,
+    @required this.bindings,
+  }) : super(key: key);
 
   @override
   _NssScreenWidgetState createState() => _NssScreenWidgetState();
 }
 
 class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorationMixin {
-  BindingModel bindings = BindingModel();
-
   @override
   void initState() {
     super.initState();
@@ -50,10 +49,10 @@ class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorat
           create: (_) => widget.viewModel,
         ),
         ChangeNotifierProvider<BindingModel>(
-          create: (_) => bindings,
+          create: (_) => widget.bindings,
         ),
       ],
-      child: widget.factory.createScaffold(widget.screen),
+      child: widget.scaffold,
     );
   }
 
@@ -71,6 +70,6 @@ class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorat
   /// the native SDK logic.
   _attachScreenAction() async {
     var screenDataMap = await widget.viewModel.attachScreenAction(widget.screen.action);
-    bindings.updateWith(screenDataMap);
+    widget.bindings.updateWith(screenDataMap);
   }
 }

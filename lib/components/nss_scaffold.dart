@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
 import 'package:gigya_native_screensets_engine/components/nss_progress.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:provider/provider.dart';
 
 /// Screen navigation bar data used to build the [AppBar] for Material style
