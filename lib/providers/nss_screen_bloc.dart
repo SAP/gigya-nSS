@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/nss_router.dart';
 import 'package:gigya_native_screensets_engine/services/nss_api_service.dart';
 import 'package:gigya_native_screensets_engine/services/nss_screen_service.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
@@ -123,6 +124,13 @@ class NssScreenViewModel with ChangeNotifier {
       },
     ).catchError(
       (error) {
+        RoutingAllowed route = RouteEvaluator.allowedBy(error.errorCode);
+
+        if(route != RoutingAllowed.none) {
+          final routeNamed = describeEnum(route);
+          navigationStream.sink.add('$id/$routeNamed');
+        }
+
         setError(error.errorMessage);
         nssLogger.d('Api request error: ${error.errorMessage}');
       },

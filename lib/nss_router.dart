@@ -116,3 +116,21 @@ class Router {
     return screen;
   }
 }
+
+enum RoutingAllowed {
+  none,
+  pendingRegistration
+}
+
+class RouteEvaluator {
+
+  static RoutingAllowed allowedBy(int code) {
+    switch (code) {
+      case 206001:
+        return RoutingAllowed.pendingRegistration;
+    }
+
+    return RoutingAllowed.none;
+  }
+
+}

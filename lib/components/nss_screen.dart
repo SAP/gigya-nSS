@@ -61,6 +61,10 @@ class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorat
   /// screen widget in order to perform navigation actions.
   _registerNavigationSteam() {
     widget.viewModel.navigationStream.stream.listen((route) {
+      if(ModalRoute.of(context).settings.name.split('/').last == route.toString().split('/').last) {
+        return;
+      }
+
       Navigator.pushReplacementNamed(context, route);
     });
   }
