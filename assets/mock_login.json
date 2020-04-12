@@ -1,7 +1,7 @@
 {
   "platformAware": false,
   "markup": {
-    "initialRoute": "register",
+    "initialRoute": "login",
     "defaultRouting": {
       "success": "dismiss"
     },
@@ -14,7 +14,6 @@
         "appBar": {
           "textKey": "login"
         },
-        "type": "container",
         "stack": "vertical",
         "children": [
           {
@@ -32,17 +31,19 @@
             "textKey": "Password"
           },
           {
-            "type": "submit",
-            "textKey": "Submit"
-          },
-          {
             "type": "container",
-            "stack": "horizontal_end",
+            "stack": "horizontal",
+            "alignment": "end",
             "children": [
               {
-                "type": "label"
+                "type": "label",
+                "textKey": "Forgot password"
               }
             ]
+          },
+          {
+            "type": "submit",
+            "textKey": "Submit"
           }
         ]
       }

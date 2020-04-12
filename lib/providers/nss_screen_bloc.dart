@@ -124,8 +124,7 @@ class NssScreenViewModel with ChangeNotifier {
       },
     ).catchError(
       (error) {
-        RoutingAllowed route = RouteEvaluator.allowedBy(error.errorCode);
-
+        final RoutingAllowed route = RouteEvaluator.allowedBy(error.errorCode);
         if(route != RoutingAllowed.none) {
           final routeNamed = describeEnum(route);
           navigationStream.sink.add('$id/$routeNamed');

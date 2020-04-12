@@ -8,11 +8,12 @@ class NssWidgetData {
   String bind;
   NssWidgetType type;
   String textKey;
-  NssAlignment stack;
+  NssStack stack;
+  NssAlignment alignment;
   List<NssWidgetData> children;
   String api;
 
-  NssWidgetData({this.textKey, this.type, this.bind, this.children, this.stack, this.api});
+  NssWidgetData({this.textKey, this.type, this.bind, this.stack, this.alignment, this.children, this.api});
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);
 
