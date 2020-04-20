@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 /// Screen data binding model used for each [NssScreen]. Data is injected using the
 /// flow initialization process from the native bridge.
@@ -19,6 +20,7 @@ class BindingModel with ChangeNotifier {
 
   /// Get the relevant bound data using the String [key] reference.
   String getValue(String key) {
+    nssLogger.d('Requesting binding value for key: $key');
     var keys = key.split('.');
     var nextKey = 0;
     var nextData = bindingData[keys[nextKey]];
@@ -40,7 +42,7 @@ class BindingModel with ChangeNotifier {
         keys[nextKey] = arrayKey;
       } else {
         nextKey++;
-        if(nextKey > keys.length-1) {
+        if (nextKey > keys.length - 1) {
           return '';
         }
 
@@ -53,7 +55,9 @@ class BindingModel with ChangeNotifier {
     return value;
   }
 
+  /// Update the binding data map with required [key] and [value].
   save(String key, String value) {
+    nssLogger.d('Update bindings with key: $key and value: $value');
     var keys = key.split('.');
     var nextKey = 0;
 
@@ -102,7 +106,7 @@ mixin BindingMixin {
   String getText(NssWidgetData data, BindingModel bindings) {
     if (data.bind.isAvailable()) {
       final value = bindings.getValue(data.bind);
-      return value.isEmpty ?  '': value;
+      return value.isEmpty ? '' : value;
     }
     return '';
   }

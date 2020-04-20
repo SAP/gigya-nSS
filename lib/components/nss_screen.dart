@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_binding_bloc.dart';
+import 'package:gigya_native_screensets_engine/components/nss_scaffold.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
-import 'package:gigya_native_screensets_engine/nss_factory.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_binding_bloc.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
 import 'package:provider/provider.dart';
 
@@ -12,14 +12,18 @@ class NssScreenWidget extends StatefulWidget {
   final Screen screen;
   final NssConfig config;
   final NssChannels channels;
-  final NssWidgetFactory widgetFactory;
+  final NssScreenViewModel viewModel;
+  final NssScaffoldWidget scaffold;
+  final BindingModel bindings;
 
   const NssScreenWidget({
     Key key,
     @required this.screen,
     @required this.config,
     @required this.channels,
-    @required this.widgetFactory,
+    @required this.viewModel,
+    @required this.scaffold,
+    @required this.bindings,
   }) : super(key: key);
 
   @override
@@ -27,33 +31,49 @@ class NssScreenWidget extends StatefulWidget {
 }
 
 class _NssScreenWidgetState extends State<NssScreenWidget> with NssWidgetDecorationMixin {
-  NssScreenViewModel viewModel;
-  BindingModel bindings = BindingModel();
-
   @override
   void initState() {
     super.initState();
 
-    // Reference view model.
-    viewModel = Provider.of<NssScreenViewModel>(context, listen: false);
-    _registerToNavigationStream();
-    _registerFlow();
+    widget.viewModel.id = widget.screen.id;
+    // Reference screen view model.
+    _attachScreenAction();
+    _registerNavigationSteam();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<BindingModel>(
-        create: (_) => bindings, child: widget.widgetFactory.createScaffold(widget.screen));
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<NssScreenViewModel>(
+          create: (_) => widget.viewModel,
+        ),
+        ChangeNotifierProvider<BindingModel>(
+          create: (_) => widget.bindings,
+        ),
+      ],
+      child: widget.scaffold,
+    );
   }
 
-  _registerToNavigationStream() {
-    viewModel.navigationStream.stream.listen((route) {
+  /// Register view model instance to a navigation steam controller.
+  /// Only the current context contains the main Navigator instance. Therefore we must communicate back to the
+  /// screen widget in order to perform navigation actions.
+  _registerNavigationSteam() {
+    widget.viewModel.navigationStream.stream.listen((route) {
+      if(ModalRoute.of(context).settings.name.split('/').last == route.toString().split('/').last) {
+        return;
+      }
+
       Navigator.pushReplacementNamed(context, route);
     });
   }
 
-  _registerFlow() async {
-    var screenDataMap = await viewModel.registerFlow(widget.screen.action);
-    bindings.updateWith(screenDataMap);
+  /// Attach the relevant screen action.
+  /// This will result in the instantiation of the native controller action model which will handle all
+  /// the native SDK logic.
+  _attachScreenAction() async {
+    var screenDataMap = await widget.viewModel.attachScreenAction(widget.screen.action);
+    widget.bindings.updateWith(screenDataMap);
   }
 }

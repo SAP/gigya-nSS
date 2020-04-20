@@ -23,7 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  provider: ^4.0.1
+  provider: ^4.0.4
   json_annotation: ^3.0.1
   ioc: ^0.3.0
 

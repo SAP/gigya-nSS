@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_actions.dart';
 import 'package:gigya_native_screensets_engine/components/nss_form.dart';
 import 'package:gigya_native_screensets_engine/components/nss_inputs.dart';
@@ -12,16 +11,32 @@ import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_injector.dart';
-import 'package:provider/provider.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_binding_bloc.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 
-enum NssWidgetType { screen, label, input, email, password, submit }
+/// Available widget types supported by the Nss engine.
+enum NssWidgetType {
+  screen,
+  container,
+  label,
+  input,
+  email,
+  password,
+  submit,
+  checkbox,
+}
 
 extension NssWidgetTypeExt on NssWidgetType {
   String get name => describeEnum(this);
 }
 
-enum NssAlignment { vertical, horizontal }
+/// Directional layout alignment widget for "stack" markup property.
+enum NssStack { vertical, horizontal }
 
+/// Multi widget container alignment options for "alignment" markup property.
+enum NssAlignment { start, end, center, equal_spacing, spread }
+
+/// Main engine widget creation factory class.
 class NssWidgetFactory {
   final NssConfig config;
   final NssChannels channels;
@@ -31,43 +46,43 @@ class NssWidgetFactory {
     @required this.channels,
   });
 
+  /// Create screen widget.
+  /// Every [NssScreenWidget] must be paired with enclosing [NssScreenViewModel] provider that is responsible to handle
+  /// the state of the current screen and provide service/repository connections for communication logic.
   Widget createScreen(Screen screen) {
-    return ChangeNotifierProvider<NssScreenViewModel>(
-      create: (_) {
-        final NssScreenViewModel viewModel = NssInjector().use(NssScreenViewModel);
-        viewModel.id = screen.id;
-        return viewModel;
-      },
-      child: NssScreenWidget(
-        screen: screen,
-        config: config,
-        channels: channels,
-        widgetFactory: this,
-      ),
+    return NssScreenWidget(
+      screen: screen,
+      config: config,
+      channels: channels,
+      viewModel: NssInjector().use(NssScreenViewModel),
+      scaffold: createScaffold(screen),
+      bindings: NssInjector().use(BindingModel),
     );
   }
 
-  Widget _buildScreenRootWidget(Screen screen) {
-    return _groupBy(screen.align, _buildWidgets(screen.children));
-  }
-
+  /// Create a new instance of the [NssScaffoldWidget] the will contain the main construct of every
+  /// displayed screen.
   Widget createScaffold(Screen screen) {
     return NssScaffoldWidget(
       config: config,
-      appBarTitle: screen.appBar != null ? screen.appBar['textKey'] ?? '' : '',
-      body: createForm(screen),
+      appBarData: screen.appBar != null
+          ? NssAppBarData(
+              screen.appBar['textKey'] ?? '',
+            )
+          : null,
+      screenBody: createForm(screen),
     );
   }
 
+  /// Create a new instance of the [NssFormWidget] for the relevant [Screen] data.
   Widget createForm(Screen screen) {
-    final NssFormBloc formBloc = NssInjector().use(NssFormBloc);
     return NssFormWidget(
       screenId: screen.id,
-      child: _buildScreenRootWidget(screen),
-      bloc: formBloc,
+      child: _groupBy(_buildWidgets(screen.children), screen.stack),
     );
   }
 
+  /// Create a new instance widget according to provided [NssWidgetType] and [NssWidgetData] parameters.
   Widget create(NssWidgetType type, NssWidgetData data) {
     switch (type) {
       case NssWidgetType.screen:
@@ -79,6 +94,10 @@ class NssWidgetFactory {
         return NssTextInputWidget(config: config, data: data);
       case NssWidgetType.submit:
         return NssSubmitWidget(config: config, data: data);
+        break;
+      case NssWidgetType.checkbox:
+        break;
+      default:
         break;
     }
     return Container();
@@ -93,10 +112,14 @@ class NssWidgetFactory {
 
     List<Widget> widgets = [];
     children.forEach((widget) {
-      if (widget.hasChildren()) {
+      if (widget.type == NssWidgetType.container) {
         // View group required.
         widgets.add(
-          _groupBy(widget.stack, _buildWidgets(widget.children)),
+          _groupBy(
+            _buildWidgets(widget.children),
+            widget.stack,
+            alignment: widget.alignment,
+          ),
         );
       } else {
         widgets.add(
@@ -107,14 +130,48 @@ class NssWidgetFactory {
     return widgets;
   }
 
-  Widget _groupBy(NssAlignment alignment, List<Widget> list) {
-    switch (alignment) {
-      case NssAlignment.vertical:
-        return Column(children: list);
-      case NssAlignment.horizontal:
-        return Row(children: list);
+  /// Group provided widget list according to [NssAlignment] directional parameter.
+  /// Currently supports only [Column] and [Row] group widgets.
+  Widget _groupBy(List<Widget> list, NssStack stack, {NssAlignment alignment}) {
+    if (stack == null) {
+      //TODO: Should display an error widget here as a part of the stack.
+      return Container();
+    }
+    switch (stack) {
+      case NssStack.vertical:
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: getMainAxisAlignment(alignment),
+          children: list,
+        );
+      case NssStack.horizontal:
+        return Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: getMainAxisAlignment(alignment),
+          children: list,
+        );
       default:
         return Column(children: list);
+    }
+  }
+
+  /// [Flex] Widgets such as [Column] and [Row] require alignment property in order
+  /// to better understand where their child widgets are will layout.
+  MainAxisAlignment getMainAxisAlignment(NssAlignment alignment) {
+    if (alignment == null) return MainAxisAlignment.start;
+    switch (alignment) {
+      case NssAlignment.start:
+        return MainAxisAlignment.start;
+      case NssAlignment.end:
+        return MainAxisAlignment.end;
+      case NssAlignment.center:
+        return MainAxisAlignment.center;
+      case NssAlignment.equal_spacing:
+        return MainAxisAlignment.spaceEvenly;
+      case NssAlignment.spread:
+        return MainAxisAlignment.spaceBetween;
+      default:
+        return MainAxisAlignment.start;
     }
   }
 }

@@ -2,22 +2,31 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
 import 'package:gigya_native_screensets_engine/components/nss_progress.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:provider/provider.dart';
 
+/// Screen navigation bar data used to build the [AppBar] for Material style
+/// or [CupertinoNavigationBar] for Cupertino.
+class NssAppBarData {
+  final String title;
+
+  NssAppBarData(this.title);
+}
+
+/// Screen main scaffold widget.
 class NssScaffoldWidget extends NssPlatformWidget {
   final NssConfig config;
-  final String appBarTitle;
-  final Widget body;
+  final NssAppBarData appBarData;
+  final Widget screenBody;
 
   NssScaffoldWidget({
     @required this.config,
-    @required this.appBarTitle,
-    @required this.body,
+    @required this.appBarData,
+    @required this.screenBody,
   }) : super(isPlatformAware: config.isPlatformAware);
 
   @override
@@ -29,28 +38,39 @@ class NssScaffoldWidget extends NssPlatformWidget {
   @override
   Widget buildMaterialWidget(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(appBarTitle),
-        leading:  Platform.isIOS ? IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pushNamed(context, "dismiss"),
-        ) : null,
-      ),
+      appBar: _buildMaterialAppBar(context),
       body: SafeArea(
         child: Stack(
           children: <Widget>[
-            body,
+            screenBody,
             NssFormErrorWidget(),
-            activityIndicator(context),
+            _displayActivityIndication(context),
           ],
         ),
       ),
     );
   }
 
-  Widget activityIndicator(context) {
-    return Provider.of<NssScreenViewModel>(context).isProgress()
-        ? NssScreenProgressWidget(config: config)
-        : Container();
+  /// Build Material design [AppBar] widget according to provided [NssWidgetData] parameters.
+  AppBar _buildMaterialAppBar(context) {
+    if (appBarData != null) {
+      return AppBar(
+        title: Text(appBarData.title),
+        leading: Platform.isIOS
+            ? IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Navigator.pushNamed(context, "dismiss"),
+              )
+            : null,
+      );
+    }
+    return null;
+  }
+
+  /// According to screen state handled by the [NssScreenViewModel] activity indication should be displayed
+  /// on top of the screen content.
+  Widget _displayActivityIndication(context) {
+    var viewModel = Provider.of<NssScreenViewModel>(context);
+    return viewModel.isProgress() ? NssScreenProgressWidget(config: config) : Container();
   }
 }

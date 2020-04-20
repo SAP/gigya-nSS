@@ -1,0 +1,52 @@
+{
+  "platformAware": false,
+  "markup": {
+    "initialRoute": "login",
+    "defaultRouting": {
+      "success": "dismiss"
+    },
+    "screens": {
+      "login": {
+        "routing": {
+          "success": "dismiss"
+        },
+        "action": "login",
+        "appBar": {
+          "textKey": "login"
+        },
+        "stack": "vertical",
+        "children": [
+          {
+            "type": "label",
+            "textKey": "login with site credentials:"
+          },
+          {
+            "type": "email",
+            "bind": "loginID",
+            "textKey": "Email"
+          },
+          {
+            "type": "password",
+            "bind": "password",
+            "textKey": "Password"
+          },
+          {
+            "type": "container",
+            "stack": "horizontal",
+            "alignment": "end",
+            "children": [
+              {
+                "type": "label",
+                "textKey": "Forgot password"
+              }
+            ]
+          },
+          {
+            "type": "submit",
+            "textKey": "Submit"
+          }
+        ]
+      }
+    }
+  }
+}

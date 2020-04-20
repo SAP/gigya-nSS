@@ -1,9 +1,9 @@
-import 'package:gigya_native_screensets_engine/blocs/nss_form_bloc.dart';
-import 'package:gigya_native_screensets_engine/blocs/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:gigya_native_screensets_engine/nss_ignition.dart';
 import 'package:gigya_native_screensets_engine/nss_router.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_binding_bloc.dart';
+import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/services/nss_api_service.dart';
 import 'package:gigya_native_screensets_engine/services/nss_screen_service.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
@@ -52,18 +52,16 @@ class NssContainer {
     NssInjector()
         .register(NssConfig, (ioc) => NssConfig(isMock: asMock), singleton: true)
         .register(NssChannels, (ioc) => NssChannels(), singleton: true)
-        .register(NssFormModel, (ioc) => NssFormModel());
+        .register(BindingModel, (ioc) => BindingModel());
     NssInjector().register(
       NssLogger,
       (ioc) {
         NssChannels channels = ioc.use(NssChannels);
-        return NssLogger(channels: channels);
-      },
-    ).register(
-      NssFormBloc,
-      (ioc) {
-        NssFormModel model = ioc.use(NssFormModel);
-        return NssFormBloc(model: model);
+        NssConfig config = ioc.use(NssConfig);
+        return NssLogger(
+          channels: channels,
+          config: config,
+        );
       },
     ).register(
       NssWidgetFactory,

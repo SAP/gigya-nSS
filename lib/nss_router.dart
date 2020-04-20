@@ -7,6 +7,8 @@ import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
+/// Flutter application routing manager.
+//TODO: The Router is currently hardcoded to work with Material routes only!
 class Router {
   final NssConfig config;
   final NssChannels channels;
@@ -18,6 +20,7 @@ class Router {
     @required this.widgetFactory,
   });
 
+  /// Generate next route given [RouteSettings] data provided from [Navigator].
   Route<dynamic> generateRoute(RouteSettings settings) {
     var nextRoute = getNextRoute(settings.name);
 
@@ -40,6 +43,8 @@ class Router {
     );
   }
 
+  /// Determine next possible route according to provided [name] parameter.
+  /// Parsed route name will then be matched with the correct markup routing value.
   @visibleForTesting
   String getNextRoute(String name) {
     if (name == null) {
@@ -73,14 +78,18 @@ class Router {
     return urlSplit[0];
   }
 
+  /// Get the next route according to the markup default routing value.
+  /// This will be used if a specific screen does not contain the required route value.
   String getNextRouteFromDefaultRouting(String name) {
     return config.main.defaultRouting[name];
   }
 
+  /// Evaluate dismissal route indication.
   bool shouldDismiss(String nextRoute) {
     return nextRoute == 'dismiss';
   }
 
+  /// Route and Notify the native controller that the engine need to be dismissed.
   MaterialPageRoute dismissEngine(settings) {
     if (config.isMock) {
       return MaterialPageRoute(
@@ -99,10 +108,29 @@ class Router {
     );
   }
 
+  /// Match the correct [Screen] instance to the [nextRoute] property.
   @visibleForTesting
   Screen nextScreen(String nextRoute) {
     var screen = config.main.screens[nextRoute];
     screen.id = nextRoute;
     return screen;
   }
+}
+
+enum RoutingAllowed {
+  none,
+  pendingRegistration
+}
+
+class RouteEvaluator {
+
+  static RoutingAllowed allowedBy(int code) {
+    switch (code) {
+      case 206001:
+        return RoutingAllowed.pendingRegistration;
+    }
+
+    return RoutingAllowed.none;
+  }
+
 }
