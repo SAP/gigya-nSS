@@ -10,10 +10,10 @@ class ScreenService {
     @required this.channels,
   });
 
-  Future<Map<String, dynamic>> requestFlow(String flowId) async {
+  Future<Map<String, dynamic>> initiateAction(String flowId) async {
     var map = await channels.screenChannel.invokeMethod<Map<dynamic, dynamic>>(
-      'flow',
-      {'flowId': flowId},
+      'action',
+      {'actionId': flowId},
     ).catchError((error) {
       return {};
     }).timeout(Duration(seconds: _defaultTimeout), onTimeout: () {
