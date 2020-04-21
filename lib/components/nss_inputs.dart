@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
+import 'package:gigya_native_screensets_engine/models/option.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/nss_factory.dart';
@@ -138,37 +139,22 @@ class _NssCheckboxWidgetState extends NssPlatformState<NssCheckboxWidget> with N
     return expandIfNeeded(
       widget.data.expand,
       Padding(
-        //TODO Padding is hard coded to avoid unwanted padding (currently left).
-        padding: EdgeInsets.only(left: 0, right: 12, top: 12, bottom: 12),
-        child: Consumer<BindingModel>(builder: (context, bindings, child) {
-          currentValue = getBool(widget.data, bindings);
-          return InkWell(
-            onTap: () {
-              if (mounted) {
+        padding: defaultPadding(),
+        child: Consumer<BindingModel>(
+          builder: (context, bindings, child) {
+            currentValue = getBool(widget.data, bindings);
+            return CheckboxListTile(
+              controlAffinity: ListTileControlAffinity.leading,
+              title: Text(widget.data.textKey),
+              value: currentValue,
+              onChanged: (bool val) {
                 setState(() {
-                  bindings.save(widget.data.bind, !currentValue);
+                  bindings.save(widget.data.bind, val);
                 });
-              }
-            },
-            child: Container(
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Checkbox(
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    value: currentValue,
-                    onChanged: (bool val) {
-                      setState(() {
-                        bindings.save(widget.data.bind, val);
-                      });
-                    },
-                  ),
-                  Text(widget.data.textKey),
-                ],
-              ),
-            ),
-          );
-        }),
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -197,7 +183,8 @@ class _NssRadioWidgetState extends NssPlatformState<NssRadioWidget> with NssWidg
 
   final bool isPlatformAware;
 
-  String groupValue = '';
+  String groupValue;
+  String defaultValue;
 
   @override
   Widget buildCupertinoWidget(BuildContext context) {
@@ -213,20 +200,29 @@ class _NssRadioWidgetState extends NssPlatformState<NssRadioWidget> with NssWidg
         padding: defaultPadding(),
         child: Consumer<BindingModel>(
           builder: (context, bindings, child) {
+            groupValue = getText(widget.data, bindings);
+            if (groupValue.isEmpty) {
+              widget.data.options.forEach((option) {
+                if (option.defaultValue != null && option.defaultValue) {
+                  groupValue = option.value;
+                }
+              });
+            }
             return ListView.builder(
-              itemCount: 2,
+              shrinkWrap: true,
+              itemCount: widget.data.options.length,
               itemBuilder: (BuildContext lvbContext, int index) {
-                return ListTile(
-                  title: Text(widget.data.textKey),
-                  leading: Radio(
-                    value: 'sdss',
-                    groupValue: groupValue,
-                    onChanged: (String value) {
-                      setState(() {
-                        groupValue = value;
-                      });
-                    },
-                  ),
+                NssOption option = widget.data.options[index];
+                return RadioListTile(
+                  controlAffinity: ListTileControlAffinity.leading,
+                  value: option.value,
+                  title: Text(option.textKey),
+                  groupValue: groupValue,
+                  onChanged: (String value) {
+                    setState(() {
+                      bindings.save(widget.data.bind, value);
+                    });
+                  },
                 );
               },
             );

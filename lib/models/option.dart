@@ -4,12 +4,12 @@ part 'option.g.dart';
 
 @JsonSerializable(anyMap: true)
 class NssOption {
+  @JsonKey(name: 'default')
   bool defaultValue;
   String value;
   String textKey;
 
   NssOption({
-    @JsonKey(name: 'default')
     this.defaultValue,
     this.value,
     this.textKey,

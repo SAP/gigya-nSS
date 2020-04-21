@@ -79,7 +79,7 @@ mixin NssWidgetDecorationMixin {
 
   /// Determine if this widget should be nested within an [Expanded] widget.
   Widget expandIfNeeded(bool expand, Widget child) {
-    return expand ? Expanded(child: child) : child;
+    return expand ? Expanded(child: child) : Flexible(child: child);
   }
 }
 
