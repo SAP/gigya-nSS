@@ -166,5 +166,13 @@ void main() {
       expect(value, false);
     });
 
+    test('test value no found (Bool)', () {
+      bindUtils.updateWith({});
+
+      dynamic value = bindUtils.getValue('checkBool');
+
+      expect(value, '');
+    });
+
   });
 }
