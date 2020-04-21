@@ -33,9 +33,11 @@ class Router {
         ),
       );
     }
-
+    if (shouldCancel(nextRoute)) {
+      return dismissEngine(settings, 'canceled');
+    }
     if (shouldDismiss(nextRoute)) {
-      return dismissEngine(settings);
+      return dismissEngine(settings, 'dismiss');
     }
     return MaterialPageRoute(
       settings: settings,
@@ -89,8 +91,13 @@ class Router {
     return nextRoute == 'dismiss';
   }
 
+  /// Evaluate dismissal route indication with canceled event.
+  bool shouldCancel(String nextRoute) {
+    return nextRoute == 'canceled';
+  }
+
   /// Route and Notify the native controller that the engine need to be dismissed.
-  MaterialPageRoute dismissEngine(settings) {
+  MaterialPageRoute dismissEngine(settings, method) {
     if (config.isMock) {
       return MaterialPageRoute(
         settings: settings,
@@ -98,7 +105,7 @@ class Router {
       );
     }
     try {
-      channels.screenChannel.invokeMethod('dismiss');
+      channels.screenChannel.invokeMethod(method);
     } on MissingPluginException catch (ex) {
       nssLogger.e('Missing channel connection: check mock state?');
     }

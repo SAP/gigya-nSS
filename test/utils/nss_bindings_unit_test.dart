@@ -13,6 +13,7 @@ void main() {
   group('BindingModel: with preset ', () {
     bindUtils.updateWith({
       'UID': '123',
+      'Xbool': true,
       'profile': {
         'firstName': 'sagi',
         'lastName': 'shmuel',
@@ -34,6 +35,13 @@ void main() {
           }
         ]
       }
+    });
+
+
+    test('get bool value', () {
+      bool value = bindUtils.getValue('Xbool');
+
+      expect(value, true);
     });
 
     test('get 1st value', () {
@@ -138,7 +146,7 @@ void main() {
       expect(value, 'tel aviv');
     });
 
-    test('test add new value', () {
+    test('test add new value (String)', () {
       bindUtils.updateWith({});
 
       bindUtils.save('profile.firstName', 'sagi');
@@ -147,5 +155,24 @@ void main() {
 
       expect(value, 'sagi');
     });
+
+    test('test add new value (Bool)', () {
+      bindUtils.updateWith({});
+
+      bindUtils.save('checkBool', false);
+
+      bool value = bindUtils.getValue('checkBool');
+
+      expect(value, false);
+    });
+
+    test('test value no found (Bool)', () {
+      bindUtils.updateWith({});
+
+      dynamic value = bindUtils.getValue('checkBool');
+
+      expect(value, '');
+    });
+
   });
 }

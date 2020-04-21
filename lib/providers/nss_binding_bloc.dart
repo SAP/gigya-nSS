@@ -19,8 +19,8 @@ class BindingModel with ChangeNotifier {
   }
 
   /// Get the relevant bound data using the String [key] reference.
-  String getValue(String key) {
-    nssLogger.d('Requesting binding value for key: $key');
+  dynamic getValue(String key) {
+//    nssLogger.d('Requesting binding value for key: $key');
     var keys = key.split('.');
     var nextKey = 0;
     var nextData = bindingData[keys[nextKey]];
@@ -32,6 +32,8 @@ class BindingModel with ChangeNotifier {
 
     while (value == null) {
       if (nextData is String) {
+        value = nextData;
+      } else if (nextData is bool) {
         value = nextData;
       } else if (regExp.hasMatch(keys[nextKey])) {
         var arrayKeyData = keys[nextKey].split('[');
@@ -56,8 +58,8 @@ class BindingModel with ChangeNotifier {
   }
 
   /// Update the binding data map with required [key] and [value].
-  save(String key, String value) {
-    nssLogger.d('Update bindings with key: $key and value: $value');
+  save(String key, dynamic value) {
+//    nssLogger.d('Update bindings with key: $key and value: $value');
     var keys = key.split('.');
     var nextKey = 0;
 
