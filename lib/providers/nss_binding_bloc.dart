@@ -19,7 +19,7 @@ class BindingModel with ChangeNotifier {
   }
 
   /// Get the relevant bound data using the String [key] reference.
-  dynamic getValue(String key) {
+  dynamic getValue<T>(String key) {
 //    nssLogger.d('Requesting binding value for key: $key');
     var keys = key.split('.');
     var nextKey = 0;
@@ -27,6 +27,10 @@ class BindingModel with ChangeNotifier {
     dynamic value;
 
     if (keys.length >= _limit || nextData == null) {
+      if (T == bool) {
+        return false;
+      }
+
       return '';
     }
 
@@ -45,6 +49,10 @@ class BindingModel with ChangeNotifier {
       } else {
         nextKey++;
         if (nextKey > keys.length - 1) {
+          if (T == bool) {
+            return false;
+          }
+
           return '';
         }
 
