@@ -93,12 +93,19 @@ class IgnitionWorker {
   @visibleForTesting
   Future<Spark> spark() async {
     var fetchData = config.isMock ? await _ignitionFromMock() : await _ignitionFromChannel();
-    return Spark.fromJson(fetchData.cast<String, dynamic>());
+    try {
+      final Spark spark = Spark.fromJson(fetchData.cast<String, dynamic>());
+      return spark;
+    } on Exception catch (ex) {
+      debugPrint('$ex.message');
+      return null;
+    }
   }
 
   /// Get the [Spark] markup from asset JSON file.
   Future<Map<dynamic, dynamic>> _ignitionFromMock() async {
-    return jsonDecode(await AssetUtils.jsonFromAssets('assets/mock_login.json'));
+    final String json = await AssetUtils.jsonFromAssets('assets/mock_login.json');
+    return jsonDecode(json);
   }
 
   /// Get the [Spark] markup from native component using the ignition channel.

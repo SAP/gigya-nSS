@@ -8,13 +8,12 @@ part 'screen.g.dart';
 class Screen {
   String id;
   String action;
-  @JsonKey(name: 'stack')
-  NssAlignment align;
+  NssStack stack;
   Map<String, dynamic> appBar;
   List<NssWidgetData> children;
   Map<String, String> routing;
 
-  Screen(this.id, this.action, this.align, this.children,  {this.appBar, this.routing});
+  Screen(this.id, this.action, this.stack, this.children, {this.appBar, this.routing});
 
   factory Screen.fromJson(Map<String, dynamic> json) => _$ScreenFromJson(json);
 

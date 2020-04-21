@@ -17,6 +17,7 @@ import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 /// Available widget types supported by the Nss engine.
 enum NssWidgetType {
   screen,
+  container,
   label,
   input,
   email,
@@ -29,19 +30,11 @@ extension NssWidgetTypeExt on NssWidgetType {
   String get name => describeEnum(this);
 }
 
-/// Directional alignment widget for "stack" markup property.
-enum NssAlignment {
-  vertical,
-  vertical_start,
-  vertical_end,
-  vertical_equal_spacing,
-  vertical_spread,
-  horizontal,
-  horizontal_start,
-  horizontal_end,
-  horizontal_equal_spacing,
-  horizontal_spread,
-}
+/// Directional layout alignment widget for "stack" markup property.
+enum NssStack { vertical, horizontal }
+
+/// Multi widget container alignment options for "alignment" markup property.
+enum NssAlignment { start, end, center, equal_spacing, spread }
 
 /// Main engine widget creation factory class.
 class NssWidgetFactory {
@@ -85,7 +78,7 @@ class NssWidgetFactory {
   Widget createForm(Screen screen) {
     return NssFormWidget(
       screenId: screen.id,
-      child: _groupBy(screen.align, _buildWidgets(screen.children)),
+      child: _groupBy(_buildWidgets(screen.children), screen.stack),
     );
   }
 
@@ -104,6 +97,8 @@ class NssWidgetFactory {
         break;
       case NssWidgetType.checkbox:
         break;
+      default:
+        break;
     }
     return Container();
   }
@@ -117,10 +112,14 @@ class NssWidgetFactory {
 
     List<Widget> widgets = [];
     children.forEach((widget) {
-      if (widget.hasChildren()) {
+      if (widget.type == NssWidgetType.container) {
         // View group required.
         widgets.add(
-          _groupBy(widget.stack, _buildWidgets(widget.children)),
+          _groupBy(
+            _buildWidgets(widget.children),
+            widget.stack,
+            alignment: widget.alignment,
+          ),
         );
       } else {
         widgets.add(
@@ -133,20 +132,46 @@ class NssWidgetFactory {
 
   /// Group provided widget list according to [NssAlignment] directional parameter.
   /// Currently supports only [Column] and [Row] group widgets.
-  Widget _groupBy(NssAlignment alignment, List<Widget> list) {
-    switch (alignment) {
-      case NssAlignment.vertical:
+  Widget _groupBy(List<Widget> list, NssStack stack, {NssAlignment alignment}) {
+    if (stack == null) {
+      //TODO: Should display an error widget here as a part of the stack.
+      return Container();
+    }
+    switch (stack) {
+      case NssStack.vertical:
         return Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: getMainAxisAlignment(alignment),
           children: list,
         );
-      case NssAlignment.horizontal:
+      case NssStack.horizontal:
         return Row(
           mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: getMainAxisAlignment(alignment),
           children: list,
         );
       default:
         return Column(children: list);
+    }
+  }
+
+  /// [Flex] Widgets such as [Column] and [Row] require alignment property in order
+  /// to better understand where their child widgets are will layout.
+  MainAxisAlignment getMainAxisAlignment(NssAlignment alignment) {
+    if (alignment == null) return MainAxisAlignment.start;
+    switch (alignment) {
+      case NssAlignment.start:
+        return MainAxisAlignment.start;
+      case NssAlignment.end:
+        return MainAxisAlignment.end;
+      case NssAlignment.center:
+        return MainAxisAlignment.center;
+      case NssAlignment.equal_spacing:
+        return MainAxisAlignment.spaceEvenly;
+      case NssAlignment.spread:
+        return MainAxisAlignment.spaceBetween;
+      default:
+        return MainAxisAlignment.start;
     }
   }
 }
