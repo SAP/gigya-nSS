@@ -169,9 +169,9 @@ void main() {
     test('test value no found (Bool)', () {
       bindUtils.updateWith({});
 
-      dynamic value = bindUtils.getValue('checkBool');
+      bool value = bindUtils.getValue<bool>('checkBool');
 
-      expect(value, '');
+      expect(value, false);
     });
 
   });
