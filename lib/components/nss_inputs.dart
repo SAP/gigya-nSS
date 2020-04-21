@@ -125,7 +125,7 @@ class _NssCheckboxWidgetState extends NssPlatformState<NssCheckboxWidget> with N
 
   final bool isPlatformAware;
 
-  bool currentValue = false;
+  bool currentValue;
 
   @override
   Widget buildCupertinoWidget(BuildContext context) {
@@ -138,13 +138,15 @@ class _NssCheckboxWidgetState extends NssPlatformState<NssCheckboxWidget> with N
     return expandIfNeeded(
       widget.data.expand,
       Padding(
-        padding: defaultPadding(),
+        //TODO Padding is hard coded to avoid unwanted padding (currently left).
+        padding: EdgeInsets.only(left: 0, right: 12, top: 12, bottom: 12),
         child: Consumer<BindingModel>(builder: (context, bindings, child) {
+          currentValue = getBool(widget.data, bindings);
           return InkWell(
             onTap: () {
               if (mounted) {
                 setState(() {
-                  currentValue = !currentValue;
+                  bindings.save(widget.data.bind, !currentValue);
                 });
               }
             },
@@ -155,14 +157,10 @@ class _NssCheckboxWidgetState extends NssPlatformState<NssCheckboxWidget> with N
                   Checkbox(
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     value: currentValue,
-                    onChanged: (val) {
-                      setState(
-                        () {
-                          if (mounted) {
-                            currentValue = val;
-                          }
-                        },
-                      );
+                    onChanged: (bool val) {
+                      setState(() {
+                        bindings.save(widget.data.bind, val);
+                      });
                     },
                   ),
                   Text(widget.data.textKey),

@@ -20,7 +20,6 @@ class BindingModel with ChangeNotifier {
 
   /// Get the relevant bound data using the String [key] reference.
   dynamic getValue<T>(String key) {
-//    nssLogger.d('Requesting binding value for key: $key');
     var keys = key.split('.');
     var nextKey = 0;
     var nextData = bindingData[keys[nextKey]];
@@ -67,7 +66,6 @@ class BindingModel with ChangeNotifier {
 
   /// Update the binding data map with required [key] and [value].
   save(String key, dynamic value) {
-//    nssLogger.d('Update bindings with key: $key and value: $value');
     var keys = key.split('.');
     var nextKey = 0;
 
@@ -115,9 +113,20 @@ class BindingModel with ChangeNotifier {
 mixin BindingMixin {
   String getText(NssWidgetData data, BindingModel bindings) {
     if (data.bind.isAvailable()) {
-      final value = bindings.getValue(data.bind);
+      final String value = bindings.getValue<String>(data.bind);
       return value.isEmpty ? '' : value;
     }
+    if (data.textKey.isAvailable()) {
+      return data.textKey;
+    }
     return '';
+  }
+
+  bool getBool(NssWidgetData data, BindingModel bindings) {
+    if (data.bind.isAvailable()) {
+      final value = bindings.getValue<bool>(data.bind);
+      return value;
+    }
+    return false;
   }
 }
