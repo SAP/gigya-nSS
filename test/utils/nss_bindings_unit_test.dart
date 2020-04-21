@@ -15,6 +15,7 @@ void main() {
       'UID': '123',
       'Xbool': true,
       'profile': {
+        'testBool': false,
         'firstName': 'sagi',
         'lastName': 'shmuel',
         'details': {'address': 'test'},
@@ -146,15 +147,23 @@ void main() {
       expect(value, 'tel aviv');
     });
 
-    test('test add new value (String)', () {
+    test('test update (bool)', () {
+
+      bindUtils.save('profile.testBool', true);
+
+      bool value = bindUtils.getValue<bool>('profile.testBool');
+
+      expect(value, true);
+    });
+
+    test('test value no found (Bool)', () {
       bindUtils.updateWith({});
 
-      bindUtils.save('profile.firstName', 'sagi');
+      bool value = bindUtils.getValue<bool>('checkBool');
 
-      String value = bindUtils.getValue('profile.firstName');
-
-      expect(value, 'sagi');
+      expect(value, false);
     });
+
 
     test('test add new value (Bool)', () {
       bindUtils.updateWith({});
