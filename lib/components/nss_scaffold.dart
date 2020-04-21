@@ -59,7 +59,7 @@ class NssScaffoldWidget extends NssPlatformWidget {
         leading: Platform.isIOS
             ? IconButton(
                 icon: Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () => Navigator.pushNamed(context, "dismiss"),
+                onPressed: () => Navigator.pushNamed(context, "canceled"),
               )
             : null,
       );
