@@ -51,8 +51,9 @@ class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget>
 
   @override
   Widget buildMaterialWidget(BuildContext context) {
-    return Flexible(
-      child: Padding(
+    return expandIfNeeded(
+      widget.data.expand,
+      Padding(
         padding: defaultPadding(),
         child: Consumer<BindingModel>(
           builder: (context, bindings, child) {
@@ -69,7 +70,7 @@ class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget>
                 return _validateField(input.trim());
               },
               onSaved: (value) {
-                if(value.trim().isEmpty && placeHolder.isEmpty) {
+                if (value.trim().isEmpty && placeHolder.isEmpty) {
                   return;
                 }
 
@@ -98,5 +99,142 @@ class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget>
         break;
     }
     return null;
+  }
+}
+
+class NssCheckboxWidget extends StatefulWidget {
+  final NssConfig config;
+  final NssWidgetData data;
+
+  const NssCheckboxWidget({
+    Key key,
+    @required this.config,
+    @required this.data,
+  }) : super(key: key);
+
+  @override
+  _NssCheckboxWidgetState createState() => _NssCheckboxWidgetState(
+        isPlatformAware: config.isPlatformAware,
+      );
+}
+
+class _NssCheckboxWidgetState extends NssPlatformState<NssCheckboxWidget> with NssWidgetDecorationMixin, BindingMixin {
+  _NssCheckboxWidgetState({
+    @required this.isPlatformAware,
+  }) : super(isPlatformAware: isPlatformAware);
+
+  final bool isPlatformAware;
+
+  bool currentValue = false;
+
+  @override
+  Widget buildCupertinoWidget(BuildContext context) {
+    // TODO: implement buildCupertinoWidget
+    return null;
+  }
+
+  @override
+  Widget buildMaterialWidget(BuildContext context) {
+    return expandIfNeeded(
+      widget.data.expand,
+      Padding(
+        padding: defaultPadding(),
+        child: Consumer<BindingModel>(builder: (context, bindings, child) {
+          return InkWell(
+            onTap: () {
+              if (mounted) {
+                setState(() {
+                  currentValue = !currentValue;
+                });
+              }
+            },
+            child: Container(
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Checkbox(
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    value: currentValue,
+                    onChanged: (val) {
+                      setState(
+                        () {
+                          if (mounted) {
+                            currentValue = val;
+                          }
+                        },
+                      );
+                    },
+                  ),
+                  Text(widget.data.textKey),
+                ],
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class NssRadioWidget extends StatefulWidget {
+  final NssConfig config;
+  final NssWidgetData data;
+
+  const NssRadioWidget({
+    Key key,
+    @required this.config,
+    @required this.data,
+  }) : super(key: key);
+
+  @override
+  _NssRadioWidgetState createState() => _NssRadioWidgetState(
+        isPlatformAware: config.isPlatformAware,
+      );
+}
+
+class _NssRadioWidgetState extends NssPlatformState<NssRadioWidget> with NssWidgetDecorationMixin, BindingMixin {
+  _NssRadioWidgetState({
+    @required this.isPlatformAware,
+  }) : super(isPlatformAware: isPlatformAware);
+
+  final bool isPlatformAware;
+
+  String groupValue = '';
+
+  @override
+  Widget buildCupertinoWidget(BuildContext context) {
+    // TODO: implement buildCupertinoWidget
+    return null;
+  }
+
+  @override
+  Widget buildMaterialWidget(BuildContext context) {
+    return expandIfNeeded(
+      widget.data.expand,
+      Padding(
+        padding: defaultPadding(),
+        child: Consumer<BindingModel>(
+          builder: (context, bindings, child) {
+            return ListView.builder(
+              itemCount: 2,
+              itemBuilder: (BuildContext lvbContext, int index) {
+                return ListTile(
+                  title: Text(widget.data.textKey),
+                  leading: Radio(
+                    value: 'sdss',
+                    groupValue: groupValue,
+                    onChanged: (String value) {
+                      setState(() {
+                        groupValue = value;
+                      });
+                    },
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
   }
 }

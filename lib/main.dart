@@ -6,6 +6,6 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return NssContainer().startEngine(asMock: true);
+    return NssContainer().startEngine(asMock: false);
   }
 }

@@ -30,8 +30,6 @@ mixin NssWidgetDecorationMixin {
   /// Use as a default padding value for all widgets that dd not contain a padding style parameter.
   defaultPadding() => withPadding(12);
 
-//region Coloring
-
   /// Request a [Color] instance given an multi optional identifier (named, hex).
   Color getColor(String color, {bool platformAware}) {
     if (color.contains("#"))
@@ -79,11 +77,12 @@ mixin NssWidgetDecorationMixin {
     }
   }
 
-//endregion
+  /// Determine if this widget should be nested within an [Expanded] widget.
+  Widget expandIfNeeded(bool expand, Widget child) {
+    return expand ? Expanded(child: child) : child;
+  }
 }
 
 /// Input field decoration classes mixin.
 /// Support for both [TextField] & [CupertinoTextField].
-class NssInputDecorationMixin with NssWidgetDecorationMixin {
-
-}
+class NssInputDecorationMixin with NssWidgetDecorationMixin {}

@@ -96,6 +96,7 @@ class NssWidgetFactory {
         return NssSubmitWidget(config: config, data: data);
         break;
       case NssWidgetType.checkbox:
+        return NssCheckboxWidget(config: config, data: data);
         break;
       default:
         break;
@@ -141,6 +142,7 @@ class NssWidgetFactory {
       case NssStack.vertical:
         return Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: getMainAxisAlignment(alignment),
           children: list,
         );
