@@ -92,7 +92,7 @@ class BindingModel with ChangeNotifier {
       }
 
       if (nextData != null) {
-        if (nextData[keys[nextKey]] is String) {
+        if (nextData[keys[nextKey]] is String || nextData[keys[nextKey]] is bool) {
           nextData[keys[nextKey]] = value;
           return;
         }
