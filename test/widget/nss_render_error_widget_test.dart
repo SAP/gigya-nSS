@@ -4,7 +4,7 @@ import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
 import 'package:gigya_native_screensets_engine/components/nss_errors.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-import '../nss_test_extensions.dart';
+import '../unit/nss_test_extensions.dart';
 
 void main() {
   final screenStateBloc = MockScreenStateBloc();

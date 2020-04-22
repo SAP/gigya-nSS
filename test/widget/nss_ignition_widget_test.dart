@@ -8,7 +8,7 @@ import 'package:gigya_native_screensets_engine/nss_ignition.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:mockito/mockito.dart';
 
-import './nss_test_extensions.dart';
+import '../unit/nss_test_extensions.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

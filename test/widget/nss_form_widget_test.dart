@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/components/nss_form.dart';
 import 'package:provider/provider.dart';
 
-import '../nss_test_extensions.dart';
+import '../unit/nss_test_extensions.dart';
 
 void main() {
   MockNssScreenViewModel viewModel = MockNssScreenViewModel();
