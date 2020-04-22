@@ -292,10 +292,14 @@ class _NssDropDownButtonWidgetState extends NssPlatformState<NssDropDownButtonWi
           });
           dropdownValue = dropdownItems[indexFromValue(bindValue)];
           return DropdownButton<String>(
+            isExpanded: true,
             value: dropdownValue,
-            icon: Icon(Icons.arrow_drop_down),
+            icon: Icon(
+              Icons.arrow_drop_down,
+              color: Theme.of(context).accentColor,
+            ),
             iconSize: 24,
-            elevation: 16,
+            elevation: 4,
             underline: Container(
               height: 2,
               color: Theme.of(context).accentColor,

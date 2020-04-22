@@ -146,7 +146,6 @@ class NssWidgetFactory {
       case NssStack.vertical:
         return Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: getMainAxisAlignment(alignment),
           children: list,
         );
