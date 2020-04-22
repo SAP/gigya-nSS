@@ -25,6 +25,7 @@ enum NssWidgetType {
   submit,
   checkbox,
   radio,
+  dropdown,
 }
 
 extension NssWidgetTypeExt on NssWidgetType {
@@ -99,6 +100,8 @@ class NssWidgetFactory {
         return NssCheckboxWidget(config: config, data: data);
       case NssWidgetType.radio:
         return NssRadioWidget(config: config, data: data);
+      case NssWidgetType.dropdown:
+        return NssDropDownButtonWidget(config: config, data: data);
       default:
         break;
     }

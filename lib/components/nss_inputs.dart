@@ -11,6 +11,7 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:provider/provider.dart';
 
+/// General text input widget.
 class NssTextInputWidget extends StatefulWidget {
   final NssConfig config;
   final NssWidgetData data;
@@ -27,6 +28,7 @@ class NssTextInputWidget extends StatefulWidget {
       );
 }
 
+/// General text input widget state.
 class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget>
     with NssWidgetDecorationMixin, BindingMixin {
   _NssTextInputWidgetState({
@@ -103,6 +105,7 @@ class _NssTextInputWidgetState extends NssPlatformState<NssTextInputWidget>
   }
 }
 
+/// General checkbox widget.
 class NssCheckboxWidget extends StatefulWidget {
   final NssConfig config;
   final NssWidgetData data;
@@ -119,6 +122,7 @@ class NssCheckboxWidget extends StatefulWidget {
       );
 }
 
+/// General checkbox widget state.
 class _NssCheckboxWidgetState extends NssPlatformState<NssCheckboxWidget> with NssWidgetDecorationMixin, BindingMixin {
   _NssCheckboxWidgetState({
     @required this.isPlatformAware,
@@ -160,6 +164,7 @@ class _NssCheckboxWidgetState extends NssPlatformState<NssCheckboxWidget> with N
   }
 }
 
+/// General radio group widget.
 class NssRadioWidget extends StatefulWidget {
   final NssConfig config;
   final NssWidgetData data;
@@ -176,6 +181,7 @@ class NssRadioWidget extends StatefulWidget {
       );
 }
 
+/// General radio group widget state.
 class _NssRadioWidgetState extends NssPlatformState<NssRadioWidget> with NssWidgetDecorationMixin, BindingMixin {
   _NssRadioWidgetState({
     @required this.isPlatformAware,
@@ -230,5 +236,105 @@ class _NssRadioWidgetState extends NssPlatformState<NssRadioWidget> with NssWidg
         ),
       ),
     );
+  }
+}
+
+/// General dropdown button widget.
+class NssDropDownButtonWidget extends StatefulWidget {
+  final NssConfig config;
+  final NssWidgetData data;
+
+  const NssDropDownButtonWidget({
+    Key key,
+    @required this.config,
+    @required this.data,
+  }) : super(key: key);
+
+  @override
+  _NssDropDownButtonWidgetState createState() => _NssDropDownButtonWidgetState(
+        isPlatformAware: config.isPlatformAware,
+      );
+}
+
+/// General dropdown button widget state.
+class _NssDropDownButtonWidgetState extends NssPlatformState<NssDropDownButtonWidget>
+    with NssWidgetDecorationMixin, BindingMixin {
+  _NssDropDownButtonWidgetState({
+    @required this.isPlatformAware,
+  }) : super(isPlatformAware: isPlatformAware);
+
+  final bool isPlatformAware;
+
+  String dropdownValue;
+  String defaultValue;
+  List<String> dropdownItems = [];
+
+  @override
+  Widget buildCupertinoWidget(BuildContext context) {
+    // TODO: implement buildCupertinoWidget
+    return null;
+  }
+
+  @override
+  Widget buildMaterialWidget(BuildContext context) {
+    return expandIfNeeded(
+      widget.data.expand,
+      Padding(
+        padding: defaultPadding(),
+        child: Consumer<BindingModel>(builder: (context, bindings, child) {
+          dropdownItems.clear();
+          var bindValue = getText(widget.data, bindings);
+          widget.data.options.forEach((option) {
+            dropdownItems.add(option.textKey);
+            if (bindValue.isEmpty && option.defaultValue != null && option.defaultValue) {
+              bindValue = option.value;
+            }
+          });
+          dropdownValue = dropdownItems[indexFromValue(bindValue)];
+          return DropdownButton<String>(
+            value: dropdownValue,
+            icon: Icon(Icons.arrow_drop_down),
+            iconSize: 24,
+            elevation: 16,
+            underline: Container(
+              height: 2,
+              color: Theme.of(context).accentColor,
+            ),
+            onChanged: (String newValue) {
+              setState(() {
+                var index = indexFromDisplayValue(newValue);
+                bindings.save(widget.data.bind, widget.data.options[index].value);
+              });
+            },
+            items: dropdownItems.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          );
+        }),
+      ),
+    );
+  }
+
+  int indexFromDisplayValue(String value) {
+    int index = 0;
+    for (var i = 0; i < dropdownItems.length; i++) {
+      if (dropdownItems[i] == value) {
+        return i;
+      }
+    }
+    return index;
+  }
+
+  int indexFromValue(String value) {
+    int index = 0;
+    for (var i = 0; i < widget.data.options.length; i++) {
+      if (widget.data.options[i].value == value) {
+        return i;
+      }
+    }
+    return index;
   }
 }

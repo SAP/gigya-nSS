@@ -47,7 +47,7 @@
             "textKey": "Accept terms"
           },
           {
-            "type": "radio",
+            "type": "dropdown",
             "bind": "data.favGuitar",
             "options": [
               {
