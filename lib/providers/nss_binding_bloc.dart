@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
-import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 /// Screen data binding model used for each [NssScreen]. Data is injected using the
 /// flow initialization process from the native bridge.
@@ -9,7 +8,11 @@ class BindingModel with ChangeNotifier {
   final int _limit = 10;
   final regExp = new RegExp(r'^(.*)[[0-9]]$');
 
+  // map of supported types with default return value.
   final typeSupported = {String: '', bool: false};
+
+  // default return when type not supported
+  final defaultReturn = '';
 
   Map<String, dynamic> bindingData = {};
 
@@ -22,14 +25,13 @@ class BindingModel with ChangeNotifier {
 
   /// Get the relevant bound data using the String [key] reference.
   dynamic getValue<T>(String key) {
-//    nssLogger.d('Requesting binding value for key: $key');
     var keys = key.split('.');
     var nextKey = 0;
     var nextData = bindingData[keys[nextKey]];
     dynamic value;
 
     if (keys.length >= _limit || nextData == null) {
-      return typeSupported[T] ?? '';
+      return typeSupported[T] ?? defaultReturn;
     }
 
     while (value == null) {
@@ -45,7 +47,7 @@ class BindingModel with ChangeNotifier {
       } else {
         nextKey++;
         if (nextKey > keys.length - 1) {
-          return typeSupported[T] ?? '';
+          return typeSupported[T] ?? defaultReturn;
         }
 
         if (nextData[keys[nextKey]] != null) {
@@ -59,7 +61,6 @@ class BindingModel with ChangeNotifier {
 
   /// Update the binding data map with required [key] and [value].
   save<T>(String key, T value) {
-//    nssLogger.d('Update bindings with key: $key and value: $value');
     var keys = key.split('.');
     var nextKey = 0;
 
