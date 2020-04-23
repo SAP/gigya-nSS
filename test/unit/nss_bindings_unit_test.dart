@@ -168,11 +168,11 @@ void main() {
     test('test add new value (Bool)', () {
       bindUtils.updateWith({});
 
-      bindUtils.save('checkBool', false);
+      bindUtils.save('checkBool', true);
 
       bool value = bindUtils.getValue('checkBool');
 
-      expect(value, false);
+      expect(value, true);
     });
 
     test('test value no found (Bool)', () {
@@ -182,6 +182,14 @@ void main() {
 
       expect(value, false);
     });
+
+    test('types supported', () {
+
+      String value = bindUtils.typeSupported[String];
+
+      expect(value, '');
+    });
+
 
   });
 }
