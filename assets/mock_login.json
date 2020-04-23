@@ -42,6 +42,30 @@
             ]
           },
           {
+            "type": "checkbox",
+            "bind": "data.terms",
+            "textKey": "Accept terms"
+          },
+          {
+            "type": "dropdown",
+            "bind": "data.favGuitar",
+            "options": [
+              {
+                "default": true,
+                "value": "PRS",
+                "textKey": "Paul Reed Smith"
+              },
+              {
+                "value": "Rubato",
+                "textKey": "Rubato"
+              },
+              {
+                "value": "Parker",
+                "textKey": "Parker Guitars"
+              }
+            ]
+          },
+          {
             "type": "submit",
             "textKey": "Submit"
           }

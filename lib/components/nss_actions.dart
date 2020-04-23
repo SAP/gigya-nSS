@@ -46,8 +46,9 @@ class _NssSubmitWidgetState extends NssPlatformState<NssSubmitWidget> with NssWi
 
   @override
   Widget buildMaterialWidget(BuildContext context) {
-    return Flexible(
-      child: Padding(
+    return expandIfNeeded(
+      widget.data.expand,
+      Padding(
         padding: defaultPadding(),
         child: Consumer2<NssScreenViewModel, BindingModel>(
           builder: (context, viewModel, bindings, child) {

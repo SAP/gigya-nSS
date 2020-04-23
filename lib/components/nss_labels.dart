@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/components/nss_platform.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
@@ -22,16 +23,15 @@ class NssLabelWidget extends NssPlatformWidget with NssWidgetDecorationMixin, Bi
 
   @override
   Widget buildMaterialWidget(BuildContext context) {
-    return Flexible(
-      child: Padding(
+    return expandIfNeeded(
+      data.expand,
+      Padding(
         padding: defaultPadding(),
-        child: Consumer<BindingModel>(builder: (context, bindings, child) {
-          final bindingText = getText(data, bindings);
-          return Text(
-            bindingText.isEmpty ? data.textKey : bindingText,
-            style: TextStyle(),
-          );
-        }),
+        child: Consumer<BindingModel>(
+          builder: (context, bindings, child) {
+            return Text(getText(data, bindings));
+          },
+        ),
       ),
     );
   }

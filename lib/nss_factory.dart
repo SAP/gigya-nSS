@@ -24,6 +24,8 @@ enum NssWidgetType {
   password,
   submit,
   checkbox,
+  radio,
+  dropdown,
 }
 
 extension NssWidgetTypeExt on NssWidgetType {
@@ -94,9 +96,12 @@ class NssWidgetFactory {
         return NssTextInputWidget(config: config, data: data);
       case NssWidgetType.submit:
         return NssSubmitWidget(config: config, data: data);
-        break;
       case NssWidgetType.checkbox:
-        break;
+        return NssCheckboxWidget(config: config, data: data);
+      case NssWidgetType.radio:
+        return NssRadioWidget(config: config, data: data);
+      case NssWidgetType.dropdown:
+        return NssDropDownButtonWidget(config: config, data: data);
       default:
         break;
     }

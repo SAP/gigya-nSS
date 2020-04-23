@@ -13,7 +13,9 @@ void main() {
   group('BindingModel: with preset ', () {
     bindUtils.updateWith({
       'UID': '123',
+      'Xbool': true,
       'profile': {
+        'testBool': false,
         'firstName': 'sagi',
         'lastName': 'shmuel',
         'details': {'address': 'test'},
@@ -34,6 +36,13 @@ void main() {
           }
         ]
       }
+    });
+
+
+    test('get bool value', () {
+      bool value = bindUtils.getValue('Xbool');
+
+      expect(value, true);
     });
 
     test('get 1st value', () {
@@ -138,14 +147,41 @@ void main() {
       expect(value, 'tel aviv');
     });
 
-    test('test add new value', () {
+    test('test update (bool)', () {
+
+      bindUtils.save('profile.testBool', true);
+
+      bool value = bindUtils.getValue<bool>('profile.testBool');
+
+      expect(value, true);
+    });
+
+    test('test value no found (Bool)', () {
       bindUtils.updateWith({});
 
-      bindUtils.save('profile.firstName', 'sagi');
+      bool value = bindUtils.getValue<bool>('checkBool');
 
-      String value = bindUtils.getValue('profile.firstName');
-
-      expect(value, 'sagi');
+      expect(value, false);
     });
+
+
+    test('test add new value (Bool)', () {
+      bindUtils.updateWith({});
+
+      bindUtils.save('checkBool', false);
+
+      bool value = bindUtils.getValue('checkBool');
+
+      expect(value, false);
+    });
+
+    test('test value no found (Bool)', () {
+      bindUtils.updateWith({});
+
+      bool value = bindUtils.getValue<bool>('checkBool');
+
+      expect(value, false);
+    });
+
   });
 }

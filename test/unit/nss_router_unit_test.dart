@@ -125,7 +125,7 @@ void main() {
 
     test('nextScreen: ', () async {
       // Creating fake Screen instance.
-      var fakeScreen = Screen(null, 'flow', NssAlignment.vertical, [], appBar: {}, routing: {});
+      var fakeScreen = Screen(null, 'flow', NssStack.vertical, [], appBar: {}, routing: {});
       when(config.main).thenReturn(main);
       when(main.screens).thenReturn({'login': fakeScreen});
       var nextRoute = 'login';
