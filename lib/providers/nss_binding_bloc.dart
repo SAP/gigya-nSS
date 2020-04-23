@@ -9,6 +9,8 @@ class BindingModel with ChangeNotifier {
   final int _limit = 10;
   final regExp = new RegExp(r'^(.*)[[0-9]]$');
 
+  final typeSupported = {String: '', bool: false};
+
   Map<String, dynamic> bindingData = {};
 
   /// Update biding data once available. Updating the data will trigger rebuild for
@@ -27,17 +29,11 @@ class BindingModel with ChangeNotifier {
     dynamic value;
 
     if (keys.length >= _limit || nextData == null) {
-      if (T == bool) {
-        return false;
-      }
-
-      return '';
+      return typeSupported[T] ?? '';
     }
 
     while (value == null) {
-      if (nextData is String) {
-        value = nextData;
-      } else if (nextData is bool) {
+      if (typeSupported[nextData.runtimeType] != null) {
         value = nextData;
       } else if (regExp.hasMatch(keys[nextKey])) {
         var arrayKeyData = keys[nextKey].split('[');
@@ -49,11 +45,7 @@ class BindingModel with ChangeNotifier {
       } else {
         nextKey++;
         if (nextKey > keys.length - 1) {
-          if (T == bool) {
-            return false;
-          }
-
-          return '';
+          return typeSupported[T] ?? '';
         }
 
         if (nextData[keys[nextKey]] != null) {
@@ -66,7 +58,7 @@ class BindingModel with ChangeNotifier {
   }
 
   /// Update the binding data map with required [key] and [value].
-  save(String key, dynamic value) {
+  save<T>(String key, T value) {
 //    nssLogger.d('Update bindings with key: $key and value: $value');
     var keys = key.split('.');
     var nextKey = 0;
@@ -92,7 +84,7 @@ class BindingModel with ChangeNotifier {
       }
 
       if (nextData != null) {
-        if (nextData[keys[nextKey]] is String || nextData[keys[nextKey]] is bool) {
+        if (nextData[keys[nextKey]] is T) {
           nextData[keys[nextKey]] = value;
           return;
         }

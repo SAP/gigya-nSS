@@ -183,5 +183,13 @@ void main() {
       expect(value, false);
     });
 
+    test('types supported', () {
+
+      String value = bindUtils.typeSupported[String];
+
+      expect(value, '');
+    });
+
+
   });
 }
