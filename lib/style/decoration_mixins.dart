@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 
 /// General widget decoration mixin.
 /// Includes useful UI builders that correspond with the applied markup.
-mixin NssWidgetDecorationMixin {
+mixin WidgetDecorationMixin {
   /// Make sure this value will be treated as a double.
   /// Useful for JSON parsed elements
   /// which should be treated as double but are parsed as integer.
@@ -85,4 +85,4 @@ mixin NssWidgetDecorationMixin {
 
 /// Input field decoration classes mixin.
 /// Support for both [TextField] & [CupertinoTextField].
-class NssInputDecorationMixin with NssWidgetDecorationMixin {}
+class InputDecorationMixin with WidgetDecorationMixin {}

@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/nss_router.dart';
-import 'package:gigya_native_screensets_engine/services/nss_api_service.dart';
-import 'package:gigya_native_screensets_engine/services/nss_screen_service.dart';
+import 'package:gigya_native_screensets_engine/platform/router.dart';
+import 'package:gigya_native_screensets_engine/services/api_service.dart';
+import 'package:gigya_native_screensets_engine/services/screen_service.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 enum NssScreenState { idle, progress, error }
@@ -19,11 +19,11 @@ extension ScreenActionExt on ScreenAction {
 /// The view model class acts as the coordinator to the currently displayed screen.
 /// It will handle the current screen visual state and its adjacent form and is responsible for service/repository
 /// action triggering.
-class NssScreenViewModel with ChangeNotifier {
+class ScreenViewModel with ChangeNotifier {
   final ApiService apiService;
   final ScreenService screenService;
 
-  NssScreenViewModel(
+  ScreenViewModel(
     this.apiService,
     this.screenService,
   );
@@ -53,10 +53,10 @@ class NssScreenViewModel with ChangeNotifier {
   Future<Map<String, dynamic>> attachScreenAction(String action) async {
     try {
       var map = await screenService.initiateAction(action);
-      nssLogger.d('Screen $id flow initialized with data map');
+      engineLogger.d('Screen $id flow initialized with data map');
       return map;
     } on MissingPluginException {
-      nssLogger.e('Missing channel connection: check mock state?');
+      engineLogger.e('Missing channel connection: check mock state?');
       return {};
     }
   }
@@ -76,21 +76,21 @@ class NssScreenViewModel with ChangeNotifier {
   isError() => _state == NssScreenState.error;
 
   void setIdle() {
-    nssLogger.d('Screen with id: $id setIdle');
+    engineLogger.d('Screen with id: $id setIdle');
     _state = NssScreenState.idle;
     _errorText = null;
     notifyListeners();
   }
 
   void setProgress() {
-    nssLogger.d('Screen with id: $id setProgress');
+    engineLogger.d('Screen with id: $id setProgress');
     _state = NssScreenState.progress;
     _errorText = null;
     notifyListeners();
   }
 
   void setError(String error) {
-    nssLogger.d('Screen with id: $id setError with $error');
+    engineLogger.d('Screen with id: $id setError with $error');
     _state = NssScreenState.error;
     _errorText = error;
     notifyListeners();
@@ -101,7 +101,7 @@ class NssScreenViewModel with ChangeNotifier {
   void submitScreenForm(Map<String, dynamic> submission) {
     var validated = formKey.currentState.validate();
     if (validated) {
-      nssLogger.d('Form validations success - submission requested.');
+      engineLogger.d('Form validations success - submission requested.');
 
       // Request form save state. This will update the binding map with the required data for submission.
       formKey.currentState.save();
@@ -117,21 +117,21 @@ class NssScreenViewModel with ChangeNotifier {
     apiService.send(method, parameters).then(
       (result) {
         setIdle();
-        nssLogger.d('Api request success: ${result.data.toString()}');
+        engineLogger.d('Api request success: ${result.data.toString()}');
 
         // Trigger navigation.
-        navigationStream.sink.add('$id/success');
+        navigationStream.sink.add('$id/onSuccess');
       },
     ).catchError(
       (error) {
         final RoutingAllowed route = RouteEvaluator.allowedBy(error.errorCode);
-        if(route != RoutingAllowed.none) {
+        if (route != RoutingAllowed.none) {
           final routeNamed = describeEnum(route);
           navigationStream.sink.add('$id/$routeNamed');
         }
 
         setError(error.errorMessage);
-        nssLogger.d('Api request error: ${error.errorMessage}');
+        engineLogger.d('Api request error: ${error.errorMessage}');
       },
     );
   }

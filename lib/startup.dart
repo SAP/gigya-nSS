@@ -5,37 +5,38 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/components/nss_app.dart';
-import 'package:gigya_native_screensets_engine/models/spark.dart';
-import 'package:gigya_native_screensets_engine/nss_configuration.dart';
-import 'package:gigya_native_screensets_engine/nss_router.dart';
+import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/platform/factory.dart';
+import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
+
+enum StartupAction { ignition, ready_for_display }
+
+extension StartupActionExt on StartupAction {
+  String get action {
+    return describeEnum(this);
+  }
+}
 
 /// Engine initialization root widget.
 /// The Main purpose of this widget is to open a channel to the native code in order to obtain all
 /// the necessary initialization data/configuration and determine the actual theme of the main app along
 /// with obtaining & parsing the main JSON data.
-class NssIgnitionWidget extends StatelessWidget {
-  final IgnitionWorker worker;
+class StartupWidget extends StatelessWidget {
+  final StartupWorker worker;
   final NssConfig config;
   final NssChannels channels;
-  final Router router;
 
-  NssIgnitionWidget({
-    Key key,
-    @required this.worker,
-    @required this.config,
-    @required this.channels,
-    @required this.router,
-  }) : super(key: key);
+  const StartupWidget({Key key, this.worker, this.config, this.channels}) : super(key: key);
 
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: worker.spark(),
-      builder: (context, AsyncSnapshot<Spark> snapshot) {
+      future: worker.parseMarkup(),
+      builder: (context, AsyncSnapshot<Markup> snapshot) {
         if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-          nssLogger.d('ignition - state - done');
+          engineLogger.d('ignition - state - done');
           return prepareApp(snapshot.data);
         } else {
           return onPreparingApp();
@@ -46,15 +47,15 @@ class NssIgnitionWidget extends StatelessWidget {
 
   /// Commence Flutter application buildup according to provided [Spark] markup.
   @visibleForTesting
-  Widget prepareApp(Spark spark) {
-    config.main = spark.markup;
-    config.isPlatformAware = spark.platformAware ?? false;
+  Widget prepareApp(Markup markup) {
+    config.markup = markup;
+    config.isPlatformAware = markup.platformAware ?? false;
+
     // Notify native that we are ready to display. Pre-warm up done.
-    readyForDisplay();
-    return Container(
-      color: Colors.white,
-      child: NssApp(config: config, router: router),
-    );
+    issueNativeReadyForDisplay();
+
+    WidgetFactory factory = NssIoc().use(config.isPlatformAware ? CupertinoWidgetFactory : MaterialWidgetFactory);
+    return Container(color: Colors.white, child: factory.buildApp());
   }
 
   /// Indication state shown when Flutter application is pre/during buildup.
@@ -67,35 +68,32 @@ class NssIgnitionWidget extends StatelessWidget {
 
   /// Trigger native side that the Flutter UI is ready for display. This is used to minimize any
   /// Jitter caused from widget buildup during initial flow.
-  void readyForDisplay() {
+  void issueNativeReadyForDisplay() {
     if (config.isMock) {
       return;
     }
-    nssLogger.d('Ignition - invoke ready for display');
+    engineLogger.d('Ignition - invoke ready for display');
     try {
-      channels.ignitionChannel.invokeMethod<void>(IgnitionChannelAction.ready_for_display.action);
+      channels.ignitionChannel.invokeMethod<void>(StartupAction.ready_for_display.action);
     } on MissingPluginException catch (ex) {
-      nssLogger.e('Missing channel connection: check mock state?');
+      engineLogger.e('Missing channel connection: check mock state?');
     }
   }
 }
 
 /// Async worker used to fetch the JSON markup from the native controller.
-class IgnitionWorker {
+class StartupWorker {
   final NssConfig config;
   final NssChannels channels;
 
-  IgnitionWorker({
-    @required this.config,
-    @required this.channels,
-  });
+  StartupWorker(this.config, this.channels);
 
   @visibleForTesting
-  Future<Spark> spark() async {
+  Future<Markup> parseMarkup() async {
     var fetchData = config.isMock ? await _ignitionFromMock() : await _ignitionFromChannel();
     try {
-      final Spark spark = Spark.fromJson(fetchData.cast<String, dynamic>());
-      return spark;
+      final Markup markup = Markup.fromJson(fetchData.cast<String, dynamic>());
+      return markup;
     } on Exception catch (ex) {
       debugPrint('$ex.message');
       return null;
@@ -104,12 +102,12 @@ class IgnitionWorker {
 
   /// Get the [Spark] markup from asset JSON file.
   Future<Map<dynamic, dynamic>> _ignitionFromMock() async {
-    final String json = await AssetUtils.jsonFromAssets('assets/mock_login.json');
+    final String json = await AssetUtils.jsonFromAssets('assets/mock_dynamic.json');
     return jsonDecode(json);
   }
 
   /// Get the [Spark] markup from native component using the ignition channel.
   Future<Map<dynamic, dynamic>> _ignitionFromChannel() async {
-    return channels.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(IgnitionChannelAction.ignition.action);
+    return channels.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(StartupAction.ignition.action);
   }
 }

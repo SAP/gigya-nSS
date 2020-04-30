@@ -1,5 +1,5 @@
+import 'package:gigya_native_screensets_engine/platform/factory.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'screen.g.dart';
@@ -11,9 +11,10 @@ class Screen {
   NssStack stack;
   Map<String, dynamic> appBar;
   List<NssWidgetData> children;
-  Map<String, String> routing;
+  @JsonKey(name: 'routing')
+  Map<String, String> routes;
 
-  Screen(this.id, this.action, this.stack, this.children, {this.appBar, this.routing});
+  Screen(this.id, this.action, this.stack, this.children, {this.appBar, this.routes});
 
   factory Screen.fromJson(Map<String, dynamic> json) => _$ScreenFromJson(json);
 
