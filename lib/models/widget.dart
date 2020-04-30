@@ -1,5 +1,5 @@
+import 'package:gigya_native_screensets_engine/platform/factory.dart';
 import 'package:gigya_native_screensets_engine/models/option.dart';
-import 'package:gigya_native_screensets_engine/nss_factory.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'widget.g.dart';

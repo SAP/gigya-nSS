@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/theme/nss_decoration_mixins.dart';
+import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:test/test.dart';
 
-class UsesMixin with NssWidgetDecorationMixin {}
+class UsesMixin with WidgetDecorationMixin {}
 
 void main() {
   group('NssWidgetDecorationMixin tests', () {

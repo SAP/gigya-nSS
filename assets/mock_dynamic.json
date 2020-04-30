@@ -1,0 +1,142 @@
+{
+  "platformAware": false,
+  "routing": {
+    "initial": "login",
+    "default": {
+      "onSuccess": "_dismiss"
+    }
+  },
+  "screens": {
+    "login": {
+      "routing": {
+        "onSuccess": "_dismiss"
+      },
+      "flow": "login",
+      "appBar": {
+        "textKey": "login"
+      },
+      "stack": "vertical",
+      "children": [
+        {
+          "type": "label",
+          "textKey": "login with site credentials:"
+        },
+        {
+          "id": "loginID",
+          "type": "email",
+          "textKey": "Email"
+        },
+        {
+          "id": "password",
+          "type": "password",
+          "textKey": "Password"
+        },
+        {
+          "type": "submit",
+          "textKey": "Submit",
+          "api": "accounts.login"
+        }
+      ]
+    },
+    "register": {
+      "routing": {
+        "onSuccess": "_dismiss"
+      },
+      "flow": "register",
+      "appBar": {
+        "textKey": "Register"
+      },
+      "stack": "vertical",
+      "children": [
+        {
+          "type": "label",
+          "textKey": "Register with site credentials:"
+        },
+        {
+          "id": "email",
+          "type": "email",
+          "textKey": "Email"
+        },
+        {
+          "id": "password",
+          "type": "password",
+          "textKey": "Password"
+        },
+        {
+          "id": "password",
+          "type": "password",
+          "textKey": "Verify password"
+        },
+        {
+          "type": "submit",
+          "textKey": "Submit",
+          "api": "accounts.register"
+        }
+      ]
+    },
+    "account-information" : {
+      "routing": {
+        "onSuccess": "_dismiss"
+      },
+      "action": "setAccount",
+      "appBar": {
+        "textKey": "Account Information"
+      },
+      "stack": "vertical",
+      "children": [
+        {
+          "stack": "horizontal",
+          "children": [
+            {
+              "type": "label",
+              "textKey": "Hi "
+            },
+            {
+              "type": "label",
+              "bind": "profile.firstName",
+              "textKey": "name"
+            },
+            {
+              "type": "label",
+              "textKey": ""
+            }
+          ]
+        },
+        {
+          "stack": "horizontal",
+          "children": [
+            {
+              "bind": "profile.firstName",
+              "type": "input",
+              "textKey": "First name"
+            },
+            {
+              "bind": "profile.lastName",
+              "type": "input",
+              "textKey": "Last name"
+            }
+          ]
+        },
+        {
+          "bind": "profile.email",
+          "type": "input",
+          "textKey": "Email"
+        },
+        {
+          "bind": "profile.zipcode",
+          "type": "input",
+          "textKey": "Zipcode"
+        },
+        {
+          "bind": "profile.country",
+          "type": "input",
+          "textKey": "Country"
+        },
+        {
+          "type": "submit",
+          "textKey": "Submit"
+        }
+      ]
+    }
+  }
+}

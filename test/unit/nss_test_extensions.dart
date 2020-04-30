@@ -1,14 +1,18 @@
+import 'dart:developer';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gigya_native_screensets_engine/providers/nss_screen_bloc.dart';
+import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/platform/factory.dart';
+import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
-import 'package:gigya_native_screensets_engine/nss_configuration.dart';
-import 'package:gigya_native_screensets_engine/nss_factory.dart';
-import 'package:gigya_native_screensets_engine/nss_ignition.dart';
-import 'package:gigya_native_screensets_engine/nss_router.dart';
-import 'package:gigya_native_screensets_engine/services/nss_api_service.dart';
+import 'package:gigya_native_screensets_engine/startup.dart';
+import 'package:gigya_native_screensets_engine/services/api_service.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:mockito/mockito.dart';
 
 //region Test extensions
@@ -25,21 +29,26 @@ extension CommonFindersExtension on CommonFinders {
       });
 }
 
+mockLogging(config, channels) {
+  var logger = MockLogger();
+  NssIoc().register(Logger, (ioc) => logger);
+  verifyZeroInteractions(logger);
+}
 //endregion
 
 //region Mock classes
 
 class MockConfig extends Mock implements NssConfig {}
 
-class MockNssChannels extends Mock implements NssChannels {}
+class MockChannels extends Mock implements NssChannels {}
 
-class MockWidgetFactory extends Mock implements NssWidgetFactory {}
+class MockMaterialWidgetFactory extends Mock implements MaterialWidgetFactory {}
 
-class MockIgnitionWorker extends Mock implements IgnitionWorker {}
+class MockIgnitionWorker extends Mock implements StartupWorker {}
 
 class MockApiChannel extends Mock implements MethodChannel {}
 
-class MockScreenStateBloc extends Mock implements NssScreenViewModel {}
+class MockScreenStateBloc extends Mock implements ScreenViewModel {}
 
 class MockMain extends Mock implements Markup {}
 
@@ -47,14 +56,15 @@ class MockScreen extends Mock implements Screen {}
 
 class MockMethodChannel extends Mock implements MethodChannel {}
 
-class MockRouter extends Mock implements Router {}
-
-class MockNssScreenViewModel extends Mock implements NssScreenViewModel {}
+class MockScreenViewModel extends Mock implements ScreenViewModel {}
 
 class MockApiService extends Mock implements ApiService {}
 
 // ignore: must_be_immutable
 class MockRouteSettings extends Mock implements RouteSettings {}
 
-//endregion
+class MockBindingModel extends Mock implements BindingModel {}
 
+class MockLogger extends Mock implements Logger {}
+
+//endregion

@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gigya_native_screensets_engine/components/nss_app.dart';
-import 'package:gigya_native_screensets_engine/models/spark.dart';
-import 'package:gigya_native_screensets_engine/nss_ignition.dart';
+import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/models/markup.dart';
+import 'package:gigya_native_screensets_engine/platform/factory.dart';
+import 'package:gigya_native_screensets_engine/startup.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:mockito/mockito.dart';
 
@@ -13,37 +15,36 @@ import '../unit/nss_test_extensions.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   var config = MockConfig();
-  var channels = MockNssChannels();
-  var router = MockRouter();
+  var channels = MockChannels();
+  mockLogging(config, channels);
+
   var worker = MockIgnitionWorker();
+  var factory = MockMaterialWidgetFactory();
+  NssIoc().register(MaterialWidgetFactory, (ioc) => factory);
 
   group('NssIgnitionWidget: ', () {
     testWidgets('prepareApp: mocked spark, isMock = true ', (WidgetTester tester) async {
       when(config.isMock).thenReturn(true);
+      when(config.isPlatformAware).thenReturn(false);
+      when(factory.buildApp()).thenReturn(Placeholder());
 
-      var jsonAssetString = await AssetUtils.jsonFromAssets('assets/mock_1.json');
-      var mockedSpark = Spark.fromJson(jsonDecode(jsonAssetString));
+      var jsonAssetString = await AssetUtils.jsonFromAssets('assets/mock_dynamic.json');
+      var mockedMarkup = Markup.fromJson(jsonDecode(jsonAssetString));
 
-      var ignition = NssIgnitionWidget(
-        config: config,
-        channels: channels,
-        router: router,
-        worker: worker,
-      );
+      var ignition = StartupWidget(worker: worker, config: config, channels: channels);
 
-      var widget = ignition.prepareApp(mockedSpark);
+      var widget = ignition.prepareApp(mockedMarkup);
       expect(widget is Container, true);
-      expect((widget as Container).child is NssApp, true);
+      expect((widget as Container).child is Placeholder, true);
     });
 
     testWidgets('onPreparingApp: mocked spark, isMock = true ', (WidgetTester tester) async {
       when(config.isMock).thenReturn(true);
 
-      var ignition = NssIgnitionWidget(
+      var ignition = StartupWidget(
+        worker: worker,
         config: config,
         channels: channels,
-        router: router,
-        worker: worker,
       );
 
       var widget = ignition.onPreparingApp();

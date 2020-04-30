@@ -1,18 +1,14 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:gigya_native_screensets_engine/nss_configuration.dart';
-import 'package:gigya_native_screensets_engine/nss_injector.dart';
+import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/injector.dart';
 
 /// Logging is directed to the native controller using the static log method channel.
 /// Default pattern uses the tag/message construct.
-class NssLogger {
-  final NssChannels channels;
+class Logger {
   final NssConfig config;
+  final NssChannels channels;
 
-  NssLogger({
-    @required this.channels,
-    @required this.config,
-  });
+  Logger(this.config, this.channels);
 
   d(String message, {String tag = 'NssEngine'}) {
     if (config.isMock) {
@@ -38,4 +34,4 @@ class NssLogger {
 }
 
 /// Global logger instance.
-NssLogger nssLogger = NssInjector().use(NssLogger);
+Logger engineLogger = NssIoc().use(Logger);

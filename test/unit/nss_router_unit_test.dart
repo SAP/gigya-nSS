@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
-import 'package:gigya_native_screensets_engine/nss_factory.dart';
-import 'package:gigya_native_screensets_engine/nss_router.dart';
+import 'package:gigya_native_screensets_engine/platform/factory.dart';
+import 'package:gigya_native_screensets_engine/platform/router.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -12,18 +12,16 @@ void main() {
   group('Router unit: ', () {
     // Mocking party.
     var config = MockConfig();
-    var channels = MockNssChannels();
-    var factory = MockWidgetFactory();
+    var channels = MockChannels();
+    mockLogging(config, channels);
+    
+    var factory = MockMaterialWidgetFactory();
     var main = MockMain();
     var screen = MockScreen();
     var channel = MockMethodChannel();
 
     // Test instance.
-    var router = Router(
-      config: config,
-      channels: channels,
-      widgetFactory: factory,
-    );
+    var router = MaterialRouter(config, channels, factory);
 
     var nextRoute;
 
@@ -43,38 +41,38 @@ void main() {
     });
 
     test('getNextRoute: 2 level success', () async {
-      when(config.main).thenReturn(main);
+      when(config.markup).thenReturn(main);
       when(main.screens).thenReturn({'login': screen});
-      when(screen.routing).thenReturn({'success': 'dismiss'});
-      nextRoute = router.getNextRoute('login/success');
-      expect('dismiss', nextRoute);
+      when(screen.routes).thenReturn({'onSuccess': '_dismiss'});
+      nextRoute = router.getNextRoute('login/onSuccess');
+      expect('_dismiss', nextRoute);
     });
 
     test('getNextRoute: 2 level failure (empty default routing)', () async {
-      when(config.main).thenReturn(main);
+      when(config.markup).thenReturn(main);
       when(main.screens).thenReturn({'login': screen});
-      when(main.defaultRouting).thenReturn({});
-      when(screen.routing).thenReturn({'success': 'dismiss'});
-      nextRoute = router.getNextRoute('login/successs');
+      when(main.routing.defaultRouting).thenReturn({});
+      when(screen.routes).thenReturn({'onSuccess': '_dismiss'});
+      nextRoute = router.getNextRoute('login/onSuccess');
       expect(null, nextRoute);
     });
 
     test('getNextRoute: 2 level success (backup default routing)', () async {
-      when(config.main).thenReturn(main);
+      when(config.markup).thenReturn(main);
       when(main.screens).thenReturn({'login': screen});
-      when(main.defaultRouting).thenReturn({'fail': 'dismiss'});
-      when(screen.routing).thenReturn(null);
+      when(main.routing.defaultRouting).thenReturn({'fail': '_dismiss'});
+      when(screen.routes).thenReturn(null);
       nextRoute = router.getNextRoute('login/fail');
-      expect('dismiss', nextRoute);
+      expect('_dismiss', nextRoute);
     });
 
     test('getNextRoute: 2 level success (backup default routing)', () async {
-      when(config.main).thenReturn(main);
+      when(config.markup).thenReturn(main);
       when(main.screens).thenReturn({'login': screen});
-      when(main.defaultRouting).thenReturn({'fail': 'dismiss'});
-      when(screen.routing).thenReturn({'success': 'dismiss'});
+      when(main.routing.defaultRouting).thenReturn({'fail': '_dismiss'});
+      when(screen.routes).thenReturn({'onSuccess': '_dismiss'});
       nextRoute = router.getNextRoute('login/fail');
-      expect('dismiss', nextRoute);
+      expect('_dismiss', nextRoute);
     });
 
     test('generateRoute: nextRoute = null', () async {
@@ -88,45 +86,45 @@ void main() {
       expect(route.settings.name, null);
     });
 
-    test('generateRoute: nextRoute = dismiss, isMock = false', () async {
+    test('generateRoute: nextRoute = _dismiss, isMock = false', () async {
       var settings = RouteSettings(
         arguments: null,
         isInitialRoute: false,
-        name: 'dismiss',
+        name: '_dismiss',
       );
       when(config.isMock).thenReturn(false);
       when(channels.screenChannel).thenReturn(channel);
       MaterialPageRoute route = router.generateRoute(settings);
-      expect(route.settings.name, 'dismiss');
+      expect(route.settings.name, '_dismiss');
     });
 
-    test('generateRoute: nextRoute = dismiss, isMock = true', () async {
+    test('generateRoute: nextRoute = _dismiss, isMock = true', () async {
       var settings = RouteSettings(
         arguments: null,
         isInitialRoute: false,
-        name: 'dismiss',
+        name: '_dismiss',
       );
       when(config.isMock).thenReturn(true);
       MaterialPageRoute route = router.generateRoute(settings);
-      expect(route.settings.name, 'dismiss');
+      expect(route.settings.name, '_dismiss');
     });
 
-    test('generateRoute: nextRoute = dismiss, isMock = false', () async {
+    test('generateRoute: nextRoute = _dismiss, isMock = false', () async {
       var settings = RouteSettings(
         arguments: null,
         isInitialRoute: false,
-        name: 'dismiss',
+        name: '_dismiss',
       );
       when(config.isMock).thenReturn(false);
       when(channels.screenChannel).thenReturn(channel);
-      when(channel.invokeMethod('dismiss')).thenThrow(MissingPluginException);
+      when(channel.invokeMethod('_dismiss')).thenThrow(MissingPluginException);
       expect(() => router.generateRoute(settings), throwsA(MissingPluginException));
     });
 
     test('nextScreen: ', () async {
       // Creating fake Screen instance.
-      var fakeScreen = Screen(null, 'flow', NssStack.vertical, [], appBar: {}, routing: {});
-      when(config.main).thenReturn(main);
+      var fakeScreen = Screen(null, 'flow', NssStack.vertical, [], appBar: {}, routes: {});
+      when(config.markup).thenReturn(main);
       when(main.screens).thenReturn({'login': fakeScreen});
       var nextRoute = 'login';
       var sc = router.nextScreen(nextRoute);

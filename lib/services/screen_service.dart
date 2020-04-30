@@ -1,14 +1,12 @@
 import 'package:flutter/foundation.dart';
-import 'package:gigya_native_screensets_engine/nss_configuration.dart';
+import 'package:gigya_native_screensets_engine/config.dart';
 
 class ScreenService {
   final NssChannels channels;
 
   final _defaultTimeout = 30;
 
-  ScreenService({
-    @required this.channels,
-  });
+  ScreenService(this.channels);
 
   Future<Map<String, dynamic>> initiateAction(String flowId) async {
     var map = await channels.screenChannel.invokeMethod<Map<dynamic, dynamic>>(

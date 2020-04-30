@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/models/api.dart';
-import 'package:gigya_native_screensets_engine/nss_configuration.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 class ApiService {
@@ -8,9 +8,7 @@ class ApiService {
 
   final _defaultTimeout = 30;
 
-  ApiService({
-    @required this.channels,
-  });
+  ApiService(this.channels);
 
   Future<ApiBaseResult> send(String method, Map<String, dynamic> params) async {
     return await channels.apiChannel.invokeMapMethod(method, params).then((map) {
@@ -20,7 +18,7 @@ class ApiService {
       result.data = dataMap;
       return result;
     }).catchError((error) {
-      nssLogger.d('Invocation error with: ${error.message}');
+      engineLogger.d('Invocation error with: ${error.message}');
       return throw ApiBaseResult.platformException(error);
     }).timeout(Duration(seconds: _defaultTimeout), onTimeout: () {
       return ApiBaseResult.timedOut();
