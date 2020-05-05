@@ -46,10 +46,12 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
                 style: TextStyle(color: Colors.black),
               ),
               leading: Platform.isIOS
-                  ? IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => Navigator.pushNamed(context, '_canceled'),
-                    )
+                  ? Container(
+                    child: IconButton(
+                        icon: Icon(Icons.close, color: Colors.black),
+                        onPressed: () => Navigator.pushNamed(context, '_canceled'),
+                      ),
+                  )
                   : null,
             ),
       body: SafeArea(

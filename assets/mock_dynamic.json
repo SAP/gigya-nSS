@@ -1,7 +1,7 @@
 {
   "platformAware": false,
   "routing": {
-    "initial": "login",
+    "initial": "register",
     "default": {
       "onSuccess": "_dismiss"
     }
@@ -9,9 +9,10 @@
   "screens": {
     "login": {
       "routing": {
+        "onPendingRegistration": "account-update",
         "onSuccess": "_dismiss"
       },
-      "flow": "login",
+      "action": "login",
       "appBar": {
         "textKey": "login"
       },
@@ -19,30 +20,30 @@
       "children": [
         {
           "type": "label",
-          "textKey": "login with site credentials:"
+          "textKey": "login in with your email and password:"
         },
         {
-          "id": "loginID",
+          "bind": "loginID",
           "type": "email",
           "textKey": "Email"
         },
         {
-          "id": "password",
+          "bind": "password",
           "type": "password",
           "textKey": "Password"
         },
         {
           "type": "submit",
-          "textKey": "Submit",
-          "api": "accounts.login"
+          "textKey": "Submit"
         }
       ]
     },
     "register": {
       "routing": {
+        "onPendingRegistration": "account-update",
         "onSuccess": "_dismiss"
       },
-      "flow": "register",
+      "action": "register",
       "appBar": {
         "textKey": "Register"
       },
@@ -53,57 +54,19 @@
           "textKey": "Register with site credentials:"
         },
         {
-          "id": "email",
+          "bind": "email",
           "type": "email",
           "textKey": "Email"
         },
         {
-          "id": "password",
+          "bind": "password",
           "type": "password",
           "textKey": "Password"
         },
         {
-          "id": "password",
-          "type": "password",
-          "textKey": "Verify password"
-        },
-        {
-          "type": "submit",
-          "textKey": "Submit",
-          "api": "accounts.register"
-        }
-      ]
-    },
-    "account-information" : {
-      "routing": {
-        "onSuccess": "_dismiss"
-      },
-      "action": "setAccount",
-      "appBar": {
-        "textKey": "Account Information"
-      },
-      "stack": "vertical",
-      "children": [
-        {
+          "type": "container",
           "stack": "horizontal",
-          "children": [
-            {
-              "type": "label",
-              "textKey": "Hi "
-            },
-            {
-              "type": "label",
-              "bind": "profile.firstName",
-              "textKey": "name"
-            },
-            {
-              "type": "label",
-              "textKey": ""
-            }
-          ]
-        },
-        {
-          "stack": "horizontal",
+          "alignment": "start",
           "children": [
             {
               "bind": "profile.firstName",
@@ -118,12 +81,43 @@
           ]
         },
         {
+          "bind": "data.terms",
+          "type": "checkbox",
+          "textKey": "i have read and understood the terms of use"
+        },
+        {
+          "type": "submit",
+          "textKey": "Submit"
+        }
+      ]
+    },
+    "account-update" : {
+      "routing": {
+        "onSuccess": "_dismiss"
+      },
+      "action": "setAccount",
+      "appBar": {
+        "textKey": "Account Information"
+      },
+      "stack": "vertical",
+      "children": [
+        {
+          "bind": "profile.firstName",
+          "type": "input",
+          "textKey": "First name"
+        },
+        {
+          "bind": "profile.lastName",
+          "type": "input",
+          "textKey": "Last name"
+        },
+        {
           "bind": "profile.email",
           "type": "input",
           "textKey": "Email"
         },
         {
-          "bind": "profile.zipcode",
+          "bind": "profile.zip",
           "type": "input",
           "textKey": "Zipcode"
         },

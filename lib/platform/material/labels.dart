@@ -11,17 +11,17 @@ class LabelWidget extends StatelessWidget with WidgetDecorationMixin, BindingMix
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return expandIfNeeded(data.expand, Padding(
       padding: defaultPadding(),
       child: Consumer<BindingModel>(
         builder: (context, bindings, child) {
           return Text(
             getText(data, bindings),
-            style: TextStyle(fontSize: 12.0 //TODO Default text style (hard coded).
+            style: TextStyle(fontSize: 14.0 //TODO Default text style (hard coded).
                 ),
           );
         },
       ),
-    );
+    ));
   }
 }

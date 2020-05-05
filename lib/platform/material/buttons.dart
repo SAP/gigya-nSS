@@ -28,7 +28,7 @@ class SubmitWidget extends StatefulWidget {
 class _SubmitWidgetState extends State<SubmitWidget> with WidgetDecorationMixin, NssActionsMixin {
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return expandIfNeeded(widget.data.expand, Padding(
       padding: defaultPadding(),
       child: Consumer2<ScreenViewModel, BindingModel>(
         builder: (context, viewModel, bindings, child) {
@@ -42,6 +42,6 @@ class _SubmitWidgetState extends State<SubmitWidget> with WidgetDecorationMixin,
           );
         },
       ),
-    );
+    ));
   }
 }

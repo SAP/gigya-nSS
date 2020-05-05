@@ -27,7 +27,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return expandIfNeeded(widget.data.expand, Padding(
       padding: defaultPadding(),
       child: Consumer<BindingModel>(
         builder: (context, bindings, child) {
@@ -50,7 +50,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
           );
         },
       ),
-    );
+    ));
   }
 
   /// Validate input according to instance type.

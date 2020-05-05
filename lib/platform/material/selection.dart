@@ -57,7 +57,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget> with WidgetDecorati
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return expandIfNeeded(widget.data.expand, Padding(
       padding: defaultPadding(),
       child: Consumer<BindingModel>(
         builder: (context, bindings, child) {
@@ -89,7 +89,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget> with WidgetDecorati
           );
         },
       ),
-    );
+    ));
   }
 }
 
@@ -129,7 +129,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget> with Widget
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return expandIfNeeded(widget.data.expand, Padding(
       padding: defaultPadding(),
       child: Consumer<BindingModel>(builder: (context, bindings, child) {
         _dropdownItems.clear();
@@ -168,6 +168,6 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget> with Widget
           }).toList(),
         );
       }),
-    );
+    ));
   }
 }
