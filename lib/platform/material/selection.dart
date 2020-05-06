@@ -71,6 +71,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget> with WidgetDecorati
           }
           return ListView.builder(
             shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: widget.data.options.length,
             itemBuilder: (BuildContext lvbContext, int index) {
               NssOption option = widget.data.options[index];

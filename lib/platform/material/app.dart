@@ -11,6 +11,7 @@ class MaterialAppWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       color: Colors.white, //TODO: Theme not implemented for v0.1.
       initialRoute: markup.routing.initial,
       onGenerateRoute: router.generateRoute,
