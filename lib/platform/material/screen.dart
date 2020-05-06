@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
+import 'package:gigya_native_screensets_engine/platform/material/errors.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/platform/screen.dart';
@@ -47,11 +48,11 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
               ),
               leading: Platform.isIOS
                   ? Container(
-                    child: IconButton(
+                      child: IconButton(
                         icon: Icon(Icons.close, color: Colors.black),
                         onPressed: () => Navigator.pushNamed(context, '_canceled'),
                       ),
-                  )
+                    )
                   : null,
             ),
       body: SafeArea(
@@ -65,7 +66,13 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
             ),
             Consumer<ScreenViewModel>(
               builder: (context, vm, child) {
-                return vm.isProgress() ? MaterialScreenProgressWidget() : Container();
+                if (vm.isProgress()) {
+                  return MaterialScreenProgressWidget();
+                } else if (vm.isError()) {
+                  return MaterialScreenInfoErrorWidget();
+                } else {
+                  return Container();
+                }
               },
             )
           ],
