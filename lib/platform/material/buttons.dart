@@ -35,7 +35,7 @@ class _SubmitWidgetState extends State<SubmitWidget> with WidgetDecorationMixin,
           return RaisedButton(
             child: Text(widget.data.textKey),
             onPressed: () {
-              viewModel.submitScreenForm(bindings.bindingData);
+              viewModel.submitScreenForm(bindings.savedBindingData);
               // Dismiss the keyboard. Important.
               dismissKeyboardWith(context);
             },

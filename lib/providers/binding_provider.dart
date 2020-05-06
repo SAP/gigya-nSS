@@ -14,17 +14,24 @@ class BindingModel with ChangeNotifier {
   // default return when type not supported
   final defaultReturn = '';
 
-  Map<String, dynamic> bindingData = {};
+  Map<String, dynamic> _bindingData = {};
+  Map<String, dynamic> savedBindingData = {};
 
   /// Update biding data once available. Updating the data will trigger rebuild for
   /// every child widget in the view tree.
   void updateWith(Map<String, dynamic> map) {
-    bindingData = map;
+    _bindingData = map;
     notifyListeners();
   }
 
+  dynamic getSavedValue<T>(String key) {
+    return getValue(key, savedBindingData);
+  }
+
   /// Get the relevant bound data using the String [key] reference.
-  dynamic getValue<T>(String key) {
+  dynamic getValue<T>(String key, [Map<String, dynamic> dataObject]) {
+    var bindingData = dataObject ?? _bindingData;
+
     var keys = key.split('.');
     var nextKey = 0;
     var nextData = bindingData[keys[nextKey]];
@@ -64,18 +71,18 @@ class BindingModel with ChangeNotifier {
     var keys = key.split('.');
     var nextKey = 0;
 
-    if (bindingData[keys[nextKey]] == null) {
-      bindingData[keys[nextKey]] = {};
+    if (savedBindingData[keys[nextKey]] == null) {
+      savedBindingData[keys[nextKey]] = {};
     }
 
     var finish = false;
 
     if (keys.length == 1) {
-      bindingData[key] = value;
+      savedBindingData[key] = value;
       return;
     }
 
-    var nextData = bindingData[keys[nextKey]];
+    var nextData = savedBindingData[keys[nextKey]];
 
     while (finish == false) {
       nextKey++;

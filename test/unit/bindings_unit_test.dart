@@ -126,7 +126,7 @@ void main() {
     test('test change 1st value', () {
       bindUtils.save('UID', 'changeUidTest');
 
-      String value = bindUtils.getValue('UID');
+      String value = bindUtils.getSavedValue('UID');
 
       expect(value, 'changeUidTest');
     });
@@ -134,7 +134,7 @@ void main() {
     test('test change 2nd value', () {
       bindUtils.save('profile.firstName', 'changeNameTest');
 
-      String value = bindUtils.getValue('profile.firstName');
+      String value = bindUtils.getSavedValue('profile.firstName');
 
       expect(value, 'changeNameTest');
     });
@@ -142,7 +142,7 @@ void main() {
     test('test change 3rd value', () {
       bindUtils.save('profile.details.address', 'tel aviv');
 
-      String value = bindUtils.getValue('profile.details.address');
+      String value = bindUtils.getSavedValue('profile.details.address');
 
       expect(value, 'tel aviv');
     });
@@ -151,7 +151,7 @@ void main() {
 
       bindUtils.save('profile.testBool', true);
 
-      bool value = bindUtils.getValue<bool>('profile.testBool');
+      bool value = bindUtils.getSavedValue<bool>('profile.testBool');
 
       expect(value, true);
     });
@@ -170,7 +170,7 @@ void main() {
 
       bindUtils.save('checkBool', true);
 
-      bool value = bindUtils.getValue('checkBool');
+      bool value = bindUtils.getSavedValue('checkBool');
 
       expect(value, true);
     });
