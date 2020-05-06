@@ -52,7 +52,7 @@ class ScreenViewModel with ChangeNotifier {
   /// native logic object.
   Future<Map<String, dynamic>> attachScreenAction(String action) async {
     try {
-      var map = await screenService.initiateAction(action);
+      var map = await screenService.initiateAction(action, id);
       engineLogger.d('Screen $id flow initialized with data map');
       return map;
     } on MissingPluginException {
