@@ -86,6 +86,44 @@
           "textKey": "i have read and understood the terms of use"
         },
         {
+          "type": "dropdown",
+          "bind": "data.favGuitar",
+          "options": [
+            {
+              "default": true,
+              "value": "PRS",
+              "textKey": "Paul Reed Smith"
+            },
+            {
+              "value": "Rubato",
+              "textKey": "Rubato"
+            },
+            {
+              "value": "Parker",
+              "textKey": "Parker Guitars"
+            }
+          ]
+        },
+        {
+          "type": "radio",
+          "bind": "data.favGuitar",
+          "options": [
+            {
+              "default": true,
+              "value": "PRS",
+              "textKey": "Paul Reed Smith"
+            },
+            {
+              "value": "Rubato",
+              "textKey": "Rubato"
+            },
+            {
+              "value": "Parker",
+              "textKey": "Parker Guitars"
+            }
+          ]
+        },
+        {
           "type": "submit",
           "textKey": "Submit"
         }

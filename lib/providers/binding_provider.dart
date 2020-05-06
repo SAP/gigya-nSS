@@ -25,7 +25,7 @@ class BindingModel with ChangeNotifier {
   }
 
   dynamic getSavedValue<T>(String key) {
-    return getValue(key, savedBindingData);
+    return getValue<T>(key, savedBindingData);
   }
 
   /// Get the relevant bound data using the String [key] reference.
@@ -66,23 +66,28 @@ class BindingModel with ChangeNotifier {
     return value;
   }
 
-  /// Update the binding data map with required [key] and [value].
   save<T>(String key, T value) {
+    saveTo(key, value, savedBindingData);
+    saveTo(key, value, _bindingData);
+  }
+
+  /// Update the binding data map with required [key] and [value].
+  saveTo<T>(String key, T value, Map<String, dynamic> tmpData ) {
     var keys = key.split('.');
     var nextKey = 0;
 
-    if (savedBindingData[keys[nextKey]] == null) {
-      savedBindingData[keys[nextKey]] = {};
+    if (tmpData[keys[nextKey]] == null) {
+      tmpData[keys[nextKey]] = {};
     }
 
     var finish = false;
 
     if (keys.length == 1) {
-      savedBindingData[key] = value;
+      tmpData[key] = value;
       return;
     }
 
-    var nextData = savedBindingData[keys[nextKey]];
+    var nextData = tmpData[keys[nextKey]];
 
     while (finish == false) {
       nextKey++;
@@ -126,7 +131,8 @@ mixin BindingMixin {
 
   bool getBool(NssWidgetData data, BindingModel bindings) {
     if (data.bind.isAvailable()) {
-      final value = bindings.getValue<bool>(data.bind);
+      var value = bindings.getValue<bool>(data.bind);
+
       return value;
     }
     return false;
