@@ -16,7 +16,12 @@ void main() {
     mockLogging(config, channels);
     
     var factory = MockMaterialWidgetFactory();
-    var main = MockMain();
+
+    var markup = MockMarkup();
+    var routing = MockRouting();
+    when(markup.routing).thenReturn(routing);
+    when(routing.defaultRouting).thenReturn({});
+
     var screen = MockScreen();
     var channel = MockMethodChannel();
 
@@ -41,35 +46,35 @@ void main() {
     });
 
     test('getNextRoute: 2 level success', () async {
-      when(config.markup).thenReturn(main);
-      when(main.screens).thenReturn({'login': screen});
+      when(config.markup).thenReturn(markup);
+      when(markup.screens).thenReturn({'login': screen});
       when(screen.routes).thenReturn({'onSuccess': '_dismiss'});
       nextRoute = router.getNextRoute('login/onSuccess');
       expect('_dismiss', nextRoute);
     });
 
     test('getNextRoute: 2 level failure (empty default routing)', () async {
-      when(config.markup).thenReturn(main);
-      when(main.screens).thenReturn({'login': screen});
-      when(main.routing.defaultRouting).thenReturn({});
+      when(config.markup).thenReturn(markup);
+      when(markup.screens).thenReturn({'login': screen});
+      when(routing.defaultRouting).thenReturn({});
       when(screen.routes).thenReturn({'onSuccess': '_dismiss'});
       nextRoute = router.getNextRoute('login/onSuccess');
-      expect(null, nextRoute);
+      expect('_dismiss', nextRoute);
     });
 
     test('getNextRoute: 2 level success (backup default routing)', () async {
-      when(config.markup).thenReturn(main);
-      when(main.screens).thenReturn({'login': screen});
-      when(main.routing.defaultRouting).thenReturn({'fail': '_dismiss'});
+      when(config.markup).thenReturn(markup);
+      when(markup.screens).thenReturn({'login': screen});
+      when(routing.defaultRouting).thenReturn({'fail': '_dismiss'});
       when(screen.routes).thenReturn(null);
       nextRoute = router.getNextRoute('login/fail');
       expect('_dismiss', nextRoute);
     });
 
     test('getNextRoute: 2 level success (backup default routing)', () async {
-      when(config.markup).thenReturn(main);
-      when(main.screens).thenReturn({'login': screen});
-      when(main.routing.defaultRouting).thenReturn({'fail': '_dismiss'});
+      when(config.markup).thenReturn(markup);
+      when(markup.screens).thenReturn({'login': screen});
+      when(routing.defaultRouting).thenReturn({'fail': '_dismiss'});
       when(screen.routes).thenReturn({'onSuccess': '_dismiss'});
       nextRoute = router.getNextRoute('login/fail');
       expect('_dismiss', nextRoute);
@@ -78,7 +83,6 @@ void main() {
     test('generateRoute: nextRoute = null', () async {
       var settings = RouteSettings(
         arguments: null,
-        isInitialRoute: false,
         name: null,
       );
       MaterialPageRoute route = router.generateRoute(settings);
@@ -89,7 +93,6 @@ void main() {
     test('generateRoute: nextRoute = _dismiss, isMock = false', () async {
       var settings = RouteSettings(
         arguments: null,
-        isInitialRoute: false,
         name: '_dismiss',
       );
       when(config.isMock).thenReturn(false);
@@ -101,7 +104,6 @@ void main() {
     test('generateRoute: nextRoute = _dismiss, isMock = true', () async {
       var settings = RouteSettings(
         arguments: null,
-        isInitialRoute: false,
         name: '_dismiss',
       );
       when(config.isMock).thenReturn(true);
@@ -112,7 +114,6 @@ void main() {
     test('generateRoute: nextRoute = _dismiss, isMock = false', () async {
       var settings = RouteSettings(
         arguments: null,
-        isInitialRoute: false,
         name: '_dismiss',
       );
       when(config.isMock).thenReturn(false);
@@ -124,8 +125,8 @@ void main() {
     test('nextScreen: ', () async {
       // Creating fake Screen instance.
       var fakeScreen = Screen(null, 'flow', NssStack.vertical, [], appBar: {}, routes: {});
-      when(config.markup).thenReturn(main);
-      when(main.screens).thenReturn({'login': fakeScreen});
+      when(config.markup).thenReturn(markup);
+      when(markup.screens).thenReturn({'login': fakeScreen});
       var nextRoute = 'login';
       var sc = router.nextScreen(nextRoute);
       expect(sc.id, 'login');

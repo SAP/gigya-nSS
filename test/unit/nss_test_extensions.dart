@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/models/routing.dart';
 import 'package:gigya_native_screensets_engine/platform/factory.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
@@ -50,7 +51,9 @@ class MockApiChannel extends Mock implements MethodChannel {}
 
 class MockScreenStateBloc extends Mock implements ScreenViewModel {}
 
-class MockMain extends Mock implements Markup {}
+class MockMarkup extends Mock implements Markup {}
+
+class MockRouting extends Mock implements Routing {}
 
 class MockScreen extends Mock implements Screen {}
 
