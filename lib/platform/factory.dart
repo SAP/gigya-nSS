@@ -22,9 +22,9 @@ enum NssWidgetType {
   screen,
   container,
   label,
-  input,
-  email,
-  password,
+  textInput,
+  emailInput,
+  passwordInput,
   submit,
   checkbox,
   radio,
@@ -140,9 +140,9 @@ class MaterialWidgetFactory extends WidgetFactory {
     switch (type) {
       case NssWidgetType.label:
         return LabelWidget(key: UniqueKey(), data: data);
-      case NssWidgetType.input:
-      case NssWidgetType.email:
-      case NssWidgetType.password:
+      case NssWidgetType.textInput:
+      case NssWidgetType.emailInput:
+      case NssWidgetType.passwordInput:
         return TextInputWidget(key: UniqueKey(), data: data);
       case NssWidgetType.submit:
         return SubmitWidget(key: UniqueKey(), data: data);
@@ -178,13 +178,13 @@ class CupertinoWidgetFactory extends WidgetFactory {
       case NssWidgetType.label:
         // TODO: Handle this case.
         break;
-      case NssWidgetType.input:
+      case NssWidgetType.textInput:
         // TODO: Handle this case.
         break;
-      case NssWidgetType.email:
+      case NssWidgetType.emailInput:
         // TODO: Handle this case.
         break;
-      case NssWidgetType.password:
+      case NssWidgetType.passwordInput:
         // TODO: Handle this case.
         break;
       case NssWidgetType.submit:

@@ -34,7 +34,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
           final placeHolder = getText(widget.data, bindings);
           _textEditingController.text = placeHolder;
           return TextFormField(
-            obscureText: widget.data.type == NssWidgetType.password,
+            obscureText: widget.data.type == NssWidgetType.passwordInput,
             controller: _textEditingController,
             decoration: InputDecoration(hintText: widget.data.textKey),
             validator: (input) {
