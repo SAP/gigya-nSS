@@ -114,7 +114,7 @@ class RouteEvaluator {
   static RoutingAllowed allowedBy(int code) {
     switch (code) {
       case 206001:
-        return RoutingAllowed.onPendingRegistration;
+        return RoutingAllowed.none;
     }
 
     return RoutingAllowed.none;
