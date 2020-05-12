@@ -8,6 +8,7 @@ part 'screen.g.dart';
 class Screen {
   String id;
   String action;
+  @JsonKey(defaultValue: NssStack.vertical)
   NssStack stack;
   Map<String, dynamic> appBar;
   List<NssWidgetData> children;

@@ -9,6 +9,7 @@ class NssWidgetData {
   String bind;
   NssWidgetType type;
   String textKey;
+  @JsonKey(defaultValue: NssStack.vertical)
   NssStack stack;
   NssAlignment alignment;
   List<NssWidgetData> children;
