@@ -16,6 +16,8 @@ class MaterialScreenRenderErrorWidget extends StatelessWidget {
           padding: const EdgeInsets.all(24.0),
           child: Center(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text(
                   'Nss Render error:',
@@ -28,11 +30,20 @@ class MaterialScreenRenderErrorWidget extends StatelessWidget {
                 SizedBox(
                   height: 10,
                 ),
-                Text(
-                  errorMessage,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                Container(
+                  decoration: BoxDecoration(
+                      color: Colors.red[100],
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Colors.red[900],
+                      )),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      errorMessage,
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w500, color: Colors.red[900]),
+                    ),
                   ),
                 ),
               ],
@@ -71,7 +82,6 @@ class MaterialComponentRenderErrorWidget extends StatelessWidget {
 }
 
 class MaterialScreenInfoErrorWidget extends StatelessWidget {
-
   @visibleForTesting
   ScreenViewModel getProvider(context) {
     return Provider.of<ScreenViewModel>(context, listen: false);
@@ -122,4 +132,3 @@ class MaterialScreenInfoErrorWidget extends StatelessWidget {
     );
   }
 }
-

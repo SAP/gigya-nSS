@@ -87,7 +87,9 @@ abstract class Router {
   @visibleForTesting
   Screen nextScreen(String nextRoute) {
     var screen = config.markup.screens[nextRoute];
-    screen.id = nextRoute;
+    if(screen != null) {
+      screen.id = nextRoute;
+    }
     return screen;
   }
 
@@ -96,7 +98,7 @@ abstract class Router {
 
     if (nextRoute == null) {
       engineLogger.e('Failed to parse routing for name: ${settings.name}');
-      return getErrorRoute(settings, 'Failed to parse desired route.\nPlease verify markup');
+      return getErrorRoute(settings, 'Failed to parse desired route.\nPlease verify markup.');
     }
     if (shouldCancel(nextRoute)) {
       return dismissEngine(settings, '_canceled');
@@ -104,7 +106,13 @@ abstract class Router {
     if (shouldDismiss(nextRoute)) {
       return dismissEngine(settings, '_dismiss');
     }
-    return screenRoute(settings, nextScreen(nextRoute));
+
+    dynamic nextScreenObj = nextScreen(nextRoute);
+    if(nextScreenObj == null) {
+      return getErrorRoute(settings, 'Screen not found.\nPlease verify markup.');
+    }
+
+    return screenRoute(settings, nextScreenObj);
   }
 }
 
@@ -114,7 +122,7 @@ class RouteEvaluator {
   static RoutingAllowed allowedBy(int code) {
     switch (code) {
       case 206001:
-        return RoutingAllowed.none;
+        return RoutingAllowed.onPendingRegistration;
     }
 
     return RoutingAllowed.none;
