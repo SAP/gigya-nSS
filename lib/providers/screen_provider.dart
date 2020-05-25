@@ -109,6 +109,11 @@ class ScreenViewModel with ChangeNotifier {
     }
   }
 
+  void textLinkTap(String link) {
+    engineLogger.d('link tap: $link');
+    screenService.linkToBrowser(link);
+  }
+
   /// Send requested API request given a String [method] and base [parameters] map.
   /// [parameter] map is not signed.
   void sendApi(String method, Map<String, dynamic> parameters) {

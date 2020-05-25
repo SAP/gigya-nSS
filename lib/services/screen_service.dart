@@ -19,4 +19,8 @@ class ScreenService {
     });
     return map.cast<String, dynamic>();
   }
+
+  Future<void> linkToBrowser(String link) async {
+
+  }
 }

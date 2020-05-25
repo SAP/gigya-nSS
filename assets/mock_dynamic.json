@@ -17,7 +17,7 @@
         "textKey": "Login",
         "style": {
           "fontColor": "white",
-          "background": "#000000"
+          "background": "blue"
         }
       },
       "stack": "vertical",
@@ -56,6 +56,13 @@
             "fontColor": "white",
             "cornerRadius": 10
           }
+        },
+        {
+          "type": "label",
+          "style": {
+            "padding": 20
+          },
+          "textKey": "By logging in you are bound to [us](https://www.google.com)"
         },
         {
           "type": "submit",
