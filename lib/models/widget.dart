@@ -1,4 +1,4 @@
-import 'package:gigya_native_screensets_engine/platform/factory.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/models/option.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -18,6 +18,7 @@ class NssWidgetData {
   @JsonKey(defaultValue: false)
   bool expand;
   List<NssOption> options;
+  Map<String, dynamic> style;
 
   NssWidgetData({
     this.textKey,
@@ -30,6 +31,7 @@ class NssWidgetData {
     this.defaultValue,
     this.expand,
     this.options,
+    this.style,
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);

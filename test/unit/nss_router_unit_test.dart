@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
-import 'package:gigya_native_screensets_engine/platform/factory.dart';
-import 'package:gigya_native_screensets_engine/platform/router.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
+import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 

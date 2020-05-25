@@ -1,4 +1,4 @@
-import 'package:gigya_native_screensets_engine/platform/factory.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -14,6 +14,7 @@ class Screen {
   List<NssWidgetData> children;
   @JsonKey(name: 'routing')
   Map<String, String> routes;
+  Map<String, String> style;
 
   Screen(this.id, this.action, this.stack, this.children, {this.appBar, this.routes});
 
