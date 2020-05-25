@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
-import 'package:gigya_native_screensets_engine/platform/router.dart';
+import 'package:gigya_native_screensets_engine/widgets/router.dart';
 
 class MaterialAppWidget extends StatelessWidget {
   final Markup markup;
