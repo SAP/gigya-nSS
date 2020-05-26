@@ -60,7 +60,13 @@
         {
           "type": "label",
           "style": {
-            "padding": 20
+            "fontColor": "white",
+            "padding": [
+              10,
+              20,
+              10,
+              10
+            ]
           },
           "textKey": "By logging in you are bound to [us](https://www.google.com)"
         },
@@ -170,7 +176,7 @@
         }
       ]
     },
-    "account-update" : {
+    "account-update": {
       "routing": {
         "onSuccess": "_dismiss"
       },
