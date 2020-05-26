@@ -42,20 +42,20 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   @override
   Widget buildScaffold() {
     var background = getStyle(Styles.background, widget.screen.style);
-    var appBackground = getStyle(Styles.background, widget.screen.appBar['style']);
+    var appBackground = getStyle(Styles.background, widget.screen.appBar.style);
 
     return Scaffold(
       extendBodyBehindAppBar: appBackground == Colors.transparent,
       appBar: widget.screen.appBar == null
           ? null
           : AppBar(
-              elevation: getStyle(Styles.elevation, widget.screen.appBar['style']),
+              elevation: getStyle(Styles.elevation, widget.screen.appBar.style),
               backgroundColor: appBackground,
               title: Text(
-                widget.screen.appBar['textKey'] ?? '',
+                widget.screen.appBar.textKey ?? '',
                 style: TextStyle(
-                  color: getStyle(Styles.fontColor, widget.screen.appBar['style']),
-                  fontWeight: getStyle(Styles.fontWeight, widget.screen.appBar['style']),
+                  color: getStyle(Styles.fontColor, widget.screen.appBar.style),
+                  fontWeight: getStyle(Styles.fontWeight, widget.screen.appBar.style),
                 ),
               ),
               leading: Platform.isIOS
@@ -63,7 +63,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
                       child: IconButton(
                         icon: Icon(
                           Icons.close,
-                          color: getStyle(Styles.fontColor, widget.screen.appBar['style']),
+                          color: getStyle(Styles.fontColor, widget.screen.appBar.style),
                         ),
                         onPressed: () => Navigator.pushNamed(context, '_canceled'),
                       ),
