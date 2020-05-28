@@ -1,19 +1,17 @@
-import 'dart:developer';
-
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/models/routing.dart';
-import 'package:gigya_native_screensets_engine/platform/factory.dart';
+import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
-import 'package:gigya_native_screensets_engine/models/markup.dart';
-import 'package:gigya_native_screensets_engine/models/screen.dart';
-import 'package:gigya_native_screensets_engine/startup.dart';
 import 'package:gigya_native_screensets_engine/services/api_service.dart';
+import 'package:gigya_native_screensets_engine/startup.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:mockito/mockito.dart';
 
 //region Test extensions

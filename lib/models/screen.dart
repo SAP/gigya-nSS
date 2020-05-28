@@ -1,6 +1,8 @@
-import 'package:gigya_native_screensets_engine/platform/factory.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import 'appbar.dart';
 
 part 'screen.g.dart';
 
@@ -10,10 +12,11 @@ class Screen {
   String action;
   @JsonKey(defaultValue: NssStack.vertical)
   NssStack stack;
-  Map<String, dynamic> appBar;
+  AppBar appBar;
   List<NssWidgetData> children;
   @JsonKey(name: 'routing')
   Map<String, String> routes;
+  Map<String, dynamic> style;
 
   Screen(this.id, this.action, this.stack, this.children, {this.appBar, this.routes});
 

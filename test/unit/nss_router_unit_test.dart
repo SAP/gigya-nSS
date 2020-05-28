@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/models/appbar.dart' as nssAppbar;
 import 'package:gigya_native_screensets_engine/models/screen.dart';
-import 'package:gigya_native_screensets_engine/platform/factory.dart';
-import 'package:gigya_native_screensets_engine/platform/router.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
+import 'package:gigya_native_screensets_engine/widgets/router.dart';
+import 'package:gigya_native_screensets_engine/models/appbar.dart' as nssAppbar;
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -14,7 +18,7 @@ void main() {
     var config = MockConfig();
     var channels = MockChannels();
     mockLogging(config, channels);
-    
+
     var factory = MockMaterialWidgetFactory();
 
     var markup = MockMarkup();
@@ -29,6 +33,44 @@ void main() {
     var router = MaterialRouter(config, channels, factory);
 
     var nextRoute;
+
+    test('routing allowed', () async {
+      Map<String, Screen> screenMap = {
+        'login': screen,
+        'register': screen,
+        'account-update': screen,
+      };
+      when(config.markup).thenReturn(markup);
+      when(markup.screens).thenReturn(screenMap);
+      NssIoc().register(NssConfig, (ioc) => config);
+      String testRoute = '_dismiss';
+      expect(RouteEvaluator.validatedRoute(testRoute), true);
+      testRoute = '_canceled';
+      expect(RouteEvaluator.validatedRoute(testRoute), true);
+      testRoute = 'login';
+      expect(RouteEvaluator.validatedRoute(testRoute), true);
+      testRoute = 'register';
+      expect(RouteEvaluator.validatedRoute(testRoute), true);
+      testRoute = 'account-update';
+      expect(RouteEvaluator.validatedRoute(testRoute), true);
+    });
+
+    test('routing not allowed', () async {
+      Map<String, Screen> screenMap = {
+        'login': screen,
+        'register': screen,
+        'account-update': screen,
+      };
+      when(config.markup).thenReturn(markup);
+      when(markup.screens).thenReturn(screenMap);
+      NssIoc().register(NssConfig, (ioc) => config);
+      String testRoute = '_dismissal';
+      expect(RouteEvaluator.validatedRoute(testRoute), false);
+      testRoute = '_cancel';
+      expect(RouteEvaluator.validatedRoute(testRoute), false);
+      testRoute = 'login2';
+      expect(RouteEvaluator.validatedRoute(testRoute), false);
+    });
 
     test('getNextRoute: 1 level null input', () async {
       nextRoute = router.getNextRoute(null);
@@ -124,7 +166,7 @@ void main() {
 
     test('nextScreen: ', () async {
       // Creating fake Screen instance.
-      var fakeScreen = Screen(null, 'flow', NssStack.vertical, [], appBar: {}, routes: {});
+      var fakeScreen = Screen(null, 'flow', NssStack.vertical, [], appBar: nssAppbar.AppBar(''), routes: {});
       when(config.markup).thenReturn(markup);
       when(markup.screens).thenReturn({'login': fakeScreen});
       var nextRoute = 'login';

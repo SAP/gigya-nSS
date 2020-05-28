@@ -6,13 +6,14 @@ import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
-import 'package:gigya_native_screensets_engine/platform/material/app.dart';
-import 'package:gigya_native_screensets_engine/platform/material/buttons.dart';
-import 'package:gigya_native_screensets_engine/platform/material/inputs.dart';
-import 'package:gigya_native_screensets_engine/platform/material/labels.dart';
-import 'package:gigya_native_screensets_engine/platform/material/screen.dart';
-import 'package:gigya_native_screensets_engine/platform/material/selection.dart';
-import 'package:gigya_native_screensets_engine/platform/router.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/app.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/buttons.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/container.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/inputs.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/labels.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/screen.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/selection.dart';
+import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 
@@ -48,26 +49,40 @@ abstract class WidgetFactory {
 
   Widget buildComponent(NssWidgetType type, NssWidgetData data);
 
-  Widget buildContainer(List<Widget> childrenWidgets, NssStack stack, {NssAlignment alignment}) {
+  Widget buildContainer(List<Widget> childrenWidgets, NssStack stack,
+      {NssAlignment alignment, Map<String, dynamic> style, bool isScreen = false}) {
     if (stack == null) {
       //TODO: Markup error.
       return Container();
     }
+
     switch (stack) {
       case NssStack.vertical:
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: getMainAxisAlignment(alignment),
-          children: childrenWidgets,
+        return ContainerWidget(
+          isScreen: isScreen,
+          style: style,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: getMainAxisAlignment(alignment),
+            children: childrenWidgets,
+          ),
         );
       case NssStack.horizontal:
-        return Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: getMainAxisAlignment(alignment),
-          children: childrenWidgets,
+        return ContainerWidget(
+          isScreen: isScreen,
+          style: style,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: getMainAxisAlignment(alignment),
+            children: childrenWidgets,
+          ),
         );
       default:
-        return Column(children: childrenWidgets);
+        return ContainerWidget(
+          isScreen: isScreen,
+          style: style,
+          child: Column(children: childrenWidgets),
+        );
     }
   }
 
@@ -83,7 +98,7 @@ abstract class WidgetFactory {
           buildContainer(
             buildWidgets(widget.children),
             widget.stack,
-            alignment: widget.alignment,
+            style: widget.style,
           ),
         );
       } else {
@@ -131,7 +146,7 @@ class MaterialWidgetFactory extends WidgetFactory {
       viewModel: NssIoc().use(ScreenViewModel),
       bindingModel: NssIoc().use(BindingModel),
       screen: screen,
-      content: buildContainer(buildWidgets(screen.children), screen.stack),
+      content: buildContainer(buildWidgets(screen.children), screen.stack, style: screen.style, isScreen: true),
     );
   }
 

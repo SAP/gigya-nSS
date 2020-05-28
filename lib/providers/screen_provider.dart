@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/platform/router.dart';
+import 'package:gigya_native_screensets_engine/utils/linkify.dart';
+import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:gigya_native_screensets_engine/services/api_service.dart';
 import 'package:gigya_native_screensets_engine/services/screen_service.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
@@ -106,6 +107,23 @@ class ScreenViewModel with ChangeNotifier {
       // Request form save state. This will update the binding map with the required data for submission.
       formKey.currentState.save();
       sendApi(ScreenAction.submit.name, submission);
+    }
+  }
+
+  /// Label widget initiated link action.
+  /// Validate option available are URL/route.
+  void linkifyTap(String link) {
+    engineLogger.d('link tap: $link');
+
+    if (Linkify.isValidUrl(link)) {
+      engineLogger.d('URL link validated : $link');
+      screenService.linkToBrowser(link);
+      return;
+    }
+    if (RouteEvaluator.validatedRoute(link)) {
+      engineLogger.d('Route link validated : $link');
+      navigationStream.sink.add('$id/$link');
+      return;
     }
   }
 

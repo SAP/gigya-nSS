@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
-import 'package:gigya_native_screensets_engine/platform/factory.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/startup.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:mockito/mockito.dart';

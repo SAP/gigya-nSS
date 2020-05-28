@@ -1,11 +1,55 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/models/widget.dart';
+import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/injector.dart';
 
-/// General widget decoration mixin.
-/// Includes useful UI builders that correspond with the applied markup.
-mixin WidgetDecorationMixin {
+mixin StyleMixin {
+  final Map<String, dynamic> defaultStyle = {
+    'margin': 16,
+    'fontSize': 14,
+    'fontColor': 'black',
+    'fontWeight': 4,
+    'background': 'transparent',
+    'elevation': 3,
+    'opacity': 1.0,
+    "borderColor": "#000000",
+    "borderSize": 1,
+    "cornerRadius": 0
+  };
+
+  dynamic getStyle(Styles style, Map<String, dynamic> data) {
+    if (data == null) data = defaultStyle;
+
+    var value = getStyleValue(style, data);
+
+    switch (style) {
+      case Styles.margin:
+        return getPadding(value);
+      case Styles.fontSize:
+      case Styles.elevation:
+      case Styles.opacity:
+      case Styles.borderSize:
+      case Styles.cornerRadius:
+        return ensureDouble(value);
+      case Styles.borderColor:
+      case Styles.fontColor:
+        var platformAware = NssIoc().use(NssConfig).isPlatformAware ?? false;
+        return getColor(value, platformAware: platformAware);
+      case Styles.fontWeight:
+        return getFontWeight(value);
+      case Styles.background:
+        var platformAware = NssIoc().use(NssConfig).isPlatformAware ?? false;
+        return getBackground(value, platformAware: platformAware);
+      default:
+        break;
+    }
+  }
+
+  getStyleValue(Styles style, Map<String, dynamic> data) {
+    return data[style.name] ?? defaultStyle[style.name];
+  }
+
   /// Make sure this value will be treated as a double.
   /// Useful for JSON parsed elements
   /// which should be treated as double but are parsed as integer.
@@ -13,7 +57,7 @@ mixin WidgetDecorationMixin {
 
   /// parse padding value.
   /// Optional input can be a double, integer or a number array (left, right, top, bottom).
-  EdgeInsetsGeometry withPadding(padding) {
+  EdgeInsetsGeometry getPadding(padding) {
     if (padding is double) {
       return EdgeInsets.all(padding);
     } else if (padding is int) {
@@ -27,9 +71,6 @@ mixin WidgetDecorationMixin {
     }
     return EdgeInsets.zero;
   }
-
-  /// Use as a default padding value for all widgets that dd not contain a padding style parameter.
-  defaultPadding() => withPadding(12);
 
   /// Request a [Color] instance given an multi optional identifier (named, hex).
   Color getColor(String color, {bool platformAware}) {
@@ -73,23 +114,50 @@ mixin WidgetDecorationMixin {
         return platformAware ? CupertinoColors.systemOrange : Colors.orange;
       case 'white':
         return platformAware ? CupertinoColors.white : Colors.white;
+      case 'transparent':
+        return platformAware ? Colors.transparent : Colors.transparent;
       default:
         return platformAware ? CupertinoColors.black : Colors.black;
     }
   }
 
-  /// Determine if this widget should be nested within an [Expanded] widget.
-  Widget expandIfNeeded(NssWidgetData data, Widget child) {
-    var size = data.style['size'];
+  getFontWeight(weight) {
+    if (weight is int) {
+      return FontWeight.values[weight - 1];
+    } else if (weight is String) {
+      switch (weight) {
+        case 'bold':
+          return FontWeight.bold;
+        case 'thin':
+          return FontWeight.w200;
+      }
+    }
+  }
 
-    if(size == null) {
-      return data.expand ? Expanded(child: child) : Flexible(child: child);
+  getBackground(background, {bool platformAware}) {
+    if (background.contains("#"))
+      return _getColorWithHex(background);
+    else if (background.contains("http://") || background.contains("https://")) {
+      return NetworkImage(background);
     } else {
-      return SizedBox(width: ensureDouble(size[0]), height: ensureDouble(size[1]), child: child);
+      return _getColorWithName(background, platformAware: platformAware ?? false);
     }
   }
 }
 
-/// Input field decoration classes mixin.
-/// Support for both [TextField] & [CupertinoTextField].
-class InputDecorationMixin with WidgetDecorationMixin {}
+enum Styles {
+  margin,
+  fontColor,
+  fontSize,
+  fontWeight,
+  background,
+  cornerRadius,
+  borderColor,
+  borderSize,
+  opacity,
+  elevation,
+}
+
+extension StylesExt on Styles {
+  String get name => describeEnum(this);
+}

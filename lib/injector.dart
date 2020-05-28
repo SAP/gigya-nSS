@@ -1,6 +1,6 @@
 import 'package:gigya_native_screensets_engine/config.dart';
-import 'package:gigya_native_screensets_engine/platform/factory.dart';
-import 'package:gigya_native_screensets_engine/platform/router.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
+import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:gigya_native_screensets_engine/startup.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';

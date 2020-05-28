@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
-import 'package:gigya_native_screensets_engine/platform/factory.dart';
+import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/models/markup.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
-import 'package:gigya_native_screensets_engine/platform/material/errors.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/errors.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 abstract class Router {
@@ -87,7 +89,7 @@ abstract class Router {
   @visibleForTesting
   Screen nextScreen(String nextRoute) {
     var screen = config.markup.screens[nextRoute];
-    if(screen != null) {
+    if (screen != null) {
       screen.id = nextRoute;
     }
     return screen;
@@ -108,7 +110,7 @@ abstract class Router {
     }
 
     dynamic nextScreenObj = nextScreen(nextRoute);
-    if(nextScreenObj == null) {
+    if (nextScreenObj == null) {
       return getErrorRoute(settings, 'Screen not found.\nPlease verify markup.');
     }
 
@@ -119,6 +121,7 @@ abstract class Router {
 enum RoutingAllowed { none, onPendingRegistration }
 
 class RouteEvaluator {
+  /// Check for allowed routing given an error [code]
   static RoutingAllowed allowedBy(int code) {
     switch (code) {
       case 206001:
@@ -126,6 +129,18 @@ class RouteEvaluator {
     }
 
     return RoutingAllowed.none;
+  }
+
+  static List<String> engineRoutes = ['_canceled', '_dismiss'];
+
+  /// Validate requested route. Only saved engine routes and provided screen names are valid.
+  static bool validatedRoute(String route) {
+    Markup markup = NssIoc().use(NssConfig).markup;
+    if (engineRoutes.contains(route)) return true;
+    for (var screenName in markup.screens.keys) {
+      if (screenName == route) return true;
+    }
+    return false;
   }
 }
 
@@ -135,7 +150,6 @@ class MaterialRouter extends Router {
   final MaterialWidgetFactory widgetFactory;
 
   MaterialRouter(this.config, this.channels, this.widgetFactory) : super(config, channels);
-
 
   @override
   Route emptyRoute(RouteSettings settings) {
