@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
+import 'package:gigya_native_screensets_engine/models/appbar.dart' as nssAppbar;
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -14,7 +15,7 @@ void main() {
     var config = MockConfig();
     var channels = MockChannels();
     mockLogging(config, channels);
-    
+
     var factory = MockMaterialWidgetFactory();
 
     var markup = MockMarkup();
@@ -124,7 +125,7 @@ void main() {
 
     test('nextScreen: ', () async {
       // Creating fake Screen instance.
-      var fakeScreen = Screen(null, 'flow', NssStack.vertical, [], appBar: {}, routes: {});
+      var fakeScreen = Screen(null, 'flow', NssStack.vertical, [], appBar: nssAppbar.AppBar(''), routes: {});
       when(config.markup).thenReturn(markup);
       when(markup.screens).thenReturn({'login': fakeScreen});
       var nextRoute = 'login';

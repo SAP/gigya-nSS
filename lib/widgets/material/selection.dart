@@ -23,7 +23,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: getStyle(Styles.padding, widget.data.style),
+      padding: getStyle(Styles.margin, widget.data.style),
       child: Consumer<BindingModel>(
         builder: (context, bindings, child) {
           _currentValue = getBool(widget.data, bindings);
@@ -69,9 +69,9 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
   @override
   Widget build(BuildContext context) {
     return expandIfNeeded(
-        widget.data.expand,
+        widget.data,
         Padding(
-          padding: getStyle(Styles.padding, widget.data.style),
+          padding: getStyle(Styles.margin, widget.data.style),
           child: Consumer<BindingModel>(
             builder: (context, bindings, child) {
               _groupValue = getText(widget.data, bindings);
@@ -153,9 +153,9 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
   @override
   Widget build(BuildContext context) {
     return expandIfNeeded(
-        widget.data.expand,
+        widget.data,
         Padding(
-          padding: getStyle(Styles.padding, widget.data.style),
+          padding: getStyle(Styles.margin, widget.data.style),
           child: Consumer<BindingModel>(builder: (context, bindings, child) {
             _dropdownItems.clear();
             var bindValue = getText(widget.data, bindings);

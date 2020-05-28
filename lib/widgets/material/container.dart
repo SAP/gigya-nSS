@@ -13,7 +13,7 @@ class ContainerWidget extends StatelessWidget with StyleMixin {
     var background = getStyle(Styles.background, style);
 
     return Padding(
-      padding: getStyle(Styles.padding, style),
+      padding: getStyle(Styles.margin, style),
       child: Container(
         decoration: isScreen == false ? BoxDecoration(
           color: background is Color ? background : null,

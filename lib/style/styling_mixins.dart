@@ -6,7 +6,7 @@ import 'package:gigya_native_screensets_engine/injector.dart';
 
 mixin StyleMixin {
   final Map<String, dynamic> defaultStyle = {
-    'padding': 16,
+    'margin': 16,
     'fontSize': 14,
     'fontColor': 'black',
     'fontWeight': 4,
@@ -24,7 +24,7 @@ mixin StyleMixin {
     var value = getStyleValue(style, data);
 
     switch (style) {
-      case Styles.padding:
+      case Styles.margin:
         return getPadding(value);
       case Styles.fontSize:
       case Styles.elevation:
@@ -146,7 +146,7 @@ mixin StyleMixin {
 }
 
 enum Styles {
-  padding,
+  margin,
   fontColor,
   fontSize,
   fontWeight,

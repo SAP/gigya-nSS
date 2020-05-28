@@ -31,9 +31,9 @@ class _SubmitWidgetState extends State<SubmitWidget>
   @override
   Widget build(BuildContext context) {
     return expandIfNeeded(
-        widget.data.expand,
+        widget.data,
         Padding(
-          padding: getStyle(Styles.padding, widget.data.style),
+          padding: getStyle(Styles.margin, widget.data.style),
           child: Consumer2<ScreenViewModel, BindingModel>(
             builder: (context, viewModel, bindings, child) {
               return Opacity(
@@ -65,6 +65,7 @@ class _SubmitWidgetState extends State<SubmitWidget>
               );
             },
           ),
-        ));
+        ),
+    );
   }
 }
