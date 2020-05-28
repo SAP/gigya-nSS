@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/models/appbar.dart' as nssAppbar;
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
@@ -30,6 +33,44 @@ void main() {
     var router = MaterialRouter(config, channels, factory);
 
     var nextRoute;
+
+    test('routing allowed', () async {
+      Map<String, Screen> screenMap = {
+        'login': screen,
+        'register': screen,
+        'account-update': screen,
+      };
+      when(config.markup).thenReturn(markup);
+      when(markup.screens).thenReturn(screenMap);
+      NssIoc().register(NssConfig, (ioc) => config);
+      String testRoute = '_dismiss';
+      expect(RouteEvaluator.validatedRoute(testRoute), true);
+      testRoute = '_canceled';
+      expect(RouteEvaluator.validatedRoute(testRoute), true);
+      testRoute = 'login';
+      expect(RouteEvaluator.validatedRoute(testRoute), true);
+      testRoute = 'register';
+      expect(RouteEvaluator.validatedRoute(testRoute), true);
+      testRoute = 'account-update';
+      expect(RouteEvaluator.validatedRoute(testRoute), true);
+    });
+
+    test('routing not allowed', () async {
+      Map<String, Screen> screenMap = {
+        'login': screen,
+        'register': screen,
+        'account-update': screen,
+      };
+      when(config.markup).thenReturn(markup);
+      when(markup.screens).thenReturn(screenMap);
+      NssIoc().register(NssConfig, (ioc) => config);
+      String testRoute = '_dismissal';
+      expect(RouteEvaluator.validatedRoute(testRoute), false);
+      testRoute = '_cancel';
+      expect(RouteEvaluator.validatedRoute(testRoute), false);
+      testRoute = 'login2';
+      expect(RouteEvaluator.validatedRoute(testRoute), false);
+    });
 
     test('getNextRoute: 1 level null input', () async {
       nextRoute = router.getNextRoute(null);

@@ -17,7 +17,8 @@
         "textKey": "Login",
         "style": {
           "fontColor": "white",
-          "background": "blue"
+          "background": "transparent",
+          "elevation": 0
         }
       },
       "stack": "vertical",
@@ -63,7 +64,7 @@
             "fontColor": "white",
             "padding": [
               10,
-              20,
+              10,
               10,
               10
             ]

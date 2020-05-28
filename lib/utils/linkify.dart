@@ -5,23 +5,24 @@ import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 typedef OnLinkTap(String link);
 
 class Linkify with StyleMixin {
-  RegExp _regExp = RegExp(r'\[([^\]]*)\]\(([^)]*)\)');
+  final String original;
+  final RegExp _regExp = RegExp(r'\[([^\]]*)\]\(([^)]*)\)');
   Iterable<RegExpMatch> matches;
-  String _original;
+
   List<String> wrappers;
 
+  Linkify(this.original) {
+    // If true will already prepare the data to linkify it.
+    matches = _regExp.allMatches(original);
+    wrappers = original.split(_regExp);
+  }
+
   dispose() {
-    _regExp = null;
-    _original = null;
     matches = null;
     wrappers = null;
   }
 
-  bool containsLinks(string) {
-    // If true will already prepare the data to linkify it.
-    _original = string;
-    matches = _regExp.allMatches(_original);
-    wrappers = _original.split(_regExp);
+  bool containLinks(string) {
     return matches.length > 0;
   }
 
@@ -36,7 +37,7 @@ class Linkify with StyleMixin {
         span.add(TextSpan(text: wrappers[i], style: TextStyle()));
         break;
       }
-      RegExpMatch match = matches.elementAt(i);
+      final RegExpMatch match = matches.elementAt(i);
       _linkSingle(wrappers[i], match.group(1), match.group(2), tap, styles, span);
     }
     return RichText(
@@ -52,8 +53,6 @@ class Linkify with StyleMixin {
     Map<String, dynamic> styles,
     List<TextSpan> list,
   ) {
-    // Check validation of provided link.
-    bool isValidUrl = Uri.parse(link).isAbsolute;
     list
       ..add(
         TextSpan(
@@ -67,10 +66,10 @@ class Linkify with StyleMixin {
       )
       ..add(
         TextSpan(
-          text: isValidUrl ? actual : 'http link invalid',
+          text: actual,
           style: TextStyle(
             fontSize: getStyle(Styles.fontSize, styles),
-            color: isValidUrl ? getColor('blue') : getColor('red'), // TODO: need to take color from theme.
+            color: getColor('blue'), // TODO: need to take color from theme.
             fontWeight: getStyle(Styles.fontWeight, styles),
           ),
           recognizer: TapGestureRecognizer()
@@ -79,5 +78,17 @@ class Linkify with StyleMixin {
             }),
         ),
       );
+  }
+
+  static bool isValidUrl(String validate) {
+    var split = validate.split('://');
+    var protocols = ['http', 'https', 'ftp'];
+    if (split.length == 1) {
+      return false;
+    }
+    if (!protocols.contains(split[0])) {
+      return false;
+    }
+    return Uri.parse(validate).isAbsolute;
   }
 }

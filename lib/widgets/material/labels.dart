@@ -21,18 +21,16 @@ class LabelWidget extends StatelessWidget with WidgetDecorationMixin, BindingMix
         child: Consumer2<ScreenViewModel, BindingModel>(
           builder: (context, viewModel, bindings, child) {
             final String text = getText(data, bindings);
-            final Linkify linkify = Linkify();
-            final bool linkified = linkify.containsLinks(text);
-            if (!linkified) {
-              linkify.dispose();
-            }
+            final Linkify linkify = Linkify(text);
+            final bool linkified = linkify.containLinks(text);
+            if (!linkified) linkify.dispose();
             return Opacity(
               opacity: getStyle(Styles.opacity, data.style),
               child: linkified
                   ? linkify.linkify(
                       data.style,
                       (link) {
-                        viewModel.textLinkTap(link);
+                        viewModel.linkifyTap(link);
                       },
                     )
                   : Text(

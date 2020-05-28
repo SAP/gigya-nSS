@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:gigya_native_screensets_engine/services/api_service.dart';
 import 'package:gigya_native_screensets_engine/services/screen_service.dart';
@@ -109,9 +110,21 @@ class ScreenViewModel with ChangeNotifier {
     }
   }
 
-  void textLinkTap(String link) {
+  /// Label widget initiated link action.
+  /// Validate option available are URL/route.
+  void linkifyTap(String link) {
     engineLogger.d('link tap: $link');
-    screenService.linkToBrowser(link);
+
+    if (Linkify.isValidUrl(link)) {
+      engineLogger.d('URL link validated : $link');
+      screenService.linkToBrowser(link);
+      return;
+    }
+    if (RouteEvaluator.validatedRoute(link)) {
+      engineLogger.d('Route link validated : $link');
+      navigationStream.sink.add('$id/$link');
+      return;
+    }
   }
 
   /// Send requested API request given a String [method] and base [parameters] map.
