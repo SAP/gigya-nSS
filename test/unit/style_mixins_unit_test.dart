@@ -28,7 +28,7 @@ void main() {
     };
 
     test("test getting style", (){
-      expect(mixin.getStyle(Styles.padding, mockStyle), EdgeInsets.all(22.0));
+      expect(mixin.getStyle(Styles.margin, mockStyle), EdgeInsets.all(22.0));
       expect(mixin.getStyle(Styles.fontSize, mockStyle), 16.0);
       expect(mixin.getStyle(Styles.fontWeight, mockStyle), FontWeight.w800);
       expect(mixin.getStyle(Styles.background, mockStyle), Colors.red);
@@ -41,7 +41,7 @@ void main() {
 
     test("test getting default style", (){
       mockStyle = {};
-      expect(mixin.getStyle(Styles.padding, mockStyle), EdgeInsets.all(16.0));
+      expect(mixin.getStyle(Styles.margin, mockStyle), EdgeInsets.all(16.0));
       expect(mixin.getStyle(Styles.fontSize, mockStyle), 14.0);
       expect(mixin.getStyle(Styles.fontWeight, mockStyle), FontWeight.w400);
       expect(mixin.getStyle(Styles.background, mockStyle), Colors.transparent);

@@ -32,9 +32,9 @@ class _TextInputWidgetState extends State<TextInputWidget>
   @override
   Widget build(BuildContext context) {
     return expandIfNeeded(
-        widget.data.expand,
+        widget.data,
         Padding(
-          padding: getStyle(Styles.padding, widget.data.style),
+          padding: getStyle(Styles.margin, widget.data.style),
           child: Consumer<BindingModel>(
             builder: (context, bindings, child) {
               final placeHolder = getText(widget.data, bindings);

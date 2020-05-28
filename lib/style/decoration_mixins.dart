@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/models/widget.dart';
 
 /// General widget decoration mixin.
 /// Includes useful UI builders that correspond with the applied markup.
@@ -78,8 +79,14 @@ mixin WidgetDecorationMixin {
   }
 
   /// Determine if this widget should be nested within an [Expanded] widget.
-  Widget expandIfNeeded(bool expand, Widget child) {
-    return expand ? Expanded(child: child) : Flexible(child: child);
+  Widget expandIfNeeded(NssWidgetData data, Widget child) {
+    var size = data.style['size'];
+
+    if(size == null) {
+      return data.expand ? Expanded(child: child) : Flexible(child: child);
+    } else {
+      return SizedBox(width: ensureDouble(size[0]), height: ensureDouble(size[1]), child: child);
+    }
   }
 }
 

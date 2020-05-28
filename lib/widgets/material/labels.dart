@@ -13,9 +13,9 @@ class LabelWidget extends StatelessWidget with WidgetDecorationMixin, BindingMix
   @override
   Widget build(BuildContext context) {
     return expandIfNeeded(
-        data.expand,
+        data,
         Padding(
-          padding: getStyle(Styles.padding, data.style),
+          padding: getStyle(Styles.margin, data.style),
           child: Consumer<BindingModel>(
             builder: (context, bindings, child) {
               return Opacity(

@@ -29,7 +29,7 @@
           "type": "label",
           "textKey": "login in with your email and password:",
           "style": {
-            "padding": 50,
+            "margin": 50,
             "fontSize": 50,
             "fontColor": "#BCBCBC",
             "fontWeight": 1
@@ -62,7 +62,7 @@
           "textKey": "Submit",
           "style": {
             "background": "#000000",
-            "padding": 50,
+            "margin": 50,
             "fontSize": 50,
             "fontColor": "#BCBCBC",
             "fontWeight": 1,
