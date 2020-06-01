@@ -122,7 +122,7 @@ class ScreenViewModel with ChangeNotifier {
     }
     if (RouteEvaluator.validatedRoute(link)) {
       engineLogger.d('Route link validated : $link');
-      navigationStream.sink.add('$id/$link');
+      navigationStream.sink.add('$link');
       return;
     }
   }

@@ -18,6 +18,7 @@ class NssWidgetData {
   @JsonKey(defaultValue: false)
   bool expand;
   List<NssOption> options;
+  @JsonKey(defaultValue: {})
   Map<String, dynamic> style;
 
   NssWidgetData({
