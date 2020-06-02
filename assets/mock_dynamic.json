@@ -60,6 +60,19 @@
           }
         },
         {
+          "type": "label",
+          "style": {
+            "fontColor": "white",
+            "padding": [
+              10,
+              10,
+              10,
+              10
+            ]
+          },
+          "textKey": "By logging in you are bound to [us](https://www.google.com)"
+        },
+        {
           "type": "submit",
           "textKey": "Submit",
           "style": {
@@ -165,7 +178,7 @@
         }
       ]
     },
-    "account-update" : {
+    "account-update": {
       "routing": {
         "onSuccess": "_dismiss"
       },
