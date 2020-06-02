@@ -5,6 +5,8 @@ import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 
 mixin StyleMixin {
+  NssConfig config = NssIoc().use(NssConfig);
+
   final Map<String, dynamic> defaultStyle = {
     'margin': 16,
     'fontSize': 14,
@@ -18,10 +20,13 @@ mixin StyleMixin {
     "cornerRadius": 0
   };
 
-  dynamic getStyle(Styles style, Map<String, dynamic> data) {
-    if (data == null) data = defaultStyle;
+  dynamic getStyle(Styles style, Map<String, dynamic> data, {String theme}) {
 
     var value = getStyleValue(style, data);
+
+    if (theme != null) {
+      value = themeIsNeeded(style, data, theme) ?? value;
+    }
 
     switch (style) {
       case Styles.margin:
@@ -34,12 +39,12 @@ mixin StyleMixin {
         return ensureDouble(value);
       case Styles.borderColor:
       case Styles.fontColor:
-        var platformAware = NssIoc().use(NssConfig).isPlatformAware ?? false;
+        var platformAware = config.isPlatformAware ?? false;
         return getColor(value, platformAware: platformAware);
       case Styles.fontWeight:
         return getFontWeight(value);
       case Styles.background:
-        var platformAware = NssIoc().use(NssConfig).isPlatformAware ?? false;
+        var platformAware = config.isPlatformAware ?? false;
         return getBackground(value, platformAware: platformAware);
       default:
         break;
@@ -47,7 +52,14 @@ mixin StyleMixin {
   }
 
   getStyleValue(Styles style, Map<String, dynamic> data) {
+    if (data == null) data = defaultStyle;
+
     return data[style.name] ?? defaultStyle[style.name];
+  }
+
+  themeIsNeeded(Styles style, Map<String, dynamic> data, String key) {
+    if (data == null) data = {};
+    return (data[style.name] == null && config.markup.theme != null) ? config.markup.theme[key] : null;
   }
 
   /// Make sure this value will be treated as a double.

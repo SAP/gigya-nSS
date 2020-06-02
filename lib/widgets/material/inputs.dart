@@ -49,7 +49,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                   obscureText: widget.data.type == NssWidgetType.passwordInput,
                   controller: _textEditingController,
                   style: TextStyle(
-                      color: getStyle(Styles.fontColor, widget.data.style),
+                      color: getStyle(Styles.fontColor, widget.data.style, theme: 'textColor'),
                       fontSize: getStyle(Styles.fontSize, widget.data.style),
                       fontWeight: getStyle(Styles.fontWeight, widget.data.style)),
                   decoration: InputDecoration(
@@ -57,19 +57,19 @@ class _TextInputWidgetState extends State<TextInputWidget>
                     fillColor: getStyle(Styles.background, widget.data.style),
                     hintText: widget.data.textKey,
                     hintStyle: TextStyle(
-                      color: getStyle(Styles.fontColor, widget.data.style).withOpacity(0.5),
+                      color: getStyle(Styles.fontColor, widget.data.style, theme: 'textColor').withOpacity(0.5),
                     ),
                     focusedBorder: borderRadius == 0
                         ? UnderlineInputBorder(
                       borderSide: BorderSide(
-                        color: Colors.blue, // TODO: need to take color from theme.
+                        color: getStyle(Styles.borderColor, {}, theme: 'enabledColor'), // TODO: need to take color from theme.
                         width: borderSize+2,
                       ),
                     )
                         : OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
                       borderSide: BorderSide(
-                        color: Colors.blue, // TODO: need to take color from theme.
+                        color: getStyle(Styles.borderColor, {}, theme: 'enabledColor'), // TODO: need to take color from theme.
                         width: borderSize,
                       ),
                     ),

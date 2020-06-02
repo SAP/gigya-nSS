@@ -24,7 +24,7 @@ class LabelWidget extends StatelessWidget with WidgetDecorationMixin, BindingMix
                   getText(data, bindings),
                   style: TextStyle(
                       fontSize: getStyle(Styles.fontSize, data.style),
-                      color: getStyle(Styles.fontColor, data.style),
+                      color: getStyle(Styles.fontColor, data.style, theme: 'textColor'),
                       fontWeight: getStyle(Styles.fontWeight, data.style),
                   ),
                 ),

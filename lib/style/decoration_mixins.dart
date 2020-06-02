@@ -80,6 +80,8 @@ mixin WidgetDecorationMixin {
 
   /// Determine if this widget should be nested within an [Expanded] widget.
   Widget expandIfNeeded(NssWidgetData data, Widget child) {
+    if (data.style == null) data.style = {};
+
     var size = data.style['size'];
 
     if(size == null) {

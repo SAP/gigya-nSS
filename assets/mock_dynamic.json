@@ -1,7 +1,15 @@
 {
   "platformAware": false,
+  "theme": {
+    "primaryColor": "red",
+    "secondaryColor": "white",
+    "textColor": "white",
+    "enabledColor": "green",
+    "disabledColor": "grey",
+    "errorColor": "red"
+  },
   "routing": {
-    "initial": "login",
+    "initial": "register",
     "default": {
       "onSuccess": "_dismiss"
     }
@@ -14,11 +22,7 @@
       },
       "action": "login",
       "appBar": {
-        "textKey": "Login",
-        "style": {
-          "fontColor": "white",
-          "background": "#000000"
-        }
+        "textKey": "Login"
       },
       "stack": "vertical",
       "style": {
@@ -42,7 +46,6 @@
           "style": {
             "borderColor": "white",
             "borderSize": 1,
-            "fontColor": "white",
             "cornerRadius": 10
           }
         },
@@ -53,7 +56,6 @@
           "style": {
             "borderColor": "white",
             "borderSize": 1,
-            "fontColor": "white",
             "cornerRadius": 10
           }
         },

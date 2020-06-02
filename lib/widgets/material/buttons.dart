@@ -39,7 +39,7 @@ class _SubmitWidgetState extends State<SubmitWidget>
               return Opacity(
                 opacity: getStyle(Styles.opacity, widget.data.style),
                 child: ButtonTheme(
-                  buttonColor: getStyle(Styles.background, widget.data.style),
+                  buttonColor: getStyle(Styles.background, widget.data.style, theme: 'primaryColor'),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(
                       getStyle(Styles.cornerRadius, widget.data.style),
@@ -51,7 +51,7 @@ class _SubmitWidgetState extends State<SubmitWidget>
                       widget.data.textKey,
                       style: TextStyle(
                         fontSize: getStyle(Styles.fontSize, widget.data.style),
-                        color: getStyle(Styles.fontColor, widget.data.style),
+                        color: getStyle(Styles.fontColor, widget.data.style, theme: 'secondaryColor'),
                         fontWeight: getStyle(Styles.fontWeight, widget.data.style),
                       ),
                     ),

@@ -10,8 +10,9 @@ class Markup {
   bool platformAware;
   Map<String, Screen> screens;
   Routing routing;
+  Map<String, dynamic> theme;
 
-  Markup({this.platformAware, this.screens, this.routing});
+  Markup({this.platformAware, this.screens, this.routing, this.theme});
 
   factory Markup.fromJson(Map<String, dynamic> json) => _$MarkupFromJson(json);
 

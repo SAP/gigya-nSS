@@ -37,8 +37,8 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                   fontWeight: getStyle(Styles.fontWeight, widget.data.style)),
             ),
             value: _currentValue,
-            activeColor: getStyle(Styles.background, widget.data.style), // TODO: need to change the getter from theme.
-            checkColor: getStyle(Styles.fontColor, widget.data.style), // TODO: need to change the getter from theme.
+            activeColor: getStyle(Styles.background, widget.data.style, theme: 'disabledColor'), // TODO: need to change the getter from theme.
+            checkColor: getStyle(Styles.fontColor, {}, theme: 'enabledColor'), // TODO: need to change the getter from theme.
             onChanged: (bool val) {
               setState(() {
                 bindings.save(widget.data.bind, val);
@@ -94,13 +94,13 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                     title: Text(
                       option.textKey,
                       style: TextStyle(
-                        color: getStyle(Styles.fontColor, widget.data.style),
+                        color: getStyle(Styles.fontColor, widget.data.style, theme: 'textColor'),
                         fontSize: getStyle(Styles.fontSize, widget.data.style),
                         fontWeight: getStyle(Styles.fontWeight, widget.data.style),
                       ),
                     ),
                     groupValue: _groupValue,
-                    activeColor: getStyle(Styles.fontColor, widget.data.style),// TODO: need to change the getter from theme.
+                    activeColor: getStyle(Styles.background, {}, theme: 'enabledColor'),// TODO: need to change the getter from theme.
                     onChanged: (String value) {
                       setState(() {
                         bindings.save(widget.data.bind, value);
@@ -171,7 +171,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
               value: _dropdownValue,
               icon: Icon(
                 Icons.arrow_drop_down,
-                color: getStyle(Styles.borderColor, widget.data.style), // TODO: need to change the getter from theme.
+                color: getStyle(Styles.borderColor, widget.data.style, theme: 'primaryColor'), // TODO: need to change the getter from theme.
               ),
               iconSize: 24,
               elevation: 4,
@@ -190,7 +190,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                   value: value,
                   child: Text(value,
                       style: TextStyle(
-                        color: getStyle(Styles.fontColor, widget.data.style),
+                        color: getStyle(Styles.fontColor, widget.data.style, theme: 'textColor'),
                         fontSize: getStyle(Styles.fontSize, widget.data.style),
                         fontWeight: getStyle(Styles.fontWeight, widget.data.style),
                       )),
