@@ -17,32 +17,35 @@ class LabelWidget extends StatelessWidget with WidgetDecorationMixin, BindingMix
     return expandIfNeeded(
       data,
       Padding(
-        padding: getStyle(Styles.margin, data.style),
-        child: Consumer2<ScreenViewModel, BindingModel>(
-          builder: (context, viewModel, bindings, child) {
-            final String text = getText(data, bindings);
-            final Linkify linkify = Linkify(text);
-            final bool linkified = linkify.containLinks(text);
-            if (!linkified) linkify.dispose();
-            return Opacity(
-              opacity: getStyle(Styles.opacity, data.style),
-              child: linkified
-                  ? linkify.linkify(
-                      data.style,
-                      (link) {
-                        viewModel.linkifyTap(link);
-                      },
-                    )
-                  : Text(
-                      text,
-                      style: TextStyle(
-                        fontSize: getStyle(Styles.fontSize, data.style),
-                        color: getStyle(Styles.fontColor, data.style, theme: 'textColor'),
-                        fontWeight: getStyle(Styles.fontWeight, data.style),
+        padding: getStyle(Styles.margin, data: data),
+        child: sizeIfNeeded(
+          data,
+          Consumer2<ScreenViewModel, BindingModel>(
+            builder: (context, viewModel, bindings, child) {
+              final String text = getText(data, bindings);
+              final Linkify linkify = Linkify(text);
+              final bool linkified = linkify.containLinks(text);
+              if (!linkified) linkify.dispose();
+              return Opacity(
+                opacity: getStyle(Styles.opacity, data: data),
+                child: linkified
+                    ? linkify.linkify(
+                        data,
+                        (link) {
+                          viewModel.linkifyTap(link);
+                        },
+                      )
+                    : Text(
+                        text,
+                        style: TextStyle(
+                          fontSize: getStyle(Styles.fontSize, data: data),
+                          color: getStyle(Styles.fontColor, data: data, themeProperty: 'textColor'),
+                          fontWeight: getStyle(Styles.fontWeight, data: data),
+                        ),
                       ),
-                    ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );

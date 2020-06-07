@@ -5,6 +5,7 @@ part 'appbar.g.dart';
 @JsonSerializable(anyMap: true)
 class AppBar {
   String textKey;
+  @JsonKey(defaultValue: {})
   Map<String, dynamic> style;
 
   AppBar(this.textKey, {this.style});

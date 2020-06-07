@@ -15,17 +15,14 @@ class MaterialScreenWidget extends StatefulWidget {
   final Screen screen;
   final Widget content;
 
-  const MaterialScreenWidget(
-      {Key key, this.viewModel, this.bindingModel, this.screen, this.content})
-      : super(key: key);
+  const MaterialScreenWidget({Key key, this.viewModel, this.bindingModel, this.screen, this.content}) : super(key: key);
 
   @override
   _MaterialScreenWidgetState createState() => _MaterialScreenWidgetState(viewModel, bindingModel);
 }
 
 class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget> with StyleMixin {
-  _MaterialScreenWidgetState(ScreenViewModel viewModel, BindingModel bindings)
-      : super(viewModel, bindings);
+  _MaterialScreenWidgetState(ScreenViewModel viewModel, BindingModel bindings) : super(viewModel, bindings);
 
   @override
   void initState() {
@@ -41,21 +38,22 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
 
   @override
   Widget buildScaffold() {
-    var background = getStyle(Styles.background, widget.screen.style);
-    var appBackground = getStyle(Styles.background, widget.screen.appBar.style, theme: 'primaryColor');
+    var background = getStyle(Styles.background, styles: widget.screen.style);
+    var appBackground = getStyle(Styles.background, styles: widget.screen.appBar.style, themeProperty: 'primaryColor');
 
     return Scaffold(
       extendBodyBehindAppBar: appBackground == Colors.transparent,
       appBar: widget.screen.appBar == null
           ? null
           : AppBar(
-              elevation: getStyle(Styles.elevation, widget.screen.appBar.style),
+              elevation: getStyle(Styles.elevation, styles: widget.screen.appBar.style),
               backgroundColor: appBackground,
               title: Text(
                 widget.screen.appBar.textKey ?? '',
                 style: TextStyle(
-                  color: getStyle(Styles.fontColor, widget.screen.appBar.style, theme: 'secondaryColor'),
-                  fontWeight: getStyle(Styles.fontWeight, widget.screen.appBar.style),
+                  color:
+                      getStyle(Styles.fontColor, styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
+                  fontWeight: getStyle(Styles.fontWeight, styles: widget.screen.appBar.style),
                 ),
               ),
               leading: Platform.isIOS
@@ -63,7 +61,8 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
                       child: IconButton(
                         icon: Icon(
                           Icons.close,
-                          color: getStyle(Styles.fontColor, widget.screen.appBar.style, theme: 'secondaryColor'),
+                          color: getStyle(Styles.fontColor,
+                              styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
                         ),
                         onPressed: () => Navigator.pushNamed(context, '_canceled'),
                       ),
@@ -111,8 +110,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   /// screen widget in order to perform navigation actions.
   _registerNavigationSteam() {
     viewModel.navigationStream.stream.listen((route) {
-      if (ModalRoute.of(context).settings.name.split('/').last ==
-          route.toString().split('/').last) {
+      if (ModalRoute.of(context).settings.name.split('/').last == route.toString().split('/').last) {
         return;
       }
       Navigator.pushReplacementNamed(context, route);

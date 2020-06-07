@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 
 typedef OnLinkTap(String link);
@@ -27,7 +28,7 @@ class Linkify with StyleMixin {
   }
 
   linkify(
-    Map<String, dynamic> styles,
+    NssWidgetData data,
     OnLinkTap tap,
   ) {
     List<TextSpan> span = List<TextSpan>();
@@ -38,7 +39,7 @@ class Linkify with StyleMixin {
         break;
       }
       final RegExpMatch match = matches.elementAt(i);
-      _linkSingle(wrappers[i], match.group(1), match.group(2), tap, styles, span);
+      _linkSingle(wrappers[i], match.group(1), match.group(2), tap, data, span);
     }
     return RichText(
       text: TextSpan(children: span),
@@ -50,7 +51,7 @@ class Linkify with StyleMixin {
     String actual,
     String link,
     OnLinkTap tap,
-    Map<String, dynamic> styles,
+    NssWidgetData data,
     List<TextSpan> list,
   ) {
     list
@@ -58,9 +59,9 @@ class Linkify with StyleMixin {
         TextSpan(
           text: leading,
           style: TextStyle(
-            fontSize: getStyle(Styles.fontSize, styles),
-            color: getStyle(Styles.fontColor, styles),
-            fontWeight: getStyle(Styles.fontWeight, styles),
+            fontSize: getStyle(Styles.fontSize, data: data),
+            color: getStyle(Styles.fontColor, data: data),
+            fontWeight: getStyle(Styles.fontWeight, data: data),
           ),
         ),
       )
@@ -68,9 +69,9 @@ class Linkify with StyleMixin {
         TextSpan(
           text: actual,
           style: TextStyle(
-            fontSize: getStyle(Styles.fontSize, styles),
+            fontSize: getStyle(Styles.fontSize, data: data),
             color: getColor('blue'), // TODO: need to take color from theme.
-            fontWeight: getStyle(Styles.fontWeight, styles),
+            fontWeight: getStyle(Styles.fontWeight, data: data),
           ),
           recognizer: TapGestureRecognizer()
             ..onTap = (() {

@@ -6,10 +6,29 @@
     "textColor": "white",
     "enabledColor": "green",
     "disabledColor": "grey",
-    "errorColor": "red"
+    "errorColor": "red",
+    "title": {
+      "fontWeight": "bold",
+      "fontSize": 22
+    },
+    "subtitle": {
+      "fontSize": 18,
+      "fontWeight": 6
+    },
+    "flatButton": {
+
+    },
+    "raisedButton": {
+      "fontSize": 14,
+      "fontColor": "white",
+      "fontWeight": 6,
+      "elevation": 4,
+      "background": "red",
+      "size": [100, 50]
+    }
   },
   "routing": {
-    "initial": "register",
+    "initial": "login",
     "default": {
       "onSuccess": "_dismiss"
     }
@@ -32,11 +51,10 @@
         {
           "type": "label",
           "textKey": "login in with your email and password:",
+          "theme": "title",
           "style": {
-            "margin": 50,
-            "fontSize": 50,
-            "fontColor": "#BCBCBC",
-            "fontWeight": 1
+            "fontSize": 10,
+            "fontColor": "white"
           }
         },
         {
@@ -75,6 +93,7 @@
         {
           "type": "submit",
           "textKey": "Submit",
+          "theme": "raisedButton",
           "style": {
             "background": "#000000",
             "margin": 50,

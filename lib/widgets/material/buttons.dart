@@ -26,33 +26,34 @@ class SubmitWidget extends StatefulWidget {
   _SubmitWidgetState createState() => _SubmitWidgetState();
 }
 
-class _SubmitWidgetState extends State<SubmitWidget>
-    with WidgetDecorationMixin, NssActionsMixin, StyleMixin {
+class _SubmitWidgetState extends State<SubmitWidget> with WidgetDecorationMixin, NssActionsMixin, StyleMixin {
   @override
   Widget build(BuildContext context) {
     return expandIfNeeded(
-        widget.data,
-        Padding(
-          padding: getStyle(Styles.margin, widget.data.style),
-          child: Consumer2<ScreenViewModel, BindingModel>(
+      widget.data,
+      Padding(
+        padding: getStyle(Styles.margin, data: widget.data),
+        child: sizeIfNeeded(
+          widget.data,
+          Consumer2<ScreenViewModel, BindingModel>(
             builder: (context, viewModel, bindings, child) {
               return Opacity(
-                opacity: getStyle(Styles.opacity, widget.data.style),
+                opacity: getStyle(Styles.opacity, data: widget.data),
                 child: ButtonTheme(
-                  buttonColor: getStyle(Styles.background, widget.data.style, theme: 'primaryColor'),
+                  buttonColor: getStyle(Styles.background, data: widget.data, themeProperty: 'primaryColor'),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(
-                      getStyle(Styles.cornerRadius, widget.data.style),
+                      getStyle(Styles.cornerRadius, data: widget.data),
                     ),
                   ),
                   child: RaisedButton(
-                    elevation: getStyle(Styles.elevation, widget.data.style),
+                    elevation: getStyle(Styles.elevation, data: widget.data),
                     child: Text(
                       widget.data.textKey,
                       style: TextStyle(
-                        fontSize: getStyle(Styles.fontSize, widget.data.style),
-                        color: getStyle(Styles.fontColor, widget.data.style, theme: 'secondaryColor'),
-                        fontWeight: getStyle(Styles.fontWeight, widget.data.style),
+                        fontSize: getStyle(Styles.fontSize, data: widget.data),
+                        color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'secondaryColor'),
+                        fontWeight: getStyle(Styles.fontWeight, data: widget.data),
                       ),
                     ),
                     onPressed: () {
@@ -66,6 +67,7 @@ class _SubmitWidgetState extends State<SubmitWidget>
             },
           ),
         ),
+      ),
     );
   }
 }

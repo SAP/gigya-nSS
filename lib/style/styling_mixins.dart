@@ -3,9 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/models/widget.dart';
+import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 
 mixin StyleMixin {
-  NssConfig config = NssIoc().use(NssConfig);
+  final NssConfig config = NssIoc().use(NssConfig);
 
   final Map<String, dynamic> defaultStyle = {
     'margin': 16,
@@ -15,17 +17,35 @@ mixin StyleMixin {
     'background': 'transparent',
     'elevation': 3,
     'opacity': 1.0,
-    "borderColor": "#000000",
-    "borderSize": 1,
-    "cornerRadius": 0
+    'borderColor': '#000000',
+    'borderSize': 1,
+    'cornerRadius': 0
   };
 
-  dynamic getStyle(Styles style, Map<String, dynamic> data, {String theme}) {
-
-    var value = getStyleValue(style, data);
-
-    if (theme != null) {
-      value = themeIsNeeded(style, data, theme) ?? value;
+  dynamic getStyle(
+    Styles style, {
+    NssWidgetData data,
+    Map<String, dynamic> styles,
+    String themeProperty,
+  }) {
+    var value;
+    var dataStyles = data != null ? data.style : styles;
+    if (data != null) {
+      // Check for custom theme first.
+      String customTheme = data.theme;
+      if (customTheme.isAvailable() && config.markup.theme.containsKey(customTheme)) {
+        if (config.markup.theme[customTheme].containsKey(style.name)) {
+          value = getStyleValue(style, config.markup.theme[customTheme]
+          );
+        }
+      }
+    }
+    if (value == null) {
+      // Custom theme not applied. Apply style value or default themed value.
+      value = getStyleValue(style, dataStyles);
+      if (themeProperty != null) {
+        value = themeIsNeeded(style, dataStyles, themeProperty) ?? value;
+      }
     }
 
     switch (style) {
@@ -51,15 +71,14 @@ mixin StyleMixin {
     }
   }
 
-  getStyleValue(Styles style, Map<String, dynamic> data) {
-    if (data == null) data = defaultStyle;
-
-    return data[style.name] ?? defaultStyle[style.name];
+  getStyleValue(Styles style, Map<String, dynamic> styles) {
+    if (styles == null) styles = defaultStyle;
+    return styles[style.name] ?? defaultStyle[style.name];
   }
 
-  themeIsNeeded(Styles style, Map<String, dynamic> data, String key) {
-    if (data == null) data = {};
-    return (data[style.name] == null && config.markup.theme != null) ? config.markup.theme[key] : null;
+  themeIsNeeded(Styles style, Map<String, dynamic> styles, String key) {
+    if (styles == null) styles = {};
+    return (styles[style.name] == null && config.markup.theme != null) ? config.markup.theme[key] : null;
   }
 
   /// Make sure this value will be treated as a double.
