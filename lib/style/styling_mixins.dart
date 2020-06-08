@@ -19,7 +19,7 @@ mixin StyleMixin {
     'opacity': 1.0,
     'borderColor': '#000000',
     'borderSize': 1,
-    'cornerRadius': 0
+    'cornerRadius': 0,
   };
 
   dynamic getStyle(
@@ -35,8 +35,7 @@ mixin StyleMixin {
       String customTheme = data.theme;
       if (customTheme.isAvailable() && config.markup.theme.containsKey(customTheme)) {
         if (config.markup.theme[customTheme].containsKey(style.name)) {
-          value = getStyleValue(style, config.markup.theme[customTheme]
-          );
+          value = getStyleValue(style, config.markup.theme[customTheme]);
         }
       }
     }
@@ -174,6 +173,7 @@ mixin StyleMixin {
       return _getColorWithName(background, platformAware: platformAware ?? false);
     }
   }
+
 }
 
 enum Styles {

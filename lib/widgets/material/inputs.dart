@@ -34,7 +34,8 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
         widget.data,
         Padding(
           padding: getStyle(Styles.margin, data: widget.data),
-          child: sizeIfNeeded(widget.data,
+          child: sizeIfNeeded(
+            widget.data,
             Consumer<BindingModel>(
               builder: (context, bindings, child) {
                 final placeHolder = getText(widget.data, bindings);
@@ -57,7 +58,8 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
                       fillColor: getStyle(Styles.background, data: widget.data),
                       hintText: widget.data.textKey,
                       hintStyle: TextStyle(
-                        color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor').withOpacity(0.5),
+                        color:
+                            getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor').withOpacity(0.5),
                       ),
                       focusedBorder: borderRadius == 0
                           ? UnderlineInputBorder(

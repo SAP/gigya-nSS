@@ -49,7 +49,7 @@ class _SubmitWidgetState extends State<SubmitWidget> with WidgetDecorationMixin,
                   child: RaisedButton(
                     elevation: getStyle(Styles.elevation, data: widget.data),
                     child: Text(
-                      widget.data.textKey,
+                       widget.data.textKey,
                       style: TextStyle(
                         fontSize: getStyle(Styles.fontSize, data: widget.data),
                         color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'secondaryColor'),
