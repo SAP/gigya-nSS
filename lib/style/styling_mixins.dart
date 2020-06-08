@@ -35,7 +35,7 @@ mixin StyleMixin {
       String customTheme = data.theme;
       if (customTheme.isAvailable() && config.markup.theme.containsKey(customTheme)) {
         if (config.markup.theme[customTheme].containsKey(style.name)) {
-          value = getStyleValue(style, config.markup.theme[customTheme]);
+          value = getStyleValue(style, config.markup.theme[customTheme].cast<String, dynamic>());
         }
       }
     }
