@@ -146,6 +146,8 @@ mixin StyleMixin {
         return platformAware ? CupertinoColors.white : Colors.white;
       case 'transparent':
         return platformAware ? Colors.transparent : Colors.transparent;
+      case 'black':
+        return platformAware ? CupertinoColors.black : Colors.black;
       default:
         return platformAware ? CupertinoColors.black : Colors.black;
     }
@@ -173,7 +175,6 @@ mixin StyleMixin {
       return _getColorWithName(background, platformAware: platformAware ?? false);
     }
   }
-
 }
 
 enum Styles {
