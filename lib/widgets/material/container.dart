@@ -1,7 +1,8 @@
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 
-class ContainerWidget extends StatelessWidget with StyleMixin {
+class ContainerWidget extends StatelessWidget with StyleMixin, WidgetDecorationMixin {
   final Widget child;
   final Map<String, dynamic> style;
   final bool isScreen;
@@ -10,18 +11,23 @@ class ContainerWidget extends StatelessWidget with StyleMixin {
 
   @override
   Widget build(BuildContext context) {
-    var background = getStyle(Styles.background, style);
-
+    var background = getStyle(Styles.background, styles: style);
+    var size = style['size'];
     return Padding(
-      padding: getStyle(Styles.margin, style),
+      padding: getStyle(Styles.margin, styles: style),
       child: Container(
-        decoration: isScreen == false ? BoxDecoration(
-          color: background is Color ? background : null,
-          image: background is NetworkImage ? DecorationImage(
-            fit: BoxFit.cover,
-            image: background,
-          ) : null
-        ) : null,
+        width: size != null ? ensureDouble(size[0]) : null,
+        height: size != null ? ensureDouble(size[1]) : null,
+        decoration: isScreen == false
+            ? BoxDecoration(
+                color: background is Color ? background : null,
+                image: background is NetworkImage
+                    ? DecorationImage(
+                        fit: BoxFit.cover,
+                        image: background,
+                      )
+                    : null)
+            : null,
         child: child,
       ),
     );

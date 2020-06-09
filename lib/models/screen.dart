@@ -16,6 +16,7 @@ class Screen {
   List<NssWidgetData> children;
   @JsonKey(name: 'routing')
   Map<String, String> routes;
+  @JsonKey(defaultValue: {})
   Map<String, dynamic> style;
 
   Screen(this.id, this.action, this.stack, this.children, {this.appBar, this.routes});

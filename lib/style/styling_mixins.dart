@@ -3,8 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/models/widget.dart';
+import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 
 mixin StyleMixin {
+  final NssConfig config = NssIoc().use(NssConfig);
+
   final Map<String, dynamic> defaultStyle = {
     'margin': 16,
     'fontSize': 14,
@@ -13,15 +17,35 @@ mixin StyleMixin {
     'background': 'transparent',
     'elevation': 3,
     'opacity': 1.0,
-    "borderColor": "#000000",
-    "borderSize": 1,
-    "cornerRadius": 0
+    'borderColor': '#000000',
+    'borderSize': 1,
+    'cornerRadius': 0,
   };
 
-  dynamic getStyle(Styles style, Map<String, dynamic> data) {
-    if (data == null) data = defaultStyle;
-
-    var value = getStyleValue(style, data);
+  dynamic getStyle(
+    Styles style, {
+    NssWidgetData data,
+    Map<String, dynamic> styles,
+    String themeProperty,
+  }) {
+    var value;
+    var dataStyles = data != null ? data.style : styles;
+    if (data != null) {
+      // Check for custom theme first.
+      String customTheme = data.theme;
+      if (customTheme.isAvailable() && config.markup.theme.containsKey(customTheme)) {
+        if (config.markup.theme[customTheme].containsKey(style.name)) {
+          value = getStyleValue(style, config.markup.theme[customTheme].cast<String, dynamic>());
+        }
+      }
+    }
+    if (value == null) {
+      // Custom theme not applied. Apply style value or default themed value.
+      value = getStyleValue(style, dataStyles);
+      if (themeProperty != null) {
+        value = themeIsNeeded(style, dataStyles, themeProperty) ?? value;
+      }
+    }
 
     switch (style) {
       case Styles.margin:
@@ -34,20 +58,26 @@ mixin StyleMixin {
         return ensureDouble(value);
       case Styles.borderColor:
       case Styles.fontColor:
-        var platformAware = NssIoc().use(NssConfig).isPlatformAware ?? false;
+        var platformAware = config.isPlatformAware ?? false;
         return getColor(value, platformAware: platformAware);
       case Styles.fontWeight:
         return getFontWeight(value);
       case Styles.background:
-        var platformAware = NssIoc().use(NssConfig).isPlatformAware ?? false;
+        var platformAware = config.isPlatformAware ?? false;
         return getBackground(value, platformAware: platformAware);
       default:
         break;
     }
   }
 
-  getStyleValue(Styles style, Map<String, dynamic> data) {
-    return data[style.name] ?? defaultStyle[style.name];
+  getStyleValue(Styles style, Map<String, dynamic> styles) {
+    if (styles == null) styles = defaultStyle;
+    return styles[style.name] ?? defaultStyle[style.name];
+  }
+
+  themeIsNeeded(Styles style, Map<String, dynamic> styles, String key) {
+    if (styles == null) styles = {};
+    return (styles[style.name] == null && config.markup.theme != null) ? config.markup.theme[key] : null;
   }
 
   /// Make sure this value will be treated as a double.
@@ -143,6 +173,7 @@ mixin StyleMixin {
       return _getColorWithName(background, platformAware: platformAware ?? false);
     }
   }
+
 }
 
 enum Styles {

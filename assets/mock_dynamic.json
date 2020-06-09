@@ -1,5 +1,42 @@
 {
   "platformAware": false,
+  "theme": {
+    "primaryColor": "red",
+    "secondaryColor": "white",
+    "textColor": "white",
+    "enabledColor": "green",
+    "disabledColor": "grey",
+    "errorColor": "red",
+    "title": {
+      "fontWeight": "bold",
+      "fontSize": 22
+    },
+    "subtitle": {
+      "fontSize": 18,
+      "fontWeight": 6
+    },
+    "flatButton": {
+      "fontSize": 14,
+      "fontColor": "white",
+      "fontWeight": 6,
+      "elevation": 0,
+      "size": [
+        220,
+        44
+      ]
+    },
+    "raisedButton": {
+      "fontSize": 14,
+      "fontColor": "white",
+      "fontWeight": 4,
+      "elevation": 4,
+      "background": "red",
+      "size": [
+        220,
+        44
+      ]
+    }
+  },
   "routing": {
     "initial": "login",
     "default": {
@@ -14,12 +51,7 @@
       },
       "action": "login",
       "appBar": {
-        "textKey": "Login",
-        "style": {
-          "fontColor": "white",
-          "background": "transparent",
-          "elevation": 0
-        }
+        "textKey": "Login"
       },
       "stack": "vertical",
       "style": {
@@ -28,13 +60,8 @@
       "children": [
         {
           "type": "label",
-          "textKey": "login in with your email and password:",
-          "style": {
-            "margin": 50,
-            "fontSize": 50,
-            "fontColor": "#BCBCBC",
-            "fontWeight": 1
-          }
+          "theme": "title",
+          "textKey": "login in with your email and password:"
         },
         {
           "bind": "loginID",
@@ -43,7 +70,6 @@
           "style": {
             "borderColor": "white",
             "borderSize": 1,
-            "fontColor": "white",
             "cornerRadius": 10
           }
         },
@@ -54,7 +80,6 @@
           "style": {
             "borderColor": "white",
             "borderSize": 1,
-            "fontColor": "white",
             "cornerRadius": 10
           }
         },
@@ -69,24 +94,22 @@
               10
             ]
           },
-          "textKey": "By logging in you are bound to [us](https://www.google.com)"
+          "textKey": "I don't have an account [register](register)"
         },
         {
           "type": "submit",
           "textKey": "Submit",
+          "theme": "raisedButton",
           "style": {
-            "background": "#000000",
-            "margin": 50,
-            "fontSize": 50,
-            "fontColor": "#BCBCBC",
-            "fontWeight": 1,
-            "elevation": 2,
-            "cornerRadius": 10
+            "cornerRadius": 22
           }
         }
       ]
     },
     "register": {
+      "style": {
+        "background": "black"
+      },
       "routing": {
         "onPendingRegistration": "account-update",
         "onSuccess": "_dismiss"

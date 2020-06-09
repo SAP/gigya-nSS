@@ -87,7 +87,7 @@ abstract class WidgetFactory {
   }
 
   List<Widget> buildWidgets(List<NssWidgetData> widgetsToBuild) {
-    if (widgetsToBuild.isEmpty) {
+    if (widgetsToBuild == null || widgetsToBuild.isEmpty) {
       return [];
     }
     List<Widget> widgets = [];

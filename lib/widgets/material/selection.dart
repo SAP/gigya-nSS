@@ -16,36 +16,43 @@ class CheckboxWidget extends StatefulWidget {
 }
 
 /// General checkbox widget state.
-class _CheckboxWidgetState extends State<CheckboxWidget>
-    with WidgetDecorationMixin, BindingMixin, StyleMixin {
+class _CheckboxWidgetState extends State<CheckboxWidget> with WidgetDecorationMixin, BindingMixin, StyleMixin {
   bool _currentValue;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: getStyle(Styles.margin, widget.data.style),
-      child: Consumer<BindingModel>(
-        builder: (context, bindings, child) {
-          _currentValue = getBool(widget.data, bindings);
-          return CheckboxListTile(
-            controlAffinity: ListTileControlAffinity.leading,
-            title: Text(
-              widget.data.textKey,
-              style: TextStyle(
-                  color: getStyle(Styles.fontColor, widget.data.style),
-                  fontSize: getStyle(Styles.fontSize, widget.data.style),
-                  fontWeight: getStyle(Styles.fontWeight, widget.data.style)),
-            ),
-            value: _currentValue,
-            activeColor: getStyle(Styles.background, widget.data.style), // TODO: need to change the getter from theme.
-            checkColor: getStyle(Styles.fontColor, widget.data.style), // TODO: need to change the getter from theme.
-            onChanged: (bool val) {
-              setState(() {
-                bindings.save(widget.data.bind, val);
-              });
+    return expandIfNeeded(
+      widget.data,
+      Padding(
+        padding: getStyle(Styles.margin, data: widget.data),
+        child: sizeIfNeeded(
+          widget.data,
+          Consumer<BindingModel>(
+            builder: (context, bindings, child) {
+              _currentValue = getBool(widget.data, bindings);
+              return CheckboxListTile(
+                controlAffinity: ListTileControlAffinity.leading,
+                title: Text(
+                  widget.data.textKey,
+                  style: TextStyle(
+                      color: getStyle(Styles.fontColor, data: widget.data),
+                      fontSize: getStyle(Styles.fontSize, data: widget.data),
+                      fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
+                ),
+                value: _currentValue,
+                activeColor: getStyle(Styles.background, data: widget.data, themeProperty: 'disabledColor'),
+                // TODO: need to change the getter from theme.
+                checkColor: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'enabledColor'),
+                // TODO: need to change the getter from theme.
+                onChanged: (bool val) {
+                  setState(() {
+                    bindings.save(widget.data.bind, val);
+                  });
+                },
+              );
             },
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -61,8 +68,7 @@ class RadioGroupWidget extends StatefulWidget {
 }
 
 /// General radio group widget state.
-class _RadioGroupWidgetState extends State<RadioGroupWidget>
-    with WidgetDecorationMixin, BindingMixin, StyleMixin {
+class _RadioGroupWidgetState extends State<RadioGroupWidget> with WidgetDecorationMixin, BindingMixin, StyleMixin {
   String _groupValue;
   String _defaultValue;
 
@@ -71,45 +77,49 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
     return expandIfNeeded(
         widget.data,
         Padding(
-          padding: getStyle(Styles.margin, widget.data.style),
-          child: Consumer<BindingModel>(
-            builder: (context, bindings, child) {
-              _groupValue = getText(widget.data, bindings);
-              if (_groupValue.isEmpty) {
-                widget.data.options.forEach((option) {
-                  if (option.defaultValue != null && option.defaultValue) {
-                    _groupValue = option.value;
-                  }
-                });
-              }
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: widget.data.options.length,
-                itemBuilder: (BuildContext lvbContext, int index) {
-                  NssOption option = widget.data.options[index];
-                  return RadioListTile(
-                    controlAffinity: ListTileControlAffinity.leading,
-                    value: option.value,
-                    title: Text(
-                      option.textKey,
-                      style: TextStyle(
-                        color: getStyle(Styles.fontColor, widget.data.style),
-                        fontSize: getStyle(Styles.fontSize, widget.data.style),
-                        fontWeight: getStyle(Styles.fontWeight, widget.data.style),
+          padding: getStyle(Styles.margin, data: widget.data),
+          child: sizeIfNeeded(
+            widget.data,
+            Consumer<BindingModel>(
+              builder: (context, bindings, child) {
+                _groupValue = getText(widget.data, bindings);
+                if (_groupValue.isEmpty) {
+                  widget.data.options.forEach((option) {
+                    if (option.defaultValue != null && option.defaultValue) {
+                      _groupValue = option.value;
+                    }
+                  });
+                }
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: widget.data.options.length,
+                  itemBuilder: (BuildContext lvbContext, int index) {
+                    NssOption option = widget.data.options[index];
+                    return RadioListTile(
+                      controlAffinity: ListTileControlAffinity.leading,
+                      value: option.value,
+                      title: Text(
+                        option.textKey,
+                        style: TextStyle(
+                          color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
+                          fontSize: getStyle(Styles.fontSize, data: widget.data),
+                          fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                        ),
                       ),
-                    ),
-                    groupValue: _groupValue,
-                    activeColor: getStyle(Styles.fontColor, widget.data.style),// TODO: need to change the getter from theme.
-                    onChanged: (String value) {
-                      setState(() {
-                        bindings.save(widget.data.bind, value);
-                      });
-                    },
-                  );
-                },
-              );
-            },
+                      groupValue: _groupValue,
+                      activeColor: getStyle(Styles.background, data: widget.data, themeProperty: 'enabledColor'),
+                      // TODO: need to change the getter from theme.
+                      onChanged: (String value) {
+                        setState(() {
+                          bindings.save(widget.data.bind, value);
+                        });
+                      },
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ));
   }
@@ -155,49 +165,54 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
     return expandIfNeeded(
         widget.data,
         Padding(
-          padding: getStyle(Styles.margin, widget.data.style),
-          child: Consumer<BindingModel>(builder: (context, bindings, child) {
-            _dropdownItems.clear();
-            var bindValue = getText(widget.data, bindings);
-            widget.data.options.forEach((option) {
-              _dropdownItems.add(option.textKey);
-              if (bindValue.isEmpty && option.defaultValue != null && option.defaultValue) {
-                bindValue = option.value;
-              }
-            });
-            _dropdownValue = _dropdownItems[indexFromValue(bindValue)];
-            return DropdownButton<String>(
-              isExpanded: true,
-              value: _dropdownValue,
-              icon: Icon(
-                Icons.arrow_drop_down,
-                color: getStyle(Styles.borderColor, widget.data.style), // TODO: need to change the getter from theme.
-              ),
-              iconSize: 24,
-              elevation: 4,
-              underline: Container(
-                height: 2,
-                color: getStyle(Styles.borderColor, widget.data.style), // TODO: need to change the getter from theme or borderColor.
-              ),
-              onChanged: (String newValue) {
-                setState(() {
-                  var index = indexFromDisplayValue(newValue);
-                  bindings.save(widget.data.bind, widget.data.options[index].value);
-                });
-              },
-              items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value,
-                      style: TextStyle(
-                        color: getStyle(Styles.fontColor, widget.data.style),
-                        fontSize: getStyle(Styles.fontSize, widget.data.style),
-                        fontWeight: getStyle(Styles.fontWeight, widget.data.style),
-                      )),
-                );
-              }).toList(),
-            );
-          }),
+          padding: getStyle(Styles.margin, data: widget.data),
+          child: sizeIfNeeded(
+            widget.data,
+            Consumer<BindingModel>(builder: (context, bindings, child) {
+              _dropdownItems.clear();
+              var bindValue = getText(widget.data, bindings);
+              widget.data.options.forEach((option) {
+                _dropdownItems.add(option.textKey);
+                if (bindValue.isEmpty && option.defaultValue != null && option.defaultValue) {
+                  bindValue = option.value;
+                }
+              });
+              _dropdownValue = _dropdownItems[indexFromValue(bindValue)];
+              return DropdownButton<String>(
+                isExpanded: true,
+                value: _dropdownValue,
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                  color: getStyle(Styles.borderColor,
+                      data: widget.data, themeProperty: 'primaryColor'), // TODO: need to change the getter from theme.
+                ),
+                iconSize: 24,
+                elevation: 4,
+                underline: Container(
+                  height: 2,
+                  color: getStyle(Styles.borderColor,
+                      data: widget.data), // TODO: need to change the getter from theme or borderColor.
+                ),
+                onChanged: (String newValue) {
+                  setState(() {
+                    var index = indexFromDisplayValue(newValue);
+                    bindings.save(widget.data.bind, widget.data.options[index].value);
+                  });
+                },
+                items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value,
+                        style: TextStyle(
+                          color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
+                          fontSize: getStyle(Styles.fontSize, data: widget.data),
+                          fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                        )),
+                  );
+                }).toList(),
+              );
+            }),
+          ),
         ));
   }
 }
