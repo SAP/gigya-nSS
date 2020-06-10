@@ -35,7 +35,7 @@ class LabelWidget extends StatelessWidget with WidgetDecorationMixin, BindingMix
                           viewModel.linkifyTap(link);
                         },
                       )
-                    : Text(
+                    : Text( // TODO: aliagnment is missing
                         text,
                         style: TextStyle(
                           fontSize: getStyle(Styles.fontSize, data: data),

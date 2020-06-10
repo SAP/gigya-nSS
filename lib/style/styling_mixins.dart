@@ -80,6 +80,10 @@ mixin StyleMixin {
     return (styles[style.name] == null && config.markup.theme != null) ? config.markup.theme[key] : null;
   }
 
+  getThemeColor(String key) {
+    return getColor(config.markup.theme[key]);
+  }
+
   /// Make sure this value will be treated as a double.
   /// Useful for JSON parsed elements
   /// which should be treated as double but are parsed as integer.

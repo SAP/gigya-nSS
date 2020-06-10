@@ -40,10 +40,9 @@ class _CheckboxWidgetState extends State<CheckboxWidget> with WidgetDecorationMi
                       fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
                 ),
                 value: _currentValue,
-                activeColor: getStyle(Styles.background, data: widget.data, themeProperty: 'disabledColor'),
-                // TODO: need to change the getter from theme.
-                checkColor: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'enabledColor'),
-                // TODO: need to change the getter from theme.
+                activeColor: getThemeColor('enabledColor'),
+                // TODO: need to verify if can improve it.
+                checkColor: getThemeColor('secondaryColor'),
                 onChanged: (bool val) {
                   setState(() {
                     bindings.save(widget.data.bind, val);
@@ -108,7 +107,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget> with WidgetDecorati
                         ),
                       ),
                       groupValue: _groupValue,
-                      activeColor: getStyle(Styles.background, data: widget.data, themeProperty: 'enabledColor'),
+                      activeColor: getThemeColor('enabledColor'),
                       // TODO: need to change the getter from theme.
                       onChanged: (String value) {
                         setState(() {
@@ -189,7 +188,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                 iconSize: 24,
                 elevation: 4,
                 underline: Container(
-                  height: 2,
+                  height: 1,
                   color: getStyle(Styles.borderColor,
                       data: widget.data), // TODO: need to change the getter from theme or borderColor.
                 ),

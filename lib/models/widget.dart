@@ -21,7 +21,6 @@ class NssWidgetData {
   @JsonKey(defaultValue: {})
   Map<String, dynamic> style;
   String theme;
-  @JsonKey(defaultValue: false)
 
   NssWidgetData({
     this.textKey,

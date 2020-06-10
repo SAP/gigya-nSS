@@ -40,7 +40,6 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
               builder: (context, bindings, child) {
                 final placeHolder = getText(widget.data, bindings);
                 _textEditingController.text = placeHolder;
-                final borderColor = getStyle(Styles.borderColor, data: widget.data);
                 final borderSize = getStyle(Styles.borderSize, data: widget.data);
                 final borderRadius = getStyle(Styles.cornerRadius, data: widget.data);
 
@@ -64,32 +63,28 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
                       focusedBorder: borderRadius == 0
                           ? UnderlineInputBorder(
                               borderSide: BorderSide(
-                                color: getStyle(Styles.borderColor,
-                                    data: widget.data,
-                                    themeProperty: 'enabledColor'), // TODO: need to take color from theme.
+                                color: getThemeColor('enabledColor'), // TODO: need to take color from theme.
                                 width: borderSize + 2,
                               ),
                             )
                           : OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
                               borderSide: BorderSide(
-                                color: getStyle(Styles.borderColor,
-                                    data: widget.data,
-                                    themeProperty: 'enabledColor'), // TODO: need to take color from theme.
+                                color: getThemeColor('enabledColor'), // TODO: need to take color from theme.
                                 width: borderSize,
                               ),
                             ),
                       enabledBorder: borderRadius == 0
                           ? UnderlineInputBorder(
                               borderSide: BorderSide(
-                                color: borderColor,
+                                color: getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
                                 width: borderSize,
                               ),
                             )
                           : OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
                               borderSide: BorderSide(
-                                color: borderColor,
+                                color: getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
                                 width: borderSize,
                               ),
                             ),
