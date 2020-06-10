@@ -22,6 +22,15 @@ mixin StyleMixin {
     'cornerRadius': 0,
   };
 
+  final Map<String, dynamic> defaultTheme = {
+    'primaryColor': 'blue',
+    'secondaryColor': 'white',
+    'textColor': 'black',
+    'enabledColor': 'blue',
+    'disabledColor': 'grey',
+    'errorColor': 'red',
+  };
+
   dynamic getStyle(
     Styles style, {
     NssWidgetData data,
@@ -32,8 +41,8 @@ mixin StyleMixin {
     var dataStyles = data != null ? data.style : styles;
     if (data != null) {
       // Check for custom theme first.
-      String customTheme = data.theme;
-      if (customTheme.isAvailable() && config.markup.theme.containsKey(customTheme)) {
+      String customTheme = data.theme ?? '';
+      if (customTheme.isAvailable() && config.markup.theme != null && config.markup.theme.containsKey(customTheme)) {
         if (config.markup.theme[customTheme].containsKey(style.name)) {
           value = getStyleValue(style, config.markup.theme[customTheme].cast<String, dynamic>());
         }
@@ -77,11 +86,16 @@ mixin StyleMixin {
 
   themeIsNeeded(Styles style, Map<String, dynamic> styles, String key) {
     if (styles == null) styles = {};
-    return (styles[style.name] == null && config.markup.theme != null) ? config.markup.theme[key] : null;
+    if (styles[style.name] == null && config.markup.theme != null) {
+      final theme = config.markup.theme[key] ?? defaultTheme[key];
+      return theme;
+    } else {
+      return null;
+    }
   }
 
   getThemeColor(String key) {
-    return getColor(config.markup.theme[key]);
+    return (config.markup.theme == null || config.markup.theme[key] == null) ? getColor(defaultTheme[key]) : getColor(config.markup.theme[key]);
   }
 
   /// Make sure this value will be treated as a double.

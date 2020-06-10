@@ -25,8 +25,8 @@ mixin WidgetDecorationMixin {
     if (data.style == null) data.style = {};
     var size = data.style['size'];
     // Check for size parameter in available custom theme. Override current if exists.
-    final String customTheme = data.theme;
-    if (customTheme != null && config.markup.theme.containsKey(customTheme)) {
+    final String customTheme = data.theme ?? '';
+    if (customTheme != null && config.markup.theme != null && config.markup.theme.containsKey(customTheme)) {
       Map<String, dynamic> themeMap = config.markup.theme[customTheme].cast<String, dynamic>();
       if (themeMap.containsKey('size')) {
         size = themeMap['size'];
