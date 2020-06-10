@@ -41,7 +41,7 @@
     }
   },
   "routing": {
-    "initial": "login",
+    "initial": "register",
     "default": {
       "onSuccess": "_dismiss"
     }
@@ -85,30 +85,11 @@
           "theme": "input"
         },
         {
-          "type": "container",
-          "stack": "horizontal",
-          "alignment": "spread",
+          "type": "label",
+          "textKey": "I don't have an account. [Register](register)",
           "style": {
-            "margin": 0
-          },
-          "children": [
-            {
-              "bind": "data.terms",
-              "type": "checkbox",
-              "textKey": "Keep me logged-in",
-              "expand": true,
-              "style": {
-                "margin": 0
-              }
-            },
-            {
-              "type": "label",
-              "textKey": "[Register](register)",
-              "style": {
-                "margin": 0
-              }
-            }
-          ]
+            "margin": [0, 24, 0, 16]
+          }
         },
         {
           "type": "submit",
@@ -177,11 +158,10 @@
           "theme": "input"
         },
         {
-          "bind": "data.terms",
-          "type": "checkbox",
-          "textKey": "Keep me logged-in",
+          "type": "label",
+          "textKey": "Already registered?  [Login](login)",
           "style": {
-            "margin": 0
+            "margin": [0, 26, 0, 16]
           }
         },
         {
@@ -234,15 +214,12 @@
           "theme": "input"
         },
         {
-          "bind": "profile.country",
-          "type": "textInput",
-          "textKey": "Country",
-          "theme": "input"
-        },
-        {
           "type": "submit",
           "textKey": "Submit",
-          "theme": "raisedButton"
+          "theme": "raisedButton",
+          "style": {
+            "margin": [0, 100, 0, 0]
+          }
         }
       ]
     }

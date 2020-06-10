@@ -30,24 +30,34 @@ class _CheckboxWidgetState extends State<CheckboxWidget> with WidgetDecorationMi
           Consumer<BindingModel>(
             builder: (context, bindings, child) {
               _currentValue = getBool(widget.data, bindings);
-              return CheckboxListTile(
-                controlAffinity: ListTileControlAffinity.leading,
-                title: Text(
-                  widget.data.textKey,
-                  style: TextStyle(
-                      color: getStyle(Styles.fontColor, data: widget.data),
-                      fontSize: getStyle(Styles.fontSize, data: widget.data),
-                      fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
-                ),
-                value: _currentValue,
-                activeColor: getThemeColor('enabledColor'),
-                // TODO: need to verify if can improve it.
-                checkColor: getThemeColor('secondaryColor'),
-                onChanged: (bool val) {
-                  setState(() {
-                    bindings.save(widget.data.bind, val);
-                  });
-                },
+              return Row(
+                children: <Widget>[
+                  Checkbox(
+                    activeColor: getThemeColor('enabledColor'),
+                    // TODO: need to verify if can improve it.
+                    checkColor: getThemeColor('secondaryColor'),
+                    value: _currentValue,
+                    onChanged: (bool val) {
+                      setState(() {
+                        bindings.save(widget.data.bind, val);
+                      });
+                    },
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        bindings.save(widget.data.bind, !_currentValue);
+                      });
+                    },
+                    child: Text(
+                      widget.data.textKey,
+                      style: TextStyle(
+                          color: getStyle(Styles.fontColor, data: widget.data),
+                          fontSize: getStyle(Styles.fontSize, data: widget.data),
+                          fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
+                    ),
+                  ),
+                ],
               );
             },
           ),

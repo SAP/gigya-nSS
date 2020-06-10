@@ -98,6 +98,7 @@ abstract class WidgetFactory {
           buildContainer(
             buildWidgets(widget.children),
             widget.stack,
+            alignment: widget.alignment,
             style: widget.style,
           ),
         );
