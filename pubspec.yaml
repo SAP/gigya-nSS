@@ -18,19 +18,26 @@ description: A new Flutter module.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  provider: ^4.0.4
+  json_annotation: ^3.0.1
+  ioc: ^0.3.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
 
 dev_dependencies:
+  test:
+  mockito:
   flutter_test:
     sdk: flutter
+  build_runner: ^1.7.3
+  json_serializable: ^3.2.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -43,7 +50,8 @@ flutter:
 
   # To add Flutter specific assets to your application, add an assets section, 
   # like this:
-  # assets:
+  assets:
+    - assets/
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
 
@@ -81,6 +89,5 @@ flutter:
   # They also do not have any bearing on your native host application's
   # identifiers, which may be completely independent or the same as these.
   module:
-    androidX: true
-    androidPackage: com.gigya.native.gigya_native_screensets_engine
-    iosBundleIdentifier: com.gigya.native.gigyaNativeScreensetsEngine
+    androidPackage: com.gigya.nss.engine
+    iosBundleIdentifier: com.gigya.gigyaNativeScreensetsEngine

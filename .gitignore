@@ -8,6 +8,8 @@
 .vagrant/
 .sconsign.dblite
 .svn/
+*.iml
+*.metadata
 
 *.swp
 profile
@@ -20,6 +22,7 @@ DerivedData/
 *.mode1v3
 *.mode2v3
 *.perspectivev3
+*.g.dart
 
 !default.pbxuser
 !default.mode1v3
@@ -40,3 +43,7 @@ build/
 .ios/
 .flutter-plugins
 .flutter-plugins-dependencies
+
+pubspec.lock
+
+coverage/
