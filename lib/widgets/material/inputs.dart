@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
-import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:provider/provider.dart';
@@ -21,11 +18,26 @@ class TextInputWidget extends StatefulWidget {
 
 class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecorationMixin, BindingMixin, StyleMixin {
   final TextEditingController _textEditingController = TextEditingController();
+  Map<String, NssInputValidator> _validators = {};
+  bool _obscuredText;
+
+  @override
+  void initState() {
+    super.initState();
+    _initValidators();
+    _obscuredText = widget.data.type == NssWidgetType.passwordInput;
+  }
 
   @override
   void dispose() {
     _textEditingController.dispose();
     super.dispose();
+  }
+
+  _togglePasswordVisibility() {
+    setState(() {
+      _obscuredText = !_obscuredText;
+    });
   }
 
   @override
@@ -46,7 +58,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
                 return Opacity(
                   opacity: getStyle(Styles.opacity, data: widget.data),
                   child: TextFormField(
-                    obscureText: widget.data.type == NssWidgetType.passwordInput,
+                    obscureText: _obscuredText,
                     controller: _textEditingController,
                     style: TextStyle(
                         color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
@@ -54,6 +66,15 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
                         fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
                     decoration: InputDecoration(
                       filled: true,
+                      suffixIcon: widget.data.type == NssWidgetType.passwordInput
+                          ? IconButton(
+                              onPressed: _togglePasswordVisibility,
+                              icon: Icon(
+                                Icons.remove_red_eye,
+                                color: _obscuredText ? Colors.black12 : Colors.black54,
+                              ),
+                            )
+                          : null,
                       fillColor: getStyle(Styles.background, data: widget.data),
                       hintText: widget.data.textKey,
                       hintStyle: TextStyle(
@@ -90,7 +111,6 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
                             ),
                     ),
                     validator: (input) {
-                      //TODO: Static validations only.
                       return _validateField(input.trim());
                     },
                     onSaved: (value) {
@@ -107,20 +127,38 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
         ));
   }
 
-  /// Validate input according to instance type.
-  String _validateField(input) {
-    var validated = NssValidations.validate(input, forType: widget.data.type.name);
+  /// Parse input validation map an prepare for form validation request.
+  _initValidators() async {
+    if (widget.data.validations == null) {
+      return;
+    }
+    widget.data.validations.cast<String, dynamic>().forEach((k, v) {
+      _validators[k] = NssInputValidator.from(v.cast<String, dynamic>());
+    });
+  }
 
-    switch (validated) {
-      case NssInputValidation.failed:
-        //TODO: Validation errors should be injected via the localization map.
-        return 'Validation faild for type: ${widget.data.type.name}';
-      case NssInputValidation.na:
-        //TODO: Not available validator error should be injected via the localization map.
-        engineLogger.d('Validator not specified for input widget type');
-        break;
-      case NssInputValidation.passed:
-        break;
+  /// Validate input according to instance type.
+  String _validateField(String input) {
+    if (_validators.isEmpty) {
+      return null;
+    }
+    // Validate required field.
+    if (input.isEmpty && _validators.containsKey('required')) {
+      NssInputValidator requiredValidator = _validators['required'];
+      if (requiredValidator.enabled) {
+        //TODO: Should be localized string.
+        return requiredValidator.errorKey;
+      }
+    }
+    // Validated regex field.
+    if (input.isNotEmpty && _validators.containsKey('regex')) {
+      NssInputValidator regexValidator = _validators['regex'];
+      final RegExp regExp = RegExp(regexValidator.value);
+      bool match = regExp.hasMatch(input);
+      if (regexValidator.enabled && !match) {
+        //TODO: Should be localized string.
+        return regexValidator.errorKey;
+      }
     }
     return null;
   }

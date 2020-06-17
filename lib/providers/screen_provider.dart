@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/utils/debug.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:gigya_native_screensets_engine/services/api_service.dart';
@@ -20,7 +21,7 @@ extension ScreenActionExt on ScreenAction {
 /// The view model class acts as the coordinator to the currently displayed screen.
 /// It will handle the current screen visual state and its adjacent form and is responsible for service/repository
 /// action triggering.
-class ScreenViewModel with ChangeNotifier {
+class ScreenViewModel with ChangeNotifier, DebugUtils {
   final ApiService apiService;
   final ScreenService screenService;
 
@@ -113,6 +114,7 @@ class ScreenViewModel with ChangeNotifier {
   /// Label widget initiated link action.
   /// Validate option available are URL/route.
   void linkifyTap(String link) {
+    if (isMock()) return;
     engineLogger.d('link tap: $link');
 
     if (Linkify.isValidUrl(link)) {
@@ -130,6 +132,7 @@ class ScreenViewModel with ChangeNotifier {
   /// Send requested API request given a String [method] and base [parameters] map.
   /// [parameter] map is not signed.
   void sendApi(String method, Map<String, dynamic> parameters) {
+    if (isMock()) return;
     setProgress();
 
     apiService.send(method, parameters).then(
