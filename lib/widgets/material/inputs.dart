@@ -17,9 +17,9 @@ class TextInputWidget extends StatefulWidget {
 }
 
 class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecorationMixin, BindingMixin, StyleMixin {
-  final TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _textEditingController = TextEditingController(text: '');
   Map<String, NssInputValidator> _validators = {};
-  bool _obscuredText;
+  bool _obscuredText = false;
 
   @override
   void initState() {
@@ -51,7 +51,16 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
             Consumer<BindingModel>(
               builder: (context, bindings, child) {
                 final placeHolder = getText(widget.data, bindings);
-                _textEditingController.text = placeHolder;
+                if (_textEditingController.text.isEmpty) {
+                  _textEditingController.text = placeHolder;
+                } else {
+                  _textEditingController.value = _textEditingController.value.copyWith(
+                    text: _textEditingController.text,
+                    selection: TextSelection.fromPosition(
+                      TextPosition(offset: _textEditingController.text.length),
+                    ),
+                  );
+                }
                 final borderSize = getStyle(Styles.borderSize, data: widget.data);
                 final borderRadius = getStyle(Styles.cornerRadius, data: widget.data);
 
@@ -68,7 +77,10 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
                       filled: true,
                       suffixIcon: widget.data.type == NssWidgetType.passwordInput
                           ? IconButton(
-                              onPressed: _togglePasswordVisibility,
+                              onPressed: () {
+                                bindings.save(widget.data.bind, _textEditingController.text.trim());
+                                _togglePasswordVisibility();
+                              },
                               icon: Icon(
                                 Icons.remove_red_eye,
                                 color: _obscuredText ? Colors.black12 : Colors.black54,

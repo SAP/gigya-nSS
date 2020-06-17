@@ -4,6 +4,7 @@ import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
+import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:provider/provider.dart';
 
 class CheckboxWidget extends StatefulWidget {
@@ -21,6 +22,10 @@ class _CheckboxWidgetState extends State<CheckboxWidget> with WidgetDecorationMi
 
   @override
   Widget build(BuildContext context) {
+    final String displayText = widget.data.textKey;
+    final Linkify linkify = Linkify(displayText);
+    final bool linkified = linkify.containLinks(displayText);
+    if (!linkified) linkify.dispose();
     return expandIfNeeded(
       widget.data,
       Padding(
@@ -43,18 +48,31 @@ class _CheckboxWidgetState extends State<CheckboxWidget> with WidgetDecorationMi
                       });
                     },
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        bindings.save(widget.data.bind, !_currentValue);
-                      });
-                    },
-                    child: Text(
-                      widget.data.textKey,
-                      style: TextStyle(
-                          color: getStyle(Styles.fontColor, data: widget.data),
-                          fontSize: getStyle(Styles.fontSize, data: widget.data),
-                          fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
+                  Flexible(
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          bindings.save(widget.data.bind, !_currentValue);
+                        });
+                      },
+                      child: Container(
+                        child: linkified ?
+                        linkify.linkify(
+                        widget.data,
+                            (link) {
+                          //viewModel.linkifyTap(link);
+                        },
+                          )
+                            : Text(
+                              displayText,
+                              //TODO: Overflow property should also be customized.
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  color: getStyle(Styles.fontColor, data: widget.data),
+                                  fontSize: getStyle(Styles.fontSize, data: widget.data),
+                                  fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
+                            ),
+                      )
                     ),
                   ),
                 ],
