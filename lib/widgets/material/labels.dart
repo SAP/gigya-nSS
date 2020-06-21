@@ -37,7 +37,7 @@ class LabelWidget extends StatelessWidget with WidgetDecorationMixin, BindingMix
                             },
                           )
                         : Text(
-                            // TODO: aliagnment is missing
+                            // TODO: Add support for "textAlign" property.
                             text,
                             style: TextStyle(
                               fontSize: getStyle(Styles.fontSize, data: data),

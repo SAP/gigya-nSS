@@ -41,7 +41,7 @@
     }
   },
   "routing": {
-    "initial": "login",
+    "initial": "register",
     "default": {
       "onSuccess": "_dismiss"
     }
@@ -186,7 +186,7 @@
         },
         {
           "type": "label",
-          "textKey": "Already registered?  [Login](login)",
+          "textKey": "Already registered? [Login](login)",
           "style": {
             "margin": [
               0,
@@ -199,7 +199,7 @@
         {
           "bind": "data.terms",
           "type": "checkbox",
-          "textKey": "I have read and understood these sdsddsds [terms of use](https://www.google.com)",
+          "textKey": "I have read and understood these [terms of use](https://www.google.com)",
           "style": {
             "margin": 0
           }
