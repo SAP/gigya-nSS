@@ -42,6 +42,7 @@ class Linkify with StyleMixin {
       _linkSingle(wrappers[i], match.group(1), match.group(2), tap, data, span);
     }
     return RichText(
+      overflow: TextOverflow.visible,
       text: TextSpan(children: span),
     );
   }

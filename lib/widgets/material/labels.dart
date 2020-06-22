@@ -27,23 +27,25 @@ class LabelWidget extends StatelessWidget with WidgetDecorationMixin, BindingMix
               final bool linkified = linkify.containLinks(text);
               if (!linkified) linkify.dispose();
               return Opacity(
-                opacity: getStyle(Styles.opacity, data: data),
-                child: linkified
-                    ? linkify.linkify(
-                        data,
-                        (link) {
-                          viewModel.linkifyTap(link);
-                        },
-                      )
-                    : Text( // TODO: aliagnment is missing
-                        text,
-                        style: TextStyle(
-                          fontSize: getStyle(Styles.fontSize, data: data),
-                          color: getStyle(Styles.fontColor, data: data, themeProperty: 'textColor'),
-                          fontWeight: getStyle(Styles.fontWeight, data: data),
-                        ),
-                      ),
-              );
+                  opacity: getStyle(Styles.opacity, data: data),
+                  child: Container(
+                    child: linkified
+                        ? linkify.linkify(
+                            data,
+                            (link) {
+                              viewModel.linkifyTap(link);
+                            },
+                          )
+                        : Text(
+                            // TODO: Add support for "textAlign" property.
+                            text,
+                            style: TextStyle(
+                              fontSize: getStyle(Styles.fontSize, data: data),
+                              color: getStyle(Styles.fontColor, data: data, themeProperty: 'textColor'),
+                              fontWeight: getStyle(Styles.fontWeight, data: data),
+                            ),
+                          ),
+                  ));
             },
           ),
         ),
