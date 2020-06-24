@@ -1,5 +1,4 @@
 {
-  "platformAware": false,
   "theme": {
     "primaryColor": "blue",
     "secondaryColor": "white",
@@ -76,19 +75,46 @@
           "bind": "loginID",
           "type": "emailInput",
           "textKey": "Email",
-          "theme": "input"
+          "theme": "input",
+          "validations": {
+            "required": {
+              "enabled": true,
+              "errorKey": "This field is required"
+            },
+            "regex": {
+              "enabled": true,
+              "value": "^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\\.[a-zA-Z]+",
+              "errorKey": "Invalid email format"
+            }
+          }
         },
         {
           "bind": "password",
           "type": "passwordInput",
           "textKey": "Password",
-          "theme": "input"
+          "theme": "input",
+          "validations": {
+            "required": {
+              "enabled": true,
+              "errorKey": "This field is required"
+            },
+            "regex": {
+              "enabled": true,
+              "value": "(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@%#$&*~]).{8,}",
+              "errorKey": "Invalid format"
+            }
+          }
         },
         {
           "type": "label",
           "textKey": "I don't have an account. [Register](register)",
           "style": {
-            "margin": [0, 24, 0, 16]
+            "margin": [
+              0,
+              24,
+              0,
+              16
+            ]
           }
         },
         {
@@ -159,15 +185,20 @@
         },
         {
           "type": "label",
-          "textKey": "Already registered?  [Login](login)",
+          "textKey": "Already registered? [Login](login)",
           "style": {
-            "margin": [0, 26, 0, 16]
+            "margin": [
+              0,
+              26,
+              0,
+              16
+            ]
           }
         },
         {
           "bind": "data.terms",
           "type": "checkbox",
-          "textKey": "I have read and understood the terms of use",
+          "textKey": "I have read and understood these [terms of use](https://www.google.com)",
           "style": {
             "margin": 0
           }
@@ -218,7 +249,12 @@
           "textKey": "Submit",
           "theme": "raisedButton",
           "style": {
-            "margin": [0, 100, 0, 0]
+            "margin": [
+              0,
+              100,
+              0,
+              0
+            ]
           }
         }
       ]

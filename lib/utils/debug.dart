@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/injector.dart';
 
-class DebugUtils {
-  static void postDelayed(seconds, Function action) {
+mixin DebugUtils {
+  void postDelayed(seconds, Function action) {
     Future.delayed(Duration(seconds: seconds), () {
       action();
     });
   }
+
+  bool isMock() => NssIoc().use(NssConfig).isMock;
 }
 
 /// Widget is used to add a "watermark" like tag on the bottom right of the screen that indicates
