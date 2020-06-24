@@ -102,7 +102,7 @@ class StartupWorker {
 
   /// Get the [Spark] markup from asset JSON file.
   Future<Map<dynamic, dynamic>> _ignitionFromMock() async {
-    final String json = await AssetUtils.jsonFromAssets('assets/mock_dynamic.json');
+    final String json = await AssetUtils.jsonFromAssets('assets/example.json');
     return jsonDecode(json);
   }
 

@@ -28,7 +28,7 @@ void main() {
       when(config.isPlatformAware).thenReturn(false);
       when(factory.buildApp()).thenReturn(Placeholder());
 
-      var jsonAssetString = await AssetUtils.jsonFromAssets('assets/mock_dynamic.json');
+      var jsonAssetString = await AssetUtils.jsonFromAssets('assets/example.json');
       var mockedMarkup = Markup.fromJson(jsonDecode(jsonAssetString));
 
       var ignition = StartupWidget(worker: worker, config: config, channels: channels);
