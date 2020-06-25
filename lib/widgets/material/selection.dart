@@ -8,6 +8,8 @@ import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:provider/provider.dart';
 
+import 'package:gigya_native_screensets_engine/utils/extensions.dart';
+
 class CheckboxWidget extends StatefulWidget {
   final NssWidgetData data;
 
@@ -112,7 +114,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
             Consumer<BindingModel>(
               builder: (context, bindings, child) {
                 _groupValue = getBoundText(widget.data, bindings);
-                if (_groupValue.isEmpty) {
+                if (_groupValue.isNullOrEmpty()) {
                   widget.data.options.forEach((option) {
                     if (option.defaultValue != null && option.defaultValue) {
                       _groupValue = option.value;
@@ -202,7 +204,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
               var bindValue = getBoundText(widget.data, bindings);
               widget.data.options.forEach((option) {
                 _dropdownItems.add(localizedStringFor(option.textKey));
-                if (bindValue.isEmpty && option.defaultValue != null && option.defaultValue) {
+                if (bindValue.isNullOrEmpty() && option.defaultValue != null && option.defaultValue) {
                   bindValue = option.value;
                 }
               });
