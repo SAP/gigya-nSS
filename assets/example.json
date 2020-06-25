@@ -87,7 +87,7 @@
     }
   },
   "routing": {
-    "initial": "account-custom",
+    "initial": "login",
     "default": {
       "onSuccess": "_dismiss"
     }
