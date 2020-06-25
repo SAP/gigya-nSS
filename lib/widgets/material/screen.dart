@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
+import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/errors.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
@@ -21,7 +22,7 @@ class MaterialScreenWidget extends StatefulWidget {
   _MaterialScreenWidgetState createState() => _MaterialScreenWidgetState(viewModel, bindingModel);
 }
 
-class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget> with StyleMixin {
+class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget> with StyleMixin, LocalizationMixin {
   _MaterialScreenWidgetState(ScreenViewModel viewModel, BindingModel bindings) : super(viewModel, bindings);
 
   @override
@@ -49,7 +50,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
               elevation: getStyle(Styles.elevation, styles: widget.screen.appBar.style),
               backgroundColor: appBackground,
               title: Text(
-                widget.screen.appBar.textKey ?? '',
+                localizedStringFor(widget.screen.appBar.textKey) ?? '',
                 style: TextStyle(
                   color:
                       getStyle(Styles.fontColor, styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),

@@ -11,6 +11,10 @@ class Markup {
   Map<String, Screen> screens;
   Routing routing;
   Map<String, dynamic> theme;
+  @JsonKey(defaultValue: '_default')
+  String lang;
+  @JsonKey(name: 'i18n')
+  Map<String, dynamic> localiation;
 
   Markup({this.platformAware, this.screens, this.routing, this.theme});
 
