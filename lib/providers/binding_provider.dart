@@ -118,21 +118,17 @@ class BindingModel with ChangeNotifier {
 }
 
 mixin BindingMixin {
-  String getText(NssWidgetData data, BindingModel bindings) {
+  String getBoundText(NssWidgetData data, BindingModel bindings) {
     if (data.bind.isAvailable()) {
       final String value = bindings.getValue<String>(data.bind);
-      return value.isEmpty ? '' : value;
+      return value.isEmpty ? null : value;
     }
-    if (data.textKey.isAvailable()) {
-      return data.textKey;
-    }
-    return '';
+    return null;
   }
 
   bool getBool(NssWidgetData data, BindingModel bindings) {
     if (data.bind.isAvailable()) {
       var value = bindings.getValue<bool>(data.bind);
-
       return value;
     }
     return false;
