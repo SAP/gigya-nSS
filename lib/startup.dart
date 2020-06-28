@@ -12,7 +12,7 @@ import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
-enum StartupAction { ignition, ready_for_display }
+enum StartupAction { ignition, ready_for_display, load_schema }
 
 extension StartupActionExt on StartupAction {
   String get action {
@@ -51,6 +51,11 @@ class StartupWidget extends StatelessWidget {
     config.markup = markup;
     config.isPlatformAware = markup.platformAware ?? false;
 
+    // Start `getSchema` if needed
+    loadSchema().then((schema) {
+      config.schema = schema;
+    });
+
     // Notify native that we are ready to display. Pre-warm up done.
     issueNativeReadyForDisplay();
 
@@ -78,6 +83,14 @@ class StartupWidget extends StatelessWidget {
     } on MissingPluginException catch (ex) {
       engineLogger.e('Missing channel connection: check mock state?');
     }
+  }
+
+  Future<Map<dynamic, dynamic>> loadSchema() async {
+    if (!config.markup.useSchemaValidations) {
+      return null;
+    }
+
+    return channels.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(StartupAction.load_schema.action);
   }
 }
 

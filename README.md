@@ -18,6 +18,16 @@ JAVA8 compatibility is required (update via the application's Gradle script).
 MinSDK version 16 or above.
 Android devices running on ARM processors only (99% of devices).
 
+## Download and Installation
+https://developers.gigya.com/display/GD/Native+Screen-Sets#NativeScreen-Sets-Downloads
+
+## How to obtain support
+Via SAP standard support.
+https://developers.gigya.com/display/GD/Opening+A+Support+Incident
+
+## Contributing
+Via pull request to this repository.
+
 ## Known Issues
 iOS – Debugging is currently available only on simulators.
 
