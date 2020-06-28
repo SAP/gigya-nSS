@@ -6,7 +6,7 @@ import 'package:gigya_native_screensets_engine/injector.dart';
 mixin LocalizationMixin {
   /// Selected language. Injected to markup using native builder.
   /// Used '_default' if not available.
-  String lang = NssIoc().use(NssConfig).markup.lang ?? '_default';
+  final String lang = NssIoc().use(NssConfig).markup.lang ?? '_default';
 
   /// Parsed localization map.
   final Map<String, dynamic> _localizationMap =
@@ -14,7 +14,9 @@ mixin LocalizationMixin {
 
   String localizedStringFor(String textKey) {
     // If localization map does not contain the specified lang will route back to default.
-    lang = _localizationMap.containsKey(lang) ? lang : '_default';
+    if (!_localizationMap.containsKey(lang)) {
+      return textKey;
+    }
     final String text = (_localizationMap[lang].containsKey(textKey) ? _localizationMap[lang][textKey] : textKey) ?? '';
     debugPrint('Localized string for $lang = $text');
     return text;

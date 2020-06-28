@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/option.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
@@ -36,8 +37,8 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
         padding: getStyle(Styles.margin, data: widget.data),
         child: sizeIfNeeded(
           widget.data,
-          Consumer<BindingModel>(
-            builder: (context, bindings, child) {
+          Consumer2<ScreenViewModel, BindingModel>(
+            builder: (context, viewModel, bindings, child) {
               _currentValue = getBool(widget.data, bindings);
               return Row(
                 children: <Widget>[
@@ -64,7 +65,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                               ? linkify.linkify(
                                   widget.data,
                                   (link) {
-                                    //viewModel.linkifyTap(link);
+                                    viewModel.linkifyTap(link);
                                   },
                                 )
                               : Text(
