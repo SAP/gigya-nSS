@@ -53,13 +53,20 @@ class StartupWidget extends StatelessWidget {
 
     // Start `getSchema` if needed
     loadSchema().then((schema) {
-      config.schema = schema;
+      var newSchema = {
+        'profile': schema['profileSchema']['fields'],
+        'data': schema['profileSchema']['fields'],
+        'subscriptions': schema['subscriptionsSchema']['fields'],
+        'preferences': schema['preferencesSchema']['fields']
+      };
+      config.schema = newSchema;
     });
 
     // Notify native that we are ready to display. Pre-warm up done.
     issueNativeReadyForDisplay();
 
-    WidgetFactory factory = NssIoc().use(config.isPlatformAware ? CupertinoWidgetFactory : MaterialWidgetFactory);
+    WidgetFactory factory =
+        NssIoc().use(config.isPlatformAware ? CupertinoWidgetFactory : MaterialWidgetFactory);
     return Container(color: Colors.white, child: factory.buildApp());
   }
 
@@ -90,7 +97,8 @@ class StartupWidget extends StatelessWidget {
       return null;
     }
 
-    return channels.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(StartupAction.load_schema.action);
+    return channels.ignitionChannel
+        .invokeMethod<Map<dynamic, dynamic>>(StartupAction.load_schema.action);
   }
 }
 
@@ -121,6 +129,7 @@ class StartupWorker {
 
   /// Get the [Spark] markup from native component using the ignition channel.
   Future<Map<dynamic, dynamic>> _ignitionFromChannel() async {
-    return channels.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(StartupAction.ignition.action);
+    return channels.ignitionChannel
+        .invokeMethod<Map<dynamic, dynamic>>(StartupAction.ignition.action);
   }
 }

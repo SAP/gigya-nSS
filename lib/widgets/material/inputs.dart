@@ -123,7 +123,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
                             ),
                     ),
                     validator: (input) {
-                      return _validateField(input.trim());
+                      return _validateField(input.trim(), widget.data.bind);
                     },
                     onSaved: (value) {
                       if (value.trim().isEmpty && placeHolder.isEmpty) {
@@ -150,8 +150,26 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
   }
 
   /// Validate input according to instance type.
-  String _validateField(String input) {
+  String _validateField(String input, String key) {
+
     if (_validators.isEmpty) {
+      if (config.schema.containsKey(key.split('.').first)) {
+        var validator = config.schema[key.split('.').first][key.replaceFirst(key.split('.').first + '.', '')] ?? {};
+        if (input.isEmpty && validator['required'] == true) {
+          return 'Error';
+        }
+
+        if (input.isNotEmpty && validator.containsKey('format')) {
+          final regex = validator['format'].toString().replaceAll("regex('", '').replaceAll("')", '');
+
+          final RegExp regExp = RegExp(regex);
+          bool match = regExp.hasMatch(input);
+          if (!match) {
+            //TODO: Should be localized string.
+            return 'regexValidator.errorKey';
+          }
+        }
+      }
       return null;
     }
     // Validate required field.
