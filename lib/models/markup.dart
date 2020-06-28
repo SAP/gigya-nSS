@@ -11,8 +11,10 @@ class Markup {
   Map<String, Screen> screens;
   Routing routing;
   Map<String, dynamic> theme;
+  @JsonKey(defaultValue: false)
+  bool useSchemaValidations;
 
-  Markup({this.platformAware, this.screens, this.routing, this.theme});
+  Markup({this.platformAware, this.screens, this.routing, this.theme, this.useSchemaValidations});
 
   factory Markup.fromJson(Map<String, dynamic> json) => _$MarkupFromJson(json);
 

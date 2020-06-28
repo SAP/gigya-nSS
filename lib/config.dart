@@ -5,6 +5,7 @@ class NssConfig {
   bool isMock = false;
   bool isPlatformAware = false;
   Markup markup;
+  Map<dynamic, dynamic> schema;
 
   NssConfig({this.isMock, this.isPlatformAware, this.markup});
 }
