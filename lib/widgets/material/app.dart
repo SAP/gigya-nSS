@@ -12,7 +12,7 @@ class MaterialAppWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      color: Colors.white, //TODO: Theme not implemented for v0.1.
+      color: Colors.white,
       initialRoute: markup.routing.initial,
       onGenerateRoute: router.generateRoute,
     );

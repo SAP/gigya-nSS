@@ -5,9 +5,10 @@ import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
+import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:provider/provider.dart';
 
-class LabelWidget extends StatelessWidget with WidgetDecorationMixin, BindingMixin, StyleMixin {
+class LabelWidget extends StatelessWidget with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin {
   final NssWidgetData data;
 
   LabelWidget({Key key, this.data}) : super(key: key);
@@ -22,7 +23,11 @@ class LabelWidget extends StatelessWidget with WidgetDecorationMixin, BindingMix
           data,
           Consumer2<ScreenViewModel, BindingModel>(
             builder: (context, viewModel, bindings, child) {
-              final String text = getText(data, bindings);
+              String text = getBoundText(data, bindings);
+              if (text == null) {
+                // Get localized label text.
+                text = localizedStringFor(data.textKey);
+              }
               final Linkify linkify = Linkify(text);
               final bool linkified = linkify.containLinks(text);
               if (!linkified) linkify.dispose();

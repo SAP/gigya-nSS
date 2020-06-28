@@ -5,6 +5,7 @@ import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
+import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:provider/provider.dart';
 
 mixin NssActionsMixin {
@@ -26,7 +27,8 @@ class SubmitWidget extends StatefulWidget {
   _SubmitWidgetState createState() => _SubmitWidgetState();
 }
 
-class _SubmitWidgetState extends State<SubmitWidget> with WidgetDecorationMixin, NssActionsMixin, StyleMixin {
+class _SubmitWidgetState extends State<SubmitWidget>
+    with DecorationMixin, NssActionsMixin, StyleMixin, LocalizationMixin {
   @override
   Widget build(BuildContext context) {
     return expandIfNeeded(
@@ -49,7 +51,8 @@ class _SubmitWidgetState extends State<SubmitWidget> with WidgetDecorationMixin,
                   child: RaisedButton(
                     elevation: getStyle(Styles.elevation, data: widget.data),
                     child: Text(
-                       widget.data.textKey,
+                      // Get localized submit text.
+                      localizedStringFor(widget.data.textKey),
                       style: TextStyle(
                         fontSize: getStyle(Styles.fontSize, data: widget.data),
                         color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'secondaryColor'),
