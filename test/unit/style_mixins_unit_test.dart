@@ -6,8 +6,6 @@ import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 
-import 'nss_test_extensions.dart';
-
 class UsesMixin with StyleMixin {}
 
 void main() {

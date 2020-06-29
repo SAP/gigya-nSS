@@ -8,7 +8,7 @@ import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 
 /// General widget decoration mixin.
 /// Includes useful UI builders that correspond with the applied markup.
-mixin WidgetDecorationMixin {
+mixin DecorationMixin {
   final NssConfig config = NssIoc().use(NssConfig);
 
   /// Make sure this value will be treated as a double.

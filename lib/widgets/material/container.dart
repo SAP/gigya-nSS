@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 
-class ContainerWidget extends StatelessWidget with StyleMixin, WidgetDecorationMixin {
+class ContainerWidget extends StatelessWidget with StyleMixin, DecorationMixin {
   final Widget child;
   final Map<String, dynamic> style;
   final bool isScreen;

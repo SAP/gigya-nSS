@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/option.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
+import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:provider/provider.dart';
+
+import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 
 class CheckboxWidget extends StatefulWidget {
   final NssWidgetData data;
@@ -17,12 +21,13 @@ class CheckboxWidget extends StatefulWidget {
 }
 
 /// General checkbox widget state.
-class _CheckboxWidgetState extends State<CheckboxWidget> with WidgetDecorationMixin, BindingMixin, StyleMixin {
+class _CheckboxWidgetState extends State<CheckboxWidget>
+    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin {
   bool _currentValue;
 
   @override
   Widget build(BuildContext context) {
-    final String displayText = widget.data.textKey;
+    final String displayText = localizedStringFor(widget.data.textKey);
     final Linkify linkify = Linkify(displayText);
     final bool linkified = linkify.containLinks(displayText);
     if (!linkified) linkify.dispose();
@@ -32,8 +37,8 @@ class _CheckboxWidgetState extends State<CheckboxWidget> with WidgetDecorationMi
         padding: getStyle(Styles.margin, data: widget.data),
         child: sizeIfNeeded(
           widget.data,
-          Consumer<BindingModel>(
-            builder: (context, bindings, child) {
+          Consumer2<ScreenViewModel, BindingModel>(
+            builder: (context, viewModel, bindings, child) {
               _currentValue = getBool(widget.data, bindings);
               return Row(
                 children: <Widget>[
@@ -50,30 +55,29 @@ class _CheckboxWidgetState extends State<CheckboxWidget> with WidgetDecorationMi
                   ),
                   Flexible(
                     child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          bindings.save(widget.data.bind, !_currentValue);
-                        });
-                      },
-                      child: Container(
-                        child: linkified ?
-                        linkify.linkify(
-                        widget.data,
-                            (link) {
-                          //viewModel.linkifyTap(link);
+                        onTap: () {
+                          setState(() {
+                            bindings.save(widget.data.bind, !_currentValue);
+                          });
                         },
-                          )
-                            : Text(
-                              displayText,
-                              //TODO: Overflow property should also be customized.
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: getStyle(Styles.fontColor, data: widget.data),
-                                  fontSize: getStyle(Styles.fontSize, data: widget.data),
-                                  fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
-                            ),
-                      )
-                    ),
+                        child: Container(
+                          child: linkified
+                              ? linkify.linkify(
+                                  widget.data,
+                                  (link) {
+                                    viewModel.linkifyTap(link);
+                                  },
+                                )
+                              : Text(
+                                  displayText,
+                                  //TODO: Overflow property should also be customized.
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      color: getStyle(Styles.fontColor, data: widget.data),
+                                      fontSize: getStyle(Styles.fontSize, data: widget.data),
+                                      fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
+                                ),
+                        )),
                   ),
                 ],
               );
@@ -95,7 +99,8 @@ class RadioGroupWidget extends StatefulWidget {
 }
 
 /// General radio group widget state.
-class _RadioGroupWidgetState extends State<RadioGroupWidget> with WidgetDecorationMixin, BindingMixin, StyleMixin {
+class _RadioGroupWidgetState extends State<RadioGroupWidget>
+    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin {
   String _groupValue;
   String _defaultValue;
 
@@ -109,8 +114,8 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget> with WidgetDecorati
             widget.data,
             Consumer<BindingModel>(
               builder: (context, bindings, child) {
-                _groupValue = getText(widget.data, bindings);
-                if (_groupValue.isEmpty) {
+                _groupValue = getBoundText(widget.data, bindings);
+                if (_groupValue.isNullOrEmpty()) {
                   widget.data.options.forEach((option) {
                     if (option.defaultValue != null && option.defaultValue) {
                       _groupValue = option.value;
@@ -127,7 +132,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget> with WidgetDecorati
                       controlAffinity: ListTileControlAffinity.leading,
                       value: option.value,
                       title: Text(
-                        option.textKey,
+                        localizedStringFor(option.textKey),
                         style: TextStyle(
                           color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
                           fontSize: getStyle(Styles.fontSize, data: widget.data),
@@ -163,7 +168,7 @@ class DropDownButtonWidget extends StatefulWidget {
 
 /// General dropdown button widget state.
 class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
-    with WidgetDecorationMixin, BindingMixin, StyleMixin {
+    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin {
   String _dropdownValue;
   List<String> _dropdownItems = [];
 
@@ -197,10 +202,10 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
             widget.data,
             Consumer<BindingModel>(builder: (context, bindings, child) {
               _dropdownItems.clear();
-              var bindValue = getText(widget.data, bindings);
+              var bindValue = getBoundText(widget.data, bindings);
               widget.data.options.forEach((option) {
-                _dropdownItems.add(option.textKey);
-                if (bindValue.isEmpty && option.defaultValue != null && option.defaultValue) {
+                _dropdownItems.add(localizedStringFor(option.textKey));
+                if (bindValue.isNullOrEmpty() && option.defaultValue != null && option.defaultValue) {
                   bindValue = option.value;
                 }
               });

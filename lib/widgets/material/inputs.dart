@@ -3,6 +3,7 @@ import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
+import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,8 @@ class TextInputWidget extends StatefulWidget {
   _TextInputWidgetState createState() => _TextInputWidgetState();
 }
 
-class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecorationMixin, BindingMixin, StyleMixin {
+class _TextInputWidgetState extends State<TextInputWidget>
+    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin {
   final TextEditingController _textEditingController = TextEditingController(text: '');
   Map<String, NssInputValidator> _validators = {};
   bool _obscuredText = false;
@@ -50,7 +52,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
             widget.data,
             Consumer<BindingModel>(
               builder: (context, bindings, child) {
-                final placeHolder = getText(widget.data, bindings);
+                String placeHolder = getBoundText(widget.data, bindings);
                 if (_textEditingController.text.isEmpty) {
                   _textEditingController.text = placeHolder;
                 } else {
@@ -88,7 +90,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
                             )
                           : null,
                       fillColor: getStyle(Styles.background, data: widget.data),
-                      hintText: widget.data.textKey,
+                      hintText: localizedStringFor(widget.data.textKey),
                       hintStyle: TextStyle(
                         color:
                             getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor').withOpacity(0.5),
@@ -123,7 +125,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
                             ),
                     ),
                     validator: (input) {
-                      return _validateField(input.trim());
+                      return _validateField(input.trim(), widget.data.bind);
                     },
                     onSaved: (value) {
                       if (value.trim().isEmpty && placeHolder.isEmpty) {
@@ -150,8 +152,26 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
   }
 
   /// Validate input according to instance type.
-  String _validateField(String input) {
+  String _validateField(String input, String key) {
+
     if (_validators.isEmpty) {
+      if (config.schema.containsKey(key.split('.').first)) {
+        var validator = config.schema[key.split('.').first][key.replaceFirst(key.split('.').first + '.', '')] ?? {};
+        if (input.isEmpty && validator['required'] == true) {
+          return 'Error';
+        }
+
+        if (input.isNotEmpty && validator.containsKey('format')) {
+          final regex = validator['format'].toString().replaceAll("regex('", '').replaceAll("')", '');
+
+          final RegExp regExp = RegExp(regex);
+          bool match = regExp.hasMatch(input);
+          if (!match) {
+            //TODO: Should be localized string.
+            return 'regexValidator.errorKey';
+          }
+        }
+      }
       return null;
     }
     // Validate required field.
@@ -159,7 +179,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
       NssInputValidator requiredValidator = _validators['required'];
       if (requiredValidator.enabled) {
         //TODO: Should be localized string.
-        return requiredValidator.errorKey;
+        return localizedStringFor(requiredValidator.errorKey);
       }
     }
     // Validated regex field.
@@ -169,7 +189,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
       bool match = regExp.hasMatch(input);
       if (regexValidator.enabled && !match) {
         //TODO: Should be localized string.
-        return regexValidator.errorKey;
+        return localizedStringFor(regexValidator.errorKey);
       }
     }
     return null;
