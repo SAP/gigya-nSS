@@ -23,7 +23,7 @@ class LabelWidget extends StatelessWidget with DecorationMixin, BindingMixin, St
           data,
           Consumer2<ScreenViewModel, BindingModel>(
             builder: (context, viewModel, bindings, child) {
-              String text = getBoundText(data, bindings);
+              String text = getBindingText(data, bindings);
               if (text == null) {
                 // Get localized label text.
                 text = localizedStringFor(data.textKey);

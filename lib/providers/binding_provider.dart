@@ -1,6 +1,9 @@
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 /// Screen data binding model used for each [NssScreen]. Data is injected using the
 /// flow initialization process from the native bridge.
@@ -49,7 +52,8 @@ class BindingModel with ChangeNotifier {
         var arrayKey = arrayKeyData[0];
         var arrayIndex = int.parse(arrayKeyData[1].replaceAll(']', ''));
 
-        nextData = arrayIndex < (nextData[arrayKey] as List).length ? nextData[arrayKey][arrayIndex] : '';
+        nextData =
+            arrayIndex < (nextData[arrayKey] as List).length ? nextData[arrayKey][arrayIndex] : '';
         keys[nextKey] = arrayKey;
       } else {
         nextKey++;
@@ -72,7 +76,7 @@ class BindingModel with ChangeNotifier {
   }
 
   /// Update the binding data map with required [key] and [value].
-  saveTo<T>(String key, T value, Map<String, dynamic> tmpData ) {
+  saveTo<T>(String key, T value, Map<String, dynamic> tmpData) {
     var keys = key.split('.');
     var nextKey = 0;
 
@@ -118,19 +122,42 @@ class BindingModel with ChangeNotifier {
 }
 
 mixin BindingMixin {
-  String getBoundText(NssWidgetData data, BindingModel bindings) {
+  String getBindingText(NssWidgetData data, BindingModel bindings) {
     if (data.bind.isAvailable()) {
       final String value = bindings.getValue<String>(data.bind);
+      checkBindInSchema(data.bind, value);
       return value.isEmpty ? null : value;
     }
     return null;
   }
 
-  bool getBool(NssWidgetData data, BindingModel bindings) {
+  bool getBindingBool(NssWidgetData data, BindingModel bindings) {
     if (data.bind.isAvailable()) {
       var value = bindings.getValue<bool>(data.bind);
+      checkBindInSchema(data.bind, value);
       return value;
     }
     return false;
+  }
+
+  void checkBindInSchema(String key, dynamic value) {
+    final schema = NssIoc().use(NssConfig).schema;
+
+    if (schema.containsKey(key.split('.').first)) {
+      final validator =
+          schema[key.split('.').first][key.replaceFirst(key.split('.').first + '.', '')] ?? {};
+
+      if (validator['type'] == "string" && value is! String) {
+        engineLogger.d('bindind key `' + key + '` is not accorting to schema');
+      }
+
+      if (validator['type'] == "number" && (value is! num)) {
+        engineLogger.d('bindind key `' + key + '` is not accorting to schema');
+      }
+
+      if (validator['type'] == "boolean" && value is! bool) {
+        engineLogger.d('bindind key `' + key + '` is not accorting to schema');
+      }
+    }
   }
 }

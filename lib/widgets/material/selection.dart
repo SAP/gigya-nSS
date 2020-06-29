@@ -39,7 +39,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
           widget.data,
           Consumer2<ScreenViewModel, BindingModel>(
             builder: (context, viewModel, bindings, child) {
-              _currentValue = getBool(widget.data, bindings);
+              _currentValue = getBindingBool(widget.data, bindings);
               return Row(
                 children: <Widget>[
                   Checkbox(
@@ -114,7 +114,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
             widget.data,
             Consumer<BindingModel>(
               builder: (context, bindings, child) {
-                _groupValue = getBoundText(widget.data, bindings);
+                _groupValue = getBindingText(widget.data, bindings);
                 if (_groupValue.isNullOrEmpty()) {
                   widget.data.options.forEach((option) {
                     if (option.defaultValue != null && option.defaultValue) {
@@ -202,7 +202,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
             widget.data,
             Consumer<BindingModel>(builder: (context, bindings, child) {
               _dropdownItems.clear();
-              var bindValue = getBoundText(widget.data, bindings);
+              var bindValue = getBindingText(widget.data, bindings);
               widget.data.options.forEach((option) {
                 _dropdownItems.add(localizedStringFor(option.textKey));
                 if (bindValue.isNullOrEmpty() && option.defaultValue != null && option.defaultValue) {

@@ -52,7 +52,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
             widget.data,
             Consumer<BindingModel>(
               builder: (context, bindings, child) {
-                String placeHolder = getBoundText(widget.data, bindings);
+                String placeHolder = getBindingText(widget.data, bindings);
                 if (_textEditingController.text.isEmpty) {
                   _textEditingController.text = placeHolder;
                 } else {

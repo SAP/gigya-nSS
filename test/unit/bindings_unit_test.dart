@@ -1,8 +1,67 @@
+import 'dart:async';
+
+import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:test/test.dart';
+
+class UseBindingMixin with BindingMixin {}
+
+var log = [];
+
+class LoggerMock extends Logger {
+  LoggerMock(NssConfig config, NssChannels channels) : super(config, channels);
+
+  @override d(String message, {String tag = 'NssEngine'}) {
+    log.add(message);
+    return message;
+  }
+
+}
+
 
 void main() {
   BindingModel bindUtils = BindingModel();
+
+  group('test mixin', () {
+
+    final mixin = UseBindingMixin();
+    var config = NssConfig(isMock: true);
+    config.schema = {'data': {'bool': {'type': 'boolean'}, 'number': {'type': 'number'}}};
+
+    NssIoc().register(NssConfig, (ioc) => config, singleton: true);
+    NssIoc().register(Logger, (ioc) => LoggerMock(config, null), singleton: true);
+
+    test('test validation of binding type bool with string value', () {
+      mixin.checkBindInSchema('data.bool', 'is string');
+      expect(log, ['bindind key `data.bool` is not accorting to schema']);
+      log.clear();
+    });
+
+    test('test validation of binding type bool success', () {
+      mixin.checkBindInSchema('data.bool', false);
+      expect(log, []);
+    });
+
+
+    test('test validation of binding type number with bool value', () {
+      mixin.checkBindInSchema('data.number', false);
+      expect(log, ['bindind key `data.number` is not accorting to schema']);
+      log.clear();
+    });
+
+    test('test validation of binding type number success', () {
+      mixin.checkBindInSchema('data.number', 5);
+      expect(log, []);
+    });
+
+    test('test validation of binding type double success', () {
+      mixin.checkBindInSchema('data.number', 5.9);
+      expect(log, []);
+    });
+
+  });
 
   group('BindingModel: empty ', () {
     bindUtils.updateWith({});
