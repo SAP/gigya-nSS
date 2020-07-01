@@ -13,6 +13,7 @@ void main() {
     NssIoc().register(NssConfig, (ioc) => NssConfig(isPlatformAware: true), singleton: true);
     NssIoc().use(NssConfig).isPlatformAware = false;
 
+
     var mixin = UsesMixin();
 
     test('ensureDouble() method', () {

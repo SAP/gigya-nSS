@@ -42,9 +42,9 @@ mixin StyleMixin {
     if (data != null) {
       // Check for custom theme first.
       String customTheme = data.theme ?? '';
-      if (customTheme.isAvailable() && config.markup.theme != null && config.markup.theme.containsKey(customTheme)) {
-        if (config.markup.theme[customTheme].containsKey(style.name)) {
-          value = getStyleValue(style, config.markup.theme[customTheme].cast<String, dynamic>());
+      if (customTheme.isAvailable() && config.markup.theme != null && config.markup.theme['customTheme'] != null && config.markup.theme['customTheme'].containsKey(customTheme)) {
+        if (config.markup.theme['customTheme'][customTheme].containsKey(style.name)) {
+          value = getStyleValue(style, config.markup.theme['customTheme'][customTheme].cast<String, dynamic>());
         }
       }
     }
