@@ -10,12 +10,12 @@ void main() {
       () async {
         var validatorMap = {
           "enabled": true,
-          "value": "^[a-zA-Z0-9]+\$",
+          "format": "^[a-zA-Z0-9]+\$",
           "errorKey": "Invalid format",
         };
 
         NssInputValidator regexValidator = NssInputValidator.from(validatorMap);
-        final RegExp regExp = RegExp(regexValidator.value);
+        final RegExp regExp = RegExp(regexValidator.format);
 
         // Valid formats.
         expect(regExp.hasMatch("abc1"), true);
@@ -42,7 +42,7 @@ void main() {
         };
 
         NssInputValidator regexValidator = NssInputValidator.from(validatorMap);
-        final RegExp regExp = RegExp(regexValidator.value);
+        final RegExp regExp = RegExp(regexValidator.format);
 
         // Valid formats.
         expect(regExp.hasMatch("Aa123#dgdg"), true);
@@ -54,10 +54,9 @@ void main() {
       },
     );
 
-
     test(
       'regex test #3 - email',
-          () async {
+      () async {
         var validatorMap = {
           "enabled": true,
           "value": "^[a-zA-Z0-9.a-zA-Z0-9.!#\$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
@@ -65,7 +64,7 @@ void main() {
         };
 
         NssInputValidator regexValidator = NssInputValidator.from(validatorMap);
-        final RegExp regExp = RegExp(regexValidator.value);
+        final RegExp regExp = RegExp(regexValidator.format);
 
         // Valid formats.
         expect(regExp.hasMatch("abx@cc.com"), true);

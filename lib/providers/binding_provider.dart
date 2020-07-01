@@ -52,8 +52,7 @@ class BindingModel with ChangeNotifier {
         var arrayKey = arrayKeyData[0];
         var arrayIndex = int.parse(arrayKeyData[1].replaceAll(']', ''));
 
-        nextData =
-            arrayIndex < (nextData[arrayKey] as List).length ? nextData[arrayKey][arrayIndex] : '';
+        nextData = arrayIndex < (nextData[arrayKey] as List).length ? nextData[arrayKey][arrayIndex] : '';
         keys[nextKey] = arrayKey;
       } else {
         nextKey++;
@@ -141,22 +140,28 @@ mixin BindingMixin {
   }
 
   void checkBindInSchema(String key, dynamic value) {
-    final schema = NssIoc().use(NssConfig).schema;
+    final NssConfig config = NssIoc().use(NssConfig);
+    if (!config.markup.useSchemaValidations) return;
+
+    final schema = config.schema;
+    if (schema == null) {
+      engineLogger.d('Schema still not available', tag: 'NssEngine');
+      return;
+    } else {
+      engineLogger.d('Schema available', tag: 'NssEngine');
+    }
 
     if (schema.containsKey(key.split('.').first)) {
-      final validator =
-          schema[key.split('.').first][key.replaceFirst(key.split('.').first + '.', '')] ?? {};
+      final schemaObject = schema[key.split('.').first][key.replaceFirst(key.split('.').first + '.', '')] ?? {};
 
-      if (validator['type'] == "string" && value is! String) {
-        engineLogger.d('bindind key `' + key + '` is not accorting to schema');
+      if (schemaObject['type'] == 'string' && value is! String) {
+        engineLogger.d('Binding key:$key is not aligned with schema type. Verify markup.');
       }
-
-      if (validator['type'] == "number" && (value is! num)) {
-        engineLogger.d('bindind key `' + key + '` is not accorting to schema');
+      if (schemaObject['type'] == "number" && (value is! num)) {
+        engineLogger.d('Binding key:$key is not aligned with schema type. Verify markup.');
       }
-
-      if (validator['type'] == "boolean" && value is! bool) {
-        engineLogger.d('bindind key `' + key + '` is not accorting to schema');
+      if (schemaObject['type'] == "boolean" && value is! bool) {
+        engineLogger.d('Binding key:$key is not aligned with schema type. Verify markup.');
       }
     }
   }

@@ -7,6 +7,7 @@ import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
+import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:provider/provider.dart';
 
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
@@ -22,7 +23,7 @@ class CheckboxWidget extends StatefulWidget {
 
 /// General checkbox widget state.
 class _CheckboxWidgetState extends State<CheckboxWidget>
-    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin {
+    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin {
   bool _currentValue;
 
   @override
@@ -70,8 +71,6 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                 )
                               : Text(
                                   displayText,
-                                  //TODO: Overflow property should also be customized.
-                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                       color: getStyle(Styles.fontColor, data: widget.data),
                                       fontSize: getStyle(Styles.fontSize, data: widget.data),
@@ -100,7 +99,7 @@ class RadioGroupWidget extends StatefulWidget {
 
 /// General radio group widget state.
 class _RadioGroupWidgetState extends State<RadioGroupWidget>
-    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin {
+    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin {
   String _groupValue;
   String _defaultValue;
 
@@ -144,7 +143,14 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                       // TODO: need to change the getter from theme.
                       onChanged: (String value) {
                         setState(() {
-                          bindings.save(widget.data.bind, value);
+                          // Value needs to be parsed.
+                          // Can be parsed according to markup or schema.
+                          if (widget.data.parseAs != null) {
+                            bindings.save(widget.data.bind, parseAs(value.trim(), widget.data.parseAs));
+                            return;
+                          }
+                          // Parse according to schema. If schema validation is not required will return the base input.
+                          bindings.save(widget.data.bind, parseUsingSchema(value.trim(), widget.data.bind));
                         });
                       },
                     );
@@ -168,7 +174,7 @@ class DropDownButtonWidget extends StatefulWidget {
 
 /// General dropdown button widget state.
 class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
-    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin {
+    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin {
   String _dropdownValue;
   List<String> _dropdownItems = [];
 
@@ -228,7 +234,15 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                 onChanged: (String newValue) {
                   setState(() {
                     var index = indexFromDisplayValue(newValue);
-                    bindings.save(widget.data.bind, widget.data.options[index].value);
+                    var updated = widget.data.options[index].value;
+                    // Value needs to be parsed.
+                    // Can be parsed according to markup or schema.
+                    if (widget.data.parseAs != null) {
+                      bindings.save(widget.data.bind, parseAs(updated, widget.data.parseAs));
+                      return;
+                    }
+                    // Parse according to schema. If schema validation is not required will return the base input.
+                    bindings.save(widget.data.bind, parseUsingSchema(updated, widget.data.bind));
                   });
                 },
                 items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {

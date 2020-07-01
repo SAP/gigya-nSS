@@ -35,7 +35,7 @@ void main() {
 
     test('test validation of binding type bool with string value', () {
       mixin.checkBindInSchema('data.bool', 'is string');
-      expect(log, ['bindind key `data.bool` is not accorting to schema']);
+      expect(log, ['Binding key:data.bool is not aligned with schema type. Verify markup.']);
       log.clear();
     });
 
@@ -47,7 +47,7 @@ void main() {
 
     test('test validation of binding type number with bool value', () {
       mixin.checkBindInSchema('data.number', false);
-      expect(log, ['bindind key `data.number` is not accorting to schema']);
+      expect(log, ['Binding key:data.number is not aligned with schema type. Verify markup.']);
       log.clear();
     });
 

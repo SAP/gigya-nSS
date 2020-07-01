@@ -13,7 +13,7 @@ class Markup {
   Map<String, dynamic> theme;
   @JsonKey(defaultValue: '_default')
   String lang;
-  @JsonKey(name: 'i18n')
+  @JsonKey(name: 'i18n', defaultValue: {'_default': {}})
   Map<String, dynamic> localiation;
   @JsonKey(defaultValue: false)
   bool useSchemaValidations;

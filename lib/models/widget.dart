@@ -21,7 +21,10 @@ class NssWidgetData {
   @JsonKey(defaultValue: {})
   Map<String, dynamic> style;
   String theme;
+  @JsonKey(defaultValue: {})
   Map<String, dynamic> validations;
+  /// Optional values: 'number'|'boolean'|'string'
+  String parseAs;
 
   NssWidgetData({
     this.textKey,
@@ -37,6 +40,7 @@ class NssWidgetData {
     this.style,
     this.theme,
     this.validations,
+    this.parseAs,
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);

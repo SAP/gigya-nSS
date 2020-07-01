@@ -18,7 +18,7 @@ class TextInputWidget extends StatefulWidget {
 }
 
 class _TextInputWidgetState extends State<TextInputWidget>
-    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin {
+    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin {
   final TextEditingController _textEditingController = TextEditingController(text: '');
   Map<String, NssInputValidator> _validators = {};
   bool _obscuredText = false;
@@ -26,7 +26,11 @@ class _TextInputWidgetState extends State<TextInputWidget>
   @override
   void initState() {
     super.initState();
-    _initValidators();
+
+    // Initialize validators.
+    initMarkupValidators(widget.data.validations);
+    initSchemaValidators(widget.data.bind);
+
     _obscuredText = widget.data.type == NssWidgetType.passwordInput;
   }
 
@@ -125,13 +129,20 @@ class _TextInputWidgetState extends State<TextInputWidget>
                             ),
                     ),
                     validator: (input) {
-                      return _validateField(input.trim(), widget.data.bind);
+                      return validateField(input);
                     },
                     onSaved: (value) {
                       if (value.trim().isEmpty && placeHolder.isEmpty) {
                         return;
                       }
-                      bindings.save(widget.data.bind, value.trim());
+                      // Value needs to be parsed.
+                      // Can be parsed according to markup or schema.
+                      if (widget.data.parseAs != null) {
+                        bindings.save(widget.data.bind, parseAs(value.trim(), widget.data.parseAs));
+                        return;
+                      }
+                      // Parse according to schema. If schema validation is not required will return the base input.
+                      bindings.save(widget.data.bind, parseUsingSchema(value.trim(), widget.data.bind));
                     },
                   ),
                 );
@@ -139,59 +150,5 @@ class _TextInputWidgetState extends State<TextInputWidget>
             ),
           ),
         ));
-  }
-
-  /// Parse input validation map an prepare for form validation request.
-  _initValidators() async {
-    if (widget.data.validations == null) {
-      return;
-    }
-    widget.data.validations.cast<String, dynamic>().forEach((k, v) {
-      _validators[k] = NssInputValidator.from(v.cast<String, dynamic>());
-    });
-  }
-
-  /// Validate input according to instance type.
-  String _validateField(String input, String key) {
-
-    if (_validators.isEmpty) {
-      if (config.schema.containsKey(key.split('.').first)) {
-        var validator = config.schema[key.split('.').first][key.replaceFirst(key.split('.').first + '.', '')] ?? {};
-        if (input.isEmpty && validator['required'] == true) {
-          return 'Error';
-        }
-
-        if (input.isNotEmpty && validator.containsKey('format')) {
-          final regex = validator['format'].toString().replaceAll("regex('", '').replaceAll("')", '');
-
-          final RegExp regExp = RegExp(regex);
-          bool match = regExp.hasMatch(input);
-          if (!match) {
-            //TODO: Should be localized string.
-            return 'regexValidator.errorKey';
-          }
-        }
-      }
-      return null;
-    }
-    // Validate required field.
-    if (input.isEmpty && _validators.containsKey('required')) {
-      NssInputValidator requiredValidator = _validators['required'];
-      if (requiredValidator.enabled) {
-        //TODO: Should be localized string.
-        return localizedStringFor(requiredValidator.errorKey);
-      }
-    }
-    // Validated regex field.
-    if (input.isNotEmpty && _validators.containsKey('regex')) {
-      NssInputValidator regexValidator = _validators['regex'];
-      final RegExp regExp = RegExp(regexValidator.value);
-      bool match = regExp.hasMatch(input);
-      if (regexValidator.enabled && !match) {
-        //TODO: Should be localized string.
-        return localizedStringFor(regexValidator.errorKey);
-      }
-    }
-    return null;
   }
 }
