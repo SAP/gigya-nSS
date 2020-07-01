@@ -66,7 +66,7 @@
       "common-first-name": "First Name",
       "common-last-name": "Last Name",
       "common-zip": "Zipcode",
-      "common-rescueCode": "My rescue code"
+      "common-rescueString": "My rescue code"
     },
     "es": {
       "login": "Iniciar sesión",
@@ -90,7 +90,7 @@
       "common-first-name": "Nombre de pila",
       "common-last-name": "Apellido",
       "common-zip": "Código postal",
-      "common-rescueCode": "Mi código de rescate"
+      "common-rescueString": "Mi código de rescate"
     }
   },
   "routing": {
@@ -299,9 +299,9 @@
           "theme": "input"
         },
         {
-          "bind": "data.rescuCode",
+          "bind": "data.rescueString",
           "type": "textInput",
-          "textKey": "common-rescueCode",
+          "textKey": "common-rescueString",
           "theme": "input"
         },
         {

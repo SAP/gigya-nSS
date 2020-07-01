@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 enum Validator { required, regex }
 
@@ -50,7 +51,8 @@ mixin ValidationMixin {
       return null;
     }
     if (config.schema.containsKey(key.split('.').first)) {
-      var schemaObject = config.schema[key.split('.').first][key.replaceFirst(key.split('.').first + '.', '')] ?? {};
+      var schemaObject =
+          config.schema[key.split('.').first][key.replaceFirst(key.split('.').first + '.', '')] ?? {};
       return schemaObject;
     }
     return null;
@@ -77,9 +79,11 @@ mixin ValidationMixin {
     if (schemaObject[Validator.required.name] == true) {
       _schemaValidators[Validator.required.name] = NssInputValidator.requiredFromSchema();
     }
-    if (schemaObject[Validator.required.name] == true && schemaObject.containsKey('format')) {
+    if (schemaObject.containsKey('format')) {
       String dirty = schemaObject['format'].toString().trim();
-      final regex = dirty.replaceAll('regex(\'', '').substring(0, dirty.length - 2);
+      dirty = dirty.replaceAll('regex(\'', '');
+      final regex = dirty.substring(0, dirty.length - 2);
+      engineLogger.d('regex = $regex');
       _schemaValidators[Validator.regex.name] = NssInputValidator.regExFromSchema(regex);
     }
   }
@@ -105,7 +109,7 @@ mixin ValidationMixin {
     if (input.isNotEmpty && validators.containsKey(Validator.regex.name)) {
       final NssInputValidator regexValidator = validators[Validator.regex.name];
       final RegExp regExp = RegExp(regexValidator.format);
-      bool match = regExp.hasMatch(input);
+      final bool match = regExp.hasMatch(input);
       if (regexValidator.enabled && !match) {
         return regexValidator.getError();
       }
