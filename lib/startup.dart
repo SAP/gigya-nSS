@@ -90,12 +90,12 @@ class StartupWidget extends StatelessWidget {
 
   //TODO: Future versions - move to a specific logic class. Task may grow in time.
   void addDefultStringValues() {
-    var localization = config.markup.localiation;
-    if (localization.containsKey(NssInputValidator.schemaErrorKeyRequired)) {
-      localization[NssInputValidator.schemaErrorKeyRequired] = 'This field is required';
+    var localization = config.markup.localization;
+    if (!localization.containsKey(NssInputValidator.schemaErrorKeyRequired)) {
+      config.markup.localization['_default'][NssInputValidator.schemaErrorKeyRequired] = 'This field is required';
     }
-    if (localization.containsKey(NssInputValidator.schemaErrorKeyRegEx)) {
-      localization[NssInputValidator.schemaErrorKeyRegEx] = 'Please enter a valid value';
+    if (!localization.containsKey(NssInputValidator.schemaErrorKeyRegEx)) {
+      config.markup.localization['_default'][NssInputValidator.schemaErrorKeyRegEx] = 'Please enter a valid value';
     }
   }
 }

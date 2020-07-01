@@ -18,7 +18,7 @@ void main() {
       'es': {'hello': 'Hola'}
     };
 
-    when(markup.localiation).thenReturn(localizationMap);
+    when(markup.localization).thenReturn(localizationMap);
 
     // Mock IOC.
     NssIoc().register(NssConfig, (ioc) => config);

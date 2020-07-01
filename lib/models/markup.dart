@@ -14,7 +14,7 @@ class Markup {
   @JsonKey(defaultValue: '_default')
   String lang;
   @JsonKey(name: 'i18n', defaultValue: {'_default': {}})
-  Map<String, dynamic> localiation;
+  Map<String, dynamic> localization;
   @JsonKey(defaultValue: false)
   bool useSchemaValidations;
 
