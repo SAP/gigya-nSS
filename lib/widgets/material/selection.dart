@@ -27,6 +27,15 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
   bool _currentValue;
 
   @override
+  void initState() {
+    super.initState();
+
+    // Initialize validators.
+    initMarkupValidators(widget.data.validations);
+    initSchemaValidators(widget.data.bind);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final String displayText = localizedStringFor(widget.data.textKey);
     final Linkify linkify = Linkify(displayText);
@@ -34,55 +43,70 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
     if (!linkified) linkify.dispose();
     return expandIfNeeded(
       widget.data,
-      Padding(
-        padding: getStyle(Styles.margin, data: widget.data),
-        child: sizeIfNeeded(
-          widget.data,
-          Consumer2<ScreenViewModel, BindingModel>(
-            builder: (context, viewModel, bindings, child) {
-              _currentValue = getBindingBool(widget.data, bindings);
-              return Row(
-                children: <Widget>[
-                  Checkbox(
-                    activeColor: getThemeColor('enabledColor'),
-                    // TODO: need to verify if can improve it.
-                    checkColor: getThemeColor('secondaryColor'),
-                    value: _currentValue,
-                    onChanged: (bool val) {
-                      setState(() {
-                        bindings.save(widget.data.bind, val);
-                      });
-                    },
-                  ),
-                  Flexible(
-                    child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            bindings.save(widget.data.bind, !_currentValue);
-                          });
-                        },
-                        child: Container(
-                          child: linkified
-                              ? linkify.linkify(
-                                  widget.data,
-                                  (link) {
-                                    viewModel.linkifyTap(link);
-                                  },
-                                )
-                              : Text(
-                                  displayText,
-                                  style: TextStyle(
-                                      color: getStyle(Styles.fontColor, data: widget.data),
-                                      fontSize: getStyle(Styles.fontSize, data: widget.data),
-                                      fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
-                                ),
-                        )),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
+      FormField(
+        validator: (val) {
+          return validateField(_currentValue.toString(), widget.data.bind);
+        },
+        builder: (state) {
+          return Padding(
+            padding: getStyle(Styles.margin, data: widget.data),
+            child: sizeIfNeeded(
+              widget.data,
+              Consumer2<ScreenViewModel, BindingModel>(
+                builder: (context, viewModel, bindings, child) {
+                  _currentValue = getBindingBool(widget.data, bindings);
+                  return Column(
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Checkbox(
+                            activeColor: getThemeColor('enabledColor'),
+                            // TODO: need to verify if can improve it.
+                            checkColor: getThemeColor('secondaryColor'),
+                            value: _currentValue,
+                            onChanged: (bool val) {
+                              setState(() {
+                                bindings.save(widget.data.bind, val);
+                              });
+                            },
+                          ),
+                          Flexible(
+                            child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    bindings.save(widget.data.bind, !_currentValue);
+                                  });
+                                },
+                                child: Container(
+                                  child: linkified
+                                      ? linkify.linkify(
+                                          widget.data,
+                                          (link) {
+                                            viewModel.linkifyTap(link);
+                                          },
+                                        )
+                                      : Text(
+                                          displayText,
+                                          style: TextStyle(
+                                              color: getStyle(Styles.fontColor, data: widget.data),
+                                              fontSize:
+                                                  getStyle(Styles.fontSize, data: widget.data),
+                                              fontWeight:
+                                                  getStyle(Styles.fontWeight, data: widget.data)),
+                                        ),
+                                )),
+                          ),
+                        ],
+                      ),
+                      Text(state.errorText != null ? state.errorText : '',
+                          style: TextStyle(color: Colors.red, fontSize: 12))
+                    ],
+                  );
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -133,7 +157,8 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                       title: Text(
                         localizedStringFor(option.textKey),
                         style: TextStyle(
-                          color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
+                          color: getStyle(Styles.fontColor,
+                              data: widget.data, themeProperty: 'textColor'),
                           fontSize: getStyle(Styles.fontSize, data: widget.data),
                           fontWeight: getStyle(Styles.fontWeight, data: widget.data),
                         ),
@@ -146,11 +171,13 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                           // Value needs to be parsed.
                           // Can be parsed according to markup or schema.
                           if (widget.data.parseAs != null) {
-                            bindings.save(widget.data.bind, parseAs(value.trim(), widget.data.parseAs));
+                            bindings.save(
+                                widget.data.bind, parseAs(value.trim(), widget.data.parseAs));
                             return;
                           }
                           // Parse according to schema. If schema validation is not required will return the base input.
-                          bindings.save(widget.data.bind, parseUsingSchema(value.trim(), widget.data.bind));
+                          bindings.save(
+                              widget.data.bind, parseUsingSchema(value.trim(), widget.data.bind));
                         });
                       },
                     );
@@ -211,7 +238,9 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
               var bindValue = getBindingText(widget.data, bindings);
               widget.data.options.forEach((option) {
                 _dropdownItems.add(localizedStringFor(option.textKey));
-                if (bindValue.isNullOrEmpty() && option.defaultValue != null && option.defaultValue) {
+                if (bindValue.isNullOrEmpty() &&
+                    option.defaultValue != null &&
+                    option.defaultValue) {
                   bindValue = option.value;
                 }
               });
@@ -222,14 +251,16 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                 icon: Icon(
                   Icons.arrow_drop_down,
                   color: getStyle(Styles.borderColor,
-                      data: widget.data, themeProperty: 'primaryColor'), // TODO: need to change the getter from theme.
+                      data: widget.data,
+                      themeProperty: 'primaryColor'), // TODO: need to change the getter from theme.
                 ),
                 iconSize: 24,
                 elevation: 4,
                 underline: Container(
                   height: 1,
                   color: getStyle(Styles.borderColor,
-                      data: widget.data), // TODO: need to change the getter from theme or borderColor.
+                      data: widget
+                          .data), // TODO: need to change the getter from theme or borderColor.
                 ),
                 onChanged: (String newValue) {
                   setState(() {
@@ -250,7 +281,8 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                     value: value,
                     child: Text(value,
                         style: TextStyle(
-                          color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
+                          color: getStyle(Styles.fontColor,
+                              data: widget.data, themeProperty: 'textColor'),
                           fontSize: getStyle(Styles.fontSize, data: widget.data),
                           fontWeight: getStyle(Styles.fontWeight, data: widget.data),
                         )),

@@ -16,8 +16,12 @@ class NssInputValidator with LocalizationMixin {
   String errorKey;
   String format;
 
-  static const schemaErrorKeyRequired = 'error_schema_required_validation';
-  static const schemaErrorKeyRegEx = 'erorr_schema_regex_validation';
+  static const defaultLangKey = '_default';
+  static const schemaErrorKeyRequired = 'error-schema-required-validation';
+  static const schemaErrorKeyRegEx = 'error-schema-regex-validation';
+  static const schemaErrorKeyCheckbox = 'error-schema-checkbox-validation';
+
+  static const unAttachTag = '#';
 
   NssInputValidator.requiredFromSchema()
       : enabled = true,
@@ -90,9 +94,12 @@ mixin ValidationMixin {
 
   /// Validate the input filed before submission is called.
   /// TODO: Inspect issuing the validation process adjacent to onFieldChanged property.
-  String validateField(String input) {
+  String validateField(String input, String bind) {
     if (_markupValidators.isEmpty) {
-      return _validate(input, _schemaValidators);
+      // Skip validation if bind is marked with `#`.
+      if (bind.substring(0, 1) != NssInputValidator.unAttachTag) {
+        return _validate(input, _schemaValidators);
+      }
     }
     return _validate(input, _markupValidators);
   }
@@ -110,6 +117,10 @@ mixin ValidationMixin {
       final NssInputValidator regexValidator = validators[Validator.regex.name];
       final RegExp regExp = RegExp(regexValidator.format);
       final bool match = regExp.hasMatch(input);
+      if(regexValidator.format == 'tr' && input != 'true') {
+        regexValidator.errorKey = NssInputValidator.schemaErrorKeyCheckbox;
+        return regexValidator.getError();
+      }
       if (regexValidator.enabled && !match) {
         return regexValidator.getError();
       }

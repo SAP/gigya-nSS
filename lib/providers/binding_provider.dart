@@ -4,6 +4,7 @@ import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
+import 'package:gigya_native_screensets_engine/utils/validation.dart';
 
 /// Screen data binding model used for each [NssScreen]. Data is injected using the
 /// flow initialization process from the native bridge.
@@ -70,6 +71,9 @@ class BindingModel with ChangeNotifier {
   }
 
   save<T>(String key, T value) {
+    // Remove `#` mark before submit.
+    key = removeUnAttachSchemaValidation(key);
+
     saveTo(key, value, savedBindingData);
     saveTo(key, value, _bindingData);
   }
@@ -117,6 +121,14 @@ class BindingModel with ChangeNotifier {
         nextData = nextData[keys[nextKey]];
       }
     }
+  }
+
+  String removeUnAttachSchemaValidation(String key) {
+    if (key.substring(0, 1) == NssInputValidator.unAttachTag) {
+      key = key.replaceFirst(NssInputValidator.unAttachTag, '');
+    }
+
+    return key;
   }
 }
 

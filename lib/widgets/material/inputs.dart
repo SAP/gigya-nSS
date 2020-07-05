@@ -129,7 +129,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                             ),
                     ),
                     validator: (input) {
-                      return validateField(input);
+                      return validateField(input, widget.data.bind);
                     },
                     onSaved: (value) {
                       if (value.trim().isEmpty && placeHolder.isEmpty) {
