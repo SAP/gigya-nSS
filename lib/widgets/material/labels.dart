@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
@@ -23,7 +24,13 @@ class LabelWidget extends StatelessWidget with DecorationMixin, BindingMixin, St
           data,
           Consumer2<ScreenViewModel, BindingModel>(
             builder: (context, viewModel, bindings, child) {
-              String text = getBindingText(data, bindings);
+              BindingValue bindingValue = getBindingText(data, bindings);
+
+              if (bindingValue.error && !kReleaseMode) {
+                return showBindingError(data.bind);
+              }
+
+              String text = bindingValue.value;
               if (text == null) {
                 // Get localized label text.
                 text = localizedStringFor(data.textKey);

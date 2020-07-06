@@ -91,14 +91,19 @@ class StartupWidget extends StatelessWidget {
   //TODO: Future versions - move to a specific logic class. Task may grow in time.
   void addDefultStringValues() {
     var localization = config.markup.localization;
-    if (!localization[NssInputValidator.defaultLangKey].containsKey(NssInputValidator.schemaErrorKeyRequired)) {
-      config.markup.localization[NssInputValidator.defaultLangKey][NssInputValidator.schemaErrorKeyRequired] = 'This field is required';
+    if (!localization[NssInputValidator.defaultLangKey]
+        .containsKey(NssInputValidator.schemaErrorKeyRequired)) {
+      config.markup.localization[NssInputValidator.defaultLangKey][NssInputValidator.schemaErrorKeyRequired] =
+          'This field is required';
     }
     if (!localization[NssInputValidator.defaultLangKey].containsKey(NssInputValidator.schemaErrorKeyRegEx)) {
-      config.markup.localization[NssInputValidator.defaultLangKey][NssInputValidator.schemaErrorKeyRegEx] = 'Please enter a valid value';
+      config.markup.localization[NssInputValidator.defaultLangKey][NssInputValidator.schemaErrorKeyRegEx] =
+          'Please enter a valid value';
     }
-    if (!localization[NssInputValidator.defaultLangKey].containsKey(NssInputValidator.schemaErrorKeyCheckbox)) {
-      config.markup.localization[NssInputValidator.defaultLangKey][NssInputValidator.schemaErrorKeyCheckbox] = 'This Checkbox is required';
+    if (!localization[NssInputValidator.defaultLangKey]
+        .containsKey(NssInputValidator.schemaErrorKeyCheckbox)) {
+      config.markup.localization[NssInputValidator.defaultLangKey][NssInputValidator.schemaErrorKeyCheckbox] =
+          'Checked field is mandatory';
     }
   }
 }

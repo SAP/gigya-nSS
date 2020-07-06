@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/option.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
@@ -54,7 +55,13 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
               widget.data,
               Consumer2<ScreenViewModel, BindingModel>(
                 builder: (context, viewModel, bindings, child) {
-                  _currentValue = getBindingBool(widget.data, bindings);
+                  BindingValue bindingValue = getBindingBool(widget.data, bindings);
+
+                  if (bindingValue.error && !kReleaseMode) {
+                    showBindingError(widget.data.bind);
+                  }
+
+                  _currentValue = bindingValue.value;
                   return Column(
                     children: <Widget>[
                       Row(
@@ -89,10 +96,8 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                           displayText,
                                           style: TextStyle(
                                               color: getStyle(Styles.fontColor, data: widget.data),
-                                              fontSize:
-                                                  getStyle(Styles.fontSize, data: widget.data),
-                                              fontWeight:
-                                                  getStyle(Styles.fontWeight, data: widget.data)),
+                                              fontSize: getStyle(Styles.fontSize, data: widget.data),
+                                              fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
                                         ),
                                 )),
                           ),
@@ -137,7 +142,13 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
             widget.data,
             Consumer<BindingModel>(
               builder: (context, bindings, child) {
-                _groupValue = getBindingText(widget.data, bindings);
+                BindingValue bindingValue = getBindingText(widget.data, bindings);
+
+                if (bindingValue.error && !kReleaseMode) {
+                  showBindingError(widget.data.bind);
+                }
+
+                _groupValue = bindingValue.value;
                 if (_groupValue.isNullOrEmpty()) {
                   widget.data.options.forEach((option) {
                     if (option.defaultValue != null && option.defaultValue) {
@@ -157,8 +168,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                       title: Text(
                         localizedStringFor(option.textKey),
                         style: TextStyle(
-                          color: getStyle(Styles.fontColor,
-                              data: widget.data, themeProperty: 'textColor'),
+                          color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
                           fontSize: getStyle(Styles.fontSize, data: widget.data),
                           fontWeight: getStyle(Styles.fontWeight, data: widget.data),
                         ),
@@ -171,13 +181,11 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                           // Value needs to be parsed.
                           // Can be parsed according to markup or schema.
                           if (widget.data.parseAs != null) {
-                            bindings.save(
-                                widget.data.bind, parseAs(value.trim(), widget.data.parseAs));
+                            bindings.save(widget.data.bind, parseAs(value.trim(), widget.data.parseAs));
                             return;
                           }
                           // Parse according to schema. If schema validation is not required will return the base input.
-                          bindings.save(
-                              widget.data.bind, parseUsingSchema(value.trim(), widget.data.bind));
+                          bindings.save(widget.data.bind, parseUsingSchema(value.trim(), widget.data.bind));
                         });
                       },
                     );
@@ -235,12 +243,17 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
             widget.data,
             Consumer<BindingModel>(builder: (context, bindings, child) {
               _dropdownItems.clear();
-              var bindValue = getBindingText(widget.data, bindings);
+
+              BindingValue bindingValue = getBindingText(widget.data, bindings);
+
+              if (bindingValue.error && !kReleaseMode) {
+                showBindingError(widget.data.bind);
+              }
+
+              var bindValue = bindingValue.value;
               widget.data.options.forEach((option) {
                 _dropdownItems.add(localizedStringFor(option.textKey));
-                if (bindValue.isNullOrEmpty() &&
-                    option.defaultValue != null &&
-                    option.defaultValue) {
+                if (bindValue.isNullOrEmpty() && option.defaultValue != null && option.defaultValue) {
                   bindValue = option.value;
                 }
               });
@@ -259,8 +272,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                 underline: Container(
                   height: 1,
                   color: getStyle(Styles.borderColor,
-                      data: widget
-                          .data), // TODO: need to change the getter from theme or borderColor.
+                      data: widget.data), // TODO: need to change the getter from theme or borderColor.
                 ),
                 onChanged: (String newValue) {
                   setState(() {
@@ -281,8 +293,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                     value: value,
                     child: Text(value,
                         style: TextStyle(
-                          color: getStyle(Styles.fontColor,
-                              data: widget.data, themeProperty: 'textColor'),
+                          color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
                           fontSize: getStyle(Styles.fontSize, data: widget.data),
                           fontWeight: getStyle(Styles.fontWeight, data: widget.data),
                         )),

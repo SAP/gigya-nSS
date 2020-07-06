@@ -4,7 +4,10 @@ import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
+import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
+
+import 'nss_test_extensions.dart';
 
 class UseBindingMixin with BindingMixin {}
 
@@ -28,36 +31,39 @@ void main() {
 
     final mixin = UseBindingMixin();
     var config = NssConfig(isMock: true);
+    var markup = MockMarkup();
+    config.markup = markup;
+    when(markup.useSchemaValidations).thenReturn(true);
     config.schema = {'data': {'bool': {'type': 'boolean'}, 'number': {'type': 'number'}}};
 
     NssIoc().register(NssConfig, (ioc) => config, singleton: true);
     NssIoc().register(Logger, (ioc) => LoggerMock(config, null), singleton: true);
 
     test('test validation of binding type bool with string value', () {
-      mixin.checkBindInSchema('data.bool', 'is string');
+      mixin.schemaBindFieldValidated('data.bool', 'is string');
       expect(log, ['Binding key:data.bool is not aligned with schema type. Verify markup.']);
       log.clear();
     });
 
     test('test validation of binding type bool success', () {
-      mixin.checkBindInSchema('data.bool', false);
+      mixin.schemaBindFieldValidated('data.bool', false);
       expect(log, []);
     });
 
 
     test('test validation of binding type number with bool value', () {
-      mixin.checkBindInSchema('data.number', false);
+      mixin.schemaBindFieldValidated('data.number', false);
       expect(log, ['Binding key:data.number is not aligned with schema type. Verify markup.']);
       log.clear();
     });
 
     test('test validation of binding type number success', () {
-      mixin.checkBindInSchema('data.number', 5);
+      mixin.schemaBindFieldValidated('data.number', 5);
       expect(log, []);
     });
 
     test('test validation of binding type double success', () {
-      mixin.checkBindInSchema('data.number', 5.9);
+      mixin.schemaBindFieldValidated('data.number', 5.9);
       expect(log, []);
     });
 

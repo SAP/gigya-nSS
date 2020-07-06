@@ -1,3 +1,5 @@
+import 'package:gigya_native_screensets_engine/utils/validation.dart';
+
 /// Extension for [Iterable] instance. Null or empty check.
 extension IterableExt on Iterable {
   bool isNullOrEmpty() {
@@ -12,6 +14,16 @@ extension StringExt on String {
 
   bool isAvailable() {
     return !isNullOrEmpty();
+  }
+
+  bool containsHashtagPrefix() {
+    return this.substring(0, 1) != NssInputValidator.propertyPrefix;
+  }
+
+  removeHashtagPrefix() {
+    if (this.substring(0, 1) == NssInputValidator.propertyPrefix) {
+      this.replaceFirst(NssInputValidator.propertyPrefix, '');
+    }
   }
 }
 

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
@@ -56,7 +57,13 @@ class _TextInputWidgetState extends State<TextInputWidget>
             widget.data,
             Consumer<BindingModel>(
               builder: (context, bindings, child) {
-                String placeHolder = getBindingText(widget.data, bindings);
+                BindingValue bindingValue = getBindingText(widget.data, bindings);
+
+                if (bindingValue.error && !kReleaseMode) {
+                  return showBindingError(widget.data.bind);
+                }
+
+                String placeHolder = bindingValue.value;
                 if (_textEditingController.text.isEmpty) {
                   _textEditingController.text = placeHolder;
                 } else {

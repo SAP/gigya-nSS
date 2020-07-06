@@ -1,10 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
-import 'package:gigya_native_screensets_engine/utils/validation.dart';
+import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 
 /// Screen data binding model used for each [NssScreen]. Data is injected using the
 /// flow initialization process from the native bridge.
@@ -72,7 +73,7 @@ class BindingModel with ChangeNotifier {
 
   save<T>(String key, T value) {
     // Remove `#` mark before submit.
-    key = removeUnAttachSchemaValidation(key);
+    key.removeHashtagPrefix();
 
     saveTo(key, value, savedBindingData);
     saveTo(key, value, _bindingData);
@@ -122,59 +123,92 @@ class BindingModel with ChangeNotifier {
       }
     }
   }
-
-  String removeUnAttachSchemaValidation(String key) {
-    if (key.substring(0, 1) == NssInputValidator.unAttachTag) {
-      key = key.replaceFirst(NssInputValidator.unAttachTag, '');
-    }
-
-    return key;
-  }
 }
 
 mixin BindingMixin {
-  String getBindingText(NssWidgetData data, BindingModel bindings) {
+  BindingValue getBindingText(NssWidgetData data, BindingModel bindings) {
     if (data.bind.isAvailable()) {
       final String value = bindings.getValue<String>(data.bind);
-      checkBindInSchema(data.bind, value);
-      return value.isEmpty ? null : value;
+      if (!schemaBindFieldValidated(data.bind, value)) {
+        return BindingValue.bindingError(data.bind);
+      }
+      return BindingValue(value.isEmpty ? null : value);
     }
-    return null;
+    return BindingValue(null);
   }
 
-  bool getBindingBool(NssWidgetData data, BindingModel bindings) {
+  BindingValue getBindingBool(NssWidgetData data, BindingModel bindings) {
     if (data.bind.isAvailable()) {
       var value = bindings.getValue<bool>(data.bind);
-      checkBindInSchema(data.bind, value);
-      return value;
+      if (!schemaBindFieldValidated(data.bind, value)) {
+        return BindingValue.bindingError(data.bind);
+      }
+      return BindingValue(value);
     }
-    return false;
+    return BindingValue(false);
   }
 
-  void checkBindInSchema(String key, dynamic value) {
+  bool schemaBindFieldValidated(String key, dynamic value) {
     final NssConfig config = NssIoc().use(NssConfig);
-    if (!config.markup.useSchemaValidations) return;
+    if (!config.markup.useSchemaValidations) return true;
 
     final schema = config.schema;
     if (schema == null) {
       engineLogger.d('Schema still not available', tag: 'NssEngine');
-      return;
+      return true;
     } else {
       engineLogger.d('Schema available', tag: 'NssEngine');
     }
 
     if (schema.containsKey(key.split('.').first)) {
-      final schemaObject = schema[key.split('.').first][key.replaceFirst(key.split('.').first + '.', '')] ?? {};
-
+      final Map<dynamic, dynamic> schemaObject =
+          schema[key.split('.').first][key.replaceFirst(key.split('.').first + '.', '')] ?? {};
+      if (schemaObject.isEmpty) {
+        engineLogger.d('Binding key:$key is not aligned with schema field. Verify markup.');
+        return false;
+      }
       if (schemaObject['type'] == 'string' && value is! String) {
-        engineLogger.d('Binding key:$key is not aligned with schema type. Verify markup.');
+        engineLogger.d('Binding key:$key is not aligned with schema field. Verify markup.');
+        return false;
       }
       if (schemaObject['type'] == "number" && (value is! num)) {
-        engineLogger.d('Binding key:$key is not aligned with schema type. Verify markup.');
+        engineLogger.d('Binding key:$key is not aligned with schema field. Verify markup.');
+        return false;
       }
       if (schemaObject['type'] == "boolean" && value is! bool) {
-        engineLogger.d('Binding key:$key is not aligned with schema type. Verify markup.');
+        engineLogger.d('Binding key:$key is not aligned with schema field. Verify markup.');
+        return false;
       }
     }
+    return true;
   }
+
+  Widget showBindingError(String key) {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Text(
+          'Binding key:$key is not aligned with schema field. Verify markup.',
+          textAlign: TextAlign.start,
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.redAccent,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BindingValue {
+  dynamic value;
+  bool error = false;
+
+  BindingValue(value)
+      : value = value,
+        error = false;
+
+  BindingValue.bindingError(value)
+      : value = value,
+        error = true;
 }

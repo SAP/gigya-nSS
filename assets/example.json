@@ -42,7 +42,6 @@
     }
   },
   "useSchemaValidations": false,
-  "lang": "_default",
   "i18n": {
     "_default": {
       "login": "Login",
@@ -94,7 +93,7 @@
     }
   },
   "routing": {
-    "initial": "account-update",
+    "initial": "register",
     "default": {
       "onSuccess": "_dismiss"
     }
@@ -126,7 +125,7 @@
           ]
         },
         {
-          "bind": "loginID",
+          "bind": "#loginID",
           "type": "emailInput",
           "textKey": "common-email",
           "theme": "input",
@@ -143,7 +142,7 @@
           }
         },
         {
-          "bind": "password",
+          "bind": "#password",
           "type": "passwordInput",
           "textKey": "common-password",
           "theme": "input",
@@ -204,7 +203,7 @@
           ]
         },
         {
-          "bind": "email",
+          "bind": "#email",
           "type": "emailInput",
           "textKey": "common-email",
           "theme": "input"
@@ -232,7 +231,7 @@
           ]
         },
         {
-          "bind": "password",
+          "bind": "#password",
           "type": "passwordInput",
           "textKey": "common-password",
           "theme": "input"

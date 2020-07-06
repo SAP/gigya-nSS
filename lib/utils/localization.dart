@@ -11,18 +11,18 @@ mixin LocalizationMixin {
 
   /// Parsed localization map.
   final Map<String, dynamic> _localizationMap =
-      NssIoc().use(NssConfig).markup.localization.cast<String, dynamic>() ?? {NssInputValidator.defaultLangKey: {}};
+      NssIoc().use(NssConfig).markup.localization.cast<String, dynamic>() ??
+          {NssInputValidator.defaultLangKey: {}};
 
   String localizedStringFor(String textKey) {
     String text = textKey;
+    String usedLang = lang;
     // If localization map does not contain the specified lang will route back to default.
-    if (!_localizationMap.containsKey(lang)) {
-      return text;
+    if (!_localizationMap.containsKey(usedLang)) {
+      usedLang = NssInputValidator.defaultLangKey;
     }
-    if (_localizationMap[lang].containsKey(textKey)) {
-      text = _localizationMap[lang][textKey];
-    } else if (_localizationMap[NssInputValidator.defaultLangKey].containsKey(textKey)) {
-      text = _localizationMap[NssInputValidator.defaultLangKey][textKey];
+    if (_localizationMap[usedLang].containsKey(textKey)) {
+      text = _localizationMap[usedLang][textKey];
     }
     debugPrint('Localized string for $lang = $text');
     return text;

@@ -3,6 +3,7 @@ import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
+import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 
 enum Validator { required, regex }
 
@@ -21,7 +22,7 @@ class NssInputValidator with LocalizationMixin {
   static const schemaErrorKeyRegEx = 'error-schema-regex-validation';
   static const schemaErrorKeyCheckbox = 'error-schema-checkbox-validation';
 
-  static const unAttachTag = '#';
+  static const propertyPrefix = '#';
 
   NssInputValidator.requiredFromSchema()
       : enabled = true,
@@ -95,11 +96,9 @@ mixin ValidationMixin {
   /// Validate the input filed before submission is called.
   /// TODO: Inspect issuing the validation process adjacent to onFieldChanged property.
   String validateField(String input, String bind) {
-    if (_markupValidators.isEmpty) {
-      // Skip validation if bind is marked with `#`.
-      if (bind.substring(0, 1) != NssInputValidator.unAttachTag) {
-        return _validate(input, _schemaValidators);
-      }
+    // Skip validation if bind is marked with `#`.
+    if (_markupValidators.isEmpty && !bind.containsHashtagPrefix()) {
+      return _validate(input, _schemaValidators);
     }
     return _validate(input, _markupValidators);
   }
@@ -115,12 +114,16 @@ mixin ValidationMixin {
     // Validated regex field.
     if (input.isNotEmpty && validators.containsKey(Validator.regex.name)) {
       final NssInputValidator regexValidator = validators[Validator.regex.name];
-      final RegExp regExp = RegExp(regexValidator.format);
-      final bool match = regExp.hasMatch(input);
-      if(regexValidator.format == 'tr' && input != 'true') {
+
+      // Handling schema checkbox field that uses the same format field as well as regex.
+      if (regexValidator.format == 'tr' && input != 'true') {
         regexValidator.errorKey = NssInputValidator.schemaErrorKeyCheckbox;
         return regexValidator.getError();
       }
+
+      // RegEx format validation.l
+      final RegExp regExp = RegExp(regexValidator.format);
+      final bool match = regExp.hasMatch(input);
       if (regexValidator.enabled && !match) {
         return regexValidator.getError();
       }
