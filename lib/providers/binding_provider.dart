@@ -5,7 +5,6 @@ import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
-import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 
 /// Screen data binding model used for each [NssScreen]. Data is injected using the
 /// flow initialization process from the native bridge.
@@ -126,73 +125,108 @@ class BindingModel with ChangeNotifier {
 }
 
 mixin BindingMixin {
-  BindingValue getBindingText(NssWidgetData data, BindingModel bindings) {
-    if (data.bind.isAvailable()) {
-      final String value = bindings.getValue<String>(data.bind);
-      if (!schemaBindFieldValidated(data.bind, value)) {
-        return BindingValue.bindingError(data.bind);
-      }
-      return BindingValue(value.isEmpty ? null : value);
-    }
-    return BindingValue(null);
-  }
-
-  BindingValue getBindingBool(NssWidgetData data, BindingModel bindings) {
-    if (data.bind.isAvailable()) {
-      var value = bindings.getValue<bool>(data.bind);
-      if (!schemaBindFieldValidated(data.bind, value)) {
-        return BindingValue.bindingError(data.bind);
-      }
-      return BindingValue(value);
-    }
-    return BindingValue(false);
-  }
-
-  bool schemaBindFieldValidated(String key, dynamic value) {
+  /// Parse schema object according to provided [key].
+  Map<dynamic, dynamic> getSchemaObject(String key) {
     final NssConfig config = NssIoc().use(NssConfig);
+    if (!config.markup.useSchemaValidations) {
+      return null;
+    }
+    if (config.schema.containsKey(key.split('.').first)) {
+      var schemaObject =
+          config.schema[key.split('.').first][key.replaceFirst(key.split('.').first + '.', '')] ?? {};
+      return schemaObject;
+    }
+    return null;
+  }
+
+  /// Fetch the text [String] bound value of the provided text display component [data] & validate it according the site schema.
+  /// Schema validation is only available when "useSchemaValidations" is applied.
+  BindingValue getBindingText(NssWidgetData data, BindingModel bindings) {
+    if (data.bind.isNullOrEmpty()) {
+      return BindingValue(null);
+    }
+    // Check binding matches.
+    if (!bindMatches(data.bind)) {
+      return BindingValue.bindingError(data.bind);
+    }
+    // Fetch value.
+    final String value = bindings.getValue<String>(data.bind);
+    return BindingValue(value.isEmpty ? null : value);
+  }
+
+  /// Fetch the boolean [bool] bound value of the provided selection component [data] & validate it according the site schema.
+  /// Schema validation is only available when "useSchemaValidations" is applied.
+  BindingValue getBindingBool(NssWidgetData data, BindingModel bindings) {
+    if (data.bind.isNullOrEmpty()) {
+      return BindingValue(false);
+    }
+    // Check binding matches.
+    if (!bindMatches(data.bind)) {
+      return BindingValue.bindingError(data.bind);
+    }
+    // Fetch value.
+    var value = bindings.getValue<bool>(data.bind);
+    return BindingValue(value);
+  }
+
+  /// Verify that bound value is exact.
+  /// When useSchemaValidations is applied it is crucial to verifiy that the component "bind" markup field
+  /// equals the correct schema field.
+  bool bindMatches(String key) {
+    final NssConfig config = NssIoc().use(NssConfig);
+    // Validation only relevant when using schema valiation.
     if (!config.markup.useSchemaValidations) return true;
 
+    // Schema may be null. If so move on.
     final schema = config.schema;
     if (schema == null) {
-      engineLogger.d('Schema still not available', tag: 'NssEngine');
       return true;
-    } else {
-      engineLogger.d('Schema available', tag: 'NssEngine');
     }
 
     if (schema.containsKey(key.split('.').first)) {
-      final Map<dynamic, dynamic> schemaObject =
-          schema[key.split('.').first][key.replaceFirst(key.split('.').first + '.', '')] ?? {};
+      final Map<dynamic, dynamic> schemaObject = getSchemaObject(key);
       if (schemaObject.isEmpty) {
-        engineLogger.d('Binding key:$key is not aligned with schema field. Verify markup.');
-        return false;
-      }
-      if (schemaObject['type'] == 'string' && value is! String) {
-        engineLogger.d('Binding key:$key is not aligned with schema field. Verify markup.');
-        return false;
-      }
-      if (schemaObject['type'] == "number" && (value is! num)) {
-        engineLogger.d('Binding key:$key is not aligned with schema field. Verify markup.');
-        return false;
-      }
-      if (schemaObject['type'] == "boolean" && value is! bool) {
-        engineLogger.d('Binding key:$key is not aligned with schema field. Verify markup.');
+        engineLogger.e('Binding key: $key does not exist in schema');
         return false;
       }
     }
     return true;
   }
 
-  Widget showBindingError(String key) {
+  TextInputType getBoundKeyboardType(String key) {
+    final NssConfig config = NssIoc().use(NssConfig);
+    // Validation only relevant when using schema valiation.
+    if (!config.markup.useSchemaValidations) return TextInputType.text;
+
+    final Map<dynamic, dynamic> schemaObject = getSchemaObject(key);
+    if (schemaObject == null) return TextInputType.text;
+    if (schemaObject.isEmpty) return TextInputType.text;
+
+    final String type = schemaObject['type'] ?? 'string';
+    switch (type) {
+      case 'string':
+        return TextInputType.text;
+      case 'integer':
+      case 'double':
+      case 'number':
+      case 'date':
+        return TextInputType.number;
+    }
+    return TextInputType.text;
+  }
+
+  /// Display a non matching error for the provided binding markupl [key].
+  Widget showBindingDoesNotMatchError(String key) {
     return Container(
+      color: Colors.amber.withOpacity(0.4),
       child: Padding(
         padding: const EdgeInsets.all(6),
         child: Text(
-          'Binding key:$key is not aligned with schema field. Verify markup.',
+          'Binding key: $key does not exist in schema',
           textAlign: TextAlign.start,
           style: TextStyle(
             fontSize: 14,
-            color: Colors.redAccent,
+            color: Colors.lightBlue,
           ),
         ),
       ),
@@ -200,6 +234,7 @@ mixin BindingMixin {
   }
 }
 
+/// Helper class for fetching the bound data of a component.
 class BindingValue {
   dynamic value;
   bool error = false;

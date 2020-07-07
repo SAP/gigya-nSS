@@ -8,6 +8,7 @@ import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:provider/provider.dart';
 
@@ -58,7 +59,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                   BindingValue bindingValue = getBindingBool(widget.data, bindings);
 
                   if (bindingValue.error && !kReleaseMode) {
-                    showBindingError(widget.data.bind);
+                    showBindingDoesNotMatchError(widget.data.bind);
                   }
 
                   _currentValue = bindingValue.value;
@@ -145,7 +146,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                 BindingValue bindingValue = getBindingText(widget.data, bindings);
 
                 if (bindingValue.error && !kReleaseMode) {
-                  showBindingError(widget.data.bind);
+                  showBindingDoesNotMatchError(widget.data.bind);
                 }
 
                 _groupValue = bindingValue.value;
@@ -178,14 +179,22 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                       // TODO: need to change the getter from theme.
                       onChanged: (String value) {
                         setState(() {
-                          // Value needs to be parsed.
-                          // Can be parsed according to markup or schema.
+                          // Value needs to be parsed before form can be submitted.
                           if (widget.data.parseAs != null) {
-                            bindings.save(widget.data.bind, parseAs(value.trim(), widget.data.parseAs));
+                            // Markup parsing applies.
+                            var parsed = parseAs(value.trim(), widget.data.parseAs);
+                            if (parsed == null) {
+                              engineLogger.e('parseAs field is not compatible with provided input');
+                            }
+                            bindings.save(widget.data.bind, parsed);
                             return;
                           }
-                          // Parse according to schema. If schema validation is not required will return the base input.
-                          bindings.save(widget.data.bind, parseUsingSchema(value.trim(), widget.data.bind));
+                          // If parseAs field is not available try to parse according to schema.
+                          var parsed = parseUsingSchema(value.trim(), widget.data.bind);
+                          if (parsed == null) {
+                            engineLogger.e('Schema type is not compatible with provided input');
+                          }
+                          bindings.save(widget.data.bind, parsed);
                         });
                       },
                     );
@@ -247,7 +256,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
               BindingValue bindingValue = getBindingText(widget.data, bindings);
 
               if (bindingValue.error && !kReleaseMode) {
-                showBindingError(widget.data.bind);
+                showBindingDoesNotMatchError(widget.data.bind);
               }
 
               var bindValue = bindingValue.value;
@@ -278,14 +287,23 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                   setState(() {
                     var index = indexFromDisplayValue(newValue);
                     var updated = widget.data.options[index].value;
-                    // Value needs to be parsed.
-                    // Can be parsed according to markup or schema.
+
+                    // Value needs to be parsed before form can be submitted.
                     if (widget.data.parseAs != null) {
-                      bindings.save(widget.data.bind, parseAs(updated, widget.data.parseAs));
+                      // Markup parsing applies.
+                      var parsed = parseAs(updated, widget.data.parseAs);
+                      if (parsed == null) {
+                        engineLogger.e('parseAs field is not compatible with provided input');
+                      }
+                      bindings.save(widget.data.bind, parsed);
                       return;
                     }
-                    // Parse according to schema. If schema validation is not required will return the base input.
-                    bindings.save(widget.data.bind, parseUsingSchema(updated, widget.data.bind));
+                    // If parseAs field is not available try to parse according to schema.
+                    var parsed = parseUsingSchema(updated, widget.data.bind);
+                    if (parsed == null) {
+                      engineLogger.e('Schema type is not compatible with provided input');
+                    }
+                    bindings.save(widget.data.bind, parsed);
                   });
                 },
                 items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {

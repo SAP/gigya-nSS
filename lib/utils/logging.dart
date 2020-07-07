@@ -10,7 +10,7 @@ class Logger {
 
   Logger(this.config, this.channels);
 
-  d(String message, {String tag = 'NssEngine'}) {
+  d(String message, {String tag = 'NssEngine DEBUG'}) {
     if (config.isMock) {
       return;
     }
@@ -21,7 +21,7 @@ class Logger {
     }
   }
 
-  e(String message, {String tag = 'none'}) {
+  e(String message, {String tag = 'NssEngine ERROR'}) {
     if (config.isMock) {
       return;
     }
