@@ -33,8 +33,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
     super.initState();
 
     // Initialize validators.
-    initMarkupValidators(widget.data.validations);
-    initSchemaValidators(widget.data.bind);
+    initValidators(widget.data);
   }
 
   @override

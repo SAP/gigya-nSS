@@ -30,8 +30,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
     super.initState();
 
     // Initialize validators.
-    initMarkupValidators(widget.data.validations);
-    initSchemaValidators(widget.data.bind);
+    initValidators(widget.data);
 
     // Text obfuscation is true by default for password input type widget.
     _obscuredText = widget.data.type == NssWidgetType.passwordInput;
@@ -97,6 +96,8 @@ class _TextInputWidgetState extends State<TextInputWidget>
                         fontSize: getStyle(Styles.fontSize, data: widget.data),
                         fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
                     decoration: InputDecoration(
+                      //TODO: errorMaxLines currently hard coded to 3 - add style property.
+                      errorMaxLines: 3,
                       filled: true,
                       suffixIcon: widget.data.type == NssWidgetType.passwordInput
                           ? IconButton(

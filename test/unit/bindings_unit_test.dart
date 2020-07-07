@@ -26,7 +26,17 @@ class LoggerMock extends Logger {
 void main() {
   BindingModel bindUtils = BindingModel();
 
-  group('test mixin', () {
+  group('BindingModel: save', () {
+
+    test('simple', () {
+
+      bindUtils.save('#loginID', 'user123');
+
+    });
+
+  });
+
+  group('BindingMixin: ', () {
     final mixin = UseBindingMixin();
     var config = NssConfig(isMock: true);
     var markup = MockMarkup();

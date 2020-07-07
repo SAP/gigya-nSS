@@ -93,7 +93,7 @@
     }
   },
   "routing": {
-    "initial": "register",
+    "initial": "login",
     "default": {
       "onSuccess": "_dismiss"
     }

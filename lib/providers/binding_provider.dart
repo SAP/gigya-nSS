@@ -72,10 +72,10 @@ class BindingModel with ChangeNotifier {
 
   save<T>(String key, T value) {
     // Remove `#` mark before submit.
-    key.removeHashtagPrefix();
+    final String checkedKey = key.removeHashtagPrefix();
 
-    saveTo(key, value, savedBindingData);
-    saveTo(key, value, _bindingData);
+    saveTo(checkedKey, value, savedBindingData);
+    saveTo(checkedKey, value, _bindingData);
   }
 
   /// Update the binding data map with required [key] and [value].
@@ -222,7 +222,7 @@ mixin BindingMixin {
       child: Padding(
         padding: const EdgeInsets.all(6),
         child: Text(
-          'Binding key: $key does not exist in schema',
+          'Dev error: Binding key: $key does not exist in schema',
           textAlign: TextAlign.start,
           style: TextStyle(
             fontSize: 14,

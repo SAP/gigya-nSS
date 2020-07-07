@@ -17,13 +17,14 @@ extension StringExt on String {
   }
 
   bool containsHashtagPrefix() {
-    return this.substring(0, 1) != NssInputValidator.propertyPrefix;
+    return this.substring(0, 1) == NssInputValidator.propertyPrefix;
   }
 
-  removeHashtagPrefix() {
+  String removeHashtagPrefix() {
     if (this.substring(0, 1) == NssInputValidator.propertyPrefix) {
-      this.replaceFirst(NssInputValidator.propertyPrefix, '');
+      return this.replaceFirst(NssInputValidator.propertyPrefix, '');
     }
+    return this;
   }
 }
 
