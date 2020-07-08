@@ -1,6 +1,5 @@
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
 
-/// Extension for [Iterable] instance. Null or empty check.
 extension IterableExt on Iterable {
   bool isNullOrEmpty() {
     return this == null || this.isEmpty;
@@ -16,14 +15,18 @@ extension StringExt on String {
     return !isNullOrEmpty();
   }
 
+  /// Check if first character of the [String] contain a '#'.
   bool containsHashtagPrefix() {
-    return this.substring(0, 1) != NssInputValidator.propertyPrefix;
+    return this.substring(0, 1) == NssInputValidator.propertyPrefix;
   }
 
-  removeHashtagPrefix() {
-    if (this.substring(0, 1) == NssInputValidator.propertyPrefix) {
-      this.replaceFirst(NssInputValidator.propertyPrefix, '');
+  /// Remove '#' first character from string if exists.
+  /// Will return a new [String] instance.
+  String removeHashtagPrefix() {
+    if (this.containsHashtagPrefix()) {
+      return this.replaceFirst(NssInputValidator.propertyPrefix, '');
     }
+    return this;
   }
 }
 

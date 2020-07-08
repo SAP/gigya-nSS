@@ -5,6 +5,7 @@ import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:provider/provider.dart';
@@ -24,14 +25,17 @@ class _TextInputWidgetState extends State<TextInputWidget>
   Map<String, NssInputValidator> _validators = {};
   bool _obscuredText = false;
 
+  //TODO: errorMaxLines currently hard coded to 3 - add style property.
+  final _errorMaxLines = 3;
+
   @override
   void initState() {
     super.initState();
 
     // Initialize validators.
-    initMarkupValidators(widget.data.validations);
-    initSchemaValidators(widget.data.bind);
+    initValidators(widget.data);
 
+    // Text obfuscation is true by default for password input type widget.
     _obscuredText = widget.data.type == NssWidgetType.passwordInput;
   }
 
@@ -41,10 +45,17 @@ class _TextInputWidgetState extends State<TextInputWidget>
     super.dispose();
   }
 
-  _togglePasswordVisibility() {
+  /// Toggle text obfuscation state. Currently relevant only for password type componenet.
+  _toggleTextObfuscationState() {
     setState(() {
       _obscuredText = !_obscuredText;
     });
+  }
+
+  /// Define the widget keyboard type according to its main type or schema field.
+  TextInputType getKeyboardType(String key) {
+    if (widget.data.type == NssWidgetType.emailInput) return TextInputType.emailAddress;
+    return getBoundKeyboardType(key);
   }
 
   @override
@@ -60,7 +71,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                 BindingValue bindingValue = getBindingText(widget.data, bindings);
 
                 if (bindingValue.error && !kReleaseMode) {
-                  return showBindingError(widget.data.bind);
+                  return showBindingDoesNotMatchError(widget.data.bind);
                 }
 
                 String placeHolder = bindingValue.value;
@@ -80,6 +91,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                 return Opacity(
                   opacity: getStyle(Styles.opacity, data: widget.data),
                   child: TextFormField(
+                    keyboardType: getKeyboardType(widget.data.bind),
                     obscureText: _obscuredText,
                     controller: _textEditingController,
                     style: TextStyle(
@@ -87,12 +99,13 @@ class _TextInputWidgetState extends State<TextInputWidget>
                         fontSize: getStyle(Styles.fontSize, data: widget.data),
                         fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
                     decoration: InputDecoration(
+                      errorMaxLines: _errorMaxLines,
                       filled: true,
                       suffixIcon: widget.data.type == NssWidgetType.passwordInput
                           ? IconButton(
                               onPressed: () {
                                 bindings.save(widget.data.bind, _textEditingController.text.trim());
-                                _togglePasswordVisibility();
+                                _toggleTextObfuscationState();
                               },
                               icon: Icon(
                                 Icons.remove_red_eye,
@@ -103,8 +116,8 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       fillColor: getStyle(Styles.background, data: widget.data),
                       hintText: localizedStringFor(widget.data.textKey),
                       hintStyle: TextStyle(
-                        color:
-                            getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor').withOpacity(0.5),
+                        color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor')
+                            .withOpacity(0.5),
                       ),
                       focusedBorder: borderRadius == 0
                           ? UnderlineInputBorder(
@@ -123,14 +136,16 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       enabledBorder: borderRadius == 0
                           ? UnderlineInputBorder(
                               borderSide: BorderSide(
-                                color: getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
+                                color: getStyle(Styles.borderColor,
+                                    data: widget.data, themeProperty: "disabledColor"),
                                 width: borderSize,
                               ),
                             )
                           : OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
                               borderSide: BorderSide(
-                                color: getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
+                                color: getStyle(Styles.borderColor,
+                                    data: widget.data, themeProperty: "disabledColor"),
                                 width: borderSize,
                               ),
                             ),
@@ -142,14 +157,23 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       if (value.trim().isEmpty && placeHolder.isEmpty) {
                         return;
                       }
-                      // Value needs to be parsed.
-                      // Can be parsed according to markup or schema.
+                      // Value needs to be parsed before form can be submitted.
                       if (widget.data.parseAs != null) {
-                        bindings.save(widget.data.bind, parseAs(value.trim(), widget.data.parseAs));
+                        // Markup parsing applies.
+                        var parsed = parseAs(value.trim(), widget.data.parseAs);
+                        if (parsed == null) {
+                          engineLogger.e('parseAs field is not compatible with provided input');
+                        }
+                        bindings.save(widget.data.bind, parsed);
                         return;
                       }
-                      // Parse according to schema. If schema validation is not required will return the base input.
-                      bindings.save(widget.data.bind, parseUsingSchema(value.trim(), widget.data.bind));
+
+                      // If parseAs field is not available try to parse according to schema.
+                      var parsed = parseUsingSchema(value.trim(), widget.data.bind);
+                      if (parsed == null) {
+                        engineLogger.e('Schema type is not compatible with provided input');
+                      }
+                      bindings.save(widget.data.bind, parsed);
                     },
                   ),
                 );

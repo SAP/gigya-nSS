@@ -16,63 +16,49 @@ var log = [];
 class LoggerMock extends Logger {
   LoggerMock(NssConfig config, NssChannels channels) : super(config, channels);
 
-  @override d(String message, {String tag = 'NssEngine'}) {
+  @override
+  d(String message, {String tag = 'NssEngine'}) {
     log.add(message);
     return message;
   }
-
 }
-
 
 void main() {
   BindingModel bindUtils = BindingModel();
 
-  group('test mixin', () {
+  group('BindingModel: save', () {
 
+    test('simple', () {
+
+      bindUtils.save('#loginID', 'user123');
+
+    });
+
+  });
+
+  group('BindingMixin: ', () {
     final mixin = UseBindingMixin();
     var config = NssConfig(isMock: true);
     var markup = MockMarkup();
     config.markup = markup;
     when(markup.useSchemaValidations).thenReturn(true);
-    config.schema = {'data': {'bool': {'type': 'boolean'}, 'number': {'type': 'number'}}};
+    config.schema = {
+      'data': {
+        'bool': {'type': 'boolean'},
+        'number': {'type': 'number'}
+      },
+    };
 
     NssIoc().register(NssConfig, (ioc) => config, singleton: true);
     NssIoc().register(Logger, (ioc) => LoggerMock(config, null), singleton: true);
 
-    test('test validation of binding type bool with string value', () {
-      mixin.schemaBindFieldValidated('data.bool', 'is string');
-      expect(log, ['Binding key:data.bool is not aligned with schema type. Verify markup.']);
-      log.clear();
+    test('Binding matches', () {
+      expect(mixin.bindMatches('data.bool'), true);
     });
 
-    test('test validation of binding type bool success', () {
-      mixin.schemaBindFieldValidated('data.bool', false);
-      expect(log, []);
+    test('Binding not matches', () {
+      expect(mixin.bindMatches('data.boolean'), false);
     });
-
-
-    test('test validation of binding type number with bool value', () {
-      mixin.schemaBindFieldValidated('data.number', false);
-      expect(log, ['Binding key:data.number is not aligned with schema type. Verify markup.']);
-      log.clear();
-    });
-
-    test('test validation of binding type number success', () {
-      mixin.schemaBindFieldValidated('data.number', 5);
-      expect(log, []);
-    });
-
-    test('test validation of binding type double success', () {
-      mixin.schemaBindFieldValidated('data.number', 5.9);
-      expect(log, []);
-    });
-
-  });
-
-  group('BindingModel: empty ', () {
-    bindUtils.updateWith({});
-
-    test('save new value', () {});
   });
 
   group('BindingModel: with preset ', () {
@@ -102,7 +88,6 @@ void main() {
         ]
       }
     });
-
 
     test('get bool value', () {
       bool value = bindUtils.getValue('Xbool');
@@ -213,7 +198,6 @@ void main() {
     });
 
     test('test update (bool)', () {
-
       bindUtils.save('profile.testBool', true);
 
       bool value = bindUtils.getSavedValue<bool>('profile.testBool');
@@ -228,7 +212,6 @@ void main() {
 
       expect(value, false);
     });
-
 
     test('test add new value (Bool)', () {
       bindUtils.updateWith({});
@@ -249,12 +232,9 @@ void main() {
     });
 
     test('types supported', () {
-
       String value = bindUtils.typeSupported[String];
 
       expect(value, '');
     });
-
-
   });
 }

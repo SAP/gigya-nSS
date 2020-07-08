@@ -3,19 +3,21 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'package:gigya_native_screensets_engine/injector.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/app.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/buttons.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/container.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/inputs.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/labels.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/screen.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/selection.dart';
-import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/app.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/buttons.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/checkbox.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/container.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/dropdown.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/inputs.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/labels.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/radio.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/screen.dart';
+import 'package:gigya_native_screensets_engine/widgets/router.dart';
 
 /// Available widget types supported by the Nss engine.
 enum NssWidgetType {
@@ -147,7 +149,8 @@ class MaterialWidgetFactory extends WidgetFactory {
       viewModel: NssIoc().use(ScreenViewModel),
       bindingModel: NssIoc().use(BindingModel),
       screen: screen,
-      content: buildContainer(buildWidgets(screen.children), screen.stack, style: screen.style, isScreen: true),
+      content:
+          buildContainer(buildWidgets(screen.children), screen.stack, style: screen.style, isScreen: true),
     );
   }
 
