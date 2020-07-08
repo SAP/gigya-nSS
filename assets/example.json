@@ -32,7 +32,7 @@
         "fontSize": 14,
         "fontColor": "white",
         "fontWeight": 4,
-        "elevation": 4,
+        "elevation": 0,
         "background": "blue",
         "size": [
           300,
@@ -65,7 +65,9 @@
       "common-first-name": "First Name",
       "common-last-name": "Last Name",
       "common-zip": "Zipcode",
-      "common-rescueString": "My rescue code"
+      "common-rescueString": "My rescue code",
+      "social-sign-in-facebook": "Sign in with Facebook",
+      "login-social-title": "Login with social provider:"
     },
     "es": {
       "login": "Iniciar sesión",
@@ -93,7 +95,7 @@
     }
   },
   "routing": {
-    "initial": "register",
+    "initial": "login",
     "default": {
       "onSuccess": "_dismiss"
     }
@@ -119,6 +121,49 @@
           "children": [
             {
               "type": "label",
+              "textKey": "login-social-title",
+              "theme": "subtitle"
+            }
+          ]
+        },
+        {
+          "type": "socialLoginButton",
+          "provider": "facebook",
+          "textKey": "social-sign-in-facebook",
+          "style": {
+            "margin": [4, 0, 4, 0],
+            "cornerRadius": 5,
+            "elevation": 0
+          }
+        },
+        {
+          "type": "socialLoginButton",
+          "provider": "google",
+          "style": {
+            "margin": [4, 0, 4, 0],
+            "cornerRadius": 5,
+            "elevation": 0
+          }
+        },
+        {
+          "type": "socialLoginButton",
+          "provider": "wechat",
+          "style": {
+            "margin": [4, 0, 4, 0],
+            "cornerRadius": 5,
+            "elevation": 0
+          }
+        },
+        {
+          "type": "container",
+          "stack": "horizontal",
+          "alignment": "start",
+          "style": {
+            "margin": 0
+          },
+          "children": [
+            {
+              "type": "label",
               "textKey": "login-title",
               "theme": "subtitle"
             }
@@ -129,6 +174,10 @@
           "type": "emailInput",
           "textKey": "common-email",
           "theme": "input",
+          "style": {
+            "cornerRadius": 5,
+            "borderSize": 1
+          },
           "validations": {
             "required": {
               "enabled": true,
@@ -146,6 +195,10 @@
           "type": "passwordInput",
           "textKey": "common-password",
           "theme": "input",
+          "style": {
+            "cornerRadius": 5,
+            "borderSize": 1
+          },
           "validations": {
             "required": {
               "enabled": true,
@@ -173,7 +226,10 @@
         {
           "type": "submit",
           "textKey": "common-submit",
-          "theme": "raisedButton"
+          "theme": "raisedButton",
+          "style": {
+            "cornerRadius": 5
+          }
         }
       ]
     },

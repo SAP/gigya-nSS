@@ -28,6 +28,9 @@ extension StringExt on String {
     }
     return this;
   }
+
+  String get inCaps => '${this[0].toUpperCase()}${this.substring(1)}';
+
 }
 
 /// Extension for [Map] !containsKey

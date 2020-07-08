@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/utils/debug.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:gigya_native_screensets_engine/services/api_service.dart';
 import 'package:gigya_native_screensets_engine/services/screen_service.dart';
@@ -155,5 +156,9 @@ class ScreenViewModel with ChangeNotifier, DebugUtils {
         engineLogger.d('Api request error: ${error.errorMessage}');
       },
     );
+  }
+
+  void socialLogin(NssSocialProvider provider) {
+    screenService.socialLogin(provider);
   }
 }
