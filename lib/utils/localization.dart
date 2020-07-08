@@ -14,6 +14,10 @@ mixin LocalizationMixin {
       NssIoc().use(NssConfig).markup.localization.cast<String, dynamic>() ??
           {NssInputValidator.defaultLangKey: {}};
 
+  /// Get the localized string for the provided [textKey].
+  /// If the specific key is not available within the selected language map, it will
+  /// fallback to the "_default" mapping.
+  /// Original "textKey" value will only be displayed if no "_default" language mapping is available.
   String localizedStringFor(String textKey) {
     String text = textKey;
     String usedLang = lang;

@@ -9,6 +9,7 @@ import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 mixin StyleMixin {
   final NssConfig config = NssIoc().use(NssConfig);
 
+  /// Default style mapping.
   final Map<String, dynamic> defaultStyle = {
     'margin': 16,
     'fontSize': 14,
@@ -22,6 +23,7 @@ mixin StyleMixin {
     'cornerRadius': 0,
   };
 
+  /// Default theme mapping.
   final Map<String, dynamic> defaultTheme = {
     'primaryColor': 'blue',
     'secondaryColor': 'white',
@@ -31,6 +33,7 @@ mixin StyleMixin {
     'errorColor': 'red',
   };
 
+  /// Get the relevant style value.
   dynamic getStyle(
     Styles style, {
     NssWidgetData data,
@@ -42,9 +45,13 @@ mixin StyleMixin {
     if (data != null) {
       // Check for custom theme first.
       String customTheme = data.theme ?? '';
-      if (customTheme.isAvailable() && config.markup.theme != null && config.markup.theme['customTheme'] != null && config.markup.theme['customTheme'].containsKey(customTheme)) {
+      if (customTheme.isAvailable() &&
+          config.markup.theme != null &&
+          config.markup.theme['customTheme'] != null &&
+          config.markup.theme['customTheme'].containsKey(customTheme)) {
         if (config.markup.theme['customTheme'][customTheme].containsKey(style.name)) {
-          value = getStyleValue(style, config.markup.theme['customTheme'][customTheme].cast<String, dynamic>());
+          value =
+              getStyleValue(style, config.markup.theme['customTheme'][customTheme].cast<String, dynamic>());
         }
       }
     }
@@ -79,11 +86,13 @@ mixin StyleMixin {
     }
   }
 
+  /// Get the relevant style value from provided [styles] markup parsed map.
   getStyleValue(Styles style, Map<String, dynamic> styles) {
     if (styles == null) styles = defaultStyle;
     return styles[style.name] ?? defaultStyle[style.name];
   }
 
+  /// Check if to apply a specific theme.
   themeIsNeeded(Styles style, Map<String, dynamic> styles, String key) {
     if (styles == null) styles = {};
     if (styles[style.name] == null && config.markup.theme != null) {
@@ -94,8 +103,11 @@ mixin StyleMixin {
     }
   }
 
+  /// Get the theme color according to provided theme specific [key].
   getThemeColor(String key) {
-    return (config.markup.theme == null || config.markup.theme[key] == null) ? getColor(defaultTheme[key]) : getColor(config.markup.theme[key]);
+    return (config.markup.theme == null || config.markup.theme[key] == null)
+        ? getColor(defaultTheme[key])
+        : getColor(config.markup.theme[key]);
   }
 
   /// Make sure this value will be treated as a double.
@@ -145,7 +157,6 @@ mixin StyleMixin {
 
   /// Get a [Color] instance given color name.
   /// Method is platform aware.
-  //TODO: Need to research relevant colors used with Apple's cupertino pattern.
   Color _getColorWithName(name, {bool platformAware}) {
     switch (name) {
       case 'blue':
@@ -171,6 +182,10 @@ mixin StyleMixin {
     }
   }
 
+  /// Get the requested font weight.
+  /// Available options:
+  ///  - 'bold', 'thin' identifiers.
+  ///  - number.
   getFontWeight(weight) {
     if (weight is int) {
       return FontWeight.values[weight - 1];
@@ -184,6 +199,10 @@ mixin StyleMixin {
     }
   }
 
+  /// Get the relevant background widget.
+  /// Available options:
+  ///  - Remote image given URL.
+  ///  - Color (Hex or name by default).
   getBackground(background, {bool platformAware}) {
     if (background.contains("#"))
       return _getColorWithHex(background);

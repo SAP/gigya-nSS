@@ -5,6 +5,9 @@ import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 
 typedef OnLinkTap(String link);
 
+/// Adding a "linkification" action.
+/// According to specifc regular expression format a spannable text widget will be
+/// created which will add touch click triggering for external & internal links.
 class Linkify with StyleMixin {
   final String original;
   final RegExp _regExp = RegExp(r'\[([^\]]*)\]\(([^)]*)\)');

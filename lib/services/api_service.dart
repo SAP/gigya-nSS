@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/models/api.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
@@ -10,6 +9,7 @@ class ApiService {
 
   ApiService(this.channels);
 
+  /// Trigger a native SDK API call given the [method] endpoint and relevant [params] map.
   Future<ApiBaseResult> send(String method, Map<String, dynamic> params) async {
     return await channels.apiChannel.invokeMapMethod(method, params).then((map) {
       //TODO: Add try/catch for parsing error.

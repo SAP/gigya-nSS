@@ -114,10 +114,10 @@ class ScreenViewModel with ChangeNotifier, DebugUtils {
   /// Label widget initiated link action.
   /// Validate option available are URL/route.
   void linkifyTap(String link) {
-    if (isMock()) return;
     engineLogger.d('link tap: $link');
 
     if (Linkify.isValidUrl(link)) {
+      if (isMock()) return;
       engineLogger.d('URL link validated : $link');
       screenService.linkToBrowser(link);
       return;

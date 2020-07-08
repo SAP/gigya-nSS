@@ -39,6 +39,7 @@ class NssInputValidator with LocalizationMixin {
         errorKey = json['errorKey'],
         format = json['format'];
 
+  /// Overwrite specific fields.
   void overrideFrom(Map<String, dynamic> map) {
     if (map.containsKey('enabled')) {
       enabled = map['enabled'];

@@ -21,6 +21,8 @@ mixin DecorationMixin {
     return data.expand ? Expanded(child: child) : Flexible(child: child);
   }
 
+  /// Apply a specific size to the selected element.
+  /// Will check the [data] for any "size" property and apply it accordingly.
   Widget sizeIfNeeded(NssWidgetData data, Widget child) {
     if (data.style == null) data.style = {};
     var size = data.style['size'];

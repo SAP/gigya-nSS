@@ -8,6 +8,8 @@ class ScreenService {
 
   ScreenService(this.channels);
 
+  /// Trigger the native SDK to instantiate the adjacent screen action.
+  /// The screen action native component is responsible for performing all native SDK logic.
   Future<Map<String, dynamic>> initiateAction(String actionId, String screenId) async {
     var map = await channels.screenChannel.invokeMethod<Map<dynamic, dynamic>>(
       'action',
@@ -23,6 +25,7 @@ class ScreenService {
     return map.cast<String, dynamic>();
   }
 
+  /// Trigger the native SDK to display an external link providing a formatted [link] URL.
   Future<void> linkToBrowser(String link) async {
     await channels.screenChannel.invokeMethod<Map<dynamic, dynamic>>(
       'link',

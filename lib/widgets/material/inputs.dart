@@ -25,6 +25,9 @@ class _TextInputWidgetState extends State<TextInputWidget>
   Map<String, NssInputValidator> _validators = {};
   bool _obscuredText = false;
 
+  //TODO: errorMaxLines currently hard coded to 3 - add style property.
+  final _errorMaxLines = 3;
+
   @override
   void initState() {
     super.initState();
@@ -96,8 +99,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                         fontSize: getStyle(Styles.fontSize, data: widget.data),
                         fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
                     decoration: InputDecoration(
-                      //TODO: errorMaxLines currently hard coded to 3 - add style property.
-                      errorMaxLines: 3,
+                      errorMaxLines: _errorMaxLines,
                       filled: true,
                       suffixIcon: widget.data.type == NssWidgetType.passwordInput
                           ? IconButton(

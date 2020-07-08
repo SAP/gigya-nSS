@@ -38,7 +38,7 @@ class LabelWidget extends StatelessWidget with DecorationMixin, StyleMixin, Loca
                 text = localizedStringFor(data.textKey);
               }
 
-              // Apply Linkification if needed.¬
+              // Apply Linkification if needed.
               final Linkify linkify = Linkify(text);
               final bool linkified = linkify.containLinks(text);
               if (!linkified) linkify.dispose();

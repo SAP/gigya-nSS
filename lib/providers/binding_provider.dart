@@ -70,6 +70,7 @@ class BindingModel with ChangeNotifier {
     return value;
   }
 
+  /// Save a new [key] / [value] pair for form submission.
   save<T>(String key, T value) {
     // Remove `#` mark before submit.
     final String checkedKey = key.removeHashtagPrefix();
@@ -124,6 +125,8 @@ class BindingModel with ChangeNotifier {
   }
 }
 
+/// Mixin class used to apply additional binding operations to every component
+/// that supports it.
 mixin BindingMixin {
   /// Parse schema object according to provided [key].
   Map<dynamic, dynamic> getSchemaObject(String key) {
@@ -193,6 +196,7 @@ mixin BindingMixin {
     return true;
   }
 
+  /// Get the correct keyboard display type [TextInputType] according to schema field type.
   TextInputType getBoundKeyboardType(String key) {
     final NssConfig config = NssIoc().use(NssConfig);
     // Validation only relevant when using schema valiation.

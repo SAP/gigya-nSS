@@ -10,6 +10,7 @@ class Logger {
 
   Logger(this.config, this.channels);
 
+  /// Trigger a native debug log.
   d(String message, {String tag = 'NssEngine DEBUG'}) {
     if (config.isMock) {
       return;
@@ -21,6 +22,7 @@ class Logger {
     }
   }
 
+  /// Trigger a native error log.
   e(String message, {String tag = 'NssEngine ERROR'}) {
     if (config.isMock) {
       return;
