@@ -25,6 +25,9 @@ extension StringExt on String {
       this.replaceFirst(NssInputValidator.propertyPrefix, '');
     }
   }
+
+  String get inCaps => '${this[0].toUpperCase()}${this.substring(1)}';
+
 }
 
 /// Extension for [Map] !containsKey

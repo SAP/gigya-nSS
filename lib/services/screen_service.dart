@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
 
 class ScreenService {
   final NssChannels channels;
@@ -31,6 +32,17 @@ class ScreenService {
       },
     ).catchError((error) {
       debugPrint('Link error returned from native');
+    });
+  }
+
+  Future<void> socialLogin(NssSocialProvider provider) async {
+    await channels.screenChannel.invokeMethod<Map<dynamic, dynamic>>(
+      'socialLogin',
+      {
+        'provider': provider.name,
+      },
+    ).catchError((error) {
+      debugPrint('Socia login error returned from native');
     });
   }
 }
