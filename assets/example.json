@@ -139,6 +139,7 @@
         {
           "type": "socialLoginButton",
           "provider": "google",
+          "iconEnabled": false,
           "style": {
             "margin": [4, 0, 4, 0],
             "cornerRadius": 5,

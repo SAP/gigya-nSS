@@ -17,7 +17,6 @@ import 'package:gigya_native_screensets_engine/widgets/material/inputs.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/labels.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/radio.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/screen.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/selection.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
 

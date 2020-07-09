@@ -181,15 +181,19 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8, left: 8),
-                          child: Image(
-                            image:
-                                AssetImage('assets/social_images/${widget.data.provider.name}.png'),
-                            width: 28,
-                            height: 28,
-                          ),
-                        ),
+                        widget.data.iconEnabled
+                            ? Padding(
+                                padding: const EdgeInsets.only(right: 8, left: 8),
+                                child: Image(
+                                  image: widget.data.iconURL != null
+                                      ? NetworkImage(widget.data.iconURL)
+                                      : AssetImage(
+                                          'assets/social_images/${widget.data.provider.name}.png'),
+                                  width: 28,
+                                  height: 28,
+                                ),
+                              )
+                            : Container(width: 8),
                         Text(
                           // Get localized submit text.
                           text,
