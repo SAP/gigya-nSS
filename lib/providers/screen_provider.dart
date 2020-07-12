@@ -13,7 +13,7 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 enum NssScreenState { idle, progress, error }
 
-enum ScreenAction { submit, api }
+enum ScreenAction { submit, api, socialLogin }
 
 extension ScreenActionExt on ScreenAction {
   String get name => describeEnum(this);
@@ -112,6 +112,15 @@ class ScreenViewModel with ChangeNotifier, DebugUtils {
     }
   }
 
+  /// Trigger natvie social login flow with selected [provider].
+  void socialLogin(NssSocialProvider provider) {
+    if (isMock()) {
+      debugPrint('Requeted social login with ${provider.name}');
+      return;
+    }
+    sendApi(ScreenAction.socialLogin.name, {'provider': provider.name});
+  }
+
   /// Label widget initiated link action.
   /// Validate option available are URL/route.
   void linkifyTap(String link) {
@@ -156,9 +165,5 @@ class ScreenViewModel with ChangeNotifier, DebugUtils {
         engineLogger.d('Api request error: ${error.errorMessage}');
       },
     );
-  }
-
-  void socialLogin(NssSocialProvider provider) {
-    screenService.socialLogin(provider);
   }
 }

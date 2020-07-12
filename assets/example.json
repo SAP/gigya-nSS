@@ -51,6 +51,7 @@
       "register-title": "Register with your email and password:",
       "register-already+link": "Already registered? [Login](login)",
       "register-terms+link": "I have read and understood these [terms of use](https://www.google.com)",
+      "register-or": " - Or - ",
       "account-information": "Account Information",
       "account-custom-title": "Update account special fields",
       "account-custom-rubato": "Rubato Guitars",
@@ -77,6 +78,7 @@
       "register-title": "Regístrese con su correo electrónico y contraseña:",
       "register-already+link": "¿Ya registrado? [Iniciar sesión](login)",
       "register-terms+link": "He leído y entiendo estos [términos de uso](https://www.google.com)",
+      "register-or": " - o - ",
       "account-information": "Información de la cuenta",
       "account-custom-title": "Actualizar campos especiales de cuenta",
       "account-custom-rubato": "Guitarras Rubato",
@@ -95,7 +97,7 @@
     }
   },
   "routing": {
-    "initial": "login",
+    "initial": "register",
     "default": {
       "onSuccess": "_dismiss"
     }
@@ -131,7 +133,12 @@
           "provider": "facebook",
           "textKey": "social-sign-in-facebook",
           "style": {
-            "margin": [4, 0, 4, 0],
+            "margin": [
+              4,
+              0,
+              4,
+              0
+            ],
             "cornerRadius": 5,
             "elevation": 0
           }
@@ -141,7 +148,12 @@
           "provider": "google",
           "iconEnabled": false,
           "style": {
-            "margin": [4, 0, 4, 0],
+            "margin": [
+              4,
+              0,
+              4,
+              0
+            ],
             "cornerRadius": 5,
             "elevation": 0
           }
@@ -150,7 +162,12 @@
           "type": "socialLoginButton",
           "provider": "wechat",
           "style": {
-            "margin": [4, 0, 4, 0],
+            "margin": [
+              4,
+              0,
+              4,
+              0
+            ],
             "cornerRadius": 5,
             "elevation": 0
           }
@@ -314,9 +331,46 @@
           }
         },
         {
+          "type": "label",
+          "textKey": "register-or",
+          "style": {
+            "fontSize": 16,
+            "margin": [
+              0,
+              4,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "type": "socialLoginGrid",
+          "providers": [
+            "facebook",
+            "google",
+            "wechat",
+            "yahoo",
+            "linkedin"
+          ],
+          "columns": 4,
+          "style": {
+            "cornerRadius": 6,
+            "fontSize": 14,
+            "fontColor": "black",
+            "fontWeight": "bold"
+          }
+        },
+        {
           "type": "submit",
           "textKey": "common-submit",
-          "theme": "raisedButton"
+          "theme": "raisedButton",
+          "style": {
+            "size": [
+              280,
+              44
+            ],
+            "cornerRadius": 6
+          }
         }
       ]
     },

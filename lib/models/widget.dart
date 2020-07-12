@@ -24,13 +24,21 @@ class NssWidgetData {
   String theme;
   @JsonKey(defaultValue: {})
   Map<String, dynamic> validations;
-  /// Optional values: 'number'|'boolean'|'string'
+
+  // Optional values: 'number'|'boolean'|'string'
   String parseAs;
+
   // social login button
   NssSocialProvider provider;
   String iconURL;
   @JsonKey(defaultValue: true)
   bool iconEnabled;
+  @JsonKey(defaultValue: [])
+  List<NssSocialProvider> providers;
+  @JsonKey(defaultValue: 4)
+  int columns;
+  @JsonKey(defaultValue: 1)
+  int rows;
 
   NssWidgetData({
     this.textKey,
@@ -49,7 +57,10 @@ class NssWidgetData {
     this.parseAs,
     this.provider,
     this.iconURL,
-    this.iconEnabled
+    this.iconEnabled,
+    this.providers,
+    this.columns,
+    this.rows,
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);
