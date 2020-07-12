@@ -99,7 +99,8 @@
   "routing": {
     "initial": "register",
     "default": {
-      "onSuccess": "_dismiss"
+      "onSuccess": "_dismiss",
+      "onPendingEmailVerification": "_dismiss"
     }
   },
   "screens": {

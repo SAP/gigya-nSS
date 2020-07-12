@@ -100,7 +100,8 @@ abstract class Router {
 
     if (nextRoute == null) {
       engineLogger.e('Failed to parse routing for name: ${settings.name}');
-      return getErrorRoute(settings, 'Failed to parse desired route.\nPlease verify markup.');
+      return getErrorRoute(
+          settings, 'Failed to parse desired route.\nPlease verify markup.');
     }
     if (shouldCancel(nextRoute)) {
       return dismissEngine(settings, '_canceled');
@@ -111,14 +112,15 @@ abstract class Router {
 
     dynamic nextScreenObj = nextScreen(nextRoute);
     if (nextScreenObj == null) {
-      return getErrorRoute(settings, 'Screen not found.\nPlease verify markup.');
+      return getErrorRoute(
+          settings, 'Screen not found.\nPlease verify markup.');
     }
 
     return screenRoute(settings, nextScreenObj);
   }
 }
 
-enum RoutingAllowed { none, onPendingRegistration }
+enum RoutingAllowed { none, onPendingRegistration, onPendingEmailVerification }
 
 class RouteEvaluator {
   /// Check for allowed routing given an error [code]
@@ -126,8 +128,9 @@ class RouteEvaluator {
     switch (code) {
       case 206001:
         return RoutingAllowed.onPendingRegistration;
+      case 206002:
+        return RoutingAllowed.onPendingEmailVerification;
     }
-
     return RoutingAllowed.none;
   }
 
@@ -149,7 +152,8 @@ class MaterialRouter extends Router {
   final NssChannels channels;
   final MaterialWidgetFactory widgetFactory;
 
-  MaterialRouter(this.config, this.channels, this.widgetFactory) : super(config, channels);
+  MaterialRouter(this.config, this.channels, this.widgetFactory)
+      : super(config, channels);
 
   @override
   Route emptyRoute(RouteSettings settings) {
@@ -160,7 +164,8 @@ class MaterialRouter extends Router {
   Route getErrorRoute(RouteSettings settings, String errorMessage) {
     return MaterialPageRoute(
       settings: settings,
-      builder: (_) => MaterialScreenRenderErrorWidget(errorMessage: errorMessage),
+      builder: (_) =>
+          MaterialScreenRenderErrorWidget(errorMessage: errorMessage),
     );
   }
 
@@ -178,7 +183,8 @@ class CupertinoRouter extends Router {
   final NssChannels channels;
   final CupertinoWidgetFactory widgetFactory;
 
-  CupertinoRouter(this.config, this.channels, this.widgetFactory) : super(config, channels);
+  CupertinoRouter(this.config, this.channels, this.widgetFactory)
+      : super(config, channels);
 
   @override
   Route emptyRoute(RouteSettings settings) {
