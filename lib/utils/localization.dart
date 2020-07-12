@@ -28,7 +28,6 @@ mixin LocalizationMixin {
     if (_localizationMap[usedLang].containsKey(textKey)) {
       text = _localizationMap[usedLang][textKey];
     }
-    debugPrint('Localized string for $lang = $text');
     return text;
   }
 }

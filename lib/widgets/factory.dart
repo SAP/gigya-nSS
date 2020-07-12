@@ -33,7 +33,8 @@ enum NssWidgetType {
   checkbox,
   radio,
   dropdown,
-  socialLoginButton
+  socialLoginButton,
+  socialLoginGrid,
 }
 
 extension NssWidgetTypeExt on NssWidgetType {
@@ -175,6 +176,8 @@ class MaterialWidgetFactory extends WidgetFactory {
         return DropDownButtonWidget(key: UniqueKey(), data: data);
       case NssWidgetType.socialLoginButton:
         return SocialButtonWidget(key: UniqueKey(), data: data);
+      case NssWidgetType.socialLoginGrid:
+        return SocialLoginGrid(key: UniqueKey(), data: data);
       default:
         return Container();
     }

@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/models/api.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
 
 class ScreenService {
@@ -11,7 +13,8 @@ class ScreenService {
 
   /// Trigger the native SDK to instantiate the adjacent screen action.
   /// The screen action native component is responsible for performing all native SDK logic.
-  Future<Map<String, dynamic>> initiateAction(String actionId, String screenId) async {
+  Future<Map<String, dynamic>> initiateAction(
+      String actionId, String screenId) async {
     var map = await channels.screenChannel.invokeMethod<Map<dynamic, dynamic>>(
       'action',
       {
@@ -35,17 +38,6 @@ class ScreenService {
       },
     ).catchError((error) {
       debugPrint('Link error returned from native');
-    });
-  }
-
-  Future<void> socialLogin(NssSocialProvider provider) async {
-    await channels.screenChannel.invokeMethod<Map<dynamic, dynamic>>(
-      'socialLogin',
-      {
-        'provider': provider.name,
-      },
-    ).catchError((error) {
-      debugPrint('Socia login error returned from native');
     });
   }
 }
