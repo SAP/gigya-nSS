@@ -32,7 +32,7 @@ enum NssSocialProvider {
 extension NssSocialProviderEx on NssSocialProvider {
   String get name => describeEnum(this);
 
-  Color getColor({bool forGrid}) {
+  Color getColor({bool forGrid = false}) {
     switch (this) {
       case NssSocialProvider.facebook:
         return _getColorWithHex('0074fa');
@@ -53,7 +53,7 @@ extension NssSocialProviderEx on NssSocialProvider {
       case NssSocialProvider.vkontakte:
         return _getColorWithHex('587ea3');
       case NssSocialProvider.yahooJapan:
-        return forGrid ? _getColorWithHex('e61318') : _getColorWithHex('720e9e');
+        return _getColorWithHex('e61318');
       case NssSocialProvider.apple:
         return Colors.black;
       case NssSocialProvider.linkedin:
@@ -124,14 +124,14 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
                         widget.data.iconEnabled
                             ? Padding(
                                 padding:
-                                    const EdgeInsets.only(right: 8, left: 8),
+                                    const EdgeInsets.only(right: 8, left: 8, top: 8, bottom: 8),
                                 child: Image(
                                   image: widget.data.iconURL != null
                                       ? NetworkImage(widget.data.iconURL)
                                       : AssetImage(
                                           'assets/social_images/${widget.data.provider.name}.png'),
-                                  width: 28,
-                                  height: 28,
+                                  width: 24,
+                                  height: 24,
                                 ),
                               )
                             : SizedBox(width: 8),

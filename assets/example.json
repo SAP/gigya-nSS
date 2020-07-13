@@ -97,7 +97,7 @@
     }
   },
   "routing": {
-    "initial": "register",
+    "initial": "login",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -131,7 +131,7 @@
         },
         {
           "type": "socialLoginButton",
-          "provider": "facebook",
+          "provider": "amazon",
           "textKey": "social-sign-in-facebook",
           "style": {
             "margin": [
@@ -146,8 +146,7 @@
         },
         {
           "type": "socialLoginButton",
-          "provider": "google",
-          "iconEnabled": false,
+          "provider": "twitter",
           "style": {
             "margin": [
               4,
@@ -161,7 +160,7 @@
         },
         {
           "type": "socialLoginButton",
-          "provider": "wechat",
+          "provider": "google",
           "style": {
             "margin": [
               4,
@@ -355,12 +354,9 @@
             "twitter",
             "apple",
             "line",
-            "amazon",
-            "vkontakte",
-            "instagram",
-            "yahooJapan"
+            "amazon"
           ],
-          "columns": 4,
+          "columns": 3,
           "style": {
             "cornerRadius": 6,
             "fontSize": 14,
