@@ -1,3 +1,5 @@
+
+import 'package:flutter/painting.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
 
 extension IterableExt on Iterable {
@@ -30,7 +32,6 @@ extension StringExt on String {
   }
 
   String get inCaps => '${this[0].toUpperCase()}${this.substring(1)}';
-
 }
 
 /// Extension for [Map] !containsKey

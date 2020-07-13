@@ -97,7 +97,7 @@
     }
   },
   "routing": {
-    "initial": "login",
+    "initial": "register",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -361,7 +361,9 @@
             "cornerRadius": 6,
             "fontSize": 14,
             "fontColor": "black",
-            "fontWeight": "bold"
+            "fontWeight": "bold",
+            "elevation" : 2,
+            "indicatorColor": "grey"
           }
         },
         {

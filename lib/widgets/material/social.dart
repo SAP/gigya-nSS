@@ -1,9 +1,7 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
@@ -14,6 +12,7 @@ import 'package:gigya_native_screensets_engine/widgets/decoration/page_indicator
 import 'package:provider/provider.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 
+/// Supported providers.
 enum NssSocialProvider {
   facebook,
   google,
@@ -32,49 +31,39 @@ enum NssSocialProvider {
 extension NssSocialProviderEx on NssSocialProvider {
   String get name => describeEnum(this);
 
+  /// Get main provider color as designed by provider brand guidelines.
   Color getColor({bool forGrid = false}) {
     switch (this) {
       case NssSocialProvider.facebook:
-        return _getColorWithHex('0074fa');
+        return Color(0xff0074fa);
       case NssSocialProvider.google:
-        return forGrid ? Colors.white : _getColorWithHex('4285F4');
+        return forGrid ? Colors.white : Color(0xff4285F4);
       case NssSocialProvider.yahoo:
-        return _getColorWithHex('720e9e');
+        return Color(0xff720e9e);
       case NssSocialProvider.twitter:
-        return _getColorWithHex('55acee');
+        return Color(0xff55acee);
       case NssSocialProvider.line:
-        return _getColorWithHex('00c800');
+        return Color(0xff00c800);
       case NssSocialProvider.wechat:
-        return _getColorWithHex('00c600');
+        return Color(0xff00c600);
       case NssSocialProvider.amazon:
-        return forGrid ? Colors.white : _getColorWithHex('ffab00');
+        return forGrid ? Colors.white : Color(0xffffab00);
       case NssSocialProvider.instagram:
-        return forGrid ? Colors.white :_getColorWithHex('3f729b');
+        return forGrid ? Colors.white : Color(0xff3f729b);
       case NssSocialProvider.vkontakte:
-        return _getColorWithHex('587ea3');
+        return Color(0xff587ea3);
       case NssSocialProvider.yahooJapan:
-        return _getColorWithHex('e61318');
+        return Color(0xffe61318);
       case NssSocialProvider.apple:
         return Colors.black;
       case NssSocialProvider.linkedin:
-        return _getColorWithHex('007bb6');
+        return Color(0xff007bb6);
     }
     return Colors.blue;
   }
-
-  Color _getColorWithHex(String hexColorString, {String opacity}) {
-    if (hexColorString == null) {
-      return null;
-    }
-    hexColorString = hexColorString.toUpperCase().replaceAll("#", "");
-    if (hexColorString.length == 6) {
-      hexColorString = (opacity ?? "FF") + hexColorString;
-    }
-    int colorInt = int.parse(hexColorString, radix: 16);
-    return Color(colorInt);
-  }
 }
 
+/// Social login button widget.
 class SocialButtonWidget extends StatefulWidget {
   final NssWidgetData data;
 
@@ -123,8 +112,7 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
                       children: <Widget>[
                         widget.data.iconEnabled
                             ? Padding(
-                                padding:
-                                    const EdgeInsets.only(right: 8, left: 8, top: 8, bottom: 8),
+                                padding: const EdgeInsets.all(8.0),
                                 child: Image(
                                   image: widget.data.iconURL != null
                                       ? NetworkImage(widget.data.iconURL)
@@ -164,6 +152,7 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
   }
 }
 
+/// Social grid layout (with available paging) widget.
 class SocialLoginGrid extends StatefulWidget {
   final NssWidgetData data;
 
@@ -178,7 +167,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
   final double maxCellHeight = 94;
   final int maxRows = 2;
 
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
   double currentPage = 0;
 
   @override
@@ -244,7 +233,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
                           height: 10,
                           child: PageIndicator(
                             controller: _pageController,
-                            color: getStyle(Styles.fontColor,
+                            color: getStyle(Styles.indicatorColor,
                                 data: widget.data,
                                 themeProperty: 'enabledColor'),
                             itemCount: numOfPages,
@@ -264,6 +253,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
     );
   }
 
+  /// Create grid layouting of the given provider indexes.
   Widget createGrid(ScreenViewModel viewModel, int start, int end) {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -293,6 +283,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
     });
   }
 
+  /// Create grid social button widget.
   Widget createGridItem(ScreenViewModel viewModel, NssSocialProvider provider) {
     return Container(
       child: Column(
@@ -305,7 +296,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
                 viewModel.socialLogin(provider);
               },
               child: Material(
-                elevation: 2,
+                elevation: getStyle(Styles.elevation, data: widget.data),
                 borderRadius: BorderRadius.circular(
                   getStyle(Styles.cornerRadius, data: widget.data),
                 ),

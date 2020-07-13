@@ -49,9 +49,12 @@ mixin StyleMixin {
           config.markup.theme != null &&
           config.markup.theme['customTheme'] != null &&
           config.markup.theme['customTheme'].containsKey(customTheme)) {
-        if (config.markup.theme['customTheme'][customTheme].containsKey(style.name)) {
-          value =
-              getStyleValue(style, config.markup.theme['customTheme'][customTheme].cast<String, dynamic>());
+        if (config.markup.theme['customTheme'][customTheme]
+            .containsKey(style.name)) {
+          value = getStyleValue(
+              style,
+              config.markup.theme['customTheme'][customTheme]
+                  .cast<String, dynamic>());
         }
       }
     }
@@ -74,6 +77,7 @@ mixin StyleMixin {
         return ensureDouble(value);
       case Styles.borderColor:
       case Styles.fontColor:
+      case Styles.indicatorColor:
         var platformAware = config.isPlatformAware ?? false;
         return getColor(value, platformAware: platformAware);
       case Styles.fontWeight:
@@ -135,7 +139,7 @@ mixin StyleMixin {
   /// Request a [Color] instance given an multi optional identifier (named, hex).
   Color getColor(String color, {bool platformAware}) {
     if (color.contains("#"))
-      return _getColorWithHex(color);
+      return _getHexColor(color);
     else {
       return _getColorWithName(color, platformAware: platformAware ?? false);
     }
@@ -143,7 +147,7 @@ mixin StyleMixin {
 
   /// Get a [Color] instance after parsing the a color hex string.
   /// and [opacity] optional value is available using common opacity two letter pattern.
-  Color _getColorWithHex(String hexColorString, {String opacity}) {
+  Color _getHexColor(String hexColorString, {String opacity}) {
     if (hexColorString == null) {
       return null;
     }
@@ -205,11 +209,13 @@ mixin StyleMixin {
   ///  - Color (Hex or name by default).
   getBackground(background, {bool platformAware}) {
     if (background.contains("#"))
-      return _getColorWithHex(background);
-    else if (background.contains("http://") || background.contains("https://")) {
+      return _getHexColor(background);
+    else if (background.contains("http://") ||
+        background.contains("https://")) {
       return NetworkImage(background);
     } else {
-      return _getColorWithName(background, platformAware: platformAware ?? false);
+      return _getColorWithName(background,
+          platformAware: platformAware ?? false);
     }
   }
 }
@@ -225,6 +231,7 @@ enum Styles {
   borderSize,
   opacity,
   elevation,
+  indicatorColor,
 }
 
 extension StylesExt on Styles {
