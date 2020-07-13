@@ -131,7 +131,7 @@
         },
         {
           "type": "socialLoginButton",
-          "provider": "amazon",
+          "provider": "facebook",
           "textKey": "social-sign-in-facebook",
           "style": {
             "margin": [
@@ -146,7 +146,7 @@
         },
         {
           "type": "socialLoginButton",
-          "provider": "twitter",
+          "provider": "linkedin",
           "style": {
             "margin": [
               4,
