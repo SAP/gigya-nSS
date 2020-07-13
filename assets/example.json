@@ -351,7 +351,14 @@
             "google",
             "wechat",
             "yahoo",
-            "linkedin"
+            "linkedin",
+            "twitter",
+            "apple",
+            "line",
+            "amazon",
+            "vkontakte",
+            "instagram",
+            "yahooJapan"
           ],
           "columns": 4,
           "style": {

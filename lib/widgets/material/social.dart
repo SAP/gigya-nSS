@@ -32,12 +32,12 @@ enum NssSocialProvider {
 extension NssSocialProviderEx on NssSocialProvider {
   String get name => describeEnum(this);
 
-  Color getColor() {
+  Color getColor({bool forGrid}) {
     switch (this) {
       case NssSocialProvider.facebook:
         return _getColorWithHex('0074fa');
       case NssSocialProvider.google:
-        return _getColorWithHex('4285F4');
+        return forGrid ? Colors.white : _getColorWithHex('4285F4');
       case NssSocialProvider.yahoo:
         return _getColorWithHex('720e9e');
       case NssSocialProvider.twitter:
@@ -47,13 +47,13 @@ extension NssSocialProviderEx on NssSocialProvider {
       case NssSocialProvider.wechat:
         return _getColorWithHex('00c600');
       case NssSocialProvider.amazon:
-        return _getColorWithHex('ffab00');
+        return forGrid ? Colors.white : _getColorWithHex('ffab00');
       case NssSocialProvider.instagram:
-        return _getColorWithHex('3f729b');
+        return forGrid ? Colors.white :_getColorWithHex('3f729b');
       case NssSocialProvider.vkontakte:
         return _getColorWithHex('587ea3');
       case NssSocialProvider.yahooJapan:
-        return _getColorWithHex('720e9e');
+        return forGrid ? _getColorWithHex('e61318') : _getColorWithHex('720e9e');
       case NssSocialProvider.apple:
         return Colors.black;
       case NssSocialProvider.linkedin:
@@ -123,11 +123,13 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
                       children: <Widget>[
                         widget.data.iconEnabled
                             ? Padding(
-                                padding: const EdgeInsets.only(right: 8, left: 8),
+                                padding:
+                                    const EdgeInsets.only(right: 8, left: 8),
                                 child: Image(
                                   image: widget.data.iconURL != null
                                       ? NetworkImage(widget.data.iconURL)
-                                      : AssetImage('assets/social_images/${widget.data.provider.name}.png'),
+                                      : AssetImage(
+                                          'assets/social_images/${widget.data.provider.name}.png'),
                                   width: 28,
                                   height: 28,
                                 ),
@@ -137,10 +139,13 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
                           // Get localized submit text.
                           text,
                           style: TextStyle(
-                            fontSize: getStyle(Styles.fontSize, data: widget.data),
+                            fontSize:
+                                getStyle(Styles.fontSize, data: widget.data),
                             color: getStyle(Styles.fontColor,
-                                data: widget.data, themeProperty: 'secondaryColor'),
-                            fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                                data: widget.data,
+                                themeProperty: 'secondaryColor'),
+                            fontWeight:
+                                getStyle(Styles.fontWeight, data: widget.data),
                           ),
                         ),
                       ],
@@ -187,8 +192,9 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
 
     if (widget.data.rows > 2) {
       widget.data.rows = 2;
-      engineLogger.e('You have specified a row count that exceeds allowed value.\n'
-          'Currently max rows is set to 2');
+      engineLogger
+          .e('You have specified a row count that exceeds allowed value.\n'
+              'Currently max rows is set to 2');
     }
   }
 
@@ -203,8 +209,8 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
     final int providerCount = widget.data.providers.length;
     final int maxInPage = widget.data.columns * widget.data.rows;
     bool paging = (providerCount > (widget.data.columns * widget.data.rows));
-    final int numOfPages =
-        (providerCount / maxInPage).abs().toInt() + (providerCount % maxInPage != 0 ? 1 : 0);
+    final int numOfPages = (providerCount / maxInPage).abs().toInt() +
+        (providerCount % maxInPage != 0 ? 1 : 0);
     return expandIfNeeded(
       widget.data,
       Padding(
@@ -238,8 +244,9 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
                           height: 10,
                           child: PageIndicator(
                             controller: _pageController,
-                            color:
-                                getStyle(Styles.fontColor, data: widget.data, themeProperty: 'enabledColor'),
+                            color: getStyle(Styles.fontColor,
+                                data: widget.data,
+                                themeProperty: 'enabledColor'),
                             itemCount: numOfPages,
                           ),
                         )
@@ -258,10 +265,13 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
   }
 
   Widget createGrid(ScreenViewModel viewModel, int start, int end) {
-    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
       int crossAxisCount = widget.data.columns;
       double axisSpacing = 4;
-      var width = (MediaQuery.of(context).size.width - ((crossAxisCount - 1) * axisSpacing)) / crossAxisCount;
+      var width = (MediaQuery.of(context).size.width -
+              ((crossAxisCount - 1) * axisSpacing)) /
+          crossAxisCount;
       var cellHeight = 100;
       var aspectRatio = width / cellHeight;
       return GridView.count(
@@ -294,24 +304,34 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
               onTap: () {
                 viewModel.socialLogin(provider);
               },
-              child: Container(
-                height: 48,
-                width: 48,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(
-                    getStyle(Styles.cornerRadius, data: widget.data),
-                  ),
-                  color: provider.getColor(),
+              child: Material(
+                elevation: 2,
+                borderRadius: BorderRadius.circular(
+                  getStyle(Styles.cornerRadius, data: widget.data),
                 ),
-                padding: EdgeInsets.zero,
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(2),
-                    child: Center(
-                      child: Image(
-                        image: AssetImage('assets/social_images/${provider.name}.png'),
-                        width: 32,
-                        height: 32,
+                child: Container(
+                  height: 48,
+                  width: 48,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                      getStyle(Styles.cornerRadius, data: widget.data),
+                    ),
+                    color: provider.getColor(forGrid: true),
+                  ),
+                  padding: EdgeInsets.zero,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: Center(
+                        child: FadeInImage(
+                          fadeInDuration: Duration(milliseconds: 100),
+                          width: 32,
+                          height: 32,
+                          image: AssetImage(
+                              'assets/social_images/g_${provider.name}.png'),
+                          placeholder: AssetImage(
+                              'assets/social_images/${provider.name}.png'),
+                        ),
                       ),
                     ),
                   ),
