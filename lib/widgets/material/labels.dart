@@ -28,7 +28,7 @@ class LabelWidget extends StatelessWidget with DecorationMixin, StyleMixin, Loca
 
               // Check for binding error.
               if (bindingValue.error && !kReleaseMode) {
-                return showBindingDoesNotMatchError(data.bind);
+                return showBindingDoesNotMatchError(data.bind, errorText: bindingValue.errorText);
               }
 
               // Binding validated.

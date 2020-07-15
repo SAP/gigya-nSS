@@ -45,7 +45,7 @@ void main() {
     config.schema = {
       'data': {
         'bool': {'type': 'boolean'},
-        'number': {'type': 'number'}
+        'string': {'type': 'string'}
       },
     };
 
@@ -53,11 +53,13 @@ void main() {
     NssIoc().register(Logger, (ioc) => LoggerMock(config, null), singleton: true);
 
     test('Binding matches', () {
-      expect(mixin.bindMatches('data.bool'), true);
+      final String error = mixin.bindMatches('data.bool', bool);
+      expect(error, null);
     });
 
     test('Binding not matches', () {
-      expect(mixin.bindMatches('data.boolean'), false);
+      final String error = mixin.bindMatches('data.string', bool);
+      expect(error, 'Dev error: binding key:data.string is marked as String but provided with a non string UI component');
     });
   });
 

@@ -53,7 +53,9 @@ class BindingModel with ChangeNotifier {
         var arrayKey = arrayKeyData[0];
         var arrayIndex = int.parse(arrayKeyData[1].replaceAll(']', ''));
 
-        nextData = arrayIndex < (nextData[arrayKey] as List).length ? nextData[arrayKey][arrayIndex] : '';
+        nextData = arrayIndex < (nextData[arrayKey] as List).length
+            ? nextData[arrayKey][arrayIndex]
+            : '';
         keys[nextKey] = arrayKey;
       } else {
         nextKey++;
@@ -135,8 +137,9 @@ mixin BindingMixin {
       return null;
     }
     if (config.schema.containsKey(key.split('.').first)) {
-      var schemaObject =
-          config.schema[key.split('.').first][key.replaceFirst(key.split('.').first + '.', '')] ?? {};
+      var schemaObject = config.schema[key.split('.').first]
+              [key.replaceFirst(key.split('.').first + '.', '')] ??
+          {};
       return schemaObject;
     }
     return null;
@@ -149,8 +152,9 @@ mixin BindingMixin {
       return BindingValue(null);
     }
     // Check binding matches.
-    if (!bindMatches(data.bind)) {
-      return BindingValue.bindingError(data.bind);
+    final String bindingMatches = bindMatches(data.bind, 'string');
+    if (bindingMatches != null) {
+      return BindingValue.bindingError(data.bind, errorText: bindingMatches);
     }
     // Fetch value.
     final String value = bindings.getValue<String>(data.bind);
@@ -164,8 +168,9 @@ mixin BindingMixin {
       return BindingValue(false);
     }
     // Check binding matches.
-    if (!bindMatches(data.bind)) {
-      return BindingValue.bindingError(data.bind);
+    final String bindingMatches = bindMatches(data.bind, 'boolean');
+    if (bindingMatches != null) {
+      return BindingValue.bindingError(data.bind, errorText: bindingMatches);
     }
     // Fetch value.
     var value = bindings.getValue<bool>(data.bind);
@@ -175,25 +180,39 @@ mixin BindingMixin {
   /// Verify that bound value is exact.
   /// When useSchemaValidations is applied it is crucial to verifiy that the component "bind" markup field
   /// equals the correct schema field.
-  bool bindMatches(String key) {
+  String bindMatches(String key, String format) {
     final NssConfig config = NssIoc().use(NssConfig);
     // Validation only relevant when using schema valiation.
-    if (!config.markup.useSchemaValidations) return true;
+    if (!config.markup.useSchemaValidations) return null;
 
     // Schema may be null. If so move on.
     final schema = config.schema;
     if (schema == null) {
-      return true;
+      return null;
     }
 
     if (schema.containsKey(key.split('.').first)) {
       final Map<dynamic, dynamic> schemaObject = getSchemaObject(key);
+
+      // Verify binding field exists
       if (schemaObject.isEmpty) {
-        engineLogger.e('Binding key: $key does not exist in schema');
-        return false;
+        engineLogger.e('Dev error: Binding key: $key does not exist in schema');
+        return 'Dev error: Binding key: $key does not exist in schema';
+      }
+
+      // Verify binding field matches.
+      if (schemaObject['type'] == 'string' && format != 'string') {
+        engineLogger.e(
+            'Dev error: binding key:$key is marked as String but provided with a non string UI component');
+        return 'Dev error: binding key:$key is marked as String but provided with a non string UI component';
+      }
+      if (schemaObject['type'] == 'boolean' && format != 'boolean') {
+        engineLogger.e(
+            'Dev error: binding key:$key is marked as boolean but provided with a non boolean UI component');
+        return 'Dev error: binding key:$key is marked as boolean but provided with a non boolean UI component';
       }
     }
-    return true;
+    return null;
   }
 
   /// Get the correct keyboard display type [TextInputType] according to schema field type.
@@ -220,13 +239,13 @@ mixin BindingMixin {
   }
 
   /// Display a non matching error for the provided binding markupl [key].
-  Widget showBindingDoesNotMatchError(String key) {
+  Widget showBindingDoesNotMatchError(String key, {String errorText}) {
     return Container(
       color: Colors.amber.withOpacity(0.4),
       child: Padding(
         padding: const EdgeInsets.all(6),
         child: Text(
-          'Dev error: Binding key: $key does not exist in schema',
+          errorText ?? 'Dev error: Binding key: $key does not exist in schema',
           textAlign: TextAlign.start,
           style: TextStyle(
             fontSize: 14,
@@ -242,12 +261,14 @@ mixin BindingMixin {
 class BindingValue {
   dynamic value;
   bool error = false;
+  String errorText;
 
   BindingValue(value)
       : value = value,
         error = false;
 
-  BindingValue.bindingError(value)
+  BindingValue.bindingError(value, {errorText})
       : value = value,
-        error = true;
+        error = true,
+        errorText = errorText;
 }

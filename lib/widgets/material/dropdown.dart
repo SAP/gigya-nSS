@@ -59,7 +59,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
               BindingValue bindingValue = getBindingText(widget.data, bindings);
 
               if (bindingValue.error && !kReleaseMode) {
-                showBindingDoesNotMatchError(widget.data.bind);
+                return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);
               }
 
               var bindValue = bindingValue.value;

@@ -39,7 +39,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                 BindingValue bindingValue = getBindingText(widget.data, bindings);
 
                 if (bindingValue.error && !kReleaseMode) {
-                  showBindingDoesNotMatchError(widget.data.bind);
+                  return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);
                 }
 
                 _groupValue = bindingValue.value;

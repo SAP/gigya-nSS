@@ -21,7 +21,12 @@ class CheckboxWidget extends StatefulWidget {
 }
 
 class _CheckboxWidgetState extends State<CheckboxWidget>
-    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin {
+    with
+        DecorationMixin,
+        BindingMixin,
+        StyleMixin,
+        LocalizationMixin,
+        ValidationMixin {
   bool _currentValue;
 
   @override
@@ -51,16 +56,19 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
               widget.data,
               Consumer2<ScreenViewModel, BindingModel>(
                 builder: (context, viewModel, bindings, child) {
-                  BindingValue bindingValue = getBindingBool(widget.data, bindings);
+                  BindingValue bindingValue =
+                      getBindingBool(widget.data, bindings);
 
                   if (bindingValue.error && !kReleaseMode) {
-                    showBindingDoesNotMatchError(widget.data.bind);
+                    return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);
                   }
 
                   _currentValue = bindingValue.value;
                   return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Checkbox(
                             activeColor: getThemeColor('enabledColor'),
@@ -77,30 +85,42 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                             child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    bindings.save(widget.data.bind, !_currentValue);
+                                    bindings.save(
+                                        widget.data.bind, !_currentValue);
                                   });
                                 },
                                 child: Container(
                                   child: linkified
                                       ? linkify.linkify(
-                                    widget.data,
-                                        (link) {
-                                      viewModel.linkifyTap(link);
-                                    },
-                                  )
+                                          widget.data,
+                                          (link) {
+                                            viewModel.linkifyTap(link);
+                                          },
+                                        )
                                       : Text(
-                                    displayText,
-                                    style: TextStyle(
-                                        color: getStyle(Styles.fontColor, data: widget.data),
-                                        fontSize: getStyle(Styles.fontSize, data: widget.data),
-                                        fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
-                                  ),
+                                          displayText,
+                                          style: TextStyle(
+                                              color: getStyle(Styles.fontColor,
+                                                  data: widget.data),
+                                              fontSize: getStyle(
+                                                  Styles.fontSize,
+                                                  data: widget.data),
+                                              fontWeight: getStyle(
+                                                  Styles.fontWeight,
+                                                  data: widget.data)),
+                                        ),
                                 )),
                           ),
                         ],
                       ),
-                      Text(state.errorText != null ? state.errorText : '',
-                          style: TextStyle(color: Colors.red, fontSize: 12))
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          state.errorText != null ? state.errorText : '',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      )
                     ],
                   );
                 },
@@ -112,5 +132,3 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
     );
   }
 }
-
-

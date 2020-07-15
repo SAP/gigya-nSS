@@ -71,7 +71,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                 BindingValue bindingValue = getBindingText(widget.data, bindings);
 
                 if (bindingValue.error && !kReleaseMode) {
-                  return showBindingDoesNotMatchError(widget.data.bind);
+                  return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);
                 }
 
                 String placeHolder = bindingValue.value;
