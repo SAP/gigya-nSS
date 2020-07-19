@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
+import 'package:gigya_native_screensets_engine/utils/localization.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:provider/provider.dart';
@@ -16,15 +19,23 @@ class TextInputWidget extends StatefulWidget {
   _TextInputWidgetState createState() => _TextInputWidgetState();
 }
 
-class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecorationMixin, BindingMixin, StyleMixin {
+class _TextInputWidgetState extends State<TextInputWidget>
+    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin {
   final TextEditingController _textEditingController = TextEditingController(text: '');
   Map<String, NssInputValidator> _validators = {};
   bool _obscuredText = false;
 
+  //TODO: errorMaxLines currently hard coded to 3 - add style property.
+  final _errorMaxLines = 3;
+
   @override
   void initState() {
     super.initState();
-    _initValidators();
+
+    // Initialize validators.
+    initValidators(widget.data);
+
+    // Text obfuscation is true by default for password input type widget.
     _obscuredText = widget.data.type == NssWidgetType.passwordInput;
   }
 
@@ -34,10 +45,17 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
     super.dispose();
   }
 
-  _togglePasswordVisibility() {
+  /// Toggle text obfuscation state. Currently relevant only for password type componenet.
+  _toggleTextObfuscationState() {
     setState(() {
       _obscuredText = !_obscuredText;
     });
+  }
+
+  /// Define the widget keyboard type according to its main type or schema field.
+  TextInputType getKeyboardType(String key) {
+    if (widget.data.type == NssWidgetType.emailInput) return TextInputType.emailAddress;
+    return getBoundKeyboardType(key);
   }
 
   @override
@@ -50,7 +68,13 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
             widget.data,
             Consumer<BindingModel>(
               builder: (context, bindings, child) {
-                final placeHolder = getText(widget.data, bindings);
+                BindingValue bindingValue = getBindingText(widget.data, bindings);
+
+                if (bindingValue.error && !kReleaseMode) {
+                  return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);
+                }
+
+                String placeHolder = bindingValue.value;
                 if (_textEditingController.text.isEmpty) {
                   _textEditingController.text = placeHolder;
                 } else {
@@ -67,6 +91,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
                 return Opacity(
                   opacity: getStyle(Styles.opacity, data: widget.data),
                   child: TextFormField(
+                    keyboardType: getKeyboardType(widget.data.bind),
                     obscureText: _obscuredText,
                     controller: _textEditingController,
                     style: TextStyle(
@@ -74,12 +99,13 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
                         fontSize: getStyle(Styles.fontSize, data: widget.data),
                         fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
                     decoration: InputDecoration(
+                      errorMaxLines: _errorMaxLines,
                       filled: true,
                       suffixIcon: widget.data.type == NssWidgetType.passwordInput
                           ? IconButton(
                               onPressed: () {
                                 bindings.save(widget.data.bind, _textEditingController.text.trim());
-                                _togglePasswordVisibility();
+                                _toggleTextObfuscationState();
                               },
                               icon: Icon(
                                 Icons.remove_red_eye,
@@ -88,10 +114,10 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
                             )
                           : null,
                       fillColor: getStyle(Styles.background, data: widget.data),
-                      hintText: widget.data.textKey,
+                      hintText: localizedStringFor(widget.data.textKey),
                       hintStyle: TextStyle(
-                        color:
-                            getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor').withOpacity(0.5),
+                        color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor')
+                            .withOpacity(0.5),
                       ),
                       focusedBorder: borderRadius == 0
                           ? UnderlineInputBorder(
@@ -110,26 +136,44 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
                       enabledBorder: borderRadius == 0
                           ? UnderlineInputBorder(
                               borderSide: BorderSide(
-                                color: getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
+                                color: getStyle(Styles.borderColor,
+                                    data: widget.data, themeProperty: "disabledColor"),
                                 width: borderSize,
                               ),
                             )
                           : OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
                               borderSide: BorderSide(
-                                color: getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
+                                color: getStyle(Styles.borderColor,
+                                    data: widget.data, themeProperty: "disabledColor"),
                                 width: borderSize,
                               ),
                             ),
                     ),
                     validator: (input) {
-                      return _validateField(input.trim());
+                      return validateField(input, widget.data.bind);
                     },
                     onSaved: (value) {
                       if (value.trim().isEmpty && placeHolder.isEmpty) {
                         return;
                       }
-                      bindings.save(widget.data.bind, value.trim());
+                      // Value needs to be parsed before form can be submitted.
+                      if (widget.data.parseAs != null) {
+                        // Markup parsing applies.
+                        var parsed = parseAs(value.trim(), widget.data.parseAs);
+                        if (parsed == null) {
+                          engineLogger.e('parseAs field is not compatible with provided input');
+                        }
+                        bindings.save(widget.data.bind, parsed);
+                        return;
+                      }
+
+                      // If parseAs field is not available try to parse according to schema.
+                      var parsed = parseUsingSchema(value.trim(), widget.data.bind);
+                      if (parsed == null) {
+                        engineLogger.e('Schema type is not compatible with provided input');
+                      }
+                      bindings.save(widget.data.bind, parsed);
                     },
                   ),
                 );
@@ -137,41 +181,5 @@ class _TextInputWidgetState extends State<TextInputWidget> with WidgetDecoration
             ),
           ),
         ));
-  }
-
-  /// Parse input validation map an prepare for form validation request.
-  _initValidators() async {
-    if (widget.data.validations == null) {
-      return;
-    }
-    widget.data.validations.cast<String, dynamic>().forEach((k, v) {
-      _validators[k] = NssInputValidator.from(v.cast<String, dynamic>());
-    });
-  }
-
-  /// Validate input according to instance type.
-  String _validateField(String input) {
-    if (_validators.isEmpty) {
-      return null;
-    }
-    // Validate required field.
-    if (input.isEmpty && _validators.containsKey('required')) {
-      NssInputValidator requiredValidator = _validators['required'];
-      if (requiredValidator.enabled) {
-        //TODO: Should be localized string.
-        return requiredValidator.errorKey;
-      }
-    }
-    // Validated regex field.
-    if (input.isNotEmpty && _validators.containsKey('regex')) {
-      NssInputValidator regexValidator = _validators['regex'];
-      final RegExp regExp = RegExp(regexValidator.value);
-      bool match = regExp.hasMatch(input);
-      if (regexValidator.enabled && !match) {
-        //TODO: Should be localized string.
-        return regexValidator.errorKey;
-      }
-    }
-    return null;
   }
 }

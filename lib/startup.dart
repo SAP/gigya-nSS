@@ -6,13 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
-enum StartupAction { ignition, ready_for_display }
+enum StartupAction { ignition, ready_for_display, load_schema }
 
 extension StartupActionExt on StartupAction {
   String get action {
@@ -33,8 +34,8 @@ class StartupWidget extends StatelessWidget {
 
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: worker.parseMarkup(),
-      builder: (context, AsyncSnapshot<Markup> snapshot) {
+      future: worker.ignite(),
+      builder: (context, AsyncSnapshot<Ignition> snapshot) {
         if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
           engineLogger.d('ignition - state - done');
           return prepareApp(snapshot.data);
@@ -47,14 +48,21 @@ class StartupWidget extends StatelessWidget {
 
   /// Commence Flutter application buildup according to provided [Spark] markup.
   @visibleForTesting
-  Widget prepareApp(Markup markup) {
-    config.markup = markup;
-    config.isPlatformAware = markup.platformAware ?? false;
+  Widget prepareApp(Ignition ignition) {
+    config.markup = ignition.markup;
+    config.isPlatformAware = ignition.markup.platformAware ?? false;
+    if (ignition.schema != null) {
+      config.schema = ignition.schema;
+    }
+
+    // Add default localization values that are needed (can be overriden by client).
+    addDefultStringValues();
 
     // Notify native that we are ready to display. Pre-warm up done.
     issueNativeReadyForDisplay();
 
-    WidgetFactory factory = NssIoc().use(config.isPlatformAware ? CupertinoWidgetFactory : MaterialWidgetFactory);
+    WidgetFactory factory =
+        NssIoc().use(config.isPlatformAware ? CupertinoWidgetFactory : MaterialWidgetFactory);
     return Container(color: Colors.white, child: factory.buildApp());
   }
 
@@ -79,6 +87,32 @@ class StartupWidget extends StatelessWidget {
       engineLogger.e('Missing channel connection: check mock state?');
     }
   }
+
+  //TODO: Future versions - move to a specific logic class. Task may grow in time.
+  void addDefultStringValues() {
+    var localization = config.markup.localization;
+    if (!localization[NssInputValidator.defaultLangKey]
+        .containsKey(NssInputValidator.schemaErrorKeyRequired)) {
+      config.markup.localization[NssInputValidator.defaultLangKey][NssInputValidator.schemaErrorKeyRequired] =
+          'This field is required';
+    }
+    if (!localization[NssInputValidator.defaultLangKey].containsKey(NssInputValidator.schemaErrorKeyRegEx)) {
+      config.markup.localization[NssInputValidator.defaultLangKey][NssInputValidator.schemaErrorKeyRegEx] =
+          'Please enter a valid value';
+    }
+    if (!localization[NssInputValidator.defaultLangKey]
+        .containsKey(NssInputValidator.schemaErrorKeyCheckbox)) {
+      config.markup.localization[NssInputValidator.defaultLangKey][NssInputValidator.schemaErrorKeyCheckbox] =
+          'Checked field is mandatory';
+    }
+  }
+}
+
+class Ignition {
+  final Markup markup;
+  Map<dynamic, dynamic> schema;
+
+  Ignition(this.markup, {this.schema});
 }
 
 /// Async worker used to fetch the JSON markup from the native controller.
@@ -89,25 +123,35 @@ class StartupWorker {
   StartupWorker(this.config, this.channels);
 
   @visibleForTesting
-  Future<Markup> parseMarkup() async {
-    var fetchData = config.isMock ? await _ignitionFromMock() : await _ignitionFromChannel();
-    try {
-      final Markup markup = Markup.fromJson(fetchData.cast<String, dynamic>());
-      return markup;
-    } on Exception catch (ex) {
-      debugPrint('$ex.message');
-      return null;
+  Future<Ignition> ignite() async {
+    // Fetch and parse the markup.
+    var fetchData = config.isMock ? await _markupFromMock() : await _markupFromChannel();
+    final Markup markup = Markup.fromJson(fetchData.cast<String, dynamic>());
+    Ignition ignition = Ignition(markup);
+
+    // Fetch and parse the schema if needed.
+    if (!config.isMock && markup.useSchemaValidations) {
+      var rawSchema = await channels.ignitionChannel
+          .invokeMethod<Map<dynamic, dynamic>>(StartupAction.load_schema.action);
+      var newSchema = {
+        'profile': rawSchema['profileSchema']['fields'],
+        'data': rawSchema['dataSchema']['fields'],
+        'subscriptions': rawSchema['subscriptionsSchema']['fields'],
+        'preferences': rawSchema['preferencesSchema']['fields']
+      };
+      ignition.schema = newSchema;
     }
+    return ignition;
   }
 
   /// Get the [Spark] markup from asset JSON file.
-  Future<Map<dynamic, dynamic>> _ignitionFromMock() async {
+  Future<Map<dynamic, dynamic>> _markupFromMock() async {
     final String json = await AssetUtils.jsonFromAssets('assets/example.json');
     return jsonDecode(json);
   }
 
   /// Get the [Spark] markup from native component using the ignition channel.
-  Future<Map<dynamic, dynamic>> _ignitionFromChannel() async {
+  Future<Map<dynamic, dynamic>> _markupFromChannel() async {
     return channels.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(StartupAction.ignition.action);
   }
 }

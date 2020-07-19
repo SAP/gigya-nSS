@@ -30,10 +30,11 @@ void main() {
 
       var jsonAssetString = await AssetUtils.jsonFromAssets('assets/example.json');
       var mockedMarkup = Markup.fromJson(jsonDecode(jsonAssetString));
+      Ignition ignition = Ignition(mockedMarkup);
 
-      var ignition = StartupWidget(worker: worker, config: config, channels: channels);
+      var startup = StartupWidget(worker: worker, config: config, channels: channels);
 
-      var widget = ignition.prepareApp(mockedMarkup);
+      var widget = startup.prepareApp(ignition);
       expect(widget is Container, true);
       expect((widget as Container).child is Placeholder, true);
     });

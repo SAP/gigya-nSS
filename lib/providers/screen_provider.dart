@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/utils/debug.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:gigya_native_screensets_engine/services/api_service.dart';
 import 'package:gigya_native_screensets_engine/services/screen_service.dart';
@@ -12,7 +13,7 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 enum NssScreenState { idle, progress, error }
 
-enum ScreenAction { submit, api }
+enum ScreenAction { submit, api, socialLogin }
 
 extension ScreenActionExt on ScreenAction {
   String get name => describeEnum(this);
@@ -111,13 +112,22 @@ class ScreenViewModel with ChangeNotifier, DebugUtils {
     }
   }
 
+  /// Trigger natvie social login flow with selected [provider].
+  void socialLogin(NssSocialProvider provider) {
+    if (isMock()) {
+      debugPrint('Requeted social login with ${provider.name}');
+      return;
+    }
+    sendApi(ScreenAction.socialLogin.name, {'provider': provider.name});
+  }
+
   /// Label widget initiated link action.
   /// Validate option available are URL/route.
   void linkifyTap(String link) {
-    if (isMock()) return;
     engineLogger.d('link tap: $link');
 
     if (Linkify.isValidUrl(link)) {
+      if (isMock()) return;
       engineLogger.d('URL link validated : $link');
       screenService.linkToBrowser(link);
       return;

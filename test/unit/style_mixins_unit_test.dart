@@ -6,14 +6,13 @@ import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 
-import 'nss_test_extensions.dart';
-
 class UsesMixin with StyleMixin {}
 
 void main() {
   group('Style mixing tests', () {
     NssIoc().register(NssConfig, (ioc) => NssConfig(isPlatformAware: true), singleton: true);
     NssIoc().use(NssConfig).isPlatformAware = false;
+
 
     var mixin = UsesMixin();
 

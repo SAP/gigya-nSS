@@ -9,6 +9,7 @@ import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 mixin StyleMixin {
   final NssConfig config = NssIoc().use(NssConfig);
 
+  /// Default style mapping.
   final Map<String, dynamic> defaultStyle = {
     'margin': 16,
     'fontSize': 14,
@@ -22,6 +23,7 @@ mixin StyleMixin {
     'cornerRadius': 0,
   };
 
+  /// Default theme mapping.
   final Map<String, dynamic> defaultTheme = {
     'primaryColor': 'blue',
     'secondaryColor': 'white',
@@ -31,6 +33,7 @@ mixin StyleMixin {
     'errorColor': 'red',
   };
 
+  /// Get the relevant style value.
   dynamic getStyle(
     Styles style, {
     NssWidgetData data,
@@ -42,9 +45,16 @@ mixin StyleMixin {
     if (data != null) {
       // Check for custom theme first.
       String customTheme = data.theme ?? '';
-      if (customTheme.isAvailable() && config.markup.theme != null && config.markup.theme.containsKey(customTheme)) {
-        if (config.markup.theme[customTheme].containsKey(style.name)) {
-          value = getStyleValue(style, config.markup.theme[customTheme].cast<String, dynamic>());
+      if (customTheme.isAvailable() &&
+          config.markup.theme != null &&
+          config.markup.theme['customTheme'] != null &&
+          config.markup.theme['customTheme'].containsKey(customTheme)) {
+        if (config.markup.theme['customTheme'][customTheme]
+            .containsKey(style.name)) {
+          value = getStyleValue(
+              style,
+              config.markup.theme['customTheme'][customTheme]
+                  .cast<String, dynamic>());
         }
       }
     }
@@ -67,6 +77,7 @@ mixin StyleMixin {
         return ensureDouble(value);
       case Styles.borderColor:
       case Styles.fontColor:
+      case Styles.indicatorColor:
         var platformAware = config.isPlatformAware ?? false;
         return getColor(value, platformAware: platformAware);
       case Styles.fontWeight:
@@ -79,11 +90,13 @@ mixin StyleMixin {
     }
   }
 
+  /// Get the relevant style value from provided [styles] markup parsed map.
   getStyleValue(Styles style, Map<String, dynamic> styles) {
     if (styles == null) styles = defaultStyle;
     return styles[style.name] ?? defaultStyle[style.name];
   }
 
+  /// Check if to apply a specific theme.
   themeIsNeeded(Styles style, Map<String, dynamic> styles, String key) {
     if (styles == null) styles = {};
     if (styles[style.name] == null && config.markup.theme != null) {
@@ -94,8 +107,11 @@ mixin StyleMixin {
     }
   }
 
+  /// Get the theme color according to provided theme specific [key].
   getThemeColor(String key) {
-    return (config.markup.theme == null || config.markup.theme[key] == null) ? getColor(defaultTheme[key]) : getColor(config.markup.theme[key]);
+    return (config.markup.theme == null || config.markup.theme[key] == null)
+        ? getColor(defaultTheme[key])
+        : getColor(config.markup.theme[key]);
   }
 
   /// Make sure this value will be treated as a double.
@@ -123,7 +139,7 @@ mixin StyleMixin {
   /// Request a [Color] instance given an multi optional identifier (named, hex).
   Color getColor(String color, {bool platformAware}) {
     if (color.contains("#"))
-      return _getColorWithHex(color);
+      return _getHexColor(color);
     else {
       return _getColorWithName(color, platformAware: platformAware ?? false);
     }
@@ -131,7 +147,7 @@ mixin StyleMixin {
 
   /// Get a [Color] instance after parsing the a color hex string.
   /// and [opacity] optional value is available using common opacity two letter pattern.
-  Color _getColorWithHex(String hexColorString, {String opacity}) {
+  Color _getHexColor(String hexColorString, {String opacity}) {
     if (hexColorString == null) {
       return null;
     }
@@ -145,7 +161,6 @@ mixin StyleMixin {
 
   /// Get a [Color] instance given color name.
   /// Method is platform aware.
-  //TODO: Need to research relevant colors used with Apple's cupertino pattern.
   Color _getColorWithName(name, {bool platformAware}) {
     switch (name) {
       case 'blue':
@@ -171,6 +186,10 @@ mixin StyleMixin {
     }
   }
 
+  /// Get the requested font weight.
+  /// Available options:
+  ///  - 'bold', 'thin' identifiers.
+  ///  - number.
   getFontWeight(weight) {
     if (weight is int) {
       return FontWeight.values[weight - 1];
@@ -184,13 +203,19 @@ mixin StyleMixin {
     }
   }
 
+  /// Get the relevant background widget.
+  /// Available options:
+  ///  - Remote image given URL.
+  ///  - Color (Hex or name by default).
   getBackground(background, {bool platformAware}) {
     if (background.contains("#"))
-      return _getColorWithHex(background);
-    else if (background.contains("http://") || background.contains("https://")) {
+      return _getHexColor(background);
+    else if (background.contains("http://") ||
+        background.contains("https://")) {
       return NetworkImage(background);
     } else {
-      return _getColorWithName(background, platformAware: platformAware ?? false);
+      return _getColorWithName(background,
+          platformAware: platformAware ?? false);
     }
   }
 }
@@ -206,6 +231,7 @@ enum Styles {
   borderSize,
   opacity,
   elevation,
+  indicatorColor,
 }
 
 extension StylesExt on Styles {

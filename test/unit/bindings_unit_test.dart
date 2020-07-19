@@ -1,13 +1,66 @@
+import 'dart:async';
+
+import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
+import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
+
+import 'nss_test_extensions.dart';
+
+class UseBindingMixin with BindingMixin {}
+
+var log = [];
+
+class LoggerMock extends Logger {
+  LoggerMock(NssConfig config, NssChannels channels) : super(config, channels);
+
+  @override
+  d(String message, {String tag = 'NssEngine'}) {
+    log.add(message);
+    return message;
+  }
+}
 
 void main() {
   BindingModel bindUtils = BindingModel();
 
-  group('BindingModel: empty ', () {
-    bindUtils.updateWith({});
+  group('BindingModel: save', () {
 
-    test('save new value', () {});
+    test('simple', () {
+
+      bindUtils.save('#loginID', 'user123');
+
+    });
+
+  });
+
+  group('BindingMixin: ', () {
+    final mixin = UseBindingMixin();
+    var config = NssConfig(isMock: true);
+    var markup = MockMarkup();
+    config.markup = markup;
+    when(markup.useSchemaValidations).thenReturn(true);
+    config.schema = {
+      'data': {
+        'bool': {'type': 'boolean'},
+        'string': {'type': 'string'}
+      },
+    };
+
+    NssIoc().register(NssConfig, (ioc) => config, singleton: true);
+    NssIoc().register(Logger, (ioc) => LoggerMock(config, null), singleton: true);
+
+    test('Binding matches', () {
+      final String error = mixin.bindMatches('data.bool', bool);
+      expect(error, null);
+    });
+
+    test('Binding not matches', () {
+      final String error = mixin.bindMatches('data.string', bool);
+      expect(error, 'Dev error: binding key:data.string is marked as String but provided with a non string UI component');
+    });
   });
 
   group('BindingModel: with preset ', () {
@@ -37,7 +90,6 @@ void main() {
         ]
       }
     });
-
 
     test('get bool value', () {
       bool value = bindUtils.getValue('Xbool');
@@ -148,7 +200,6 @@ void main() {
     });
 
     test('test update (bool)', () {
-
       bindUtils.save('profile.testBool', true);
 
       bool value = bindUtils.getSavedValue<bool>('profile.testBool');
@@ -163,7 +214,6 @@ void main() {
 
       expect(value, false);
     });
-
 
     test('test add new value (Bool)', () {
       bindUtils.updateWith({});
@@ -184,12 +234,9 @@ void main() {
     });
 
     test('types supported', () {
-
       String value = bindUtils.typeSupported[String];
 
       expect(value, '');
     });
-
-
   });
 }

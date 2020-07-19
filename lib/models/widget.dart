@@ -1,5 +1,6 @@
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/models/option.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'widget.g.dart';
@@ -21,7 +22,23 @@ class NssWidgetData {
   @JsonKey(defaultValue: {})
   Map<String, dynamic> style;
   String theme;
+  @JsonKey(defaultValue: {})
   Map<String, dynamic> validations;
+
+  // Optional values: 'number'|'boolean'|'string'
+  String parseAs;
+
+  // social login button
+  NssSocialProvider provider;
+  String iconURL;
+  @JsonKey(defaultValue: true)
+  bool iconEnabled;
+  @JsonKey(defaultValue: [])
+  List<NssSocialProvider> providers;
+  @JsonKey(defaultValue: 4)
+  int columns;
+  @JsonKey(defaultValue: 1)
+  int rows;
 
   NssWidgetData({
     this.textKey,
@@ -37,6 +54,13 @@ class NssWidgetData {
     this.style,
     this.theme,
     this.validations,
+    this.parseAs,
+    this.provider,
+    this.iconURL,
+    this.iconEnabled,
+    this.providers,
+    this.columns,
+    this.rows,
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);
