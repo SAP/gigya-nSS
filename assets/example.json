@@ -103,7 +103,7 @@
     }
   },
   "routing": {
-    "initial": "account-update",
+    "initial": "register",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -360,9 +360,11 @@
             "twitter",
             "apple",
             "line",
-            "amazon"
+            "amazon",
+            "yahooJapan"
           ],
           "columns": 3,
+          "rows": 2,
           "style": {
             "cornerRadius": 6,
             "fontSize": 14,

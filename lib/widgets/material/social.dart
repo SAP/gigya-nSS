@@ -24,7 +24,6 @@ enum NssSocialProvider {
   amazon,
   linkedin,
   vkontakte,
-  instagram,
   yahooJapan,
 }
 
@@ -48,8 +47,6 @@ extension NssSocialProviderEx on NssSocialProvider {
         return Color(0xff00c600);
       case NssSocialProvider.amazon:
         return forGrid ? Colors.white : Color(0xffffab00);
-      case NssSocialProvider.instagram:
-        return forGrid ? Colors.white : Color(0xff3f729b);
       case NssSocialProvider.vkontakte:
         return Color(0xff587ea3);
       case NssSocialProvider.yahooJapan:

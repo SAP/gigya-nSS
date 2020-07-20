@@ -161,6 +161,7 @@ class ScreenViewModel with ChangeNotifier, DebugUtils {
           navigationStream.sink.add('$id/$routeNamed');
         }
 
+        //TODO: Set error should be displayed after route assesment to prevent UI jitter.
         setError(error.errorMessage);
         engineLogger.d('Api request error: ${error.errorMessage}');
       },
