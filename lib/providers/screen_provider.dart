@@ -159,10 +159,12 @@ class ScreenViewModel with ChangeNotifier, DebugUtils {
         if (route != RoutingAllowed.none) {
           final routeNamed = describeEnum(route);
           navigationStream.sink.add('$id/$routeNamed');
+        } else {
+          // Error will be displayed when there is no available routing option.
+          setError(error.errorMessage);
         }
 
-        //TODO: Set error should be displayed after route assesment to prevent UI jitter.
-        setError(error.errorMessage);
+        // Log the error.
         engineLogger.d('Api request error: ${error.errorMessage}');
       },
     );
