@@ -156,7 +156,7 @@ class _ImageWidgetState extends State<ImageWidget>
       error();
     }
     setState(() {
-      return MemoryImage(data);
+      _imageProvider =  MemoryImage(data);
     });
   }
 
