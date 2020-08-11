@@ -13,6 +13,7 @@ import 'package:gigya_native_screensets_engine/widgets/material/buttons.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/checkbox.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/container.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/dropdown.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/inputs.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/labels.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/radio.dart';
@@ -35,6 +36,7 @@ enum NssWidgetType {
   dropdown,
   socialLoginButton,
   socialLoginGrid,
+  image,
 }
 
 extension NssWidgetTypeExt on NssWidgetType {
@@ -178,6 +180,8 @@ class MaterialWidgetFactory extends WidgetFactory {
         return SocialButtonWidget(key: UniqueKey(), data: data);
       case NssWidgetType.socialLoginGrid:
         return SocialLoginGrid(key: UniqueKey(), data: data);
+      case NssWidgetType.image:
+        return ImageWidget(key: UniqueKey(), data: data);
       default:
         return Container();
     }

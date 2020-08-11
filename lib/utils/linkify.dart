@@ -87,7 +87,7 @@ class Linkify with StyleMixin {
 
   static bool isValidUrl(String validate) {
     var split = validate.split('://');
-    var protocols = ['http', 'https', 'ftp'];
+    var protocols = ['http', 'https'];
     if (split.length == 1) {
       return false;
     }

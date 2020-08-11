@@ -15,4 +15,5 @@ class NssChannels {
   final MethodChannel screenChannel = const MethodChannel('gigya_nss_engine/method/screen');
   final MethodChannel apiChannel = const MethodChannel('gigya_nss_engine/method/api');
   final MethodChannel logChannel = const MethodChannel('gigya_nss_engine/method/log');
+  final MethodChannel dataChannel = const MethodChannel('gigya_nss_engine/method/data');
 }
