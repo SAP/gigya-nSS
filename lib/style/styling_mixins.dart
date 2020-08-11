@@ -16,10 +16,10 @@ mixin StyleMixin {
     'fontColor': 'black',
     'fontWeight': 4,
     'background': 'transparent',
-    'elevation': 3,
+    'elevation': 0,
     'opacity': 1.0,
-    'borderColor': '#000000',
-    'borderSize': 1,
+    'borderColor': 'transparent',
+    'borderSize': 0,
     'cornerRadius': 0,
   };
 
