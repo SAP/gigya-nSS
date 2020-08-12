@@ -115,7 +115,7 @@ class _ImageWidgetState extends State<ImageWidget>
   void resolveStaticPlaceholder() {
     if (mounted) {
       setState(() {
-        engineLogger.e('Failed to obtain image for widget');
+        engineLogger.d('Failed to obtain image for widget');
         _imageProvider = MemoryImage(kTransparentImage);
       });
     }
