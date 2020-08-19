@@ -53,12 +53,12 @@ void main() {
     NssIoc().register(Logger, (ioc) => LoggerMock(config, null), singleton: true);
 
     test('Binding matches', () {
-      final String error = mixin.bindMatches('data.bool', bool);
+      final String error = mixin.bindMatches('data.bool', 'boolean');
       expect(error, null);
     });
 
     test('Binding not matches', () {
-      final String error = mixin.bindMatches('data.string', bool);
+      final String error = mixin.bindMatches('data.string', 'boolean');
       expect(error, 'Dev error: binding key:data.string is marked as String but provided with a non string UI component');
     });
   });

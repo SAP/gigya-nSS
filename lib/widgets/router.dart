@@ -98,6 +98,7 @@ abstract class Router {
   Route<dynamic> generateRoute(RouteSettings settings) {
     var nextRoute = getNextRoute(settings.name);
 
+    //TODO: Specific errors may be more apropriate here.
     if (nextRoute == null) {
       engineLogger.e('Failed to parse routing for name: ${settings.name}');
       return getErrorRoute(

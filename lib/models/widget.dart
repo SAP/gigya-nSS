@@ -40,6 +40,10 @@ class NssWidgetData {
   @JsonKey(defaultValue: 1)
   int rows;
 
+  // Image widget
+  String url;
+  String fallback;
+
   NssWidgetData({
     this.textKey,
     this.type,
@@ -61,6 +65,8 @@ class NssWidgetData {
     this.providers,
     this.columns,
     this.rows,
+    this.url,
+    this.fallback,
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);
