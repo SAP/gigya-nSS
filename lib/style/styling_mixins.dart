@@ -11,7 +11,7 @@ mixin StyleMixin {
 
   /// Default style mapping.
   final Map<String, dynamic> defaultStyle = {
-    'margin': 16,
+    'margin': 0,
     'fontSize': 14,
     'fontColor': 'black',
     'fontWeight': 4,

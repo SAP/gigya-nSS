@@ -15,7 +15,7 @@
         "fontSize": 16
       },
       "input": {
-        "margin": 5
+        "margin": [16, 8, 15, 8]
       },
       "flatButton": {
         "fontSize": 14,
@@ -111,7 +111,7 @@
     }
   },
   "routing": {
-    "initial": "login",
+    "initial": "forgot-password",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -139,7 +139,10 @@
             {
               "type": "label",
               "textKey": "login-social-title",
-              "theme": "subtitle"
+              "theme": "subtitle",
+              "style": {
+                "margin": 16
+              }
             }
           ]
         },
@@ -149,9 +152,9 @@
           "textKey": "social-sign-in-facebook",
           "style": {
             "margin": [
-              4,
+              16,
               0,
-              4,
+              16,
               0
             ],
             "cornerRadius": 5,
@@ -163,9 +166,9 @@
           "provider": "linkedin",
           "style": {
             "margin": [
-              4,
+              16,
               0,
-              4,
+              16,
               0
             ],
             "cornerRadius": 5,
@@ -177,9 +180,9 @@
           "provider": "google",
           "style": {
             "margin": [
-              4,
+              16,
               0,
-              4,
+              16,
               0
             ],
             "cornerRadius": 5,
@@ -191,7 +194,7 @@
           "stack": "horizontal",
           "alignment": "start",
           "style": {
-            "margin": 0
+            "margin": 16
           },
           "children": [
             {
@@ -250,7 +253,7 @@
             "fontSize": 14,
             "margin": [
               0,
-              4,
+              8,
               0,
               8
             ]
@@ -264,7 +267,7 @@
               0,
               24,
               0,
-              16
+              24
             ]
           }
         },
@@ -302,7 +305,10 @@
           "children": [
             {
               "type": "label",
-              "textKey": "register-title"
+              "textKey": "register-title",
+              "style": {
+                "margin": 16
+              }
             }
           ]
         },
@@ -357,7 +363,7 @@
           "type": "checkbox",
           "textKey": "register-terms+link",
           "style": {
-            "margin": 0
+            "margin": [16, 0, 16, 0]
           }
         },
         {
@@ -366,10 +372,10 @@
           "style": {
             "fontSize": 16,
             "margin": [
-              0,
+              16,
               4,
-              0,
-              0
+              16,
+              8
             ]
           }
         },
@@ -395,6 +401,7 @@
             "fontColor": "black",
             "fontWeight": "bold",
             "elevation": 2,
+            "margin": 16,
             "indicatorColor": "grey"
           }
         },
@@ -407,6 +414,7 @@
               280,
               44
             ],
+            "margin": 16,
             "cornerRadius": 6
           }
         }
@@ -430,7 +438,7 @@
             "elevation": 4,
             "margin": [
               0,
-              20,
+              22,
               0,
               10
             ],
@@ -496,11 +504,12 @@
           "textKey": "common-submit",
           "theme": "raisedButton",
           "style": {
+            "size": [200, 44],
             "margin": [
               0,
               20,
               0,
-              0
+              16
             ]
           }
         }
@@ -519,7 +528,10 @@
         {
           "type": "label",
           "textKey": "account-custom-title",
-          "theme": "title"
+          "theme": "title",
+          "style": {
+            "margin": 16
+          }
         },
         {
           "type": "radio",
@@ -553,6 +565,7 @@
           "textKey": "common-submit",
           "theme": "raisedButton",
           "style": {
+            "size": [200, 44],
             "margin": [
               0,
               50,
@@ -576,7 +589,10 @@
         {
           "type": "label",
           "textKey": "forgot-password-custom-title",
-          "theme": "subtitle"
+          "theme": "subtitle",
+          "style" : {
+            "margin": 16
+          }
         },
         {
           "bind": "#loginID",
