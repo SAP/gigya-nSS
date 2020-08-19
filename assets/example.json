@@ -111,7 +111,7 @@
     }
   },
   "routing": {
-    "initial": "account-update",
+    "initial": "login",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -273,7 +273,10 @@
           "textKey": "common-submit",
           "theme": "raisedButton",
           "style": {
-            "cornerRadius": 5
+            "size": [200, 44],
+            "cornerRadius": 5,
+            "borderColor": "black",
+            "borderSize": 2
           }
         }
       ]

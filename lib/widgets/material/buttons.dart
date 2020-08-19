@@ -42,8 +42,14 @@ class _SubmitWidgetState extends State<SubmitWidget>
               return Opacity(
                 opacity: getStyle(Styles.opacity, data: widget.data),
                 child: ButtonTheme(
-                  buttonColor: getStyle(Styles.background, data: widget.data, themeProperty: 'primaryColor'),
+                  buttonColor: getStyle(Styles.background,
+                      data: widget.data, themeProperty: 'primaryColor'),
                   shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      color: getStyle(Styles.borderColor, data: widget.data, themeProperty: 'secondaryColor'),
+                      width:
+                          getStyle(Styles.borderSize, data: widget.data) ?? 0,
+                    ),
                     borderRadius: BorderRadius.circular(
                       getStyle(Styles.cornerRadius, data: widget.data),
                     ),
@@ -55,8 +61,10 @@ class _SubmitWidgetState extends State<SubmitWidget>
                       localizedStringFor(widget.data.textKey),
                       style: TextStyle(
                         fontSize: getStyle(Styles.fontSize, data: widget.data),
-                        color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'secondaryColor'),
-                        fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                        color: getStyle(Styles.fontColor,
+                            data: widget.data, themeProperty: 'secondaryColor'),
+                        fontWeight:
+                            getStyle(Styles.fontWeight, data: widget.data),
                       ),
                     ),
                     onPressed: () {
