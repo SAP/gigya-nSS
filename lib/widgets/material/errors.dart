@@ -81,6 +81,7 @@ class MaterialComponentRenderErrorWidget extends StatelessWidget {
   }
 }
 
+///Deprecated -> remove.
 class MaterialScreenInfoErrorWidget extends StatelessWidget {
   @visibleForTesting
   ScreenViewModel getProvider(context) {

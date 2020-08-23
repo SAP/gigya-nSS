@@ -16,6 +16,106 @@ enum ImageSource { web, asset }
 
 typedef ErrorCallback();
 
+abstract class ImageWidgetState<T extends StatefulWidget> extends State<T>
+    with DecorationMixin, BindingMixin, StyleMixin {
+  ImageProvider imageProvider = MemoryImage(kTransparentImage);
+
+  /// Fetch the image according to provided specs.
+  getImage(url, fallback) async {
+    final ImageSource imageSource = getImageSource(url);
+
+    // Starting with the source.
+    if (imageSource == ImageSource.web) {
+      resolveNetworkResource(url, () {
+        // Error -> fallback.
+        resolveFallback(fallback);
+      });
+    } else {
+      resovleAssetResource(url, () {
+        // Error -> fallback.
+        resolveFallback(fallback);
+      });
+    }
+  }
+
+  /// Resolve fallback if main URL fetch has failed.
+  void resolveFallback(fallback) {
+    final String fallbackPath = fallback ?? '';
+    if (fallbackPath.isEmpty) {
+      resolveStaticPlaceholder();
+      return;
+    }
+    final ImageSource fallbackSource = getImageSource(fallback);
+    if (fallbackSource == ImageSource.web) {
+      resolveNetworkResource(fallbackPath, () {
+        resolveStaticPlaceholder();
+      });
+    } else {
+      resovleAssetResource(fallbackPath, () {
+        resolveStaticPlaceholder();
+      });
+    }
+  }
+
+  /// Place a static image if fallback image has failed.
+  void resolveStaticPlaceholder() {
+    if (mounted) {
+      setState(() {
+        engineLogger.d('Failed to obtain image for widget');
+        imageProvider = MemoryImage(kTransparentImage);
+      });
+    }
+  }
+
+  /// Try to fetch the image from a network resource.
+  void resolveNetworkResource(String url, ErrorCallback error) {
+    NetworkImage networkImage = NetworkImage(
+      url,
+    );
+    final ImageStream stream = networkImage.resolve(ImageConfiguration.empty);
+    stream.addListener(
+      ImageStreamListener((info, call) {
+        // Image loaded.
+        setState(() {
+          imageProvider = networkImage;
+        });
+      }, onError: (ex, stacktrace) {
+        // Exception.
+        error();
+      }),
+    );
+  }
+
+  /// Try to fetch the image form a native asset resource.
+  Future<void> resovleAssetResource(String url, ErrorCallback error) async {
+    if (url.isEmpty) {
+      error();
+      return null;
+    }
+    final MethodChannel channel = NssIoc().use(NssChannels).dataChannel;
+    var data = await channel
+        .invokeMethod<Uint8List>('image_resource', {'url': url}).timeout(
+            Duration(seconds: 4), onTimeout: () {
+      // Timeout
+      return null;
+    }).catchError((error) {
+      // Error
+      return null;
+    });
+    if (data == null) {
+      error();
+    }
+    setState(() {
+      imageProvider = MemoryImage(data);
+    });
+  }
+
+  /// Vary resource type.
+  ImageSource getImageSource(String url) {
+    return Linkify.isValidUrl(url) ? ImageSource.web : ImageSource.asset;
+  }
+}
+
 class ImageWidget extends StatefulWidget {
   final NssWidgetData data;
 
@@ -25,14 +125,11 @@ class ImageWidget extends StatefulWidget {
   _ImageWidgetState createState() => _ImageWidgetState();
 }
 
-class _ImageWidgetState extends State<ImageWidget>
-    with DecorationMixin, BindingMixin, StyleMixin {
-  ImageProvider _imageProvider =  MemoryImage(kTransparentImage);
-
+class _ImageWidgetState extends ImageWidgetState<ImageWidget> {
   @override
   void initState() {
     super.initState();
-    getImage();
+    getImage(widget.data.bind ?? widget.data.url, widget.data.fallback);
   }
 
   @override
@@ -62,7 +159,7 @@ class _ImageWidgetState extends State<ImageWidget>
                       ),
                       color: getStyle(Styles.background, data: widget.data),
                       image: DecorationImage(
-                          image: _imageProvider, fit: BoxFit.fill),
+                          image: imageProvider, fit: BoxFit.fill),
                     ),
                   ) ??
                   Container(),
@@ -71,98 +168,6 @@ class _ImageWidgetState extends State<ImageWidget>
         ),
       ),
     );
-  }
-
-  /// Fetch the image according to provided specs.
-  getImage() async {
-    final String url = widget.data.bind ?? widget.data.url;
-    final ImageSource imageSource = getImageSource(url);
-
-    // Starting with the source.
-    if (imageSource == ImageSource.web) {
-      resolveNetworkResource(url, () {
-        // Error -> fallback.
-        resolveFallback();
-      });
-    } else {
-      resovleAssetResource(url, () {
-        // Error -> fallback.
-        resolveFallback();
-      });
-    }
-  }
-
-  /// Resolve fallback if main URL fetch has failed.
-  void resolveFallback() {
-    final String fallback = widget.data.fallback ?? '';
-    if (fallback.isEmpty) {
-      resolveStaticPlaceholder();
-      return;
-    }
-    final ImageSource fallbackSource = getImageSource(fallback);
-    if (fallbackSource == ImageSource.web) {
-      resolveNetworkResource(fallback, () {
-        resolveStaticPlaceholder();
-      });
-    } else {
-      resovleAssetResource(fallback, () {
-        resolveStaticPlaceholder();
-      });
-    }
-  }
-
-  /// Place a static image if fallback image has failed.
-  void resolveStaticPlaceholder() {
-    if (mounted) {
-      setState(() {
-        engineLogger.d('Failed to obtain image for widget');
-        _imageProvider = MemoryImage(kTransparentImage);
-      });
-    }
-  }
-
-  /// Try to fetch the image from a network resource.
-  void resolveNetworkResource(String url, ErrorCallback error) {
-    NetworkImage networkImage = NetworkImage(
-      url,
-    );
-    final ImageStream stream = networkImage.resolve(ImageConfiguration.empty);
-    stream.addListener(
-      ImageStreamListener((info, call) {
-        // Image loaded.
-        setState(() {
-          _imageProvider = networkImage;
-        });
-      }, onError: (ex, stacktrace) {
-        // Exception.
-        error();
-      }),
-    );
-  }
-
-  /// Try to fetch the image form a native asset resource.
-  Future<void> resovleAssetResource(String url, ErrorCallback error) async {
-    final MethodChannel channel = NssIoc().use(NssChannels).dataChannel;
-    var data = await channel
-        .invokeMethod<Uint8List>('image_resource', {'url': url}).timeout(
-            Duration(seconds: 4), onTimeout: () {
-      // Timeout
-      return null;
-    }).catchError((error) {
-      // Error
-      return null;
-    });
-    if (data == null) {
-      error();
-    }
-    setState(() {
-      _imageProvider =  MemoryImage(data);
-    });
-  }
-
-  /// Vary resource type.
-  ImageSource getImageSource(String url) {
-    return Linkify.isValidUrl(url) ? ImageSource.web : ImageSource.asset;
   }
 }
 

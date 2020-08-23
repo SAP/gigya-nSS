@@ -44,6 +44,12 @@ class NssWidgetData {
   String url;
   String fallback;
 
+  @JsonKey(name: 'default')
+  dynamic defaultPlaceholder;
+
+  @JsonKey(defaultValue: true)
+  bool allowUpload;
+
   NssWidgetData({
     this.textKey,
     this.type,
@@ -67,9 +73,12 @@ class NssWidgetData {
     this.rows,
     this.url,
     this.fallback,
+    this.defaultPlaceholder,
+    this.allowUpload,
   });
 
-  factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);
+  factory NssWidgetData.fromJson(Map<String, dynamic> json) =>
+      _$NssWidgetDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$NssWidgetDataToJson(this);
 
