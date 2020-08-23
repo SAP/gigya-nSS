@@ -111,7 +111,7 @@
     }
   },
   "routing": {
-    "initial": "forgot-password",
+    "initial": "account-update",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -431,8 +431,9 @@
       "stack": "vertical",
       "children": [
         {
-          "type": "image",
-          "url": "https://www.w3schools.com/howto/img_avatar.png",
+          "type": "profilePhoto",
+          "allowUpload": false,
+          "default": "https://www.w3schools.com/howto/img_avatar.png",
           "style": {
             "cornerRadius": 40,
             "elevation": 4,
@@ -492,14 +493,6 @@
           }
         },
         {
-          "type": "checkbox",
-          "bind": "data.formatTrue",
-          "textKey": "Testing format true field",
-          "style": {
-            "margin": 0
-          }
-        },
-        {
           "type": "submit",
           "textKey": "common-submit",
           "theme": "raisedButton",
@@ -507,7 +500,7 @@
             "size": [200, 44],
             "margin": [
               0,
-              20,
+              10,
               0,
               16
             ]

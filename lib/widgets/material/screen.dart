@@ -16,14 +16,19 @@ class MaterialScreenWidget extends StatefulWidget {
   final Screen screen;
   final Widget content;
 
-  const MaterialScreenWidget({Key key, this.viewModel, this.bindingModel, this.screen, this.content}) : super(key: key);
+  const MaterialScreenWidget(
+      {Key key, this.viewModel, this.bindingModel, this.screen, this.content})
+      : super(key: key);
 
   @override
-  _MaterialScreenWidgetState createState() => _MaterialScreenWidgetState(viewModel, bindingModel);
+  _MaterialScreenWidgetState createState() =>
+      _MaterialScreenWidgetState(viewModel, bindingModel);
 }
 
-class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget> with StyleMixin, LocalizationMixin {
-  _MaterialScreenWidgetState(ScreenViewModel viewModel, BindingModel bindings) : super(viewModel, bindings);
+class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
+    with StyleMixin, LocalizationMixin {
+  _MaterialScreenWidgetState(ScreenViewModel viewModel, BindingModel bindings)
+      : super(viewModel, bindings);
 
   @override
   void initState() {
@@ -40,21 +45,25 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   @override
   Widget buildScaffold() {
     var background = getStyle(Styles.background, styles: widget.screen.style);
-    var appBackground = getStyle(Styles.background, styles: widget.screen.appBar.style, themeProperty: 'primaryColor');
+    var appBackground = getStyle(Styles.background,
+        styles: widget.screen.appBar.style, themeProperty: 'primaryColor');
 
     return Scaffold(
       extendBodyBehindAppBar: appBackground == Colors.transparent,
       appBar: widget.screen.appBar == null
           ? null
           : AppBar(
-              elevation: getStyle(Styles.elevation, styles: widget.screen.appBar.style),
+              elevation: getStyle(Styles.elevation,
+                  styles: widget.screen.appBar.style),
               backgroundColor: appBackground,
               title: Text(
                 localizedStringFor(widget.screen.appBar.textKey) ?? '',
                 style: TextStyle(
-                  color:
-                      getStyle(Styles.fontColor, styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
-                  fontWeight: getStyle(Styles.fontWeight, styles: widget.screen.appBar.style),
+                  color: getStyle(Styles.fontColor,
+                      styles: widget.screen.appBar.style,
+                      themeProperty: 'secondaryColor'),
+                  fontWeight: getStyle(Styles.fontWeight,
+                      styles: widget.screen.appBar.style),
                 ),
               ),
               leading: Platform.isIOS
@@ -63,9 +72,11 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
                         icon: Icon(
                           Icons.close,
                           color: getStyle(Styles.fontColor,
-                              styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
+                              styles: widget.screen.appBar.style,
+                              themeProperty: 'secondaryColor'),
                         ),
-                        onPressed: () => Navigator.pushNamed(context, '_canceled'),
+                        onPressed: () =>
+                            Navigator.pushNamed(context, '_canceled'),
                       ),
                     )
                   : null,
@@ -92,8 +103,6 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
                 builder: (context, vm, child) {
                   if (vm.isProgress()) {
                     return MaterialScreenProgressWidget();
-                  } else if (vm.isError()) {
-                    return MaterialScreenInfoErrorWidget();
                   } else {
                     return Container();
                   }
@@ -111,7 +120,8 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   /// screen widget in order to perform navigation actions.
   _registerNavigationSteam() {
     viewModel.navigationStream.stream.listen((route) {
-      if (ModalRoute.of(context).settings.name.split('/').last == route.toString().split('/').last) {
+      if (ModalRoute.of(context).settings.name.split('/').last ==
+          route.toString().split('/').last) {
         return;
       }
       Navigator.pushReplacementNamed(context, route);
@@ -122,7 +132,8 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   /// This will result in the instantiation of the native controller action model which will handle all
   /// the native SDK logic.
   _attachScreenAction() async {
-    var screenDataMap = await viewModel.attachScreenAction(widget.screen.action);
+    var screenDataMap =
+        await viewModel.attachScreenAction(widget.screen.action);
     bindings.updateWith(screenDataMap);
   }
 }
