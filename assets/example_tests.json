@@ -111,7 +111,7 @@
     }
   },
   "routing": {
-    "initial": "login",
+    "initial": "account-update",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -474,6 +474,25 @@
           "theme": "input"
         },
         {
+          "bind": "data.rescueString",
+          "type": "textInput",
+          "textKey": "common-rescueString",
+          "theme": "input"
+        },
+        {
+          "type": "checkbox",
+          "bind": "data.marketingNotifications",
+          "textKey": "account_marketing_notifications_selection",
+          "style": {
+            "margin": [
+              0,
+              10,
+              0,
+              0
+            ]
+          }
+        },
+        {
           "type": "submit",
           "textKey": "common-submit",
           "theme": "raisedButton",
@@ -484,6 +503,67 @@
               10,
               0,
               16
+            ]
+          }
+        }
+      ]
+    },
+    "account-custom": {
+      "routing": {
+        "onSuccess": "_dismiss"
+      },
+      "action": "setAccount",
+      "appBar": {
+        "textKey": "account-information"
+      },
+      "stack": "vertical",
+      "children": [
+        {
+          "type": "label",
+          "textKey": "account-custom-title",
+          "theme": "title",
+          "style": {
+            "margin": 16
+          }
+        },
+        {
+          "type": "radio",
+          "bind": "data.favGuitar",
+          "style": {
+            "margin": [
+              16,
+              30,
+              16,
+              0
+            ]
+          },
+          "options": [
+            {
+              "default": true,
+              "value": "PRS",
+              "textKey": "Paul Reed Smith"
+            },
+            {
+              "value": "Rubato",
+              "textKey": "account-custom-rubato"
+            },
+            {
+              "value": "Parker",
+              "textKey": "account-custom-parker"
+            }
+          ]
+        },
+        {
+          "type": "submit",
+          "textKey": "common-submit",
+          "theme": "raisedButton",
+          "style": {
+            "size": [200, 44],
+            "margin": [
+              0,
+              50,
+              0,
+              0
             ]
           }
         }
