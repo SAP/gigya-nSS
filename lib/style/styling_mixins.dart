@@ -47,13 +47,13 @@ mixin StyleMixin {
       String customTheme = data.theme ?? '';
       if (customTheme.isAvailable() &&
           config.markup.theme != null &&
-          config.markup.theme['customTheme'] != null &&
-          config.markup.theme['customTheme'].containsKey(customTheme)) {
-        if (config.markup.theme['customTheme'][customTheme]
+          config.markup.customThemes != null &&
+          config.markup.customThemes.containsKey(customTheme)) {
+        if (config.markup.customThemes[customTheme]
             .containsKey(style.name)) {
           value = getStyleValue(
               style,
-              config.markup.theme['customTheme'][customTheme]
+              config.markup.customThemes[customTheme]
                   .cast<String, dynamic>());
         }
       }

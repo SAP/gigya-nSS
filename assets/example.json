@@ -5,40 +5,45 @@
     "textColor": "black",
     "enabledColor": "blue",
     "disabledColor": "grey",
-    "errorColor": "red",
-    "customTheme": {
-      "title": {
-        "fontWeight": "bold",
-        "fontSize": 22
-      },
-      "subtitle": {
-        "fontSize": 16
-      },
-      "input": {
-        "margin": [16, 8, 15, 8]
-      },
-      "flatButton": {
-        "fontSize": 14,
-        "fontColor": "white",
-        "fontWeight": 6,
-        "elevation": 2,
-        "background": "blue",
-        "size": [
-          220,
-          44
-        ]
-      },
-      "raisedButton": {
-        "fontSize": 14,
-        "fontColor": "white",
-        "fontWeight": 4,
-        "elevation": 0,
-        "background": "blue",
-        "size": [
-          300,
-          40
-        ]
-      }
+    "errorColor": "red"
+  },
+  "customThemes": {
+    "title": {
+      "fontWeight": "bold",
+      "fontSize": 18
+    },
+    "subtitle": {
+      "fontSize": 16
+    },
+    "input": {
+      "margin": [
+        16,
+        8,
+        15,
+        8
+      ]
+    },
+    "flatButton": {
+      "fontSize": 14,
+      "fontColor": "white",
+      "fontWeight": 6,
+      "elevation": 2,
+      "background": "blue",
+      "size": [
+        220,
+        44
+      ]
+    },
+    "raisedButton": {
+      "fontSize": 14,
+      "fontColor": "white",
+      "fontWeight": 4,
+      "elevation": 0,
+      "background": "blue",
+      "size": [
+        300,
+        40
+      ]
     }
   },
   "useSchemaValidations": false,
@@ -139,7 +144,7 @@
             {
               "type": "label",
               "textKey": "login-social-title",
-              "theme": "subtitle",
+              "theme": "title",
               "style": {
                 "margin": 16
               }
@@ -210,7 +215,8 @@
           "textKey": "common-email",
           "theme": "input",
           "style": {
-            "cornerRadius": 5,
+            "margin": [16, 4, 16, 4],
+            "cornerRadius": 22,
             "borderSize": 1
           },
           "validations": {
@@ -231,7 +237,8 @@
           "textKey": "common-password",
           "theme": "input",
           "style": {
-            "cornerRadius": 5,
+            "margin": [16, 4, 16, 4],
+            "cornerRadius": 22,
             "borderSize": 1
           },
           "validations": {
@@ -276,7 +283,10 @@
           "textKey": "common-submit",
           "theme": "raisedButton",
           "style": {
-            "size": [200, 44],
+            "size": [
+              200,
+              44
+            ],
             "cornerRadius": 5,
             "borderColor": "black",
             "borderSize": 2
@@ -363,7 +373,12 @@
           "type": "checkbox",
           "textKey": "register-terms+link",
           "style": {
-            "margin": [16, 0, 16, 0]
+            "margin": [
+              16,
+              0,
+              16,
+              0
+            ]
           }
         },
         {
@@ -474,18 +489,54 @@
           "theme": "input"
         },
         {
-          "type": "submit",
-          "textKey": "common-submit",
-          "theme": "raisedButton",
+          "type": "container",
+          "stack": "horizontal",
           "style": {
-            "size": [200, 44],
-            "margin": [
-              0,
-              10,
-              0,
-              16
-            ]
-          }
+            "size": [0, 44],
+            "background": "blue"
+          },
+          "children": [
+            {
+              "type": "label",
+              "textKey": "I'm a label",
+              "style": {
+                "fontColor": "white"
+              }
+            },
+            {
+              "type": "label",
+              "textKey": "I'm a another label",
+              "style": {
+                "fontColor": "white"
+              }
+            }
+          ]
+        },
+        {
+          "type": "container",
+          "stack": "vertical",
+          "style": {
+            "background": "green"
+          },
+          "children": [
+            {
+              "type": "submit",
+              "textKey": "common-submit",
+              "theme": "raisedButton",
+              "style": {
+                "size": [
+                  200,
+                  44
+                ],
+                "margin": [
+                  16,
+                  10,
+                  16,
+                  16
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -503,7 +554,7 @@
           "type": "label",
           "textKey": "forgot-password-custom-title",
           "theme": "subtitle",
-          "style" : {
+          "style": {
             "margin": 16
           }
         },
