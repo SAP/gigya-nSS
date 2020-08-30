@@ -85,6 +85,8 @@ mixin StyleMixin {
       case Styles.background:
         var platformAware = config.isPlatformAware ?? false;
         return getBackground(value, platformAware: platformAware);
+      case Styles.textAlign:
+        return getTextAlign(value);
       default:
         break;
     }
@@ -218,6 +220,12 @@ mixin StyleMixin {
           platformAware: platformAware ?? false);
     }
   }
+
+  getTextAlign(align) {
+    align = "NssTextAlign.$align";
+    NssTextAlign a = NssTextAlign.values.firstWhere((f)=> f.toString() == align, orElse: () => NssTextAlign.none);
+    return a.getValue;
+  }
 }
 
 enum Styles {
@@ -232,8 +240,26 @@ enum Styles {
   opacity,
   elevation,
   indicatorColor,
+  textAlign,
 }
 
 extension StylesExt on Styles {
   String get name => describeEnum(this);
+}
+
+enum NssTextAlign { start, end, center, none }
+
+extension NssTextAlignExt on NssTextAlign {
+  TextAlign get getValue {
+    switch(this) {
+      case NssTextAlign.start:
+        return TextAlign.start;
+      case NssTextAlign.end:
+        return TextAlign.end;
+      case NssTextAlign.center:
+        return TextAlign.center;
+      default:
+        return null; // none
+    }
+  }
 }

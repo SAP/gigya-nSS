@@ -95,7 +95,7 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
     debugPrint('_onProfileImageTap');
     final MethodChannel channel = NssIoc().use(NssChannels).dataChannel;
     var data = await channel
-        .invokeMethod<Uint8List>('pick_image')
+        .invokeMethod<Uint8List>('pick_image', {'text': widget.data.textKey})
         .timeout(Duration(minutes: 5), onTimeout: () {
       // Timeout
       return null;

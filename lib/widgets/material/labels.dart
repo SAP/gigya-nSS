@@ -54,8 +54,8 @@ class LabelWidget extends StatelessWidget with DecorationMixin, StyleMixin, Loca
                           },
                         )
                       : Text(
-                          // TODO: Add support for "textAlign" property.
                           text,
+                          textAlign: getStyle(Styles.textAlign, data: data) ?? TextAlign.start,
                           style: TextStyle(
                             fontSize: getStyle(Styles.fontSize, data: data),
                             color: getStyle(Styles.fontColor, data: data, themeProperty: 'textColor'),
