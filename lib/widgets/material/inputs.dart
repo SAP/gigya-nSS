@@ -94,6 +94,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                     keyboardType: getKeyboardType(widget.data.bind),
                     obscureText: _obscuredText,
                     controller: _textEditingController,
+                    textAlign: getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
                     style: TextStyle(
                         color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
                         fontSize: getStyle(Styles.fontSize, data: widget.data),
