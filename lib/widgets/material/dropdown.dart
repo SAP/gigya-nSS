@@ -8,6 +8,7 @@ import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:provider/provider.dart';
+import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 
 
 /// Dropdown group UI selection component.
@@ -65,7 +66,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
               var bindValue = bindingValue.value;
               widget.data.options.forEach((option) {
                 _dropdownItems.add(localizedStringFor(option.textKey));
-                if (bindValue.isNullOrEmpty() && option.defaultValue != null && option.defaultValue) {
+                if (bindValue == null && option.defaultValue != null && option.defaultValue) {
                   bindValue = option.value;
                 }
               });
@@ -110,14 +111,19 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                   });
                 },
                 items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {
+                  TextAlign align = getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start;
+
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value,
-                        style: TextStyle(
-                          color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
-                          fontSize: getStyle(Styles.fontSize, data: widget.data),
-                          fontWeight: getStyle(Styles.fontWeight, data: widget.data),
-                        )),
+                    child: Align(
+                      alignment: align.toAlignment(widget.data.type),
+                      child: Text(value,
+                          style: TextStyle(
+                            color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
+                            fontSize: getStyle(Styles.fontSize, data: widget.data),
+                            fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                          )),
+                    ),
                   );
                 }).toList(),
               );

@@ -12,6 +12,7 @@ import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/profile_photo.dart';
 
 enum StartupAction { ignition, ready_for_display, load_schema }
 
@@ -30,13 +31,15 @@ class StartupWidget extends StatelessWidget {
   final NssConfig config;
   final NssChannels channels;
 
-  const StartupWidget({Key key, this.worker, this.config, this.channels}) : super(key: key);
+  const StartupWidget({Key key, this.worker, this.config, this.channels})
+      : super(key: key);
 
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: worker.ignite(),
       builder: (context, AsyncSnapshot<Ignition> snapshot) {
-        if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.hasData) {
           engineLogger.d('ignition - state - done');
           return prepareApp(snapshot.data);
         } else {
@@ -61,8 +64,9 @@ class StartupWidget extends StatelessWidget {
     // Notify native that we are ready to display. Pre-warm up done.
     issueNativeReadyForDisplay();
 
-    WidgetFactory factory =
-        NssIoc().use(config.isPlatformAware ? CupertinoWidgetFactory : MaterialWidgetFactory);
+    WidgetFactory factory = NssIoc().use(config.isPlatformAware
+        ? CupertinoWidgetFactory
+        : MaterialWidgetFactory);
     return Container(color: Colors.white, child: factory.buildApp());
   }
 
@@ -82,7 +86,8 @@ class StartupWidget extends StatelessWidget {
     }
     engineLogger.d('Ignition - invoke ready for display');
     try {
-      channels.ignitionChannel.invokeMethod<void>(StartupAction.ready_for_display.action);
+      channels.ignitionChannel
+          .invokeMethod<void>(StartupAction.ready_for_display.action);
     } on MissingPluginException catch (ex) {
       engineLogger.e('Missing channel connection: check mock state?');
     }
@@ -93,17 +98,32 @@ class StartupWidget extends StatelessWidget {
     var localization = config.markup.localization;
     if (!localization[NssInputValidator.defaultLangKey]
         .containsKey(NssInputValidator.schemaErrorKeyRequired)) {
-      config.markup.localization[NssInputValidator.defaultLangKey][NssInputValidator.schemaErrorKeyRequired] =
-          'This field is required';
+      config.markup.localization[NssInputValidator.defaultLangKey]
+          [NssInputValidator.schemaErrorKeyRequired] = 'This field is required';
     }
-    if (!localization[NssInputValidator.defaultLangKey].containsKey(NssInputValidator.schemaErrorKeyRegEx)) {
-      config.markup.localization[NssInputValidator.defaultLangKey][NssInputValidator.schemaErrorKeyRegEx] =
+    if (!localization[NssInputValidator.defaultLangKey]
+        .containsKey(NssInputValidator.schemaErrorKeyRegEx)) {
+      config.markup.localization[NssInputValidator.defaultLangKey]
+              [NssInputValidator.schemaErrorKeyRegEx] =
           'Please enter a valid value';
     }
     if (!localization[NssInputValidator.defaultLangKey]
         .containsKey(NssInputValidator.schemaErrorKeyCheckbox)) {
-      config.markup.localization[NssInputValidator.defaultLangKey][NssInputValidator.schemaErrorKeyCheckbox] =
+      config.markup.localization[NssInputValidator.defaultLangKey]
+              [NssInputValidator.schemaErrorKeyCheckbox] =
           'Checked field is mandatory';
+    }
+    if (!localization[NssInputValidator.defaultLangKey]
+        .containsKey(ProfilePhotoWidget.profileErrorImageUpload)) {
+      config.markup.localization[NssInputValidator.defaultLangKey]
+              [ProfilePhotoWidget.profileErrorImageUpload] =
+          'Failed to upload. Please try again';
+    }
+    if (!localization[NssInputValidator.defaultLangKey]
+        .containsKey(ProfilePhotoWidget.profileErrorImageSize)) {
+      config.markup.localization[NssInputValidator.defaultLangKey]
+              [ProfilePhotoWidget.profileErrorImageSize] =
+          'Image exceeded file-size limits';
     }
   }
 }
@@ -125,14 +145,16 @@ class StartupWorker {
   @visibleForTesting
   Future<Ignition> ignite() async {
     // Fetch and parse the markup.
-    var fetchData = config.isMock ? await _markupFromMock() : await _markupFromChannel();
+    var fetchData =
+        config.isMock ? await _markupFromMock() : await _markupFromChannel();
     final Markup markup = Markup.fromJson(fetchData.cast<String, dynamic>());
     Ignition ignition = Ignition(markup);
 
     // Fetch and parse the schema if needed.
     if (!config.isMock && markup.useSchemaValidations) {
       var rawSchema = await channels.ignitionChannel
-          .invokeMethod<Map<dynamic, dynamic>>(StartupAction.load_schema.action);
+          .invokeMethod<Map<dynamic, dynamic>>(
+              StartupAction.load_schema.action);
       var newSchema = {
         'profile': rawSchema['profileSchema']['fields'],
         'data': rawSchema['dataSchema']['fields'],
@@ -152,6 +174,7 @@ class StartupWorker {
 
   /// Get the [Spark] markup from native component using the ignition channel.
   Future<Map<dynamic, dynamic>> _markupFromChannel() async {
-    return channels.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(StartupAction.ignition.action);
+    return channels.ignitionChannel
+        .invokeMethod<Map<dynamic, dynamic>>(StartupAction.ignition.action);
   }
 }

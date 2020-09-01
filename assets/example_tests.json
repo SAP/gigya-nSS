@@ -5,45 +5,40 @@
     "textColor": "black",
     "enabledColor": "blue",
     "disabledColor": "grey",
-    "errorColor": "red"
-  },
-  "customThemes": {
-    "title": {
-      "fontWeight": "bold",
-      "fontSize": 18
-    },
-    "subtitle": {
-      "fontSize": 16
-    },
-    "input": {
-      "margin": [
-        16,
-        8,
-        15,
-        8
-      ]
-    },
-    "flatButton": {
-      "fontSize": 14,
-      "fontColor": "white",
-      "fontWeight": 6,
-      "elevation": 2,
-      "background": "blue",
-      "size": [
-        220,
-        44
-      ]
-    },
-    "raisedButton": {
-      "fontSize": 14,
-      "fontColor": "white",
-      "fontWeight": 4,
-      "elevation": 0,
-      "background": "blue",
-      "size": [
-        300,
-        40
-      ]
+    "errorColor": "red",
+    "customTheme": {
+      "title": {
+        "fontWeight": "bold",
+        "fontSize": 22
+      },
+      "subtitle": {
+        "fontSize": 16
+      },
+      "input": {
+        "margin": [16, 8, 15, 8]
+      },
+      "flatButton": {
+        "fontSize": 14,
+        "fontColor": "white",
+        "fontWeight": 6,
+        "elevation": 2,
+        "background": "blue",
+        "size": [
+          220,
+          44
+        ]
+      },
+      "raisedButton": {
+        "fontSize": 14,
+        "fontColor": "white",
+        "fontWeight": 4,
+        "elevation": 0,
+        "background": "blue",
+        "size": [
+          300,
+          40
+        ]
+      }
     }
   },
   "useSchemaValidations": false,
@@ -116,7 +111,7 @@
     }
   },
   "routing": {
-    "initial": "login",
+    "initial": "account-update",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -144,7 +139,7 @@
             {
               "type": "label",
               "textKey": "login-social-title",
-              "theme": "title",
+              "theme": "subtitle",
               "style": {
                 "margin": 16
               }
@@ -215,8 +210,7 @@
           "textKey": "common-email",
           "theme": "input",
           "style": {
-            "margin": [16, 4, 16, 4],
-            "cornerRadius": 22,
+            "cornerRadius": 5,
             "borderSize": 1
           },
           "validations": {
@@ -237,8 +231,7 @@
           "textKey": "common-password",
           "theme": "input",
           "style": {
-            "margin": [16, 4, 16, 4],
-            "cornerRadius": 22,
+            "cornerRadius": 5,
             "borderSize": 1
           },
           "validations": {
@@ -283,10 +276,7 @@
           "textKey": "common-submit",
           "theme": "raisedButton",
           "style": {
-            "size": [
-              200,
-              44
-            ],
+            "size": [200, 44],
             "cornerRadius": 5,
             "borderColor": "black",
             "borderSize": 2
@@ -373,12 +363,7 @@
           "type": "checkbox",
           "textKey": "register-terms+link",
           "style": {
-            "margin": [
-              16,
-              0,
-              16,
-              0
-            ]
+            "margin": [16, 0, 16, 0]
           }
         },
         {
@@ -489,54 +474,98 @@
           "theme": "input"
         },
         {
-          "type": "container",
-          "stack": "horizontal",
+          "bind": "data.rescueString",
+          "type": "textInput",
+          "textKey": "common-rescueString",
+          "theme": "input"
+        },
+        {
+          "type": "checkbox",
+          "bind": "data.marketingNotifications",
+          "textKey": "account_marketing_notifications_selection",
           "style": {
-            "size": [0, 44],
-            "background": "blue"
+            "margin": [
+              0,
+              10,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "type": "submit",
+          "textKey": "common-submit",
+          "theme": "raisedButton",
+          "style": {
+            "size": [200, 44],
+            "margin": [
+              0,
+              10,
+              0,
+              16
+            ]
+          }
+        }
+      ]
+    },
+    "account-custom": {
+      "routing": {
+        "onSuccess": "_dismiss"
+      },
+      "action": "setAccount",
+      "appBar": {
+        "textKey": "account-information"
+      },
+      "stack": "vertical",
+      "children": [
+        {
+          "type": "label",
+          "textKey": "account-custom-title",
+          "theme": "title",
+          "style": {
+            "margin": 16
+          }
+        },
+        {
+          "type": "radio",
+          "bind": "data.favGuitar",
+          "style": {
+            "margin": [
+              16,
+              30,
+              16,
+              0
+            ]
           },
-          "children": [
+          "options": [
             {
-              "type": "label",
-              "textKey": "I'm a label",
-              "style": {
-                "fontColor": "white"
-              }
+              "default": true,
+              "value": "PRS",
+              "textKey": "Paul Reed Smith"
             },
             {
-              "type": "label",
-              "textKey": "I'm a another label",
-              "style": {
-                "fontColor": "white"
-              }
+              "value": "Rubato",
+              "textKey": "account-custom-rubato"
+            },
+            {
+              "value": "Parker",
+              "textKey": "account-custom-parker"
             }
           ]
         },
         {
-          "type": "container",
-          "stack": "vertical",
+          "type": "submit",
+          "textKey": "common-submit",
+          "theme": "raisedButton",
           "style": {
-            "background": "green"
-          },
-          "children": [
-            {
-              "type": "submit",
-              "textKey": "common-submit",
-              "theme": "raisedButton",
-              "style": {
-                "size": [
-                  200,
-                  44
-                ],
-                "margin": [
-                  16,
-                  10,
-                  16,
-                  16
-                ]
-              }
-            }
-          ]
+            "size": [200, 44],
+            "margin": [
+              0,
+              50,
+              0,
+              0
+            ]
+          }
         }
       ]
     },
@@ -554,7 +583,7 @@
           "type": "label",
           "textKey": "forgot-password-custom-title",
           "theme": "subtitle",
-          "style": {
+          "style" : {
             "margin": 16
           }
         },

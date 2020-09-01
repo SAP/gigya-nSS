@@ -1,6 +1,7 @@
 
 import 'package:flutter/painting.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 
 extension IterableExt on Iterable {
   bool isNullOrEmpty() {
@@ -38,5 +39,28 @@ extension StringExt on String {
 extension MapExt<T, V> on Map<T, V> {
   bool unavailable(T key) {
     return !this.containsKey(key);
+  }
+}
+
+extension TextAlignExt on TextAlign {
+
+  Alignment toAlignment(NssWidgetType type) {
+    switch(this) {
+      case TextAlign.center:
+        return Alignment.center;
+      case TextAlign.start:
+        return Alignment.centerLeft;
+      case TextAlign.end:
+        return Alignment.centerRight;
+      default:
+        switch(type) {
+          case NssWidgetType.submit:
+            return Alignment.center;
+          case NssWidgetType.dropdown:
+            return Alignment.centerLeft;
+          default:
+            return Alignment.centerLeft;
+        }
+    }
   }
 }

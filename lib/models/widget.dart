@@ -1,3 +1,4 @@
+import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/models/option.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
@@ -44,6 +45,12 @@ class NssWidgetData {
   String url;
   String fallback;
 
+  @JsonKey(name: 'default')
+  dynamic defaultPlaceholder;
+
+  @JsonKey(defaultValue: true)
+  bool allowUpload;
+
   NssWidgetData({
     this.textKey,
     this.type,
@@ -67,9 +74,12 @@ class NssWidgetData {
     this.rows,
     this.url,
     this.fallback,
+    this.defaultPlaceholder,
+    this.allowUpload,
   });
 
-  factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);
+  factory NssWidgetData.fromJson(Map<String, dynamic> json) =>
+      _$NssWidgetDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$NssWidgetDataToJson(this);
 

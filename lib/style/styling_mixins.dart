@@ -11,7 +11,7 @@ mixin StyleMixin {
 
   /// Default style mapping.
   final Map<String, dynamic> defaultStyle = {
-    'margin': 16,
+    'margin': 0,
     'fontSize': 14,
     'fontColor': 'black',
     'fontWeight': 4,
@@ -47,13 +47,13 @@ mixin StyleMixin {
       String customTheme = data.theme ?? '';
       if (customTheme.isAvailable() &&
           config.markup.theme != null &&
-          config.markup.theme['customTheme'] != null &&
-          config.markup.theme['customTheme'].containsKey(customTheme)) {
-        if (config.markup.theme['customTheme'][customTheme]
+          config.markup.customThemes != null &&
+          config.markup.customThemes.containsKey(customTheme)) {
+        if (config.markup.customThemes[customTheme]
             .containsKey(style.name)) {
           value = getStyleValue(
               style,
-              config.markup.theme['customTheme'][customTheme]
+              config.markup.customThemes[customTheme]
                   .cast<String, dynamic>());
         }
       }
@@ -85,6 +85,8 @@ mixin StyleMixin {
       case Styles.background:
         var platformAware = config.isPlatformAware ?? false;
         return getBackground(value, platformAware: platformAware);
+      case Styles.textAlign:
+        return getTextAlign(value);
       default:
         break;
     }
@@ -218,6 +220,12 @@ mixin StyleMixin {
           platformAware: platformAware ?? false);
     }
   }
+
+  getTextAlign(align) {
+    align = "NssTextAlign.$align";
+    NssTextAlign a = NssTextAlign.values.firstWhere((f)=> f.toString() == align, orElse: () => NssTextAlign.none);
+    return a.getValue;
+  }
 }
 
 enum Styles {
@@ -232,8 +240,26 @@ enum Styles {
   opacity,
   elevation,
   indicatorColor,
+  textAlign,
 }
 
 extension StylesExt on Styles {
   String get name => describeEnum(this);
+}
+
+enum NssTextAlign { start, end, center, none }
+
+extension NssTextAlignExt on NssTextAlign {
+  TextAlign get getValue {
+    switch(this) {
+      case NssTextAlign.start:
+        return TextAlign.start;
+      case NssTextAlign.end:
+        return TextAlign.end;
+      case NssTextAlign.center:
+        return TextAlign.center;
+      default:
+        return null; // none
+    }
+  }
 }

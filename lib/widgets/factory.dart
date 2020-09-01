@@ -16,6 +16,7 @@ import 'package:gigya_native_screensets_engine/widgets/material/dropdown.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/inputs.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/labels.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/profile_photo.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/radio.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/screen.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
@@ -37,6 +38,7 @@ enum NssWidgetType {
   socialLoginButton,
   socialLoginGrid,
   image,
+  profilePhoto,
 }
 
 extension NssWidgetTypeExt on NssWidgetType {
@@ -57,7 +59,9 @@ abstract class WidgetFactory {
   Widget buildComponent(NssWidgetType type, NssWidgetData data);
 
   Widget buildContainer(List<Widget> childrenWidgets, NssStack stack,
-      {NssAlignment alignment, Map<String, dynamic> style, bool isScreen = false}) {
+      {NssAlignment alignment,
+      Map<String, dynamic> style,
+      bool isScreen = false}) {
     if (stack == null) {
       //TODO: Markup error.
       return Container();
@@ -154,8 +158,8 @@ class MaterialWidgetFactory extends WidgetFactory {
       viewModel: NssIoc().use(ScreenViewModel),
       bindingModel: NssIoc().use(BindingModel),
       screen: screen,
-      content:
-          buildContainer(buildWidgets(screen.children), screen.stack, style: screen.style, isScreen: true),
+      content: buildContainer(buildWidgets(screen.children), screen.stack,
+          style: screen.style, isScreen: true),
     );
   }
 
@@ -182,6 +186,8 @@ class MaterialWidgetFactory extends WidgetFactory {
         return SocialLoginGrid(key: UniqueKey(), data: data);
       case NssWidgetType.image:
         return ImageWidget(key: UniqueKey(), data: data);
+      case NssWidgetType.profilePhoto:
+        return ProfilePhotoWidget(key: UniqueKey(), data: data);
       default:
         return Container();
     }

@@ -8,7 +8,8 @@ class ContainerWidget extends StatelessWidget with StyleMixin, DecorationMixin {
   final Map<String, dynamic> style;
   final bool isScreen;
 
-  ContainerWidget({Key key, this.child, this.style, this.isScreen}) : super(key: key);
+  ContainerWidget({Key key, this.child, this.style, this.isScreen})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +20,10 @@ class ContainerWidget extends StatelessWidget with StyleMixin, DecorationMixin {
       child: Opacity(
         opacity: getStyle(Styles.opacity, styles: style),
         child: Container(
-          width: size != null ? ensureDouble(size[0]) : null,
-          height: size != null ? ensureDouble(size[1]) : null,
+          width:
+              size != null ? size[0] == 0 ? null : ensureDouble(size[0]) : null,
+          height:
+              size != null ? size[0] == 0 ? null : ensureDouble(size[1]) : null,
           decoration: isScreen == false
               ? BoxDecoration(
                   color: background is Color ? background : null,
