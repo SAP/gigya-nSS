@@ -110,7 +110,7 @@ allprojects {
 Copy the following Android archive libraries into your application's /libs folder and add these references to your application's build.gradle file:
 ```
 // Referencing the NSS native library (via Jitpack)
-implementation 'com.github.SAP:gigya-android-sdk:nss-v0.3.0'
+implementation 'com.github.SAP.gigya-android-sdk:gigya-android-auth:nss-v1.0.0'
 ```
 ```
 // Referencing the NSS engine.
