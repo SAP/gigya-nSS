@@ -962,6 +962,16 @@ Here is an example of a localization file:
 }
 ```
 
+## Global error keys
+The engine provides several global error keys which are customizable using the localization sections.
+
+Available keys:
+**error-schema-required-validation** for fields that can produce a *"required"* error.
+**error-schema-regex-validation** for fields that can produce a *"regex" error.
+**error-schema-checkbox-validation** for checkbox feilds which are required. 
+**error-photo-failed-upload** for a failed profile photo upload.
+**error-photo-image-size** for indicating that the profile photo image exceeds the size limit.
+
 ## Known Issues
 
 Native Screen-Sets engine versioning is still under development.
