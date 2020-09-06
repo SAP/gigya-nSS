@@ -110,7 +110,7 @@ allprojects {
 Copy the following Android archive libraries into your application's /libs folder and add these references to your application's build.gradle file:
 ```
 // Referencing the NSS native library (via Jitpack)
-implementation 'com.github.SAP.gigya-android-sdk:gigya-android-auth:nss-v1.0.0'
+implementation 'com.github.SAP.gigya-android-sdk:gigya-android-nss:nss-v1.0.0'
 ```
 ```
 // Referencing the NSS engine.
@@ -478,263 +478,34 @@ The NSS Library does not implement them for you.
    }
 }
 ```
-### Styling
 
-In order to style your screen-set, you are able to add specific styling properties to each component.
+#### image
 
-Available styling parameters:
-
- - margin - Will set the outer component margin and space it from its adjacent components.
-    - Supported values:
-        - Number (floating point available) - Will be used for all directions.
-        - Array of numbers (floating point available) following this pattern: [left, top, right, bottom].
-    - Supported Components:
-        - container
-        - label
-        - all inputs
-        - submit
-        - checkbox
-        - dropdown
-        - radio
- - size - Set the exact component size (in pixels).
-    - Supported values:
-        - Array of numbers (floating point available) following this pattern: [width, height]
-    - Supported Components:
-        - container
-        - label
-        - all inputs
-        - submit
-        - checkbox
-        - dropdown
-        - radio
- - background - Set the component background.
-    - Supported values:
-        - Color - (string) You can pass the color value using either any of the supported colors by name, or any hex formatted CSS color.
-            - name - available options:
-                - blue
-                - red
-                - green
-                - grey
-                - yellow
-                - orange
-                - white
-                - black
-                - transparent
-            - HEX code - Any value following this pattern:
-                - #bcbcbc
-    - Supported Components:
-        - screen
-        - container
-        - all inputs
-        - submit
-        - checkbox
-        - radio
- - fontColor - Set the color of the displayed component text.
-    - Supported values:
-        - Color - (string) You can pass the color value using either any of the supported colors by name, or any hex formatted CSS color.
-            - name - available options:
-                - blue
-                - red
-                 - green
-                - grey
-                - yellow
-                - orange
-                - white
-                - black
-                - transparent
-            - HEX code - Any value following this pattern:
-                - #bcbcbc
-    - Supported Components:
-        - label
-        - all inputs
-        - submit
-        - checkbox
-        - dropdown
-        - radio
- - fontSize - Sets the size of the displayed component text.
-    - Supported values:
-        - Number (floating point available).
-    - Supported Components:
-        - label
-        - all inputs
-        - submit
-        - checkbox
-        - dropdown
-        - radio
- - fontWeight - Set the weight of the displayed component text.
-    - Supported values:
-        - Number (integer) between 1-9.
-        - bold
-    - Supported Components:
-        - label
-        - all inputs
-        - submit
-        - checkbox
-        - dropdown
-        - radio
- - cornerRadius - Round component corners.
-    - Supported values:
-        - Number (floating point available). Be sure not to use a number that is bigger than (component.height / 2).
-    - Supported Components:
-        - all inputs
-        - submit
- - borderColor - Sets the color of the component border.
-    - Supported values:
-        - Color - (string) You can pass the color value using either any of the supported colors by name, or any hex formatted CSS color.
-        - name - available options:
-            - blue
-            - red
-            - green
-            - grey
-            - yellow
-            - orange
-            - white
-            - black
-            - transparent
-        - HEX code - Any value following this pattern:
-            - #bcbcbc
-    - Supported Components:
-        - all inputs
-        - dropdown
- - borderSize - Sets the size of the component border.
-    - Supported values:
-        - Number (floating point available)
-    - Supported Components:
-        - all inputs
-        - dropdown
- - Opacity - Sets the component opacity value.
-    - Supported values:
-        - Number - between 0-1.
-    - Supported Components:
-        - container
-        - label
-        - all inputs
-        - submit
-        - checkbox
-        - dropdown
-        - radio
- - Elevation - Sets the Z axis position of the component.
-    - Supported values:
-        - Number (floating point available) between 0-10.
-    - Supported Components:
-        - submit
-
-#### Theme
-
-You are able to apply a global theme to your screen-sets providing an additional "theme" tag to your markup or by providing an additional asset
-file.
-
-Available theme parameters:
-- primaryColor
-- secondaryColor
-- textColor
- - enabledColor
- - disabledColor
- - errorColor
-
-Example:
-
-```json
-"theme" : {
-   "primaryColor": "red",
-   "secondaryColor": "white",
-   "textColor": "white",
-   "enabledColor": "green",
-   "disabledColor": "grey",
-   "errorColor": "red"
- }
-```
-
-#### Design Notes:
-
-- Primary & Secondary colors parameters should be contrasting colors.
- - In order to add an additional asset file, you are required to name the theme file exactly as you named the screen-sets markup file, adding.theme.json" suffix.
-
-For example:
-If the markup file is: gigya-nss-example.json, your theme file should be named: gigya-nss-example.theme.json.
-Be sure to remove the "theme" parameter if you use a different file. An example is available in the sample applications.
-
-#### Using custom themes
-
-You can add customized themes and use them as a reference to a specific component.
-For example:
+Use the image compnent to display remote hosted image files or native internal assets.
 ```json
 {
-  "theme" : {
-    "primaryColor": "red",
-    "secondaryColor": "white",
-    "textColor": "white",
-    "enabledColor": "green",
-    "disabledColor": "grey",
-    "errorColor": "red",
-    "title": {
-       "fontSize": 22,
-       "fontWeight": "bold"
-    },
-    "flatButton": {
-       "fontSize": 16,
-       "elevation": 0
-    }
-  }
+  "type": "image",
+  "url": "IMAGE URL OR INTERNAL ASSET FILE NAME",
+  "fallback": "FALLBACK IMAGE URL OR INTERNAL ASSET FILE NAME"
+```
+You are able to use the *"bind"* property to bind the image component to any schema field that contains an image link.
+
+#### profilePhoto
+
+A customized image component that is used to display the users profile photo as linked in the "profile.photoURL" schema field.
+```json
+{
+  "type": "profilePhoto",
+  "allowUpload": false,
+  "default": "DEFAULT PHOTO URL OR INTERNAL ASSET FILE NAME"
 }
 ```
-
-In order to apply these themes you will need to reference them to their specific component as follows:
-
-```
-{
-...
-  {
-   "type" : "label",
-   "theme" : "title
-  }
-   ...
-  {
-   "type" : "submit",
-   "theme" : "flatButton"
-  }
- ...
-}
-```
-
-### Input validations
-
-All input components support these two validation options:
- - required
- - regex
-
-In order to apply validation please follow this example as reference:
-Example for loginID email input with email regex validations.
-```json
-{
-  "bind": "#loginID",
-  "type": "emailInput",
-  "textKey": "Email",
-  "theme": "input",
-  "validations": {
-     "required": {
-       "enabled": true,
-       "errorKey": "This field is required."
-    },
-    "regex": {
-       "enabled": true,
-       "value": "^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\\.[a-zA-Z]+",
-       "errorKey": "Invalid email format."
-    }
-  }
-},
-```
+The *"allowUpload"* property will determine if the component will handle click events in order to provide image updating.
 
 ```
-Error display value is declared in the "errorKey" string value.
+In order to link both "image" and "profilePhoto" components to an internal asset you will be required to provide only the asset name.
+Do not add the file type.
 ```
-
-```
-The NSS engine is written in Dart. Dart regular expressions have the same syntax and semantics as JavaScript regular expressions.
-See ecma-international.org/ecma-262/9.0/#sec-regexp-regular-expression-objects for the specification of JavaScript regular
-expressions.
-```
-
 #### checkbox
 
 The checkbox component shows a checkbox for basic Boolean toggle indication.
@@ -802,6 +573,267 @@ The dropdown component displays a drop-down list of options from which the user 
    ]
 }
 ```
+
+### Input validations
+
+All input components support these two validation options:
+ - required
+ - regex
+
+In order to apply validation please follow this example as reference:
+Example for loginID email input with email regex validations.
+```json
+{
+  "bind": "#loginID",
+  "type": "emailInput",
+  "textKey": "Email",
+  "theme": "input",
+  "validations": {
+     "required": {
+       "enabled": true,
+       "errorKey": "This field is required."
+    },
+    "regex": {
+       "enabled": true,
+       "value": "^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\\.[a-zA-Z]+",
+       "errorKey": "Invalid email format."
+    }
+  }
+},
+```
+
+```
+Error display value is declared in the "errorKey" string value.
+```
+
+```
+The NSS engine is written in Dart. Dart regular expressions have the same syntax and semantics as JavaScript regular expressions.
+See ecma-international.org/ecma-262/9.0/#sec-regexp-regular-expression-objects for the specification of JavaScript regular
+expressions.
+```
+
+### Styling
+
+In order to style your screen-set, you are able to add specific styling properties to each component.
+
+Available styling parameters:
+
+ - margin - Will set the outer component margin and space it from its adjacent components.
+    - Supported values:
+        - Number (floating point available) - Will be used for all directions.
+        - Array of numbers (floating point available) following this pattern: [left, top, right, bottom].
+    - Supported Components:
+        - all
+ - size - Set the exact component size (in pixels).
+    - Supported values:
+        - Array of numbers (floating point available) following this pattern: [width, height]
+    - Supported Components:
+        - container
+        - label
+        - all inputs
+        - submit
+        - checkbox
+        - dropdown
+        - radio
+        - image
+        - profilePhoto
+ - background - Set the component background.
+    - Supported values:
+        - Color - (string) You can pass the color value using either any of the supported colors by name, or any hex formatted CSS color.
+            - name - available options:
+                - blue
+                - red
+                - green
+                - grey
+                - yellow
+                - orange
+                - white
+                - black
+                - transparent
+            - HEX code - Any value following this pattern:
+                - #bcbcbc
+    - Supported Components:
+        - screen
+        - container
+        - all inputs
+        - submit
+        - checkbox
+        - radio
+        - image
+        - profilePhoto
+ - fontColor - Set the color of the displayed component text.
+    - Supported values:
+        - Color - (string) You can pass the color value using either any of the supported colors by name, or any hex formatted CSS color.
+            - name - available options:
+                - blue
+                - red
+                 - green
+                - grey
+                - yellow
+                - orange
+                - white
+                - black
+                - transparent
+            - HEX code - Any value following this pattern:
+                - #bcbcbc
+    - Supported Components:
+        - label
+        - all inputs
+        - submit
+        - checkbox
+        - dropdown
+        - radio
+ - fontSize - Sets the size of the displayed component text.
+    - Supported values:
+        - Number (floating point available).
+    - Supported Components:
+        - label
+        - all inputs
+        - submit
+        - checkbox
+        - dropdown
+        - radio
+ - fontWeight - Set the weight of the displayed component text.
+    - Supported values:
+        - Number (integer) between 1-9.
+        - bold
+    - Supported Components:
+        - label
+        - all inputs
+        - submit
+        - checkbox
+        - dropdown
+        - radio
+ - cornerRadius - Round component corners.
+    - Supported values:
+        - Number (floating point available). Be sure not to use a number that is bigger than (component.height / 2).
+    - Supported Components:
+        - all inputs
+        - submit
+        - image
+        - profilePhoto
+ - borderColor - Sets the color of the component border.
+    - Supported values:
+        - Color - (string) You can pass the color value using either any of the supported colors by name, or any hex formatted CSS color.
+        - name - available options:
+            - blue
+            - red
+            - green
+            - grey
+            - yellow
+            - orange
+            - white
+            - black
+            - transparent
+        - HEX code - Any value following this pattern:
+            - #bcbcbc
+    - Supported Components:
+        - all inputs
+        - dropdown
+        - image
+        - profilePhoto
+ - borderSize - Sets the size of the component border.
+    - Supported values:
+        - Number (floating point available)
+    - Supported Components:
+        - all inputs
+        - dropdown
+        - image
+        - profilePhoto
+ - Opacity - Sets the component opacity value.
+    - Supported values:
+        - Number - between 0-1.
+    - Supported Components:
+        - container
+        - label
+        - all inputs
+        - submit
+        - checkbox
+        - dropdown
+        - radio
+ - Elevation - Sets the Z axis position of the component.
+    - Supported values:
+        - Number (floating point available) between 0-10.
+    - Supported Components:
+        - submit
+        - image
+        - profilePhoto
+
+#### Theme
+
+You are able to apply a global theme to your screen-sets providing an additional "theme" tag to your markup or by providing an additional asset
+file.
+
+Available theme parameters:
+- primaryColor
+- secondaryColor
+- textColor
+ - enabledColor
+ - disabledColor
+ - errorColor
+
+Example:
+
+```json
+"theme" : {
+   "primaryColor": "red",
+   "secondaryColor": "white",
+   "textColor": "white",
+   "enabledColor": "green",
+   "disabledColor": "grey",
+   "errorColor": "red"
+ }
+```
+
+#### Design Notes:
+
+- Primary & Secondary colors parameters should be contrasting colors.
+ - In order to add an additional asset file, you are required to name the theme file exactly as you named the screen-sets markup file, adding.theme.json" suffix.
+
+For example:
+If the markup file is: gigya-nss-example.json, your theme file should be named: gigya-nss-example.theme.json.
+Be sure to remove the "theme" parameter if you use a different file. An example is available in the sample applications.
+
+#### Using custom themes
+
+You can add customized themes and use them as a reference to a specific component.
+Add json object to the root of the markup.
+For example:
+```json
+{
+  "customThemes" : {
+    "title": {
+       "fontSize": 22,
+       "fontWeight": "bold"
+    },
+    "flatButton": {
+       "fontSize": 16,
+       "elevation": 0
+    }
+  }
+}
+```
+
+In order to apply these themes you will need to reference them to their specific component as follows:
+
+```
+{
+...
+  {
+   "type" : "label",
+   "theme" : "title
+  }
+   ...
+  {
+   "type" : "submit",
+   "theme" : "flatButton"
+  }
+ ...
+}
+```
+
+*** Container components currently do not support custom themeing ***
+
 
 ## Schema validations
 
