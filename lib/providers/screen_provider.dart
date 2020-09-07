@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/utils/debug.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
+import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:gigya_native_screensets_engine/services/api_service.dart';
@@ -22,7 +23,7 @@ extension ScreenActionExt on ScreenAction {
 /// The view model class acts as the coordinator to the currently displayed screen.
 /// It will handle the current screen visual state and its adjacent form and is responsible for service/repository
 /// action triggering.
-class ScreenViewModel with ChangeNotifier, DebugUtils {
+class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin {
   final ApiService apiService;
   final ScreenService screenService;
 
@@ -95,7 +96,9 @@ class ScreenViewModel with ChangeNotifier, DebugUtils {
   void setError(String error) {
     engineLogger.d('Screen with id: $id setError with $error');
     _state = NssScreenState.error;
-    _errorText = error;
+
+    // Check if error string exists in localization keys. If so use it.
+    _errorText = localizedStringFor(error);
     notifyListeners();
   }
 

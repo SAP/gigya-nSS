@@ -8,6 +8,7 @@ import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
+import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
@@ -15,9 +16,6 @@ import 'package:provider/provider.dart';
 
 class ProfilePhotoWidget extends StatefulWidget {
   final NssWidgetData data;
-
-  static const profileErrorImageUpload = 'error-photo-failed-upload';
-  static const profileErrorImageSize = 'error-photo-image-size';
 
   const ProfilePhotoWidget({Key key, @required this.data}) : super(key: key);
 
@@ -94,9 +92,9 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
   void _onProfileImageTap() async {
     debugPrint('_onProfileImageTap');
     final MethodChannel channel = NssIoc().use(NssChannels).dataChannel;
-    var data = await channel
-        .invokeMethod<Uint8List>('pick_image', {'text': widget.data.textKey})
-        .timeout(Duration(minutes: 5), onTimeout: () {
+    var data = await channel.invokeMethod<Uint8List>('pick_image', {
+      'text': widget.data.textKey
+    }).timeout(Duration(minutes: 5), onTimeout: () {
       // Timeout
       return null;
     }).catchError((error) {
@@ -120,13 +118,12 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
     switch (code) {
       case "500":
         // General image upload error.
-        provider.setError(
-            localizedStringFor(ProfilePhotoWidget.profileErrorImageUpload));
+        provider
+            .setError(localizedStringFor(ErrorUtils.profileErrorImageUpload));
         break;
       case "413004":
         // Image size error.
-        provider.setError(
-            localizedStringFor(ProfilePhotoWidget.profileErrorImageSize));
+        provider.setError(localizedStringFor(ErrorUtils.profileErrorImageSize));
         break;
     }
   }

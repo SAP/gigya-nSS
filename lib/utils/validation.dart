@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
+import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
@@ -18,20 +19,15 @@ class NssInputValidator with LocalizationMixin {
   String errorKey;
   String format;
 
-  static const defaultLangKey = '_default';
-  static const schemaErrorKeyRequired = 'error-schema-required-validation';
-  static const schemaErrorKeyRegEx = 'error-schema-regex-validation';
-  static const schemaErrorKeyCheckbox = 'error-schema-checkbox-validation';
-
   static const propertyPrefix = '#';
 
   NssInputValidator.requiredFromSchema()
       : enabled = true,
-        errorKey = schemaErrorKeyRequired;
+        errorKey = ErrorUtils.schemaErrorKeyRequired;
 
   NssInputValidator.regExFromSchema(String format)
       : enabled = true,
-        errorKey = schemaErrorKeyRegEx,
+        errorKey = ErrorUtils.schemaErrorKeyRegEx,
         format = format;
 
   NssInputValidator.from(Map<String, dynamic> json)
@@ -143,7 +139,7 @@ mixin ValidationMixin {
 
       // Handling schema checkbox field that uses the same format field as well as regex.
       if (regexValidator.format == 'tr' && input != 'true') {
-        regexValidator.errorKey = NssInputValidator.schemaErrorKeyCheckbox;
+        regexValidator.errorKey = ErrorUtils.schemaErrorKeyCheckbox;
         return regexValidator.getError();
       }
 

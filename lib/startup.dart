@@ -6,13 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
-import 'package:gigya_native_screensets_engine/utils/validation.dart';
-import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
+import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/profile_photo.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 
 enum StartupAction { ignition, ready_for_display, load_schema }
 
@@ -59,7 +58,7 @@ class StartupWidget extends StatelessWidget {
     }
 
     // Add default localization values that are needed (can be overriden by client).
-    addDefultStringValues();
+    ErrorUtils().addDefultStringValues(config.markup.localization);
 
     // Notify native that we are ready to display. Pre-warm up done.
     issueNativeReadyForDisplay();
@@ -93,39 +92,6 @@ class StartupWidget extends StatelessWidget {
     }
   }
 
-  //TODO: Future versions - move to a specific logic class. Task may grow in time.
-  void addDefultStringValues() {
-    var localization = config.markup.localization;
-    if (!localization[NssInputValidator.defaultLangKey]
-        .containsKey(NssInputValidator.schemaErrorKeyRequired)) {
-      config.markup.localization[NssInputValidator.defaultLangKey]
-          [NssInputValidator.schemaErrorKeyRequired] = 'This field is required';
-    }
-    if (!localization[NssInputValidator.defaultLangKey]
-        .containsKey(NssInputValidator.schemaErrorKeyRegEx)) {
-      config.markup.localization[NssInputValidator.defaultLangKey]
-              [NssInputValidator.schemaErrorKeyRegEx] =
-          'Please enter a valid value';
-    }
-    if (!localization[NssInputValidator.defaultLangKey]
-        .containsKey(NssInputValidator.schemaErrorKeyCheckbox)) {
-      config.markup.localization[NssInputValidator.defaultLangKey]
-              [NssInputValidator.schemaErrorKeyCheckbox] =
-          'Checked field is mandatory';
-    }
-    if (!localization[NssInputValidator.defaultLangKey]
-        .containsKey(ProfilePhotoWidget.profileErrorImageUpload)) {
-      config.markup.localization[NssInputValidator.defaultLangKey]
-              [ProfilePhotoWidget.profileErrorImageUpload] =
-          'Failed to upload. Please try again';
-    }
-    if (!localization[NssInputValidator.defaultLangKey]
-        .containsKey(ProfilePhotoWidget.profileErrorImageSize)) {
-      config.markup.localization[NssInputValidator.defaultLangKey]
-              [ProfilePhotoWidget.profileErrorImageSize] =
-          'Image exceeded file-size limits';
-    }
-  }
 }
 
 class Ignition {
