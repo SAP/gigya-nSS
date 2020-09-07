@@ -21,8 +21,7 @@ class MaterialScreenWidget extends StatefulWidget {
       : super(key: key);
 
   @override
-  _MaterialScreenWidgetState createState() =>
-      _MaterialScreenWidgetState(viewModel, bindingModel);
+  _MaterialScreenWidgetState createState() => _MaterialScreenWidgetState(viewModel, bindingModel);
 }
 
 class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
@@ -40,7 +39,11 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     // Initialize screen build logic.
     _attachScreenAction();
     _registerNavigationSteam();
+
+    // Trigger on first render.
+    WidgetsBinding.instance.addPostFrameCallback((_) => screenDidLoad(widget.screen.id));
   }
+
 
   @override
   Widget buildScaffold() {
@@ -53,17 +56,14 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       appBar: widget.screen.appBar == null
           ? null
           : AppBar(
-              elevation: getStyle(Styles.elevation,
-                  styles: widget.screen.appBar.style),
+              elevation: getStyle(Styles.elevation, styles: widget.screen.appBar.style),
               backgroundColor: appBackground,
               title: Text(
                 localizedStringFor(widget.screen.appBar.textKey) ?? '',
                 style: TextStyle(
                   color: getStyle(Styles.fontColor,
-                      styles: widget.screen.appBar.style,
-                      themeProperty: 'secondaryColor'),
-                  fontWeight: getStyle(Styles.fontWeight,
-                      styles: widget.screen.appBar.style),
+                      styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
+                  fontWeight: getStyle(Styles.fontWeight, styles: widget.screen.appBar.style),
                 ),
               ),
               leading: Platform.isIOS
@@ -72,11 +72,9 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
                         icon: Icon(
                           Icons.close,
                           color: getStyle(Styles.fontColor,
-                              styles: widget.screen.appBar.style,
-                              themeProperty: 'secondaryColor'),
+                              styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
                         ),
-                        onPressed: () =>
-                            Navigator.pushNamed(context, '_canceled'),
+                        onPressed: () => Navigator.pushNamed(context, '_canceled'),
                       ),
                     )
                   : null,
@@ -132,8 +130,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   /// This will result in the instantiation of the native controller action model which will handle all
   /// the native SDK logic.
   _attachScreenAction() async {
-    var screenDataMap =
-        await viewModel.attachScreenAction(widget.screen.action);
+    var screenDataMap = await viewModel.attachScreenAction(widget.screen.action);
     bindings.updateWith(screenDataMap);
   }
 }
