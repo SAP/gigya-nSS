@@ -117,7 +117,7 @@
     }
   },
   "routing": {
-    "initial": "account-update",
+    "initial": "register",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
