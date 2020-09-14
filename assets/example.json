@@ -31,7 +31,7 @@
       "elevation": 2,
       "background": "blue",
       "size": [
-        220,
+        300,
         44
       ]
     },
@@ -117,7 +117,7 @@
     }
   },
   "routing": {
-    "initial": "register",
+    "initial": "login",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -285,10 +285,6 @@
           "textKey": "common-submit",
           "theme": "raisedButton",
           "style": {
-            "size": [
-              200,
-              44
-            ],
             "cornerRadius": 5,
             "borderColor": "black",
             "borderSize": 2
