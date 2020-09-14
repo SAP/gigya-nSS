@@ -5,7 +5,8 @@
     "textColor": "black",
     "enabledColor": "blue",
     "disabledColor": "grey",
-    "errorColor": "red"
+    "errorColor": "red",
+    "linkColor": "blue"
   },
   "customThemes": {
     "title": {
@@ -116,7 +117,7 @@
     }
   },
   "routing": {
-    "initial": "login",
+    "initial": "account-update",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -270,6 +271,7 @@
           "type": "label",
           "textKey": "login-no-account+link",
           "style": {
+            "linkColor": "red",
             "margin": [
               0,
               24,
@@ -490,34 +492,7 @@
         },
         {
           "type": "container",
-          "stack": "horizontal",
-          "style": {
-            "size": [0, 44],
-            "background": "blue"
-          },
-          "children": [
-            {
-              "type": "label",
-              "textKey": "I'm a label",
-              "style": {
-                "fontColor": "white"
-              }
-            },
-            {
-              "type": "label",
-              "textKey": "I'm a another label",
-              "style": {
-                "fontColor": "white"
-              }
-            }
-          ]
-        },
-        {
-          "type": "container",
           "stack": "vertical",
-          "style": {
-            "background": "green"
-          },
           "children": [
             {
               "type": "submit",

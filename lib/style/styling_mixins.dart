@@ -6,6 +6,26 @@ import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 
+enum Styles {
+  margin,
+  fontColor,
+  fontSize,
+  fontWeight,
+  background,
+  cornerRadius,
+  borderColor,
+  borderSize,
+  opacity,
+  elevation,
+  indicatorColor,
+  textAlign,
+  linkColor
+}
+
+extension StylesExt on Styles {
+  String get name => describeEnum(this);
+}
+
 mixin StyleMixin {
   final NssConfig config = NssIoc().use(NssConfig);
 
@@ -21,6 +41,7 @@ mixin StyleMixin {
     'borderColor': 'transparent',
     'borderSize': 0,
     'cornerRadius': 0,
+    'linkColor': 'blue'
   };
 
   /// Default theme mapping.
@@ -49,12 +70,9 @@ mixin StyleMixin {
           config.markup.theme != null &&
           config.markup.customThemes != null &&
           config.markup.customThemes.containsKey(customTheme)) {
-        if (config.markup.customThemes[customTheme]
-            .containsKey(style.name)) {
-          value = getStyleValue(
-              style,
-              config.markup.customThemes[customTheme]
-                  .cast<String, dynamic>());
+        if (config.markup.customThemes[customTheme].containsKey(style.name)) {
+          value =
+              getStyleValue(style, config.markup.customThemes[customTheme].cast<String, dynamic>());
         }
       }
     }
@@ -78,6 +96,7 @@ mixin StyleMixin {
       case Styles.borderColor:
       case Styles.fontColor:
       case Styles.indicatorColor:
+      case Styles.linkColor:
         var platformAware = config.isPlatformAware ?? false;
         return getColor(value, platformAware: platformAware);
       case Styles.fontWeight:
@@ -212,46 +231,26 @@ mixin StyleMixin {
   getBackground(background, {bool platformAware}) {
     if (background.contains("#"))
       return _getHexColor(background);
-    else if (background.contains("http://") ||
-        background.contains("https://")) {
+    else if (background.contains("http://") || background.contains("https://")) {
       return NetworkImage(background);
     } else {
-      return _getColorWithName(background,
-          platformAware: platformAware ?? false);
+      return _getColorWithName(background, platformAware: platformAware ?? false);
     }
   }
 
   getTextAlign(align) {
     align = "NssTextAlign.$align";
-    NssTextAlign a = NssTextAlign.values.firstWhere((f)=> f.toString() == align, orElse: () => NssTextAlign.none);
+    NssTextAlign a = NssTextAlign.values
+        .firstWhere((f) => f.toString() == align, orElse: () => NssTextAlign.none);
     return a.getValue;
   }
-}
-
-enum Styles {
-  margin,
-  fontColor,
-  fontSize,
-  fontWeight,
-  background,
-  cornerRadius,
-  borderColor,
-  borderSize,
-  opacity,
-  elevation,
-  indicatorColor,
-  textAlign,
-}
-
-extension StylesExt on Styles {
-  String get name => describeEnum(this);
 }
 
 enum NssTextAlign { start, end, center, none }
 
 extension NssTextAlignExt on NssTextAlign {
   TextAlign get getValue {
-    switch(this) {
+    switch (this) {
       case NssTextAlign.start:
         return TextAlign.start;
       case NssTextAlign.end:
