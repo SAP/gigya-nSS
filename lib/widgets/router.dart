@@ -101,8 +101,7 @@ abstract class Router {
     //TODO: Specific errors may be more apropriate here.
     if (nextRoute == null) {
       engineLogger.e('Failed to parse routing for name: ${settings.name}');
-      return getErrorRoute(
-          settings, 'Failed to parse desired route.\nPlease verify markup.');
+      return getErrorRoute(settings, 'Failed to parse desired route.\nPlease verify markup.');
     }
     if (shouldCancel(nextRoute)) {
       return dismissEngine(settings, '_canceled');
@@ -111,14 +110,22 @@ abstract class Router {
       return dismissEngine(settings, '_dismiss');
     }
 
-    dynamic nextScreenObj = nextScreen(nextRoute);
+    Screen nextScreenObj = nextScreen(nextRoute);
     if (nextScreenObj == null) {
-      return getErrorRoute(
-          settings, 'Screen not found.\nPlease verify markup.');
+      return getErrorRoute(settings, 'Screen not found.\nPlease verify markup.');
     }
 
     return screenRoute(settings, nextScreenObj);
   }
+}
+
+/// Engeine internal routing event class.
+/// Used to group all relevant routing stream data before passing it to the
+class RoutingEvent {
+  final String route;
+  final String pid;
+
+  RoutingEvent(this.route, this.pid);
 }
 
 enum RoutingAllowed { none, onPendingRegistration, onPendingEmailVerification }
@@ -153,8 +160,7 @@ class MaterialRouter extends Router {
   final NssChannels channels;
   final MaterialWidgetFactory widgetFactory;
 
-  MaterialRouter(this.config, this.channels, this.widgetFactory)
-      : super(config, channels);
+  MaterialRouter(this.config, this.channels, this.widgetFactory) : super(config, channels);
 
   @override
   Route emptyRoute(RouteSettings settings) {
@@ -165,8 +171,7 @@ class MaterialRouter extends Router {
   Route getErrorRoute(RouteSettings settings, String errorMessage) {
     return MaterialPageRoute(
       settings: settings,
-      builder: (_) =>
-          MaterialScreenRenderErrorWidget(errorMessage: errorMessage),
+      builder: (_) => MaterialScreenRenderErrorWidget(errorMessage: errorMessage),
     );
   }
 
@@ -174,7 +179,7 @@ class MaterialRouter extends Router {
   Route screenRoute(RouteSettings settings, Screen screen) {
     return MaterialPageRoute(
       settings: settings,
-      builder: (_) => widgetFactory.buildScreen(screen),
+      builder: (_) => widgetFactory.buildScreen(screen, settings.arguments),
     );
   }
 }
@@ -184,8 +189,7 @@ class CupertinoRouter extends Router {
   final NssChannels channels;
   final CupertinoWidgetFactory widgetFactory;
 
-  CupertinoRouter(this.config, this.channels, this.widgetFactory)
-      : super(config, channels);
+  CupertinoRouter(this.config, this.channels, this.widgetFactory) : super(config, channels);
 
   @override
   Route emptyRoute(RouteSettings settings) {

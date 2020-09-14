@@ -16,9 +16,18 @@ class MaterialScreenWidget extends StatefulWidget {
   final Screen screen;
   final Widget content;
 
-  const MaterialScreenWidget(
-      {Key key, this.viewModel, this.bindingModel, this.screen, this.content})
-      : super(key: key);
+  /// Routing data is the dyanmic data that is injected or changed in realtime when you edit
+  /// your screen form.
+  final Map<String, dynamic> routingData;
+
+  const MaterialScreenWidget({
+    Key key,
+    this.viewModel,
+    this.bindingModel,
+    this.screen,
+    this.content,
+    this.routingData,
+  }) : super(key: key);
 
   @override
   _MaterialScreenWidgetState createState() => _MaterialScreenWidgetState(viewModel, bindingModel);
@@ -33,17 +42,17 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   void initState() {
     // Update dynamic view model screen id because view model is instantiated view IOC.
     viewModel.id = widget.screen.id;
-
     super.initState();
+
+    // Screen Event triggered "routeFrom"
 
     // Initialize screen build logic.
     _attachScreenAction();
     _registerNavigationSteam();
 
-    // Trigger on first render.
+    // Screen Event triggered "screenDidLoad".
     WidgetsBinding.instance.addPostFrameCallback((_) => screenDidLoad(widget.screen.id));
   }
-
 
   @override
   Widget buildScaffold() {
@@ -94,7 +103,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
               SingleChildScrollView(
                 child: Form(
                   key: widget.viewModel.formKey,
-                  child: widget.content,
+                  child: Container(width: MediaQuery.of(context).size.width, child: widget.content),
                 ),
               ),
               Consumer<ScreenViewModel>(
@@ -122,7 +131,8 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
           route.toString().split('/').last) {
         return;
       }
-      Navigator.pushReplacementNamed(context, route);
+      Navigator.pushReplacementNamed(context, route,
+          arguments: {'pid': viewModel.id, 'routingData': widget.routingData});
     });
   }
 
@@ -130,11 +140,35 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   /// This will result in the instantiation of the native controller action model which will handle all
   /// the native SDK logic.
   _attachScreenAction() async {
-    var screenDataMap = await viewModel.attachScreenAction(widget.screen.action);
-    bindings.updateWith(screenDataMap);
+    var dataMap = await viewModel.attachScreenAction(widget.screen.action);
+    // Merge routing data into injected screen data and update bindings.
+    dataMap.addAll(widget.routingData);
+    bindings.updateWith(dataMap);
+  }
+
+  void didRouteFrom() async {
+    Map<String, dynamic> data = await routeFrom(viewModel.pid, widget.routingData);
+    if (data != null) {
+      setState(() {
+        widget.routingData.addAll(data);
+        // Merge routing data into available binding data.
+        bindings.updateWith(widget.routingData);
+      });
+    }
+  }
+
+  void willRouteTo(nid) async {
+    Map<String, dynamic> data = await routeTo(nid, bindings.savedBindingData);
+    if (data != null) {
+      setState(() {
+
+      });
+    }
   }
 }
 
+/// Custom screen progress widget.
+/// Will be displayed on top of the screen stack when the screen state is in progress.
 class MaterialScreenProgressWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -145,6 +179,7 @@ class MaterialScreenProgressWidget extends StatelessWidget {
         color: Colors.grey.withOpacity(0.4),
       ),
       child: Center(
+        //TODO: Allow theming of the progress indicator.
         child: CircularProgressIndicator(),
       ),
     );

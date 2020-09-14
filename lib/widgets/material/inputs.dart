@@ -152,9 +152,14 @@ class _TextInputWidgetState extends State<TextInputWidget>
                             ),
                     ),
                     validator: (input) {
+                      // Field validation triggered.
                       return validateField(input, widget.data.bind);
                     },
+                    onChanged: (s) {
+                      // Changed event triggered.
+                    },
                     onSaved: (value) {
+                      // Form field saved event triggered.
                       if (value.trim().isEmpty && placeHolder.isEmpty) {
                         return;
                       }
