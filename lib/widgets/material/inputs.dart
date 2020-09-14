@@ -117,7 +117,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       fillColor: getStyle(Styles.background, data: widget.data),
                       hintText: localizedStringFor(widget.data.textKey),
                       hintStyle: TextStyle(
-                        color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor')
+                        color: getStyle(Styles.placeholderColor, data: widget.data, themeProperty: 'textColor')
                             .withOpacity(0.5),
                       ),
                       focusedBorder: borderRadius == 0

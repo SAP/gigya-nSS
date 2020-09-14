@@ -19,7 +19,8 @@ enum Styles {
   elevation,
   indicatorColor,
   textAlign,
-  linkColor
+  linkColor,
+  placeholderColor
 }
 
 extension StylesExt on Styles {
@@ -41,7 +42,8 @@ mixin StyleMixin {
     'borderColor': 'transparent',
     'borderSize': 0,
     'cornerRadius': 0,
-    'linkColor': 'blue'
+    'linkColor': 'blue',
+    'placeholderColor': 'black'
   };
 
   /// Default theme mapping.
@@ -55,8 +57,7 @@ mixin StyleMixin {
   };
 
   /// Get the relevant style value.
-  dynamic getStyle(
-    Styles style, {
+  dynamic getStyle(Styles style, {
     NssWidgetData data,
     Map<String, dynamic> styles,
     String themeProperty,
@@ -97,6 +98,7 @@ mixin StyleMixin {
       case Styles.fontColor:
       case Styles.indicatorColor:
       case Styles.linkColor:
+      case Styles.placeholderColor:
         var platformAware = config.isPlatformAware ?? false;
         return getColor(value, platformAware: platformAware);
       case Styles.fontWeight:
