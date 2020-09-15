@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/errors.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
@@ -45,10 +46,11 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     super.initState();
 
     // Screen Event triggered "routeFrom"
+    didRouteFrom();
 
     // Initialize screen build logic.
     _attachScreenAction();
-    _registerNavigationSteam();
+    _registerNavigationStream();
 
     // Screen Event triggered "screenDidLoad".
     WidgetsBinding.instance.addPostFrameCallback((_) => screenDidLoad(widget.screen.id));
@@ -125,14 +127,25 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   /// Register view model instance to a navigation steam controller.
   /// Only the current context contains the main Navigator instance. Therefore we must communicate back to the
   /// screen widget in order to perform navigation actions.
-  _registerNavigationSteam() {
-    viewModel.navigationStream.stream.listen((route) {
+  _registerNavigationStream() {
+    viewModel.navigationStream.stream.listen((route) async {
       if (ModalRoute.of(context).settings.name.split('/').last ==
           route.toString().split('/').last) {
         return;
       }
-      Navigator.pushReplacementNamed(context, route,
-          arguments: {'pid': viewModel.id, 'routingData': widget.routingData});
+
+      // Trigger "routeTo" event to determine routing override.
+      String routingOverride = await willRouteTo(route);
+
+      // Merge bindings & routing data to avoid data loss between screens.
+      widget.routingData.addAll(bindings.savedBindingData);
+
+      // Route.
+      Navigator.pushReplacementNamed(
+        context,
+        routingOverride.isNotEmpty ? routingOverride : route,
+        arguments: {'pid': viewModel.id, 'routingData': widget.routingData},
+      );
     });
   }
 
@@ -147,23 +160,37 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   }
 
   void didRouteFrom() async {
-    Map<String, dynamic> data = await routeFrom(viewModel.pid, widget.routingData);
-    if (data != null) {
+    Map<String, dynamic> eventData = await routeFrom(viewModel.pid, widget.routingData);
+    if (eventData != null) {
       setState(() {
-        widget.routingData.addAll(data);
+        // Overrite current routing data if exists.
+        widget.routingData.addAll(eventData['data']);
         // Merge routing data into available binding data.
         bindings.updateWith(widget.routingData);
+
+        debugPrint('didRouteFrom: data = ${widget.routingData.toString()}');
       });
     }
   }
 
-  void willRouteTo(nid) async {
-    Map<String, dynamic> data = await routeTo(nid, bindings.savedBindingData);
-    if (data != null) {
+  Future<String> willRouteTo(nid) async {
+    Map<String, dynamic> eventData = await routeTo(nid, bindings.savedBindingData);
+    if (eventData != null) {
       setState(() {
+        // Overrite current routing data if exists.
+        widget.routingData.addAll(eventData['data']);
+        // Merge routing data into available binding data.
+        bindings.updateWith(widget.routingData);
 
+        // Fetch sid override if exists.
+        String sid = eventData['sid'] ?? '';
+
+        debugPrint('willRouteTo: sid = $sid, data = ${widget.routingData.toString()}');
+        // Update routing override
+        return sid;
       });
     }
+    return '';
   }
 }
 

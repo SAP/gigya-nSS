@@ -155,7 +155,7 @@ class MaterialWidgetFactory extends WidgetFactory {
     // Make sure screen routing data is beeing passed on with every screen transition.
     var routingData = {};
     if (arguments is Map<String, dynamic>) {
-      routingData = arguments['routingData'];
+      routingData.addAll(arguments['routingData']);
     }
     return MaterialScreenWidget(
       viewModel: NssIoc().use(ScreenViewModel),

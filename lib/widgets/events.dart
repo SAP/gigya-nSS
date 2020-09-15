@@ -20,7 +20,7 @@ mixin EngineEvents {
   Future<Map<String, dynamic>> routeFrom(pid, Map<String, dynamic> routingData) async {
     engineLogger.d('Screen route from $pid with ${routingData.toString()}');
     return eventChannel
-        .invokeMethod<Map<String, dynamic>>('routeFrom', {'pid': pid, 'data': routingData});
+        .invokeMethod<Map<String, dynamic>>('routeFrom', {'sid': pid, 'data': routingData});
   }
 
   /// Trigger route out of screen event.
@@ -28,7 +28,7 @@ mixin EngineEvents {
   Future<Map<String, dynamic>> routeTo(nid, Map<String, dynamic> routingData) async {
     engineLogger.d('Screen route to $nid with ${routingData.toString()}');
     return eventChannel
-        .invokeMethod<Map<String, dynamic>>('routeTo', {'nid': nid, 'data': routingData});
+        .invokeMethod<Map<String, dynamic>>('routeTo', {'sid': nid, 'data': routingData});
   }
 
   /// Trigger submission event.
