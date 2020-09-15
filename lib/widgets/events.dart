@@ -31,10 +31,11 @@ mixin EngineEvents {
 
   /// Trigger route out of screen event.
   /// This event will include the next screen [nid] and the current screen [routingData] if exists.
-  Future<Map<String, dynamic>> routeTo(nid, Map<String, dynamic> routingData) async {
+  Future<Map<String, dynamic>> routeTo(sid, nid, Map<String, dynamic> routingData) async {
     engineLogger.d('Screen route to $nid with ${routingData.toString()}');
     var eventData = await eventChannel.invokeMethod<Map<String, dynamic>>('routeTo', {
-      'sid': nid,
+      'sid': sid,
+      'nid': nid,
       'data': routingData,
     }).timeout(Duration(seconds: 10), onTimeout: () {
       return {}.cast<String, dynamic>();
