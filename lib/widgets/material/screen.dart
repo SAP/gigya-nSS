@@ -149,6 +149,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     });
   }
 
+
   /// Attach the relevant screen action.
   /// This will result in the instantiation of the native controller action model which will handle all
   /// the native SDK logic.
@@ -164,7 +165,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     if (eventData != null) {
       setState(() {
         // Overrite current routing data if exists.
-        widget.routingData.addAll(eventData['data']);
+        widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
         // Merge routing data into available binding data.
         bindings.updateWith(widget.routingData);
 
@@ -178,7 +179,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     if (eventData != null) {
       setState(() {
         // Overrite current routing data if exists.
-        widget.routingData.addAll(eventData['data']);
+        widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
         // Merge routing data into available binding data.
         bindings.updateWith(widget.routingData);
 

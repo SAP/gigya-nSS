@@ -19,7 +19,7 @@ mixin EngineEvents {
   /// This event will include the previous screen [pid] and its [routingData] if exists.
   Future<Map<String, dynamic>> routeFrom(sid, pid, Map<String, dynamic> routingData) async {
     engineLogger.d('Screen route from $pid with ${routingData.toString()}');
-    var eventData = await eventChannel.invokeMethod<Map<String, dynamic>>('routeFrom', {
+    var eventData = await eventChannel.invokeMethod<Map<dynamic, dynamic>>('routeFrom', {
       'sid': sid,
       'pid': pid,
       'data': routingData,
@@ -33,7 +33,7 @@ mixin EngineEvents {
   /// This event will include the next screen [nid] and the current screen [routingData] if exists.
   Future<Map<String, dynamic>> routeTo(nid, Map<String, dynamic> routingData) async {
     engineLogger.d('Screen route to $nid with ${routingData.toString()}');
-    var eventData = await eventChannel.invokeMethod<Map<String, dynamic>>('routeTo', {
+    var eventData = await eventChannel.invokeMethod<Map<dynamic, dynamic>>('routeTo', {
       'sid': nid,
       'data': routingData,
     }).timeout(Duration(seconds: 10), onTimeout: () {
