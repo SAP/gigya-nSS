@@ -163,34 +163,40 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   void didRouteFrom() async {
     Map<String, dynamic> eventData = await routeFrom(viewModel.id, viewModel.pid, widget.routingData);
     if (eventData != null) {
-      setState(() {
-        // Overrite current routing data if exists.
-        widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
-        // Merge routing data into available binding data.
-        bindings.updateWith(widget.routingData);
+      // Overrite current routing data if exists.
+      widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
+      // Merge routing data into available binding data.
+      bindings.updateWith(widget.routingData);
 
-        debugPrint('didRouteFrom: data = ${widget.routingData.toString()}');
-      });
+      debugPrint('didRouteFrom: data = ${widget.routingData.toString()}');
+
+      if(mounted) {
+        setState(() {});
+      }
     }
   }
 
   Future<String> willRouteTo(nid) async {
     Map<String, dynamic> eventData = await routeTo(viewModel.id, nid, bindings.savedBindingData);
     if (eventData != null) {
-      setState(() {
-        // Overrite current routing data if exists.
-        widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
-        // Merge routing data into available binding data.
-        bindings.updateWith(widget.routingData);
+      // Overrite current routing data if exists.
+      widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
+      // Merge routing data into available binding data.
+      bindings.updateWith(widget.routingData);
 
-        // Fetch sid override if exists.
-        String sid = eventData['sid'] ?? '';
+      // Fetch sid override if exists.
+      String sid = eventData['sid'] ?? '';
 
-        debugPrint('willRouteTo: sid = $sid, data = ${widget.routingData.toString()}');
-        // Update routing override
-        return sid;
-      });
+      debugPrint('willRouteTo: sid = $sid, data = ${widget.routingData.toString()}');
+      // Update routing override
+
+      if(mounted) {
+        setState(() {});
+      }
+
+      return sid;
     }
+
     return '';
   }
 }
