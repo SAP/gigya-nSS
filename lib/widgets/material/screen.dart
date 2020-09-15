@@ -175,7 +175,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   }
 
   Future<String> willRouteTo(nid) async {
-    Map<String, dynamic> eventData = await routeTo(nid, bindings.savedBindingData);
+    Map<String, dynamic> eventData = await routeTo(viewModel.id, nid, bindings.savedBindingData);
     if (eventData != null) {
       setState(() {
         // Overrite current routing data if exists.
