@@ -160,7 +160,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   }
 
   void didRouteFrom() async {
-    Map<String, dynamic> eventData = await routeFrom(viewModel.pid, widget.routingData);
+    Map<String, dynamic> eventData = await routeFrom(viewModel.id, viewModel.pid, widget.routingData);
     if (eventData != null) {
       setState(() {
         // Overrite current routing data if exists.
