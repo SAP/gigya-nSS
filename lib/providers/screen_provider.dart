@@ -117,13 +117,31 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
       formKey.currentState.save();
 
       // Handle engine submit event.
-      Map<String, dynamic> submissionEventData = await beforeSubmit(id, submission);
-      if (submissionEventData.isNotEmpty) {
-        submission = submissionEventData;
-      }
+      Map<String, dynamic> eventData = await beforeSubmit(id, submission);
+      if (eventData.isNotEmpty) {
+        String error = eventData['error'].cast<String>();
 
-      sendApi(ScreenAction.submit.name, submission);
+        // Submit event yeilded and error.
+        if (error != null) {
+          if (error.isEmpty) {
+            engineLogger.d('Provided empty error message from event submission override');
+          }
+          setError(error);
+          return;
+        }
+
+        // Overrite submission data if exists.
+        Map<String, dynamic> submissionData = eventData['data'].cast<String, dynamic>();
+        if (submissionData.isNotEmpty) submission = submissionData;
+      }
     }
+
+    sendApi(ScreenAction.submit.name, submission);
+  }
+
+  /// Force form validation request.
+  void requestScreenFormValidation() {
+    formKey.currentState.validate();
   }
 
   /// Trigger natvie social login flow with selected [provider].
@@ -182,7 +200,6 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
           // Error will be displayed when there is no available routing option.
           setError(error.errorMessage);
         }
-
 
         // Log the error.
         engineLogger.d('Api request error: ${error.errorMessage}');

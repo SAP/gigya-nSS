@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
@@ -6,6 +7,10 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 /// Screen native events handler class used to interact with dynamic native code.
 mixin EngineEvents {
   final MethodChannel eventChannel = NssIoc().use(NssChannels).eventsChannel;
+
+  // Setting the timeout for all event channel invocations.
+  // Debug timeout is longer for testing purposes.
+  final int eventTimeoutDuration = !kReleaseMode ? 60 : 10;
 
   /// Trigger first screen load event.
   /// This event will only occur after the first screen state build.
@@ -23,8 +28,8 @@ mixin EngineEvents {
       'sid': sid,
       'pid': pid,
       'data': routingData,
-    }).timeout(Duration(seconds: 10), onTimeout: () {
-      return {'data':{}}.cast<String, dynamic>();
+    }).timeout(Duration(seconds: eventTimeoutDuration), onTimeout: () {
+      return {'data': {}}.cast<String, dynamic>();
     });
     return eventData.cast<String, dynamic>();
   }
@@ -37,8 +42,8 @@ mixin EngineEvents {
       'sid': sid,
       'nid': nid,
       'data': routingData,
-    }).timeout(Duration(seconds: 10), onTimeout: () {
-      return {'data':{}}.cast<String, dynamic>();
+    }).timeout(Duration(seconds: eventTimeoutDuration), onTimeout: () {
+      return {'data': {}}.cast<String, dynamic>();
     });
     return eventData.cast<String, dynamic>();
   }
@@ -47,18 +52,25 @@ mixin EngineEvents {
   /// This event will include the current submission.
   Future<Map<String, dynamic>> beforeSubmit(sid, submission) async {
     engineLogger.d('Submission with submission data ${submission.toString()}');
-    var eventData = await eventChannel.invokeMethod<Map<dynamic, dynamic>>(
-        'submit', {'sid': sid, 'data': submission}).timeout(Duration(seconds: 10), onTimeout: () {
-      return {'data':{}}.cast<String, dynamic>();
+    var eventData = await eventChannel
+        .invokeMethod<Map<dynamic, dynamic>>('submit', {'sid': sid, 'data': submission}).timeout(
+            Duration(seconds: eventTimeoutDuration), onTimeout: () {
+      return {'data': {}}.cast<String, dynamic>();
     });
-
-    var submissionData = eventData['data'].cast<String, dynamic>();
-    return submissionData;
+    return eventData.cast<String, dynamic>();
   }
 
-  /// Trigger input field change event giving its [binding] identifier and [from] and [to] values.
-  Future<dynamic> fieldDidChange(binding, from, to) async {
-    engineLogger.d('fieldDidChange with $binding and value from $from to $to');
-    return eventChannel.invokeMethod('fieldDidChane', {'field': binding, 'from': from, 'to': to});
+  /// Trigger input field change event giving the screen [sid], its [binding] identifier and [from] and [to] values.
+  Future<Map<String, dynamic>> fieldDidChange(sid, binding, from, to) async {
+    engineLogger.d('fieldDidChange from $sid with $binding and value from $from to $to');
+    var eventData = await eventChannel.invokeMethod<Map<dynamic, dynamic>>('fieldDidChane', {
+      'sid': sid,
+      'field': binding,
+      'from': from,
+      'to': to
+    }).timeout(Duration(seconds: eventTimeoutDuration), onTimeout: () {
+      return {'data': {}}.cast<String, dynamic>();
+    });
+    return eventData.cast<String, dynamic>();
   }
 }
