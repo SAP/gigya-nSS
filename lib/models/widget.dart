@@ -40,6 +40,8 @@ class NssWidgetData {
   int columns;
   @JsonKey(defaultValue: 1)
   int rows;
+  @JsonKey(defaultValue: false)
+  bool hideTitles;
 
   // Image widget
   String url;
@@ -72,6 +74,7 @@ class NssWidgetData {
     this.providers,
     this.columns,
     this.rows,
+    this.hideTitles,
     this.url,
     this.fallback,
     this.defaultPlaceholder,

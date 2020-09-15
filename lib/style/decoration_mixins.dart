@@ -24,19 +24,28 @@ mixin DecorationMixin {
   /// Apply a specific size to the selected element.
   /// Will check the [data] for any "size" property and apply it accordingly.
   Widget sizeIfNeeded(NssWidgetData data, Widget child) {
-    if (data.style == null) data.style = {};
-    var size = data.style['size'];
+    var size;
     // Check for size parameter in available custom theme. Override current if exists.
     final String customTheme = data.theme ?? '';
-    if (customTheme != null && config.markup.theme != null && config.markup.theme.containsKey(customTheme)) {
-      Map<String, dynamic> themeMap = config.markup.theme[customTheme].cast<String, dynamic>();
-      if (themeMap.containsKey('size')) {
-        size = themeMap['size'];
+    // Check if this widget has a size attached in attached custom theme.
+    if (customTheme != null &&
+        config.markup.customThemes != null &&
+        config.markup.customThemes.containsKey(customTheme)) {
+      if (config.markup.customThemes[customTheme].containsKey('size')) {
+        size = config.markup.customThemes[customTheme]['size'];
       }
     }
+
+    // Explicit size declaration will always get priority over custom theme declaration.
+    if (data.style == null) data.style = {};
+    if (data.style.containsKey('size')) {
+      size = data.style['size'];
+    }
+
     if (size == null) {
       return child;
     }
+    
     return SizedBox(
       width: ensureDouble(size[0]),
       height: ensureDouble(size[1]),

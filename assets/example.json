@@ -5,7 +5,8 @@
     "textColor": "black",
     "enabledColor": "blue",
     "disabledColor": "grey",
-    "errorColor": "red"
+    "errorColor": "red",
+    "linkColor": "blue"
   },
   "customThemes": {
     "title": {
@@ -30,7 +31,7 @@
       "elevation": 2,
       "background": "blue",
       "size": [
-        220,
+        300,
         44
       ]
     },
@@ -270,6 +271,7 @@
           "type": "label",
           "textKey": "login-no-account+link",
           "style": {
+            "linkColor": "red",
             "margin": [
               0,
               24,
@@ -283,10 +285,6 @@
           "textKey": "common-submit",
           "theme": "raisedButton",
           "style": {
-            "size": [
-              200,
-              44
-            ],
             "cornerRadius": 5,
             "borderColor": "black",
             "borderSize": 2
@@ -490,34 +488,7 @@
         },
         {
           "type": "container",
-          "stack": "horizontal",
-          "style": {
-            "size": [0, 44],
-            "background": "blue"
-          },
-          "children": [
-            {
-              "type": "label",
-              "textKey": "I'm a label",
-              "style": {
-                "fontColor": "white"
-              }
-            },
-            {
-              "type": "label",
-              "textKey": "I'm a another label",
-              "style": {
-                "fontColor": "white"
-              }
-            }
-          ]
-        },
-        {
-          "type": "container",
           "stack": "vertical",
-          "style": {
-            "background": "green"
-          },
           "children": [
             {
               "type": "submit",

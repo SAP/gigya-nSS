@@ -124,13 +124,10 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
                           // Get localized submit text.
                           text,
                           style: TextStyle(
-                            fontSize:
-                                getStyle(Styles.fontSize, data: widget.data),
+                            fontSize: getStyle(Styles.fontSize, data: widget.data),
                             color: getStyle(Styles.fontColor,
-                                data: widget.data,
-                                themeProperty: 'secondaryColor'),
-                            fontWeight:
-                                getStyle(Styles.fontWeight, data: widget.data),
+                                data: widget.data, themeProperty: 'secondaryColor'),
+                            fontWeight: getStyle(Styles.fontWeight, data: widget.data),
                           ),
                         ),
                       ],
@@ -178,9 +175,8 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
 
     if (widget.data.rows > 2) {
       widget.data.rows = 2;
-      engineLogger
-          .e('You have specified a row count that exceeds allowed value.\n'
-              'Currently max rows is set to 2');
+      engineLogger.e('You have specified a row count that exceeds allowed value.\n'
+          'Currently max rows is set to 2');
     }
   }
 
@@ -195,8 +191,8 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
     final int providerCount = widget.data.providers.length;
     final int maxInPage = widget.data.columns * widget.data.rows;
     bool paging = (providerCount > (widget.data.columns * widget.data.rows));
-    final int numOfPages = (providerCount / maxInPage).abs().toInt() +
-        (providerCount % maxInPage != 0 ? 1 : 0);
+    final int numOfPages =
+        (providerCount / maxInPage).abs().toInt() + (providerCount % maxInPage != 0 ? 1 : 0);
     return expandIfNeeded(
       widget.data,
       Padding(
@@ -231,8 +227,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
                           child: PageIndicator(
                             controller: _pageController,
                             color: getStyle(Styles.indicatorColor,
-                                data: widget.data,
-                                themeProperty: 'enabledColor'),
+                                data: widget.data, themeProperty: 'enabledColor'),
                             itemCount: numOfPages,
                           ),
                         )
@@ -252,12 +247,10 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
 
   /// Create grid layouting of the given provider indexes.
   Widget createGrid(ScreenViewModel viewModel, int start, int end) {
-    return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       int crossAxisCount = widget.data.columns;
       double axisSpacing = 4;
-      var width = (MediaQuery.of(context).size.width -
-              ((crossAxisCount - 1) * axisSpacing)) /
+      var width = (MediaQuery.of(context).size.width - ((crossAxisCount - 1) * axisSpacing)) /
           crossAxisCount;
       var cellHeight = 100;
       var aspectRatio = width / cellHeight;
@@ -315,10 +308,8 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
                           fadeInDuration: Duration(milliseconds: 100),
                           width: 32,
                           height: 32,
-                          image: AssetImage(
-                              'assets/social_images/g_${provider.name}.png'),
-                          placeholder: AssetImage(
-                              'assets/social_images/${provider.name}.png'),
+                          image: AssetImage('assets/social_images/g_${provider.name}.png'),
+                          placeholder: AssetImage('assets/social_images/${provider.name}.png'),
                         ),
                       ),
                     ),
@@ -330,14 +321,16 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
           SizedBox(
             height: 8,
           ),
-          Text(
-            provider.name.inCaps,
-            style: TextStyle(
-              fontSize: getStyle(Styles.fontSize, data: widget.data),
-              color: getStyle(Styles.fontColor, data: widget.data),
-              fontWeight: getStyle(Styles.fontWeight, data: widget.data),
-            ),
-          ),
+          widget.data.hideTitles
+              ? Container()
+              : Text(
+                  provider.name.inCaps,
+                  style: TextStyle(
+                    fontSize: getStyle(Styles.fontSize, data: widget.data),
+                    color: getStyle(Styles.fontColor, data: widget.data),
+                    fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                  ),
+                ),
         ],
       ),
     );

@@ -39,7 +39,6 @@ class _SubmitWidgetState extends State<SubmitWidget>
         child: Consumer2<ScreenViewModel, BindingModel>(
           builder: (context, viewModel, bindings, child) {
             TextAlign align = getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.center;
-
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[

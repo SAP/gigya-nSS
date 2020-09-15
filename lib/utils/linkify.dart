@@ -33,6 +33,7 @@ class Linkify with StyleMixin {
   linkify(
     NssWidgetData data,
     OnLinkTap tap,
+    Color linkColor,
   ) {
     List<TextSpan> span = List<TextSpan>();
     for (var i = 0; i < wrappers.length; i++) {
@@ -42,7 +43,7 @@ class Linkify with StyleMixin {
         break;
       }
       final RegExpMatch match = matches.elementAt(i);
-      _linkSingle(wrappers[i], match.group(1), match.group(2), tap, data, span);
+      _linkSingle(wrappers[i], match.group(1), match.group(2), tap, data, span, linkColor);
     }
     return RichText(
       overflow: TextOverflow.visible,
@@ -57,6 +58,7 @@ class Linkify with StyleMixin {
     OnLinkTap tap,
     NssWidgetData data,
     List<TextSpan> list,
+    Color linkColor,
   ) {
     list
       ..add(
@@ -74,7 +76,7 @@ class Linkify with StyleMixin {
           text: actual,
           style: TextStyle(
             fontSize: getStyle(Styles.fontSize, data: data),
-            color: getColor('blue'), // TODO: need to take color from theme.
+            color: linkColor,
             fontWeight: getStyle(Styles.fontWeight, data: data),
           ),
           recognizer: TapGestureRecognizer()
