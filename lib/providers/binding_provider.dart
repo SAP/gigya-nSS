@@ -24,7 +24,7 @@ class BindingModel with ChangeNotifier {
   /// Update biding data once available. Updating the data will trigger rebuild for
   /// every child widget in the view tree.
   void updateWith(Map<String, dynamic> map) {
-    _bindingData = map;
+    _bindingData.addAll(map);
     notifyListeners();
   }
 

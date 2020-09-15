@@ -32,6 +32,9 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin {
     this.screenService,
   );
 
+  /// Previous screen unique identifier.
+  String pid = '';
+
   /// Screen unique identifier.
   String id;
 

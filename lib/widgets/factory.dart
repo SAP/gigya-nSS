@@ -54,14 +54,12 @@ enum NssAlignment { start, end, center, equal_spacing, spread }
 abstract class WidgetFactory {
   Widget buildApp();
 
-  Widget buildScreen(Screen screen);
+  Widget buildScreen(Screen screen, Map<String, dynamic> routingData);
 
   Widget buildComponent(NssWidgetType type, NssWidgetData data);
 
   Widget buildContainer(List<Widget> childrenWidgets, NssStack stack,
-      {NssAlignment alignment,
-      Map<String, dynamic> style,
-      bool isScreen = false}) {
+      {NssAlignment alignment, Map<String, dynamic> style, bool isScreen = false}) {
     if (stack == null) {
       //TODO: Markup error.
       return Container();
@@ -153,10 +151,16 @@ class MaterialWidgetFactory extends WidgetFactory {
   }
 
   @override
-  Widget buildScreen(Screen screen) {
+  Widget buildScreen(Screen screen, Map<String, dynamic> arguments) {
+    // Make sure screen routing data is beeing passed on with every screen transition.
+    var routingData = {};
+    if (arguments is Map<String, dynamic>) {
+      routingData.addAll(arguments['routingData']);
+    }
     return MaterialScreenWidget(
       viewModel: NssIoc().use(ScreenViewModel),
       bindingModel: NssIoc().use(BindingModel),
+      routingData: routingData,
       screen: screen,
       content: buildContainer(buildWidgets(screen.children), screen.stack,
           style: screen.style, isScreen: true),
@@ -203,7 +207,7 @@ class CupertinoWidgetFactory extends WidgetFactory {
   }
 
   @override
-  Widget buildScreen(Screen screen) {
+  Widget buildScreen(Screen screen, Map<String, dynamic> routingData) {
     // TODO: implement buildScreen
     return null;
   }
