@@ -24,7 +24,7 @@ mixin EngineEvents {
       'pid': pid,
       'data': routingData,
     }).timeout(Duration(seconds: 10), onTimeout: () {
-      return {}.cast<String, dynamic>();
+      return {'data':{}}.cast<String, dynamic>();
     });
     return eventData.cast<String, dynamic>();
   }
@@ -33,21 +33,27 @@ mixin EngineEvents {
   /// This event will include the next screen [nid] and the current screen [routingData] if exists.
   Future<Map<String, dynamic>> routeTo(sid, nid, Map<String, dynamic> routingData) async {
     engineLogger.d('Screen route to $nid with ${routingData.toString()}');
-    var eventData = await eventChannel.invokeMethod<Map<String, dynamic>>('routeTo', {
+    var eventData = await eventChannel.invokeMethod<Map<dynamic, dynamic>>('routeTo', {
       'sid': sid,
       'nid': nid,
       'data': routingData,
     }).timeout(Duration(seconds: 10), onTimeout: () {
-      return {}.cast<String, dynamic>();
+      return {'data':{}}.cast<String, dynamic>();
     });
     return eventData.cast<String, dynamic>();
   }
 
   /// Trigger submission event.
   /// This event will include the current submission.
-  Future<dynamic> submit(submission) async {
+  Future<Map<String, dynamic>> beforeSubmit(sid, submission) async {
     engineLogger.d('Submission with submission data ${submission.toString()}');
-    return eventChannel.invokeMethod<dynamic>('submit', {'data': submission});
+    var eventData = await eventChannel.invokeMethod<Map<dynamic, dynamic>>(
+        'submit', {'sid': sid, 'data': submission}).timeout(Duration(seconds: 10), onTimeout: () {
+      return {'data':{}}.cast<String, dynamic>();
+    });
+
+    var submissionData = eventData['data'].cast<String, dynamic>();
+    return submissionData;
   }
 
   /// Trigger input field change event giving its [binding] identifier and [from] and [to] values.

@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/utils/debug.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
+import 'package:gigya_native_screensets_engine/widgets/events.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:gigya_native_screensets_engine/services/api_service.dart';
@@ -23,7 +24,7 @@ extension ScreenActionExt on ScreenAction {
 /// The view model class acts as the coordinator to the currently displayed screen.
 /// It will handle the current screen visual state and its adjacent form and is responsible for service/repository
 /// action triggering.
-class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin {
+class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, EngineEvents {
   final ApiService apiService;
   final ScreenService screenService;
 
@@ -107,13 +108,20 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin {
 
   /// Request form submission. Form will try to validate first. If validation succeeds than the submission action
   /// will be sent to the native container.
-  void submitScreenForm(Map<String, dynamic> submission) {
+  void submitScreenForm(Map<String, dynamic> submission) async {
     var validated = formKey.currentState.validate();
     if (validated) {
       engineLogger.d('Form validations success - submission requested.');
 
       // Request form save state. This will update the binding map with the required data for submission.
       formKey.currentState.save();
+
+      // Handle engine submit event.
+      Map<String, dynamic> submissionEventData = await beforeSubmit(id, submission);
+      if (submissionEventData.isNotEmpty) {
+        submission = submissionEventData;
+      }
+
       sendApi(ScreenAction.submit.name, submission);
     }
   }
@@ -156,6 +164,8 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin {
         setIdle();
         engineLogger.d('Api request success: ${result.data.toString()}');
 
+        //TODO: inject response data to screen routing data so the data will be passed to the next screen.
+
         // Trigger navigation.
         navigationStream.sink.add('$id/onSuccess');
       },
@@ -165,10 +175,14 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin {
         if (route != RoutingAllowed.none) {
           final routeNamed = describeEnum(route);
           navigationStream.sink.add('$id/$routeNamed');
+
+          //TODO: inject response data to screen routing data so the data will be passed to the next screen.
+
         } else {
           // Error will be displayed when there is no available routing option.
           setError(error.errorMessage);
         }
+
 
         // Log the error.
         engineLogger.d('Api request error: ${error.errorMessage}');
