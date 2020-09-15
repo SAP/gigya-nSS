@@ -153,7 +153,7 @@ class MaterialWidgetFactory extends WidgetFactory {
   @override
   Widget buildScreen(Screen screen, Map<String, dynamic> arguments) {
     // Make sure screen routing data is beeing passed on with every screen transition.
-    var routingData = {};
+    Map<String, dynamic> routingData = {};
     if (arguments is Map<String, dynamic>) {
       routingData.addAll(arguments['routingData']);
     }

@@ -17,18 +17,29 @@ mixin EngineEvents {
 
   /// Trigger route into screen event.
   /// This event will include the previous screen [pid] and its [routingData] if exists.
-  Future<Map<String, dynamic>> routeFrom(pid, Map<String, dynamic> routingData) async {
+  Future<Map<String, dynamic>> routeFrom(sid, pid, Map<String, dynamic> routingData) async {
     engineLogger.d('Screen route from $pid with ${routingData.toString()}');
-    return eventChannel
-        .invokeMethod<Map<String, dynamic>>('routeFrom', {'sid': pid, 'data': routingData});
+    var eventData = await eventChannel.invokeMethod<Map<String, dynamic>>('routeFrom', {
+      'sid': sid,
+      'pid': pid,
+      'data': routingData,
+    }).timeout(Duration(seconds: 10), onTimeout: () {
+      return {}.cast<String, dynamic>();
+    });
+    return eventData.cast<String, dynamic>();
   }
 
   /// Trigger route out of screen event.
   /// This event will include the next screen [nid] and the current screen [routingData] if exists.
   Future<Map<String, dynamic>> routeTo(nid, Map<String, dynamic> routingData) async {
     engineLogger.d('Screen route to $nid with ${routingData.toString()}');
-    return eventChannel
-        .invokeMethod<Map<String, dynamic>>('routeTo', {'sid': nid, 'data': routingData});
+    var eventData = await eventChannel.invokeMethod<Map<String, dynamic>>('routeTo', {
+      'sid': nid,
+      'data': routingData,
+    }).timeout(Duration(seconds: 10), onTimeout: () {
+      return {}.cast<String, dynamic>();
+    });
+    return eventData.cast<String, dynamic>();
   }
 
   /// Trigger submission event.
