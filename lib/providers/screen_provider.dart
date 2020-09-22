@@ -124,7 +124,7 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
       Map<String, dynamic> eventData = await beforeSubmit(id, submission);
       if (eventData.isNotEmpty) {
         if (eventData.containsKey('error')) {
-          String error = eventData['error'].cast<String>();
+          String error = eventData['error'];
 
           if (error.isEmpty) {
             engineLogger.d('Provided empty error message from event submission override');
