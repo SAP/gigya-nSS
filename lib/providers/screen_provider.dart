@@ -137,9 +137,10 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
         Map<String, dynamic> submissionData = eventData['data'].cast<String, dynamic>();
         if (submissionData.isNotEmpty) submission = submissionData;
       }
-    }
 
-    sendApi(ScreenAction.submit.name, submission);
+      // Send API only if validated.
+      sendApi(ScreenAction.submit.name, submission);
+    }
   }
 
   /// Force form validation request.
