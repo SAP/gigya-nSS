@@ -83,6 +83,7 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
 
   isError() => _state == NssScreenState.error;
 
+  /// Screen idle state.
   void setIdle() {
     engineLogger.d('Screen with id: $id setIdle');
     _state = NssScreenState.idle;
@@ -90,6 +91,7 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
     notifyListeners();
   }
 
+  /// Screen in progress state. Will show common progress indicator ontop a semi transparent background.
   void setProgress() {
     engineLogger.d('Screen with id: $id setProgress');
     _state = NssScreenState.progress;
@@ -97,6 +99,8 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
     notifyListeners();
   }
 
+  /// Screen in error mode. Will display a specific error under submission button.
+  /// Other error display options will be added.
   void setError(String error) {
     engineLogger.d('Screen with id: $id setError with $error');
     _state = NssScreenState.error;
@@ -119,7 +123,6 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
       // Handle engine submit event.
       Map<String, dynamic> eventData = await beforeSubmit(id, submission);
       if (eventData.isNotEmpty) {
-
         if (eventData.containsKey('error')) {
           String error = eventData['error'].cast<String>();
 
