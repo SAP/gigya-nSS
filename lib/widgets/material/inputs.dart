@@ -141,6 +141,38 @@ class _TextInputWidgetState extends State<TextInputWidget>
                                 data: widget.data, themeProperty: 'textColor')
                             .withOpacity(0.5),
                       ),
+                      errorBorder: borderRadius == 0
+                          ? UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: getThemeColor('errorColor'),
+                          // TODO: need to take color from theme.
+                          width: borderSize + 2,
+                        ),
+                      )
+                          : OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                        borderSide: BorderSide(
+                          color: getThemeColor('errorColor'),
+                          // TODO: need to take color from theme.
+                          width: borderSize,
+                        ),
+                      ),
+                      focusedErrorBorder: borderRadius == 0
+                          ? UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: getThemeColor('errorColor'),
+                          // TODO: need to take color from theme.
+                          width: borderSize + 2,
+                        ),
+                      )
+                          : OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                        borderSide: BorderSide(
+                          color: getThemeColor('errorColor'),
+                          // TODO: need to take color from theme.
+                          width: borderSize,
+                        ),
+                      ),
                       focusedBorder: borderRadius == 0
                           ? UnderlineInputBorder(
                               borderSide: BorderSide(
@@ -233,6 +265,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
       if (eventData.containsKey('error')) {
         // Error injected via native event override.
         eventInjectedError = eventData['error'];
+
         viewModel.requestScreenFormValidation();
       } else if (eventInjectedError != null) {
         // dispose of last injected error. Disposal should be fired once as the injected error
