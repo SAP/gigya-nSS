@@ -201,7 +201,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                         if (parsed == null) {
                           engineLogger.e('parseAs field is not compatible with provided input');
                         }
-                        bindings.save(widget.data.bind, parsed);
+                        bindings.save<String>(widget.data.bind, parsed);
                         return;
                       }
 
@@ -210,7 +210,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       if (parsed == null) {
                         engineLogger.e('Schema type is not compatible with provided input');
                       }
-                      bindings.save(widget.data.bind, parsed);
+                      bindings.save<String>(widget.data.bind, parsed);
                     },
                   ),
                 );
@@ -232,7 +232,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
     if (eventData.isNotEmpty) {
       if (eventData.containsKey('error')) {
         // Error injected via native event override.
-        eventInjectedError = eventData['error'].cast<String>();
+        eventInjectedError = eventData['error'];
         viewModel.requestScreenFormValidation();
       } else if (eventInjectedError != null) {
         // dispose of last injected error. Disposal should be fired once as the injected error

@@ -107,7 +107,7 @@ class BindingModel with ChangeNotifier {
       }
 
       if (nextData != null) {
-        if (nextData[keys[nextKey]] is T) {
+        if (nextData[keys[nextKey]] is T && nextData[keys[nextKey]] != null) {
           nextData[keys[nextKey]] = value;
           return;
         }

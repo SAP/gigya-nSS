@@ -99,7 +99,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                       if (parsed == null) {
                         engineLogger.e('parseAs field is not compatible with provided input');
                       }
-                      bindings.save(widget.data.bind, parsed);
+                      bindings.save<String>(widget.data.bind, parsed);
                       return;
                     }
                     // If parseAs field is not available try to parse according to schema.
@@ -107,7 +107,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                     if (parsed == null) {
                       engineLogger.e('Schema type is not compatible with provided input');
                     }
-                    bindings.save(widget.data.bind, parsed);
+                    bindings.save<String>(widget.data.bind, parsed);
                   });
                 },
                 items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {

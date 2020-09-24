@@ -72,7 +72,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                             value: _currentValue,
                             onChanged: (bool val) {
                               setState(() {
-                                bindings.save(widget.data.bind, val);
+                                bindings.save<bool>(widget.data.bind, val);
                               });
                             },
                           ),
@@ -80,7 +80,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                             child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    bindings.save(widget.data.bind, !_currentValue);
+                                    bindings.save<bool>(widget.data.bind, !_currentValue);
                                   });
                                 },
                                 child: Container(
