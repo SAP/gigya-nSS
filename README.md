@@ -980,6 +980,97 @@ Available keys:
 **error-photo-failed-upload** for a failed profile photo upload.
 **error-photo-image-size** for indicating that the profile photo image exceeds the size limit.
 
+## Screen events
+The NSS engine provides the ability to listen and interact with varius screen events.
+Registring to these events is done in the native application using the NSS builder.
+
+Android
+```
+GigyaNss.getInstance()...
+    .eventsFor("login", object: NssScreenEvents() {
+    
+          override fun screenDidLoad() {
+               // Screen loaded.
+          }
+          
+          override fun routeFrom(screen: ScreenEventsModel) {
+              screen.`continue`()
+          }
+          
+          override fun routeTo(screen: ScreenEventsModel) {
+              screen.`continue`()    
+          }
+          
+          override fun submit(screen: ScreenEventsModel) {
+              screen.`continue`()         
+          }
+          
+          override fun fieldDidChange(screen: ScreenEventsModel, field: FieldEventModel) {
+               when (field.id) {
+                  "profile.zip" -> {
+                    // Do some kind of validation.
+                  }
+                  else -> {
+                     screen.`continue`()
+                  }
+               }           
+          }
+```
+
+iOS
+```
+GigyaNss.shared...
+        }.eventsFor(screen: "login", handler: { (event) in
+            switch event {
+            case .screenDidLoad:
+                break
+            case .routeFrom(screen: let screen):
+                screen.continue()
+            case .routeTo(screen: var screen):
+                screen.continue()
+            case .submit(var screen):
+                screen.continue()
+            case .fieldDidChange(let screen, let field):
+                switch field.id {
+                case "profile.zip":
+                    // Do some kind of validation.
+                    screen.showError("profile.zip is not valid")
+                    // or
+                    screen.continue()
+                    break
+                default:
+                    screen.continue()
+                }
+                break
+            }
+```
+
+### Available events:
+**screenDidLoad** - Screen finished it's first load and is fully rendered.
+**routeFrom** - Indicates the entry point of the current screen.
+    You are able to mutate the data passed in the *screen* model.
+**routeTo** - Indicates the expected route once screen submission is done.
+    You are able to mutate both the data passed in the *screen* model and the *nextRoute* if needed.
+**submit** - Exposes the submission data after the screen has been validated.
+    You are able to mutate the submission data passed in the *screen* model.
+    You are able to inject an error message to the screen.
+**fieldDidChange** - Event triggered when an input component has changed its data.
+    The field's identifier corresponds withe the **bind** property you have set in the markup.
+    You are able to inject an error message to the screen.
+ 
+**How to properly use NSS events:**
+When you override a specific event you are able to use the provided *screen* model in order to evaluate or mutate its current
+*data*. 
+
+In order for the flow to be completed, when overriding the event, you must call the *continue* method on the *screen* model.
+This will ensure that the connection to the engine will hang as it awaits your result.
+Events such as *submit* and *fieldDidChange* also provide the option to inject an error to the screen using the *showError* method 
+of the *screen* model.
+
+**Note:**
+**When overriding the *fieldDidChange* event you are required to use the *screen* model's *continue* method.**
+
+
 ## Known Issues
 
 Native Screen-Sets engine versioning is still under development.
