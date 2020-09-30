@@ -75,12 +75,14 @@ mixin EngineEvents {
   /// Trigger input field change event giving the screen [sid], its [binding] identifier and [from] and [to] values.
   Future<Map<String, dynamic>> fieldDidChange(sid, binding, from, to) async {
     engineLogger.d('fieldDidChange from $sid with $binding and value from $from to $to');
-    var eventData = await eventChannel.invokeMethod<Map<dynamic, dynamic>>(
-        EventIdenfier.fieldDidChange.name, {
+    var eventData =
+        await eventChannel.invokeMethod<Map<dynamic, dynamic>>(EventIdenfier.fieldDidChange.name, {
       'sid': sid,
-      'field': binding,
-      'from': from,
-      'to': to
+      'data': {
+        'field': binding,
+        'from': from,
+        'to': to,
+      },
     }).timeout(Duration(seconds: eventTimeoutDuration), onTimeout: () {
       return {'data': {}}.cast<String, dynamic>();
     });
