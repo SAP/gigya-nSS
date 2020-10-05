@@ -44,35 +44,44 @@ Android devices running on ARM processors only (99% of devices).
 
 ### iOS - Swift
 
-Download the GigyaNss bundle.
+The native screen-sets package is available via CocoaPods.
 
-Unzip and place the entire folder into your project folder.
-```
-It is important to place the downloaded bundle as is. Do not move files from the GigyaNss bundle, it will break the build.
-```
-In order to link the provided debug library:
+In order to add the Gigya Native Screen-Sets library via CocoaPods to your project, you need to create a specific target per configuration (Debug / Release).
 
-Go to the "GigyaNss/Debug" folder. Drag both frameworks to the Project -> General -> Frameworks -> Libraries and Embedded Content.
+Now add the following to you *pod* file:
 
-Mark them as Embed & Sign.
+```
+// For Debug target:
+pod 'GigyaNss'
+ 
+// For Release target:
+pod 'GigyaNssRelease'
+```
+So, your code should look similar to this:
 
-Go to Build Settings -> Framework Search Paths and Update GigyaNss/Debug to GigyaNss/$(CONFIGURATION) in both available options (Debug & Release)
 ```
-If your application contains a custom configuration, update the above code to support your configuration.
+target 'GigyaDemoApp-Debug' do
+  pod 'Gigya'
+  pod 'GigyaTfa'
+  pod 'GigyaAuth'
+  pod 'GigyaNss'
+end
+ 
+target 'GigyaDemoApp-Release' do
+  pod 'Gigya'
+  pod 'GigyaTfa'
+  pod 'GigyaAuth'
+  pod 'GigyaNssRelease'
+end
 ```
-Go to Build Phases. Add new Run Script Phase (tap on "+" icon).
 
-Open and then add the following:
-```
-bash
-“${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/GigyaNss.framework/engine.sh” GigyaNss
-```
-Check the Run script only when installing option.
-```
-Make sure the new script is placed before the Remove unused architectures script that is required for the core SDK setup.
-```
+Once you have completed the changes above, run the pod install command.
+
 
 ## Android
+
+[Download](https://github.com/SAP/gigya-android-sdk/releases/download/nss-v1.0.0/sdk-nss-engine.zip) the latest engine file.
+Unpack and move the folder into your application root folder.
 
 ```
 To avoid crashing non ARM devices. Please use the"isSupported()" method of the GigyaNss instance in order to determine if the
@@ -87,9 +96,8 @@ android {
   }
 }
 ```
-Unzip the gigya-sdk-nss-engine.zip file and drag the folder to your root application folder.
 
-In your project build.gradle file, add the following (this will allow the application to import the necessary Flutter dependencies and will link the NSS engine as a local reference).:
+In your project build.gradle file, add the following:
 ```
 allprojects {
   repositories {
@@ -98,7 +106,7 @@ allprojects {
     mavenCentral()
     maven { url 'https://jitpack.io' }
     maven {
-      url '../gigya-sdk-nss-engine/host/outputs/repo'
+      url '../sdk-nss-engine/host/outputs/repo'
     }
     maven {
       url 'https://storage.googleapis.com/download.flutter.io'
@@ -106,6 +114,8 @@ allprojects {
   }
 }
 ```
+This will allow the application to import the necessary Flutter dependencies and will link the NSS engine as a local reference.
+It is important that the engine's folder name and the local maven url that u have set will be the same.
 
 Copy the following Android archive libraries into your application's /libs folder and add these references to your application's build.gradle file:
 ```
@@ -121,8 +131,12 @@ releaseImplementation 'com.gigya.nss.engine:flutter_release:+'
 Finally, add the *NativeScreensetsActivity.class* reference to your application's *AndroidManifest.xml* file.
 
 The NSS libraries are released as debug/release pairs. This is due to various build configurations in the Flutter framework that are builtto provide better performance definitions for debug/release builds.
-```
-<activity android:name="com.gigya.android.sdk.nss.NativeScreenSetsActivity" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|loca le|layoutDirection|fontScale|screenLayout|density|uiMode" android:hardwareAccelerated="true" android:windowSoftInputMode="adjustResize" />
+```xml
+ <activity
+    android:name="com.gigya.android.sdk.nss.NssActivity"
+    android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+    android:hardwareAccelerated="true"
+    android:windowSoftInputMode="adjustResize" />
 ```
 
 ## Enabling Native Screen-Sets
