@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
+import 'package:gigya_native_screensets_engine/startup.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/errors.dart';
@@ -15,6 +16,8 @@ abstract class Router {
 
   Router(this.config, this.channels);
 
+  Route startupRoute(RouteSettings settings);
+
   Route getErrorRoute(RouteSettings settings, String message);
 
   Route emptyRoute(RouteSettings settings);
@@ -23,11 +26,11 @@ abstract class Router {
 
   /// Determine next possible route according to provided [name] parameter.
   /// Parsed route name will then be matched with the correct markup routing value.
-  @visibleForTesting
   String getNextRoute(String name) {
     if (name == null) {
       return null;
     }
+
     var urlSplit = name.split('/');
     if (urlSplit.length > 1) {
       var next = urlSplit[1];
@@ -86,7 +89,6 @@ abstract class Router {
   }
 
   /// Match the correct [Screen] instance to the [nextRoute] property.
-  @visibleForTesting
   Screen nextScreen(String nextRoute) {
     var screen = config.markup.screens[nextRoute];
     if (screen != null) {
@@ -95,7 +97,12 @@ abstract class Router {
     return screen;
   }
 
+  /// Dynamic route generator.
   Route<dynamic> generateRoute(RouteSettings settings) {
+    if (settings.name == '/') {
+      return startupRoute(settings);
+    }
+
     var nextRoute = getNextRoute(settings.name);
 
     //TODO: Specific errors may be more apropriate here.
@@ -130,6 +137,8 @@ class RoutingEvent {
 
 enum RoutingAllowed { none, onPendingRegistration, onPendingEmailVerification }
 
+/// Route evaluator class is responsible for specific routing flows.
+/// These flows are generally intended for recoverable errors.
 class RouteEvaluator {
   /// Check for allowed routing given an error [code]
   static RoutingAllowed allowedBy(int code) {
@@ -163,6 +172,11 @@ class MaterialRouter extends Router {
   MaterialRouter(this.config, this.channels, this.widgetFactory) : super(config, channels);
 
   @override
+  Route startupRoute(RouteSettings settings) {
+    return MaterialPageRoute(settings: settings, builder: (_) => NssIoc().use(StartupWidget));
+  }
+
+  @override
   Route emptyRoute(RouteSettings settings) {
     return MaterialPageRoute(settings: settings, builder: (_) => Container());
   }
@@ -192,20 +206,26 @@ class CupertinoRouter extends Router {
   CupertinoRouter(this.config, this.channels, this.widgetFactory) : super(config, channels);
 
   @override
+  Route startupRoute(RouteSettings settings) {
+    // TODO: implement startupRoute
+    throw UnimplementedError();
+  }
+
+  @override
   Route emptyRoute(RouteSettings settings) {
     // TODO: implement emptyRoute
-    return null;
+    throw UnimplementedError();
   }
 
   @override
   Route getErrorRoute(RouteSettings settings, String message) {
     // TODO: implement getErrorRoute
-    return null;
+    throw UnimplementedError();
   }
 
   @override
   Route screenRoute(RouteSettings settings, Screen screen) {
     // TODO: implement screenRoute
-    return null;
+    throw UnimplementedError();
   }
 }
