@@ -237,7 +237,7 @@ mixin StyleMixin {
     else if (background.contains("http://") || background.contains("https://")) {
       return NetworkImage(background);
     }
-    else if (background.substring(0,2) == "//") {
+    else if (background.substring(0,1) == "/") {
       var data = NssWidgetData.fromJson({"url": background.substring(2)});
       return ImageWidget(key: UniqueKey(), data: data);
     } else {
