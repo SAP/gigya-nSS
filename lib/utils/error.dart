@@ -8,7 +8,7 @@ class ErrorUtils {
   static const canceledError = 'error-operation-canceled';
 
   void addDefaultError(Map<String, dynamic> localization, String key, String defaultString) {
-    if (!localization['_default'].containsKey(key)) {
+    if (localization.containsKey('_default') && !localization['_default'].containsKey(key)) {
       localization['_default'][key] = defaultString;
     }
   }

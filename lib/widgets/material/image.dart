@@ -123,6 +123,7 @@ class ImageWidget extends StatefulWidget {
 
   @override
   _ImageWidgetState createState() => _ImageWidgetState();
+
 }
 
 class _ImageWidgetState extends ImageWidgetState<ImageWidget> {

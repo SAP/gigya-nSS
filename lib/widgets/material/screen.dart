@@ -91,21 +91,13 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
                   : null,
             ),
       body: Container(
-        decoration: BoxDecoration(
-            color: background is Color ? background : null,
-            image: background is NetworkImage
-                ? DecorationImage(
-                    fit: BoxFit.cover,
-                    image: background,
-                  )
-                : null),
         child: SafeArea(
           child: Stack(
             children: <Widget>[
               SingleChildScrollView(
                 child: Form(
                   key: widget.viewModel.formKey,
-                  child: Container(width: MediaQuery.of(context).size.width, child: widget.content),
+                  child: Container(width: MediaQuery.of(context).size.width, height: MediaQuery.of(context).size.height, child: widget.content),
                 ),
               ),
               Consumer<ScreenViewModel>(

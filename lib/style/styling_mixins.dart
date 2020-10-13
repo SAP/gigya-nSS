@@ -5,6 +5,7 @@ import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
 
 enum Styles {
   margin,
@@ -235,6 +236,10 @@ mixin StyleMixin {
       return _getHexColor(background);
     else if (background.contains("http://") || background.contains("https://")) {
       return NetworkImage(background);
+    }
+    else if (background.substring(0,2) == "//") {
+      var data = NssWidgetData.fromJson({"url": background.substring(2)});
+      return ImageWidget(key: UniqueKey(), data: data);
     } else {
       return _getColorWithName(background, platformAware: platformAware ?? false);
     }
