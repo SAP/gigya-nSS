@@ -33,10 +33,17 @@ class _StartupWidgetState extends State<StartupWidget> {
         future: fetchMarkupAndSchema(),
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
-            buildInitialScreen();
+            return buildInitialScreen();
           }
           return Container(
             color: Colors.transparent,
+            child: Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(),
+              ),
+            ),
           );
         });
   }
