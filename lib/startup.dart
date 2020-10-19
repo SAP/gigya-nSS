@@ -37,25 +37,22 @@ class _StartupWidgetState extends State<StartupWidget> {
           }
           return Container(
             color: Colors.transparent,
-            child: Center(
-              child: SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(),
-              ),
-            ),
           );
         });
   }
 
   /// Build and display the initial screen when platfom data is available.
+  /// //TODO: Currenrlt hard coded to Material only.
   Widget buildInitialScreen() {
-    //TODO: Currenrlt hard coded to Material only.
+    // Reference required factory and route.
     MaterialRouter router = NssIoc().use(MaterialRouter);
     var nextRoute = router.getNextRoute(widget.config.markup.routing.initial);
     Screen initial = router.nextScreen(nextRoute);
     MaterialWidgetFactory factory = NssIoc().use(MaterialWidgetFactory);
-    return factory.buildScreen(initial, {});
+
+    // Build screen and trigger native display.
+    Widget screen = factory.buildScreen(initial, {});
+    return screen;
   }
 
   /// Fetch and propagate the required data injected from the platform.

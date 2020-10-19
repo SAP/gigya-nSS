@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
@@ -53,7 +55,22 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     _registerNavigationStream();
 
     // Screen Event triggered "screenDidLoad".
-    WidgetsBinding.instance.addPostFrameCallback((_) => screenDidLoad(widget.screen.id));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+
+      // Issuing ready for display native trigger only when the initial screen has been rendered.
+      // This will occur only once per load.
+      if (viewModel.pid == '' && viewModel.id == NssIoc().use(NssConfig).markup.routing.initial) {
+        engineIsReadyForDisplay();
+      }
+
+      screenDidLoad(widget.screen.id);
+    });
+  }
+
+  void engineIsReadyForDisplay() {
+    if (!NssIoc().use(NssConfig).isMock) {
+      NssIoc().use(NssChannels).ignitionChannel.invokeMethod<void>('ready_for_display');
+    }
   }
 
   @override
@@ -97,7 +114,10 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
               SingleChildScrollView(
                 child: Form(
                   key: widget.viewModel.formKey,
-                  child: Container(width: MediaQuery.of(context).size.width, height: MediaQuery.of(context).size.height, child: widget.content),
+                  child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      child: widget.content),
                 ),
               ),
               Consumer<ScreenViewModel>(
@@ -141,7 +161,6 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     });
   }
 
-
   /// Attach the relevant screen action.
   /// This will result in the instantiation of the native controller action model which will handle all
   /// the native SDK logic.
@@ -153,7 +172,8 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   }
 
   void didRouteFrom() async {
-    Map<String, dynamic> eventData = await routeFrom(viewModel.id, viewModel.pid, widget.routingData);
+    Map<String, dynamic> eventData =
+        await routeFrom(viewModel.id, viewModel.pid, widget.routingData);
     if (eventData != null) {
       // Overrite current routing data if exists.
       widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
@@ -162,7 +182,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
 
       debugPrint('didRouteFrom: data = ${widget.routingData.toString()}');
 
-      if(mounted) {
+      if (mounted) {
         setState(() {});
       }
     }
@@ -182,7 +202,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       debugPrint('willRouteTo: sid = $sid, data = ${widget.routingData.toString()}');
       // Update routing override
 
-      if(mounted) {
+      if (mounted) {
         setState(() {});
       }
 

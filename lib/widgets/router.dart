@@ -135,7 +135,7 @@ class RoutingEvent {
   RoutingEvent(this.route, this.pid);
 }
 
-enum RoutingAllowed { none, onPendingRegistration, onPendingEmailVerification }
+enum RoutingAllowed { none, onPendingRegistration, onPendingEmailVerification, onLoginIDConflict }
 
 /// Route evaluator class is responsible for specific routing flows.
 /// These flows are generally intended for recoverable errors.
@@ -147,6 +147,8 @@ class RouteEvaluator {
         return RoutingAllowed.onPendingRegistration;
       case 206002:
         return RoutingAllowed.onPendingEmailVerification;
+      case 403043:
+        return RoutingAllowed.onLoginIDConflict;
     }
     return RoutingAllowed.none;
   }
