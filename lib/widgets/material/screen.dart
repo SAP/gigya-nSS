@@ -176,7 +176,9 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         await routeFrom(viewModel.id, viewModel.pid, widget.routingData);
     if (eventData != null) {
       // Overrite current routing data if exists.
-      widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
+      if (eventData['data'] != null) {
+        widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
+      }
       // Merge routing data into available binding data.
       bindings.updateWith(widget.routingData);
 

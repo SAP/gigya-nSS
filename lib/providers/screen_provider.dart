@@ -150,7 +150,7 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
 
   /// Trigger natvie social login flow with selected [provider].
   void socialLogin(NssSocialProvider provider) {
-    if (isMock()) {
+    if (isMock) {
       debugPrint('Requeted social login with ${provider.name}');
       return;
     }
@@ -163,7 +163,7 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
     engineLogger.d('link tap: $link');
 
     if (Linkify.isValidUrl(link)) {
-      if (isMock()) return;
+      if (isMock) return;
       engineLogger.d('URL link validated : $link');
       screenService.linkToBrowser(link);
       return;
@@ -178,7 +178,7 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
   /// Send requested API request given a String [method] and base [parameters] map.
   /// [parameter] map is not signed.
   void sendApi(String method, Map<String, dynamic> parameters) {
-    if (isMock()) return;
+    if (isMock) return;
     setProgress();
 
     apiService.send(method, parameters).then(

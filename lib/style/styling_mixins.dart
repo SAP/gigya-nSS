@@ -132,7 +132,7 @@ mixin StyleMixin {
   }
 
   /// Get the theme color according to provided theme specific [key].
-  getThemeColor(String key) {
+  Color getThemeColor(String key) {
     return (config.markup.theme == null || config.markup.theme[key] == null)
         ? getColor(defaultTheme[key])
         : getColor(config.markup.theme[key]);

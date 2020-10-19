@@ -39,7 +39,8 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                 BindingValue bindingValue = getBindingText(widget.data, bindings);
 
                 if (bindingValue.error && !kReleaseMode) {
-                  return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);
+                  return showBindingDoesNotMatchError(widget.data.bind,
+                      errorText: bindingValue.errorText);
                 }
 
                 _groupValue = bindingValue.value;
@@ -62,15 +63,23 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                       title: Text(
                         localizedStringFor(option.textKey),
                         style: TextStyle(
-                          color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
+                          color: widget.data.disabled
+                              ? getThemeColor('disabledColor')
+                              : getStyle(Styles.fontColor,
+                                  data: widget.data, themeProperty: 'textColor'),
                           fontSize: getStyle(Styles.fontSize, data: widget.data),
                           fontWeight: getStyle(Styles.fontWeight, data: widget.data),
                         ),
                       ),
                       groupValue: _groupValue,
-                      activeColor: getThemeColor('enabledColor'),
+                      activeColor: widget.data.disabled
+                          ? getThemeColor('disabledColor')
+                          : getThemeColor('enabledColor'),
                       // TODO: need to change the getter from theme.
                       onChanged: (String value) {
+                        if (widget.data.disabled) {
+                          return null;
+                        }
                         setState(() {
                           // Value needs to be parsed before form can be submitted.
                           if (widget.data.parseAs != null) {

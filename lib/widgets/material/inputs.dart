@@ -110,6 +110,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                 return Opacity(
                   opacity: getStyle(Styles.opacity, data: widget.data),
                   child: TextFormField(
+                    enabled: !widget.data.disabled,
                     keyboardType: getKeyboardType(widget.data.bind),
                     obscureText: _obscuredText,
                     controller: _textEditingController,
@@ -137,42 +138,62 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       fillColor: getStyle(Styles.background, data: widget.data),
                       hintText: localizedStringFor(widget.data.textKey),
                       hintStyle: TextStyle(
-                        color: getStyle(Styles.placeholderColor,
+                        color: widget.data.disabled ?
+                        getStyle(Styles.placeholderColor,
+                            data: widget.data, themeProperty: 'disabledColor')
+                            .withOpacity(0.3):
+                        getStyle(Styles.placeholderColor,
                                 data: widget.data, themeProperty: 'textColor')
                             .withOpacity(0.5),
                       ),
+                      disabledBorder: borderRadius == 0
+                          ? UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: getThemeColor('disabledColor').withOpacity(0.3),
+                                // TODO: need to take color from theme.
+                                width: borderSize + 2,
+                              ),
+                            )
+                          : OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                              borderSide: BorderSide(
+                                color: getThemeColor('disabledColor').withOpacity(0.3),
+                                // TODO: need to take color from theme.
+                                width: borderSize,
+                              ),
+                            ),
                       errorBorder: borderRadius == 0
                           ? UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: getThemeColor('errorColor'),
-                          // TODO: need to take color from theme.
-                          width: borderSize + 2,
-                        ),
-                      )
+                              borderSide: BorderSide(
+                                color: getThemeColor('errorColor'),
+                                // TODO: need to take color from theme.
+                                width: borderSize + 2,
+                              ),
+                            )
                           : OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-                        borderSide: BorderSide(
-                          color: getThemeColor('errorColor'),
-                          // TODO: need to take color from theme.
-                          width: borderSize,
-                        ),
-                      ),
+                              borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                              borderSide: BorderSide(
+                                color: getThemeColor('errorColor'),
+                                // TODO: need to take color from theme.
+                                width: borderSize,
+                              ),
+                            ),
                       focusedErrorBorder: borderRadius == 0
                           ? UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: getThemeColor('errorColor'),
-                          // TODO: need to take color from theme.
-                          width: borderSize + 2,
-                        ),
-                      )
+                              borderSide: BorderSide(
+                                color: getThemeColor('errorColor'),
+                                // TODO: need to take color from theme.
+                                width: borderSize + 2,
+                              ),
+                            )
                           : OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-                        borderSide: BorderSide(
-                          color: getThemeColor('errorColor'),
-                          // TODO: need to take color from theme.
-                          width: borderSize,
-                        ),
-                      ),
+                              borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                              borderSide: BorderSide(
+                                color: getThemeColor('errorColor'),
+                                // TODO: need to take color from theme.
+                                width: borderSize,
+                              ),
+                            ),
                       focusedBorder: borderRadius == 0
                           ? UnderlineInputBorder(
                               borderSide: BorderSide(

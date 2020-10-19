@@ -53,6 +53,9 @@ class NssWidgetData {
   @JsonKey(defaultValue: true)
   bool allowUpload;
 
+  @JsonKey(defaultValue: false)
+  bool disabled;
+
   NssWidgetData({
     this.textKey,
     this.type,
@@ -79,6 +82,7 @@ class NssWidgetData {
     this.fallback,
     this.defaultPlaceholder,
     this.allowUpload,
+    this.disabled,
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) =>

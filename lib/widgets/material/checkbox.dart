@@ -66,11 +66,18 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Checkbox(
-                            activeColor: getThemeColor('enabledColor'),
+                            activeColor: widget.data.disabled
+                                ? getThemeColor('disabledColor').withOpacity(0.3)
+                                : getThemeColor('enabledColor'),
                             // TODO: need to verify if can improve it.
-                            checkColor: getThemeColor('secondaryColor'),
+                            checkColor: widget.data.disabled
+                                ? getThemeColor('disabledColor').withOpacity(0.3)
+                                : getThemeColor('secondaryColor'),
                             value: _currentValue,
                             onChanged: (bool val) {
+                              if (widget.data.disabled) {
+                                return null;
+                              }
                               setState(() {
                                 bindings.save<bool>(widget.data.bind, val);
                               });

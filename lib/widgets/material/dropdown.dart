@@ -10,7 +10,6 @@ import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:provider/provider.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 
-
 /// Dropdown group UI selection component.
 class DropDownButtonWidget extends StatefulWidget {
   final NssWidgetData data;
@@ -60,7 +59,8 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
               BindingValue bindingValue = getBindingText(widget.data, bindings);
 
               if (bindingValue.error && !kReleaseMode) {
-                return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);
+                return showBindingDoesNotMatchError(widget.data.bind,
+                    errorText: bindingValue.errorText);
               }
 
               var bindValue = bindingValue.value;
@@ -71,61 +71,77 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                 }
               });
               _dropdownValue = _dropdownItems[indexFromValue(bindValue)];
-              return DropdownButton<String>(
-                isExpanded: true,
-                value: _dropdownValue,
-                icon: Icon(
-                  Icons.arrow_drop_down,
-                  color: getStyle(Styles.borderColor,
-                      data: widget.data,
-                      themeProperty: 'primaryColor'), // TODO: need to change the getter from theme.
-                ),
-                iconSize: 24,
-                elevation: 4,
-                underline: Container(
-                  height: 1,
-                  color: getStyle(Styles.borderColor,
-                      data: widget.data), // TODO: need to change the getter from theme or borderColor.
-                ),
-                onChanged: (String newValue) {
-                  setState(() {
-                    var index = indexFromDisplayValue(newValue);
-                    var updated = widget.data.options[index].value;
-
-                    // Value needs to be parsed before form can be submitted.
-                    if (widget.data.parseAs != null) {
-                      // Markup parsing applies.
-                      var parsed = parseAs(updated, widget.data.parseAs);
-                      if (parsed == null) {
-                        engineLogger.e('parseAs field is not compatible with provided input');
-                      }
-                      bindings.save<String>(widget.data.bind, parsed);
+              return IgnorePointer(
+                ignoring: widget.data.disabled,
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  value: _dropdownValue,
+                  icon: Icon(
+                    Icons.arrow_drop_down,
+                    color: widget.data.disabled
+                        ? getThemeColor('disabledColor').withOpacity(0.3)
+                        : getStyle(Styles.borderColor,
+                            data: widget.data,
+                            themeProperty:
+                                'primaryColor'), // TODO: need to change the getter from theme.
+                  ),
+                  iconSize: 24,
+                  elevation: 4,
+                  underline: Container(
+                    height: 1,
+                    color: widget.data.disabled
+                        ? getThemeColor('disabledColor').withOpacity(0.3)
+                        : getStyle(Styles.borderColor,
+                            data: widget
+                                .data), // TODO: need to change the getter from theme or borderColor.
+                  ),
+                  onChanged: (String newValue) {
+                    if (widget.data.disabled) {
                       return;
                     }
-                    // If parseAs field is not available try to parse according to schema.
-                    var parsed = parseUsingSchema(updated, widget.data.bind);
-                    if (parsed == null) {
-                      engineLogger.e('Schema type is not compatible with provided input');
-                    }
-                    bindings.save<String>(widget.data.bind, parsed);
-                  });
-                },
-                items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {
-                  TextAlign align = getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start;
+                    setState(() {
+                      var index = indexFromDisplayValue(newValue);
+                      var updated = widget.data.options[index].value;
 
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Align(
-                      alignment: align.toAlignment(widget.data.type),
-                      child: Text(value,
-                          style: TextStyle(
-                            color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
-                            fontSize: getStyle(Styles.fontSize, data: widget.data),
-                            fontWeight: getStyle(Styles.fontWeight, data: widget.data),
-                          )),
-                    ),
-                  );
-                }).toList(),
+                      // Value needs to be parsed before form can be submitted.
+                      if (widget.data.parseAs != null) {
+                        // Markup parsing applies.
+                        var parsed = parseAs(updated, widget.data.parseAs);
+                        if (parsed == null) {
+                          engineLogger.e('parseAs field is not compatible with provided input');
+                        }
+                        bindings.save<String>(widget.data.bind, parsed);
+                        return;
+                      }
+                      // If parseAs field is not available try to parse according to schema.
+                      var parsed = parseUsingSchema(updated, widget.data.bind);
+                      if (parsed == null) {
+                        engineLogger.e('Schema type is not compatible with provided input');
+                      }
+                      bindings.save<String>(widget.data.bind, parsed);
+                    });
+                  },
+                  items:
+                  _dropdownItems.map<DropdownMenuItem<String>>((String value) {
+                    TextAlign align =
+                        getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start;
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Align(
+                        alignment: align.toAlignment(widget.data.type),
+                        child: Text(value,
+                            style: TextStyle(
+                              color: widget.data.disabled
+                                  ? getThemeColor('disabledColor').withOpacity(0.3)
+                                  : getStyle(Styles.fontColor,
+                                      data: widget.data, themeProperty: 'textColor'),
+                              fontSize: getStyle(Styles.fontSize, data: widget.data),
+                              fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                            )),
+                      ),
+                    );
+                  }).toList(),
+                ),
               );
             }),
           ),

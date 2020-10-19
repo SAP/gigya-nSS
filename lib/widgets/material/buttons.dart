@@ -47,41 +47,41 @@ class _SubmitWidgetState extends State<SubmitWidget>
                   Opacity(
                     opacity: getStyle(Styles.opacity, data: widget.data),
                     child: ButtonTheme(
-                      buttonColor: getStyle(Styles.background,
-                          data: widget.data, themeProperty: 'primaryColor'),
+                      buttonColor: widget.data.disabled
+                          ? getThemeColor('disabledColor').withOpacity(0.3)
+                          : getStyle(Styles.background,
+                              data: widget.data, themeProperty: 'primaryColor'),
                       shape: RoundedRectangleBorder(
                         side: BorderSide(
-                          color: getStyle(Styles.borderColor,
-                              data: widget.data,
-                              themeProperty: 'secondaryColor'),
-                          width:
-                              getStyle(Styles.borderSize, data: widget.data) ??
-                                  0,
+                          color: widget.data.disabled
+                              ? getThemeColor('disabledColor').withOpacity(0.3)
+                              : getStyle(Styles.borderColor,
+                                  data: widget.data, themeProperty: 'secondaryColor'),
+                          width: getStyle(Styles.borderSize, data: widget.data) ?? 0,
                         ),
                         borderRadius: BorderRadius.circular(
                           getStyle(Styles.cornerRadius, data: widget.data),
                         ),
                       ),
                       child: RaisedButton(
-                        elevation:
-                            getStyle(Styles.elevation, data: widget.data),
+                        elevation: getStyle(Styles.elevation, data: widget.data),
                         child: Align(
                           alignment: align.toAlignment(widget.data.type),
                           child: Text(
                             // Get localized submit text.
                             localizedStringFor(widget.data.textKey),
                             style: TextStyle(
-                              fontSize:
-                                  getStyle(Styles.fontSize, data: widget.data),
+                              fontSize: getStyle(Styles.fontSize, data: widget.data),
                               color: getStyle(Styles.fontColor,
-                                  data: widget.data,
-                                  themeProperty: 'secondaryColor'),
-                              fontWeight:
-                                  getStyle(Styles.fontWeight, data: widget.data),
+                                  data: widget.data, themeProperty: 'secondaryColor'),
+                              fontWeight: getStyle(Styles.fontWeight, data: widget.data),
                             ),
                           ),
                         ),
                         onPressed: () {
+                          if (widget.data.disabled) {
+                            return null;
+                          }
                           viewModel.submitScreenForm(bindings.savedBindingData);
                           // Dismiss the keyboard. Important.
                           dismissKeyboardWith(context);
@@ -93,16 +93,13 @@ class _SubmitWidgetState extends State<SubmitWidget>
                 viewModel.isError()
                     ? Flexible(
                         child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 16, right: 16, top: 8, bottom: 16),
+                          padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
                           child: Container(
                             width: MediaQuery.of(context).size.width,
                             child: Text(
                               viewModel.error,
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 14.0,
-                                  color: getThemeColor('errorColor')),
+                              style: TextStyle(fontSize: 14.0, color: getThemeColor('errorColor')),
                             ),
                           ),
                         ),
