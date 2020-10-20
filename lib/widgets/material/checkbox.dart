@@ -38,8 +38,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
     final Linkify linkify = Linkify(displayText);
     final bool linkified = linkify.containLinks(displayText);
     if (!linkified) linkify.dispose();
-    return expandIfNeeded(
-      widget.data,
+    return
       FormField(
         validator: (val) {
           return validateField(_currentValue.toString(), widget.data.bind);
@@ -47,7 +46,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
         builder: (state) {
           return Padding(
             padding: getStyle(Styles.margin, data: widget.data),
-            child: sizeIfNeeded(
+            child: customSizeWidget(
               widget.data,
               Consumer2<ScreenViewModel, BindingModel>(
                 builder: (context, viewModel, bindings, child) {
@@ -126,7 +125,6 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
             ),
           );
         },
-      ),
     );
   }
 }

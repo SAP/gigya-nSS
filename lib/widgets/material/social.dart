@@ -74,72 +74,69 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
     with DecorationMixin, StyleMixin, LocalizationMixin {
   @override
   Widget build(BuildContext context) {
-    return expandIfNeeded(
-      widget.data,
-      Padding(
-        padding: getStyle(Styles.margin, data: widget.data),
-        child: sizeIfNeeded(
-          widget.data,
-          Consumer<ScreenViewModel>(
-            builder: (context, viewModel, child) {
-              final text = widget.data.textKey == null
-                  ? 'Sign in with ${widget.data.provider.name.inCaps}'
-                  : localizedStringFor(widget.data.textKey);
+    return Padding(
+      padding: getStyle(Styles.margin, data: widget.data),
+      child: customSizeWidget(
+        widget.data,
+        Consumer<ScreenViewModel>(
+          builder: (context, viewModel, child) {
+            final text = widget.data.textKey == null
+                ? 'Sign in with ${widget.data.provider.name.inCaps}'
+                : localizedStringFor(widget.data.textKey);
 
-              var background = getStyle(Styles.background, data: widget.data);
+            var background = getStyle(Styles.background, data: widget.data);
 
-              if (widget.data.style[Styles.background.name] == null) {
-                background = widget.data.provider.getColor();
-              }
+            if (widget.data.style[Styles.background.name] == null) {
+              background = widget.data.provider.getColor();
+            }
 
-              return Opacity(
-                opacity: getStyle(Styles.opacity, data: widget.data),
-                child: ButtonTheme(
-                  buttonColor: background,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                      getStyle(Styles.cornerRadius, data: widget.data),
-                    ),
-                  ),
-                  child: RaisedButton(
-                    padding: EdgeInsets.zero,
-                    elevation: getStyle(Styles.elevation, data: widget.data),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        widget.data.iconEnabled
-                            ? Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image(
-                                  image: widget.data.iconURL != null
-                                      ? NetworkImage(widget.data.iconURL)
-                                      : AssetImage(
-                                          'assets/social_images/${widget.data.provider.name}.png'),
-                                  width: 24,
-                                  height: 24,
-                                ),
-                              )
-                            : SizedBox(width: 8),
-                        Text(
-                          // Get localized submit text.
-                          text,
-                          style: TextStyle(
-                            fontSize: getStyle(Styles.fontSize, data: widget.data),
-                            color: getStyle(Styles.fontColor,
-                                data: widget.data, themeProperty: 'secondaryColor'),
-                            fontWeight: getStyle(Styles.fontWeight, data: widget.data),
-                          ),
-                        ),
-                      ],
-                    ),
-                    onPressed: () {
-                      viewModel.socialLogin(widget.data.provider);
-                    },
+            return Opacity(
+              opacity: getStyle(Styles.opacity, data: widget.data),
+              child: ButtonTheme(
+                buttonColor: background,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    getStyle(Styles.cornerRadius, data: widget.data),
                   ),
                 ),
-              );
-            },
-          ),
+                child: RaisedButton(
+                  padding: EdgeInsets.zero,
+                  elevation: getStyle(Styles.elevation, data: widget.data),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      widget.data.iconEnabled
+                          ? Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image(
+                                image: widget.data.iconURL != null
+                                    ? NetworkImage(widget.data.iconURL)
+                                    : AssetImage(
+                                        'assets/social_images/${widget.data.provider.name}.png'),
+                                width: 24,
+                                height: 24,
+                              ),
+                            )
+                          : SizedBox(width: 8),
+                      Text(
+                        // Get localized submit text.
+                        text,
+                        style: TextStyle(
+                          fontSize: getStyle(Styles.fontSize, data: widget.data),
+                          color: getStyle(Styles.fontColor,
+                              data: widget.data, themeProperty: 'secondaryColor'),
+                          fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                        ),
+                      ),
+                    ],
+                  ),
+                  onPressed: () {
+                    viewModel.socialLogin(widget.data.provider);
+                  },
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -193,54 +190,60 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
     bool paging = (providerCount > (widget.data.columns * widget.data.rows));
     final int numOfPages =
         (providerCount / maxInPage).abs().toInt() + (providerCount % maxInPage != 0 ? 1 : 0);
-    return expandIfNeeded(
-      widget.data,
-      Padding(
-        padding: getStyle(Styles.margin, data: widget.data),
-        child: sizeIfNeeded(
-          widget.data,
-          Consumer<ScreenViewModel>(
-            builder: (context, viewModel, child) {
-              return paging
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          height: maxCellHeight * widget.data.rows,
-                          child: PageView.builder(
-                            itemCount: numOfPages,
-                            controller: _pageController,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, position) {
-                              var start = position * maxInPage;
-                              var end = maxInPage * (position + 1);
-                              if (widget.data.providers.length < end) {
-                                var delta = end - widget.data.providers.length;
-                                end = end - delta;
-                              }
-                              return createGrid(viewModel, start, end);
-                            },
-                          ),
+
+    debugPrint(
+        'Social login grid: paging = $paging, numberOfPages = $numOfPages, aproximateHeight = ${maxCellHeight * widget.data.rows}');
+
+    return Padding(
+      padding: getStyle(Styles.margin, data: widget.data),
+      child: Consumer<ScreenViewModel>(
+        builder: (context, viewModel, child) {
+          return paging
+              ? NotificationListener<OverscrollIndicatorNotification>(
+                  onNotification: (overscroll) {
+                    overscroll.disallowGlow();
+                    return;
+                  },
+                  child: ListView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    primary: false,
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      Container(
+                        height: (maxCellHeight * widget.data.rows),
+                        child: PageView.builder(
+                          itemCount: numOfPages,
+                          controller: _pageController,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, position) {
+                            var start = position * maxInPage;
+                            var end = maxInPage * (position + 1);
+                            if (widget.data.providers.length < end) {
+                              var delta = end - widget.data.providers.length;
+                              end = end - delta;
+                            }
+                            return createGrid(viewModel, start, end);
+                          },
                         ),
-                        Container(
-                          height: 10,
-                          child: PageIndicator(
-                            controller: _pageController,
-                            color: getStyle(Styles.indicatorColor,
-                                data: widget.data, themeProperty: 'enabledColor'),
-                            itemCount: numOfPages,
-                          ),
-                        )
-                      ],
-                    )
-                  : createGrid(
-                      viewModel,
-                      0,
-                      widget.data.providers.length,
-                    );
-            },
-          ),
-        ),
+                      ),
+                      Container(
+                        height: 10,
+                        child: PageIndicator(
+                          controller: _pageController,
+                          color: getStyle(Styles.indicatorColor,
+                              data: widget.data, themeProperty: 'enabledColor'),
+                          itemCount: numOfPages,
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              : createGrid(
+                  viewModel,
+                  0,
+                  widget.data.providers.length,
+                );
+        },
       ),
     );
   }

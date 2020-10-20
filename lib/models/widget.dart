@@ -17,8 +17,6 @@ class NssWidgetData {
   List<NssWidgetData> children;
   String api;
   dynamic defaultValue;
-  @JsonKey(defaultValue: false)
-  bool expand;
   List<NssOption> options;
   @JsonKey(defaultValue: {})
   Map<String, dynamic> style;
@@ -65,7 +63,6 @@ class NssWidgetData {
     this.children,
     this.api,
     this.defaultValue,
-    this.expand,
     this.options,
     this.style,
     this.theme,

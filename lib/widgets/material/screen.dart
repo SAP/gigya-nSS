@@ -60,18 +60,13 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       // Issuing ready for display native trigger only when the initial screen has been rendered.
       // This will occur only once per load.
       if (viewModel.pid == '' && viewModel.id == NssIoc().use(NssConfig).markup.routing.initial) {
-        engineIsReadyForDisplay();
+        //TODO: Testing trigger.
       }
 
       screenDidLoad(widget.screen.id);
     });
   }
 
-  void engineIsReadyForDisplay() {
-    if (!NssIoc().use(NssConfig).isMock) {
-      NssIoc().use(NssChannels).ignitionChannel.invokeMethod<void>('ready_for_display');
-    }
-  }
 
   @override
   Widget buildScaffold() {
@@ -192,7 +187,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
 
   Future<String> willRouteTo(nid) async {
     Map<String, dynamic> eventData = await routeTo(viewModel.id, nid, bindings.savedBindingData);
-    if (eventData != null) {
+    if (eventData != null && eventData.isNotEmpty) {
       // Overrite current routing data if exists.
       widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
       // Merge routing data into available binding data.

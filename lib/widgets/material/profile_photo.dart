@@ -47,7 +47,7 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
 
     return Padding(
       padding: getStyle(Styles.margin, data: widget.data),
-      child: sizeIfNeeded(
+      child: customSizeWidget(
         widget.data,
         Consumer<BindingModel>(
           builder: (context, bindings, child) {

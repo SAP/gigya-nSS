@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/utils/debug.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
@@ -59,6 +61,9 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
   /// Method will use the [ScreenService] to send the correct action to the native to initialize the correct
   /// native logic object.
   Future<Map<String, dynamic>> attachScreenAction(String action) async {
+    if (NssIoc().use(NssConfig).isMock) {
+      return {};
+    }
     try {
       var map = await screenService.initiateAction(action, id);
       engineLogger.d('Screen $id flow initialized with data map');

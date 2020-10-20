@@ -42,7 +42,7 @@ class _StartupWidgetState extends State<StartupWidget> {
   }
 
   /// Build and display the initial screen when platfom data is available.
-  /// //TODO: Currenrlt hard coded to Material only.
+  /// //TODO: Currently hard coded to Material only.
   Widget buildInitialScreen() {
     // Reference required factory and route.
     MaterialRouter router = NssIoc().use(MaterialRouter);
@@ -52,7 +52,14 @@ class _StartupWidgetState extends State<StartupWidget> {
 
     // Build screen and trigger native display.
     Widget screen = factory.buildScreen(initial, {});
+    engineIsReadyForDisplay();
     return screen;
+  }
+
+  void engineIsReadyForDisplay() {
+    if (!NssIoc().use(NssConfig).isMock) {
+      NssIoc().use(NssChannels).ignitionChannel.invokeMethod<void>('ready_for_display');
+    }
   }
 
   /// Fetch and propagate the required data injected from the platform.

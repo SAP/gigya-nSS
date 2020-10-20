@@ -17,11 +17,10 @@ class LabelWidget extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return expandIfNeeded(
-      data,
+    return
       Padding(
         padding: getStyle(Styles.margin, data: data),
-        child: sizeIfNeeded(
+        child: customSizeWidget(
           data,
           Consumer2<ScreenViewModel, BindingModel>(
             builder: (context, viewModel, bindings, child) {
@@ -68,7 +67,6 @@ class LabelWidget extends StatelessWidget
             },
           ),
         ),
-      ),
     );
   }
 }
