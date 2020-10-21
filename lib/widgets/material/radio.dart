@@ -86,7 +86,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                         if (parsed == null) {
                           engineLogger.e('parseAs field is not compatible with provided input');
                         }
-                        bindings.save<String>(widget.data.bind, parsed);
+                        bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
                         return;
                       }
                       // If parseAs field is not available try to parse according to schema.
@@ -94,7 +94,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                       if (parsed == null) {
                         engineLogger.e('Schema type is not compatible with provided input');
                       }
-                      bindings.save<String>(widget.data.bind, parsed);
+                      bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
                     });
                   },
                 );

@@ -78,7 +78,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                 return null;
                               }
                               setState(() {
-                                bindings.save<bool>(widget.data.bind, val);
+                                bindings.save<bool>(widget.data.bind, val, saveAs: widget.data.sendAs);
                               });
                             },
                           ),
@@ -86,7 +86,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                             child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    bindings.save<bool>(widget.data.bind, !_currentValue);
+                                    bindings.save<bool>(widget.data.bind, !_currentValue, saveAs: widget.data.sendAs);
                                   });
                                 },
                                 child: Container(

@@ -26,6 +26,7 @@ class NssWidgetData {
 
   // Optional values: 'number'|'boolean'|'string'
   String parseAs;
+  String sendAs;
 
   // social login button
   NssSocialProvider provider;
@@ -68,6 +69,7 @@ class NssWidgetData {
     this.theme,
     this.validations,
     this.parseAs,
+    this.sendAs,
     this.provider,
     this.iconURL,
     this.iconEnabled,

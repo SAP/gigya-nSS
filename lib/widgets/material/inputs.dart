@@ -125,7 +125,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                     suffixIcon: widget.data.type == NssWidgetType.passwordInput
                         ? IconButton(
                             onPressed: () {
-                              bindings.save(widget.data.bind, _textEditingController.text.trim());
+                              bindings.save(widget.data.bind, _textEditingController.text.trim(), saveAs: widget.data.sendAs);
                               _toggleTextObfuscationState();
                             },
                             icon: Icon(
@@ -235,6 +235,10 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       }
                       return eventInjectedError;
                     }
+                    // Disable validation when the bind is mark with `#`.
+                    if (widget.data.bind.startsWith("#")) {
+                      return null;
+                    }
                     // Field validation triggered.
                     return validateField(input, widget.data.bind);
                   },
@@ -253,7 +257,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       if (parsed == null) {
                         engineLogger.e('parseAs field is not compatible with provided input');
                       }
-                      bindings.save<String>(widget.data.bind, parsed);
+                      bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
                       return;
                     }
 
@@ -262,7 +266,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                     if (parsed == null) {
                       engineLogger.e('Schema type is not compatible with provided input');
                     }
-                    bindings.save<String>(widget.data.bind, parsed);
+                    bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
                   },
                 ),
               );

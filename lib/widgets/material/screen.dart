@@ -136,8 +136,8 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   /// screen widget in order to perform navigation actions.
   _registerNavigationStream() {
     viewModel.navigationStream.stream.listen((route) async {
-      if (ModalRoute.of(context).settings.name.split('/').last ==
-          route.toString().split('/').last) {
+      if (ModalRoute.of(context).settings.name ==
+          route.toString()) {
         return;
       }
 
