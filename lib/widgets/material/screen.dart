@@ -111,7 +111,6 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
                   key: widget.viewModel.formKey,
                   child: Container(
                       width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
                       child: widget.content),
                 ),
               ),
