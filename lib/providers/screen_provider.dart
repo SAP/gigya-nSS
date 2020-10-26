@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/utils/debug.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
@@ -48,7 +49,7 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
   /// Stream controller responsible for triggering navigation events.
   /// The [NssScreenWidget] holds the correct [BuildContext] which can access the [Navigator]. Therefore it will
   /// be the only one listening to this stream.
-  final StreamController navigationStream = StreamController<String>();
+  final StreamController<NavigationEvent> navigationStream = StreamController<NavigationEvent>();
 
   @override
   void dispose() {
@@ -60,13 +61,13 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
   /// Attach screen action.
   /// Method will use the [ScreenService] to send the correct action to the native to initialize the correct
   /// native logic object.
-  Future<Map<String, dynamic>> attachScreenAction(String action) async {
+  Future<Map<String, dynamic>> attachScreenAction(String action, String screenId) async {
     if (NssIoc().use(NssConfig).isMock) {
       return {};
     }
     try {
-      var map = await screenService.initiateAction(action, id);
-      engineLogger.d('Screen $id flow initialized with data map');
+      var map = await screenService.initiateAction(action, screenId);
+      engineLogger.d('Screen $screenId flow initialized with data map');
       return map;
     } on MissingPluginException {
       engineLogger.e('Missing channel connection: check mock state?');
@@ -175,7 +176,7 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
     }
     if (RouteEvaluator.validatedRoute(link)) {
       engineLogger.d('Route link validated : $link');
-      navigationStream.sink.add('$link');
+      navigationStream.sink.add(NavigationEvent('$link', {}));
       return;
     }
   }
@@ -187,24 +188,29 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
     setProgress();
 
     apiService.send(method, parameters).then(
-      (result) {
-        setIdle();
+      (result) async {
         engineLogger.d('Api request success: ${result.data.toString()}');
 
-        //TODO: inject response data to screen routing data so the data will be passed to the next screen.
+        // Initiate next action.
+        final Map<String, dynamic> data = await initiateNextAction('onSuccess');
+
+        setIdle();
 
         // Trigger navigation.
-        navigationStream.sink.add('$id/onSuccess');
+        navigationStream.sink.add(NavigationEvent('$id/onSuccess', data));
       },
     ).catchError(
-      (error) {
+      (error) async {
         final RoutingAllowed route = RouteEvaluator.allowedBy(error.errorCode);
         if (route != RoutingAllowed.none) {
           final routeNamed = describeEnum(route);
-          navigationStream.sink.add('$id/$routeNamed');
 
-          //TODO: inject response data to screen routing data so the data will be passed to the next screen.
+          // Initiate next action.
+          final Map<String, dynamic> data = await initiateNextAction(routeNamed);
 
+          setIdle();
+
+          navigationStream.sink.add(NavigationEvent('$id/$routeNamed', data));
         } else {
           // Error will be displayed when there is no available routing option.
           setError(error.errorMessage);
@@ -215,4 +221,42 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
       },
     );
   }
+
+  /// Initiate the next screen's native action.
+  /// This will allow action initialization data to be retrieved prior to navigation and will
+  /// remove data population jitter.
+  Future<Map<String, dynamic>> initiateNextAction(String nextRoute) async {
+    final Markup markup = NssIoc().use(NssConfig).markup;
+
+    final String nextScreenId = markup.screens[id].routes[nextRoute];
+
+    // Check for available route.
+    if (nextScreenId == null || nextScreenId.isEmpty) {
+      return {};
+    }
+
+    // Check if the next route is a screen definition (can be _dismiss).
+    if (markup.screens[nextScreenId] == null) {
+      return {};
+    }
+
+    final String nextScreenAction = markup.screens[nextScreenId].action;
+    if (nextScreenAction == null || nextScreenAction.isEmpty) {
+      return {};
+    }
+
+    engineLogger
+        .d('initiateNextAction: for next screen id = $nextScreenId and action = $nextScreenAction');
+
+    // Action initialization data fetch.
+    var dataMap = await attachScreenAction(nextScreenAction, nextScreenId);
+    return dataMap;
+  }
+}
+
+class NavigationEvent {
+  final String route;
+  final Map<String, dynamic> data;
+
+  NavigationEvent(this.route, this.data);
 }

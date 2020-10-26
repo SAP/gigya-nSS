@@ -52,14 +52,7 @@ class _StartupWidgetState extends State<StartupWidget> {
 
     // Build screen and trigger native display.
     Widget screen = factory.buildScreen(initial, {});
-    engineIsReadyForDisplay();
     return screen;
-  }
-
-  void engineIsReadyForDisplay() {
-    if (!NssIoc().use(NssConfig).isMock) {
-      NssIoc().use(NssChannels).ignitionChannel.invokeMethod<void>('ready_for_display');
-    }
   }
 
   /// Fetch and propagate the required data injected from the platform.

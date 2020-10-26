@@ -50,27 +50,30 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     // Screen Event triggered "routeFrom"
     didRouteFrom();
 
-    // Initialize screen build logic.
-    _attachScreenAction();
     _registerNavigationStream();
 
-    // Screen Event triggered "screenDidLoad".
+    // On first render issue "screenDidLoad" event.
+    // If this is the first screen being rendered, a "ready_for_display" event will be triggered to allow
+    // smooth transition when the engine loads.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-
       // Issuing ready for display native trigger only when the initial screen has been rendered.
       // This will occur only once per load.
       if (viewModel.pid == '' && viewModel.id == NssIoc().use(NssConfig).markup.routing.initial) {
-        //TODO: Testing trigger.
+        if (!NssIoc().use(NssConfig).isMock) {
+          NssIoc().use(NssChannels).ignitionChannel.invokeMethod<void>('ready_for_display');
+
+          // Attach the initial screen action only.
+          // Follwing actions will be initiated as a part of the navigation flow moving forward.
+          _attachInitialScreenAction();
+        }
       }
 
       screenDidLoad(widget.screen.id);
     });
   }
 
-
   @override
   Widget buildScaffold() {
-    var background = getStyle(Styles.background, styles: widget.screen.style);
     var appBackground = getStyle(Styles.background,
         styles: widget.screen.appBar.style, themeProperty: 'primaryColor');
 
@@ -109,10 +112,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
               SingleChildScrollView(
                 child: Form(
                   key: widget.viewModel.formKey,
-                  child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      child: widget.content),
+                  child: Container(width: MediaQuery.of(context).size.width, child: widget.content),
                 ),
               ),
               Consumer<ScreenViewModel>(
@@ -135,14 +135,18 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   /// Only the current context contains the main Navigator instance. Therefore we must communicate back to the
   /// screen widget in order to perform navigation actions.
   _registerNavigationStream() {
-    viewModel.navigationStream.stream.listen((route) async {
-      if (ModalRoute.of(context).settings.name ==
-          route.toString()) {
+    viewModel.navigationStream.stream.listen((NavigationEvent event) async {
+      if (ModalRoute.of(context).settings.name == event.route.toString()) {
         return;
       }
 
+      // If route data is available, make sure it is added to the routing/binding data.
+      if (event.data.isNotEmpty) {
+        widget.routingData.addAll(event.data);
+      }
+
       // Trigger "routeTo" event to determine routing override.
-      String routingOverride = await willRouteTo(route);
+      String routingOverride = await willRouteTo(event.route);
 
       // Merge bindings & routing data to avoid data loss between screens.
       widget.routingData.addAll(bindings.savedBindingData);
@@ -150,7 +154,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       // Route.
       Navigator.pushReplacementNamed(
         context,
-        routingOverride.isNotEmpty ? routingOverride : route,
+        routingOverride.isNotEmpty ? routingOverride : event.route,
         arguments: {'pid': viewModel.id, 'routingData': widget.routingData},
       );
     });
@@ -159,8 +163,8 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   /// Attach the relevant screen action.
   /// This will result in the instantiation of the native controller action model which will handle all
   /// the native SDK logic.
-  _attachScreenAction() async {
-    var dataMap = await viewModel.attachScreenAction(widget.screen.action);
+  _attachInitialScreenAction() async {
+    var dataMap = await viewModel.attachScreenAction(widget.screen.action, widget.screen.id);
     // Merge routing data into injected screen data and update bindings.
     dataMap.addAll(widget.routingData);
     bindings.updateWith(dataMap);
