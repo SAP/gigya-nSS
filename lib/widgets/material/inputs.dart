@@ -235,10 +235,6 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       }
                       return eventInjectedError;
                     }
-                    // Disable validation when the bind is mark with `#`.
-                    if (widget.data.bind.startsWith("#")) {
-                      return null;
-                    }
                     // Field validation triggered.
                     return validateField(input, widget.data.bind);
                   },
