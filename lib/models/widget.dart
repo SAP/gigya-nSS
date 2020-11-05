@@ -55,6 +55,8 @@ class NssWidgetData {
   @JsonKey(defaultValue: false)
   bool disabled;
 
+  String showIf;
+
   NssWidgetData({
     this.textKey,
     this.type,
@@ -82,6 +84,7 @@ class NssWidgetData {
     this.defaultPlaceholder,
     this.allowUpload,
     this.disabled,
+    this.showIf,
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) =>

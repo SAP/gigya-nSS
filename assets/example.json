@@ -305,6 +305,7 @@
       "children": [
         {
           "type": "container",
+          "showIf": "1 == 0",
           "stack": "horizontal",
           "alignment": "start",
           "style": {
