@@ -62,7 +62,8 @@ class _SubmitWidgetState extends State<SubmitWidget>
                       ),
                     ),
                     child: RaisedButton(
-                      elevation: getStyle(Styles.elevation, data: widget.data),
+                      elevation:
+                          widget.data.disabled ? 0 : getStyle(Styles.elevation, data: widget.data),
                       child: Align(
                         alignment: align.toAlignment(widget.data.type),
                         child: Text(
