@@ -177,6 +177,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       viewModel.mapScreenExpressions(widget.screen),
     );
     // Merge routing data into injected screen data and update bindings.
+    viewModel.expressions = dataMap['expressions'];
     dataMap.addAll(widget.routingData);
     bindings.updateWith(dataMap);
   }

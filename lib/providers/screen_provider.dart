@@ -32,7 +32,7 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
   final ApiService apiService;
   final ScreenService screenService;
 
-  Map<String, dynamic> expressions = {};
+  Map<dynamic, dynamic> expressions = {};
 
   ScreenViewModel(
     this.apiService,
@@ -271,12 +271,12 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
 
   /// Map all screen expressions before sending it when attaching the next screen.
   Map<String, String> mapScreenExpressions(Screen screen) {
-    var expressionMap = {};
+    Map<String, String> expressionMap = {};
     screen.children.asMap().forEach((index, widget) {
       // Addiing showIf expression.
-      if (widget.showIf != null && widget.showIf.isNotEmpty) {
+      if (widget.showIf != null) {
         // Add expression with hierarchy index as unique key.
-        expressionMap[index] = widget.showIf;
+        expressionMap[index.toString()] = widget.showIf;
 
         // Overrite markup expression field with index.
         widget.showIf = index.toString();
