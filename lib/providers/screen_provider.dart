@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
+import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/utils/debug.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
@@ -30,6 +31,8 @@ extension ScreenActionExt on ScreenAction {
 class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, EngineEvents {
   final ApiService apiService;
   final ScreenService screenService;
+
+  Map<String, dynamic> expressions = {};
 
   ScreenViewModel(
     this.apiService,
@@ -61,12 +64,13 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
   /// Attach screen action.
   /// Method will use the [ScreenService] to send the correct action to the native to initialize the correct
   /// native logic object.
-  Future<Map<String, dynamic>> attachScreenAction(String action, String screenId) async {
+  Future<Map<String, dynamic>> attachScreenAction(
+      String action, String screenId, Map<String, String> expressions) async {
     if (NssIoc().use(NssConfig).isMock) {
       return {};
     }
     try {
-      var map = await screenService.initiateAction(action, screenId);
+      var map = await screenService.initiateAction(action, screenId, expressions);
       engineLogger.d('Screen $screenId flow initialized with data map');
       return map;
     } on MissingPluginException {
@@ -176,7 +180,7 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
     }
     if (RouteEvaluator.validatedRoute(link)) {
       engineLogger.d('Route link validated : $link');
-      navigationStream.sink.add(NavigationEvent('$link', {}));
+      navigationStream.sink.add(NavigationEvent('$link', {}, {}));
       return;
     }
   }
@@ -192,12 +196,14 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
         engineLogger.d('Api request success: ${result.data.toString()}');
 
         // Initiate next action.
-        final Map<String, dynamic> data = await initiateNextAction('onSuccess');
+        final Map<String, dynamic> actionData = await initiateNextAction('onSuccess');
+        final Map<String, dynamic> screenData = actionData['data'];
+        final Map<String, dynamic> expressionData = actionData['expressions'];
 
         setIdle();
 
         // Trigger navigation.
-        navigationStream.sink.add(NavigationEvent('$id/onSuccess', data));
+        navigationStream.sink.add(NavigationEvent('$id/onSuccess', screenData, expressionData));
       },
     ).catchError(
       (error) async {
@@ -206,11 +212,13 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
           final routeNamed = describeEnum(route);
 
           // Initiate next action.
-          final Map<String, dynamic> data = await initiateNextAction(routeNamed);
+          final Map<String, dynamic> actionData = await initiateNextAction(routeNamed);
+          final Map<String, dynamic> screenData = actionData['data'];
+          final Map<String, dynamic> expressionData = actionData['expressions'];
 
           setIdle();
 
-          navigationStream.sink.add(NavigationEvent('$id/$routeNamed', data));
+          navigationStream.sink.add(NavigationEvent('$id/$routeNamed', screenData, expressionData));
         } else {
           // Error will be displayed when there is no available routing option.
           setError(error.errorMessage);
@@ -245,18 +253,43 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
       return {};
     }
 
+    // Map next screen expressions.
+    final Screen nextScreen = markup.screens[nextScreenId];
+    var nextScreenExpressions = mapScreenExpressions(nextScreen);
+
     engineLogger
         .d('initiateNextAction: for next screen id = $nextScreenId and action = $nextScreenAction');
 
     // Action initialization data fetch.
-    var dataMap = await attachScreenAction(nextScreenAction, nextScreenId);
+    var dataMap = await attachScreenAction(
+      nextScreenAction,
+      nextScreenId,
+      nextScreenExpressions ?? {},
+    );
     return dataMap;
+  }
+
+  /// Map all screen expressions before sending it when attaching the next screen.
+  Map<String, String> mapScreenExpressions(Screen screen) {
+    var expressionMap = {};
+    screen.children.asMap().forEach((index, widget) {
+      // Addiing showIf expression.
+      if (widget.showIf != null && widget.showIf.isNotEmpty) {
+        // Add expression with hierarchy index as unique key.
+        expressionMap[index] = widget.showIf;
+
+        // Overrite markup expression field with index.
+        widget.showIf = index.toString();
+      }
+    });
+    return expressionMap;
   }
 }
 
 class NavigationEvent {
   final String route;
-  final Map<String, dynamic> data;
+  final Map<String, dynamic> routingData;
+  final Map<String, dynamic> expressions;
 
-  NavigationEvent(this.route, this.data);
+  NavigationEvent(this.route, this.routingData, this.expressions);
 }

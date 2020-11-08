@@ -17,56 +17,53 @@ class LabelWidget extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return
-      Padding(
-        padding: getStyle(Styles.margin, data: data),
-        child: customSizeWidget(
-          data,
-          Consumer2<ScreenViewModel, BindingModel>(
-            builder: (context, viewModel, bindings, child) {
-              BindingValue bindingValue = getBindingText(data, bindings);
+    return Consumer2<ScreenViewModel, BindingModel>(
+      builder: (context, viewModel, bindings, child) {
+        BindingValue bindingValue = getBindingText(data, bindings);
 
-              // Check for binding error.
-              if (bindingValue.error && !kReleaseMode) {
-                return showBindingDoesNotMatchError(data.bind, errorText: bindingValue.errorText);
-              }
+        // Check for binding error.
+        if (bindingValue.error && !kReleaseMode) {
+          return showBindingDoesNotMatchError(data.bind, errorText: bindingValue.errorText);
+        }
 
-              // Binding validated.
-              String text = bindingValue.value;
-              if (text == null) {
-                // Get localized label text.
-                text = localizedStringFor(data.textKey);
-              }
+        // Binding validated.
+        String text = bindingValue.value;
+        if (text == null) {
+          // Get localized label text.
+          text = localizedStringFor(data.textKey);
+        }
 
-              // Apply Linkification if needed.
-              final Linkify linkify = Linkify(text ?? '');
-              final bool linkified = linkify.containLinks(text);
-              if (!linkified) linkify.dispose();
-
-              return Opacity(
-                opacity: getStyle(Styles.opacity, data: data),
-                child: Container(
-                  child: linkified
-                      ? linkify.linkify(data, (link) {
-                          viewModel.linkifyTap(link);
-                        },
-                          getStyle(Styles.linkColor, data: data, themeProperty: 'linkColor') ??
-                              getColor('blue'))
-                      : Text(
-                          text,
-                          textAlign: getStyle(Styles.textAlign, data: data) ?? TextAlign.start,
-                          style: TextStyle(
-                            fontSize: getStyle(Styles.fontSize, data: data),
-                            color:
-                                getStyle(Styles.fontColor, data: data, themeProperty: 'textColor'),
-                            fontWeight: getStyle(Styles.fontWeight, data: data),
-                          ),
+        // Apply Linkification if needed.
+        final Linkify linkify = Linkify(text ?? '');
+        final bool linkified = linkify.containLinks(text);
+        if (!linkified) linkify.dispose();
+        return Padding(
+          padding: getStyle(Styles.margin, data: data),
+          child: customSizeWidget(
+            data,
+            Opacity(
+              opacity: getStyle(Styles.opacity, data: data),
+              child: Container(
+                child: linkified
+                    ? linkify.linkify(data, (link) {
+                        viewModel.linkifyTap(link);
+                      },
+                        getStyle(Styles.linkColor, data: data, themeProperty: 'linkColor') ??
+                            getColor('blue'))
+                    : Text(
+                        text,
+                        textAlign: getStyle(Styles.textAlign, data: data) ?? TextAlign.start,
+                        style: TextStyle(
+                          fontSize: getStyle(Styles.fontSize, data: data),
+                          color: getStyle(Styles.fontColor, data: data, themeProperty: 'textColor'),
+                          fontWeight: getStyle(Styles.fontWeight, data: data),
                         ),
-                ),
-              );
-            },
+                      ),
+              ),
+            ),
           ),
-        ),
+        );
+      },
     );
   }
 }

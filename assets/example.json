@@ -117,7 +117,7 @@
     }
   },
   "routing": {
-    "initial": "register",
+    "initial": "link-account",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -127,6 +127,7 @@
     "login": {
       "routing": {
         "onPendingRegistration": "account-update",
+        "onLoginIdentifierExists": "link-account",
         "onSuccess": "account-update"
       },
       "action": "login",
@@ -216,7 +217,12 @@
           "textKey": "common-email",
           "theme": "input",
           "style": {
-            "margin": [16, 4, 16, 4],
+            "margin": [
+              16,
+              4,
+              16,
+              4
+            ],
             "cornerRadius": 22,
             "borderSize": 1
           },
@@ -238,7 +244,12 @@
           "textKey": "common-password",
           "theme": "input",
           "style": {
-            "margin": [16, 4, 16, 4],
+            "margin": [
+              16,
+              4,
+              16,
+              4
+            ],
             "cornerRadius": 22,
             "borderSize": 1
           },
@@ -306,7 +317,6 @@
       "children": [
         {
           "type": "container",
-          "showIf": "1 == 0",
           "stack": "horizontal",
           "alignment": "start",
           "style": {
@@ -513,76 +523,6 @@
         }
       ]
     },
-    "link-account": {
-      "routing": {
-        "onSuccess": "_dismiss"
-      },
-      "action": "linkAccount",
-      "appBar": {
-        "textKey": "account-information"
-      },
-      "stack": "vertical",
-      "children": [
-        {
-          "type": "socialLoginGrid",
-          "providers": [
-            "facebook",
-            "google",
-            "wechat",
-            "yahoo",
-            "linkedin",
-            "twitter",
-            "apple",
-            "line",
-            "amazon",
-            "yahooJapan"
-          ],
-          "columns": 3,
-          "rows": 2,
-          "style": {
-            "cornerRadius": 6,
-            "fontSize": 14,
-            "fontColor": "black",
-            "fontWeight": "bold",
-            "elevation": 2,
-            "margin": 16,
-            "indicatorColor": "grey"
-          }
-        },
-        {
-          "bind": "loginID",
-          "type": "textInput",
-          "textKey": "common-email",
-          "theme": "input"
-        },
-        {
-          "bind": "password",
-          "type": "passwordInput",
-          "textKey": "common-password",
-          "theme": "input",
-          "validations": {
-            "required": {
-              "enabled": true,
-              "errorKey": "error-required-field"
-            },
-          }
-        },
-        {
-          "type": "submit",
-          "textKey": "common-submit",
-          "theme": "raisedButton",
-          "style": {
-            "margin": [
-              0,
-              40,
-              0,
-              0
-            ],
-            "cornerRadius": 5
-          }
-        }
-      ]
-    },
     "forgot-password": {
       "routing": {
         "onSuccess": "_dismiss"
@@ -647,6 +587,89 @@
             ],
             "cornerRadius": 5
           }
+        }
+      ]
+    },
+    "link-account": {
+      "routing": {
+        "onSuccess": "_dismiss"
+      },
+      "action": "linkAccount",
+      "appBar": {
+        "textKey": "account-information"
+      },
+      "stack": "vertical",
+      "children": [
+        {
+          "type": "container",
+          "showIf": "1 == 1",
+          "children": [
+            {
+              "type": "socialLoginGrid",
+              "providers": [
+                "facebook",
+                "google",
+                "wechat",
+                "yahoo",
+                "linkedin",
+                "twitter",
+                "apple",
+                "line",
+                "amazon",
+                "yahooJapan"
+              ],
+              "columns": 3,
+              "rows": 2,
+              "style": {
+                "cornerRadius": 6,
+                "fontSize": 14,
+                "fontColor": "black",
+                "fontWeight": "bold",
+                "elevation": 2,
+                "margin": 16,
+                "indicatorColor": "grey"
+              }
+            }
+          ]
+        },
+        {
+          "type": "container",
+          "showIf": "1 == 0",
+          "children": [
+            {
+              "bind": "loginID",
+              "disabled": true,
+              "type": "emailInput",
+              "textKey": "common-email",
+              "theme": "input"
+            },
+            {
+              "bind": "password",
+              "type": "passwordInput",
+              "textKey": "common-password",
+              "theme": "input",
+              "validations": {
+                "required": {
+                  "enabled": true,
+                  "errorKey": "error-required-field"
+                }
+              }
+            },
+            {
+              "type": "submit",
+              "textKey": "common-submit",
+              "theme": "raisedButton",
+              "style": {
+                "margin": [
+                  0,
+                  40,
+                  0,
+                  0
+                ],
+                "cornerRadius": 5
+              }
+            }
+          ]
         }
       ]
     }

@@ -112,7 +112,10 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
               SingleChildScrollView(
                 child: Form(
                   key: widget.viewModel.formKey,
-                  child: Container(width: MediaQuery.of(context).size.width, child: widget.content),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: widget.content,
+                  ),
                 ),
               ),
               Consumer<ScreenViewModel>(
@@ -141,8 +144,8 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       }
 
       // If route data is available, make sure it is added to the routing/binding data.
-      if (event.data.isNotEmpty) {
-        widget.routingData.addAll(event.data);
+      if (event.routingData.isNotEmpty) {
+        widget.routingData.addAll(event.routingData);
       }
 
       // Trigger "routeTo" event to determine routing override.
@@ -155,7 +158,11 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       Navigator.pushReplacementNamed(
         context,
         routingOverride.isNotEmpty ? routingOverride : event.route,
-        arguments: {'pid': viewModel.id, 'routingData': widget.routingData},
+        arguments: {
+          'pid': viewModel.id,
+          'routingData': widget.routingData,
+          'expressions': event.expressions
+        },
       );
     });
   }
@@ -164,7 +171,11 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   /// This will result in the instantiation of the native controller action model which will handle all
   /// the native SDK logic.
   _attachInitialScreenAction() async {
-    var dataMap = await viewModel.attachScreenAction(widget.screen.action, widget.screen.id);
+    var dataMap = await viewModel.attachScreenAction(
+      widget.screen.action,
+      widget.screen.id,
+      viewModel.mapScreenExpressions(widget.screen),
+    );
     // Merge routing data into injected screen data and update bindings.
     dataMap.addAll(widget.routingData);
     bindings.updateWith(dataMap);
