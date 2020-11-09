@@ -21,12 +21,11 @@ class ContainerWidget extends StatelessWidget with StyleMixin, DecorationMixin {
   @override
   Widget build(BuildContext context) {
     var background = getStyle(Styles.background, styles: data.style);
-
     return Container(
       child: Consumer2<ScreenViewModel, BindingModel>(
-        builder: (context, vm, binding ,widget) {
+        builder: (context, viewModel, binding, widget) {
           return Visibility(
-            visible: containerVisible(context),
+            visible: containerVisible(viewModel),
             child: Padding(
               padding: getStyle(Styles.margin, styles: data.style),
               child: Opacity(
@@ -52,8 +51,8 @@ class ContainerWidget extends StatelessWidget with StyleMixin, DecorationMixin {
     );
   }
 
-  bool containerVisible(context) {
-    String showIf = Provider.of<ScreenViewModel>(context, listen: false).expressions[data.showIf] ?? 'true';
+  bool containerVisible(viewModel) {
+    String showIf = viewModel.expressions[data.showIf] ?? 'true';
     return showIf.toLowerCase() == 'true';
   }
 

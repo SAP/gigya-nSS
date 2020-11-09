@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
+import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
@@ -70,8 +71,7 @@ class SocialButtonWidget extends StatefulWidget {
   _SocialButtonWidgetState createState() => _SocialButtonWidgetState();
 }
 
-class _SocialButtonWidgetState extends State<SocialButtonWidget>
-    with DecorationMixin, StyleMixin, LocalizationMixin {
+class _SocialButtonWidgetState extends State<SocialButtonWidget> with DecorationMixin, StyleMixin, LocalizationMixin {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -111,8 +111,7 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
                               child: Image(
                                 image: widget.data.iconURL != null
                                     ? NetworkImage(widget.data.iconURL)
-                                    : AssetImage(
-                                        'assets/social_images/${widget.data.provider.name}.png'),
+                                    : AssetImage('assets/social_images/${widget.data.provider.name}.png'),
                                 width: 24,
                                 height: 24,
                               ),
@@ -123,8 +122,7 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
                         text,
                         style: TextStyle(
                           fontSize: getStyle(Styles.fontSize, data: widget.data),
-                          color: getStyle(Styles.fontColor,
-                              data: widget.data, themeProperty: 'secondaryColor'),
+                          color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'secondaryColor'),
                           fontWeight: getStyle(Styles.fontWeight, data: widget.data),
                         ),
                       ),
@@ -153,8 +151,7 @@ class SocialLoginGrid extends StatefulWidget {
   _SocialLoginGridState createState() => _SocialLoginGridState();
 }
 
-class _SocialLoginGridState extends State<SocialLoginGrid>
-    with DecorationMixin, StyleMixin, LocalizationMixin {
+class _SocialLoginGridState extends State<SocialLoginGrid> with DecorationMixin, StyleMixin, LocalizationMixin {
   final double maxCellHeight = 94;
   final int maxRows = 2;
 
@@ -185,19 +182,20 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
 
   @override
   Widget build(BuildContext context) {
-    final int providerCount = widget.data.providers.length;
-    final int maxInPage = widget.data.columns * widget.data.rows;
-    bool paging = (providerCount > (widget.data.columns * widget.data.rows));
-    final int numOfPages =
-        (providerCount / maxInPage).abs().toInt() + (providerCount % maxInPage != 0 ? 1 : 0);
-
-    debugPrint(
-        'Social login grid: paging = $paging, numberOfPages = $numOfPages, aproximateHeight = ${maxCellHeight * widget.data.rows}');
-
     return Padding(
       padding: getStyle(Styles.margin, data: widget.data),
-      child: Consumer<ScreenViewModel>(
-        builder: (context, viewModel, child) {
+      child: Consumer2<ScreenViewModel, BindingModel>(
+        builder: (context, viewModel, bindings, child) {
+          final List<NssSocialProvider> providers = SocialEvaluator().determineProviders(widget.data.providers, bindings);
+
+          final int providerCount = providers.length;
+          final int maxInPage = widget.data.columns * widget.data.rows;
+          bool paging = (providerCount > (widget.data.columns * widget.data.rows));
+          final int numOfPages = (providerCount / maxInPage).abs().toInt() + (providerCount % maxInPage != 0 ? 1 : 0);
+
+          debugPrint(
+              'Social login grid: paging = $paging, numberOfPages = $numOfPages, aproximateHeight = ${maxCellHeight * widget.data.rows}');
+
           return paging
               ? NotificationListener<OverscrollIndicatorNotification>(
                   onNotification: (overscroll) {
@@ -218,11 +216,11 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
                           itemBuilder: (context, position) {
                             var start = position * maxInPage;
                             var end = maxInPage * (position + 1);
-                            if (widget.data.providers.length < end) {
-                              var delta = end - widget.data.providers.length;
+                            if (providers.length < end) {
+                              var delta = end - providers.length;
                               end = end - delta;
                             }
-                            return createGrid(viewModel, start, end);
+                            return createGrid(viewModel, providers, start, end);
                           },
                         ),
                       ),
@@ -230,8 +228,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
                         height: 10,
                         child: PageIndicator(
                           controller: _pageController,
-                          color: getStyle(Styles.indicatorColor,
-                              data: widget.data, themeProperty: 'enabledColor'),
+                          color: getStyle(Styles.indicatorColor, data: widget.data, themeProperty: 'enabledColor'),
                           itemCount: numOfPages,
                         ),
                       )
@@ -240,8 +237,9 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
                 )
               : createGrid(
                   viewModel,
+                  providers,
                   0,
-                  widget.data.providers.length,
+                  providers.length,
                 );
         },
       ),
@@ -249,12 +247,11 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
   }
 
   /// Create grid layouting of the given provider indexes.
-  Widget createGrid(ScreenViewModel viewModel, int start, int end) {
+  Widget createGrid(ScreenViewModel viewModel, List<NssSocialProvider> providers, int start, int end) {
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       int crossAxisCount = widget.data.columns;
       double axisSpacing = 4;
-      var width = (MediaQuery.of(context).size.width - ((crossAxisCount - 1) * axisSpacing)) /
-          crossAxisCount;
+      var width = (MediaQuery.of(context).size.width - ((crossAxisCount - 1) * axisSpacing)) / crossAxisCount;
       var cellHeight = 100;
       var aspectRatio = width / cellHeight;
       return GridView.count(
@@ -263,7 +260,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
         mainAxisSpacing: axisSpacing,
         childAspectRatio: aspectRatio,
         crossAxisCount: crossAxisCount,
-        children: widget.data.providers
+        children: providers
             .map<Widget>((provider) {
               return createGridItem(
                 viewModel,
@@ -337,5 +334,28 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
         ],
       ),
     );
+  }
+}
+
+/// Helper class for evaluating social providers injected to the [SocialLoginGrid] widget.
+class SocialEvaluator {
+  List<NssSocialProvider> determineProviders(List<NssSocialProvider> markupProviders, BindingModel bindings) {
+    // Default provider list is taken from markup.
+    List<NssSocialProvider> providers = markupProviders ?? [];
+    if (bindings.savedBindingData.containsKey('conflictingAccount')) {
+      Map<String, dynamic> conflictingAccount = bindings.savedBindingData['conflictingAccount'];
+      if (conflictingAccount.containsKey('loginProviders')) {
+        List<String> loginProviders = conflictingAccount['loginProviders'];
+        if (loginProviders.isNotEmpty) {
+          providers.clear();
+          loginProviders.forEach((provider) {
+            if (provider != 'site') {
+              providers.add(NssSocialProvider.values.firstWhere((e) => e.toString() == 'NssSocialProvider.' + provider));
+            }
+          });
+        }
+      }
+    }
+    return providers;
   }
 }

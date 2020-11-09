@@ -117,7 +117,7 @@
     }
   },
   "routing": {
-    "initial": "link-account",
+    "initial": "login",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
