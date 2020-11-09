@@ -17,6 +17,7 @@ import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 enum NssSocialProvider {
   facebook,
   google,
+  googleplus,
   yahoo,
   apple,
   twitter,
@@ -29,13 +30,22 @@ enum NssSocialProvider {
 }
 
 extension NssSocialProviderEx on NssSocialProvider {
-  String get name => describeEnum(this);
+  String get name {
+    switch (this) {
+      case NssSocialProvider.googleplus:
+      case NssSocialProvider.google:
+        return "google";
+      default:
+        return describeEnum(this);
+    }
+  }
 
   /// Get main provider color as designed by provider brand guidelines.
   Color getColor({bool forGrid = false}) {
     switch (this) {
       case NssSocialProvider.facebook:
         return Color(0xff0074fa);
+      case NssSocialProvider.googleplus:
       case NssSocialProvider.google:
         return forGrid ? Colors.white : Color(0xff4285F4);
       case NssSocialProvider.yahoo:
@@ -343,9 +353,9 @@ class SocialEvaluator {
     // Default provider list is taken from markup.
     List<NssSocialProvider> providers = markupProviders ?? [];
     if (bindings.savedBindingData.containsKey('conflictingAccount')) {
-      Map<String, dynamic> conflictingAccount = bindings.savedBindingData['conflictingAccount'];
+      Map<String, dynamic> conflictingAccount = bindings.savedBindingData['conflictingAccount'].cast<String, dynamic>();
       if (conflictingAccount.containsKey('loginProviders')) {
-        List<String> loginProviders = conflictingAccount['loginProviders'];
+        List<String> loginProviders = conflictingAccount['loginProviders'].cast<String>();
         if (loginProviders.isNotEmpty) {
           providers.clear();
           loginProviders.forEach((provider) {

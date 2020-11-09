@@ -157,9 +157,12 @@ class MaterialWidgetFactory extends WidgetFactory {
       }
     }
 
+    BindingModel binding =  NssIoc().use(BindingModel);
+    binding.savedBindingData.addAll(routingData);
+
     return MaterialScreenWidget(
       viewModel: viewModel,
-      bindingModel: NssIoc().use(BindingModel),
+      bindingModel: binding,
       routingData: routingData,
       screen: screen,
       content: buildContainer(

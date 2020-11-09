@@ -197,8 +197,14 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
 
         // Initiate next action.
         final Map<String, dynamic> actionData = await initiateNextAction('onSuccess');
-        final Map<String, dynamic> screenData = actionData['data'];
-        final Map<String, dynamic> expressionData = actionData['expressions'];
+
+        Map<String, dynamic> screenData = {};
+        Map<String, dynamic> expressionData = {};
+
+        if (actionData != null && actionData.isNotEmpty) {
+          screenData = actionData['data'].cast<String, dynamic>();
+          actionData['expressions'].cast<String, dynamic>();
+        }
 
         setIdle();
 
@@ -213,9 +219,14 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
 
           // Initiate next action.
           final Map<String, dynamic> actionData = await initiateNextAction(routeNamed);
-          final Map<String, dynamic> screenData = actionData['data'];
-          final Map<String, dynamic> expressionData = actionData['expressions'];
 
+          Map<String, dynamic> screenData = {};
+          Map<String, dynamic> expressionData = {};
+
+          if (actionData != null && actionData.isNotEmpty) {
+            screenData = actionData['data'].cast<String, dynamic>();
+            expressionData = actionData['expressions'].cast<String, dynamic>();
+          }
           setIdle();
 
           navigationStream.sink.add(NavigationEvent('$id/$routeNamed', screenData, expressionData));

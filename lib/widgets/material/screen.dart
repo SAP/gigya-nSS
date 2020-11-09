@@ -144,7 +144,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       }
 
       // If route data is available, make sure it is added to the routing/binding data.
-      if (event.routingData.isNotEmpty) {
+      if (event.routingData != null && event.routingData.isNotEmpty) {
         widget.routingData.addAll(event.routingData);
       }
 
