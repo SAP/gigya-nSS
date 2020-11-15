@@ -117,7 +117,7 @@
     }
   },
   "routing": {
-    "initial": "login",
+    "initial": "register",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -408,18 +408,10 @@
           "type": "socialLoginGrid",
           "providers": [
             "facebook",
-            "google",
-            "wechat",
-            "yahoo",
-            "linkedin",
-            "twitter",
-            "apple",
-            "line",
-            "amazon",
-            "yahooJapan"
+            "google"
           ],
           "columns": 3,
-          "rows": 2,
+          "rows": 1,
           "style": {
             "cornerRadius": 6,
             "fontSize": 14,
@@ -606,18 +598,6 @@
           "children": [
             {
               "type": "socialLoginGrid",
-              "providers": [
-                "facebook",
-                "google",
-                "wechat",
-                "yahoo",
-                "linkedin",
-                "twitter",
-                "apple",
-                "line",
-                "amazon",
-                "yahooJapan"
-              ],
               "columns": 3,
               "rows": 2,
               "style": {

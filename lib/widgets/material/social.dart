@@ -203,8 +203,24 @@ class _SocialLoginGridState extends State<SocialLoginGrid> with DecorationMixin,
           bool paging = (providerCount > (widget.data.columns * widget.data.rows));
           final int numOfPages = (providerCount / maxInPage).abs().toInt() + (providerCount % maxInPage != 0 ? 1 : 0);
 
-          debugPrint(
-              'Social login grid: paging = $paging, numberOfPages = $numOfPages, aproximateHeight = ${maxCellHeight * widget.data.rows}');
+          // If the number of providers does not require an actual grid to be built.
+          if (providerCount < 3) {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                createGridItem(viewModel, providers[0]),
+                providers.length == 2
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: 22.0),
+                        child: createGridItem(viewModel, providers[1]),
+                      )
+                    : Container()
+              ],
+            );
+          }
+
+          // debugPrint(
+          //     'Social login grid: paging = $paging, numberOfPages = $numOfPages, aproximateHeight = ${maxCellHeight * widget.data.rows}');
 
           return paging
               ? NotificationListener<OverscrollIndicatorNotification>(
