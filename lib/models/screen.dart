@@ -1,3 +1,4 @@
+import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -18,8 +19,11 @@ class Screen {
   Map<String, String> routes;
   @JsonKey(defaultValue: {})
   Map<String, dynamic> style;
+  @JsonKey(defaultValue: NssShowOnlyFields.none)
+  NssShowOnlyFields showOnlyFields;
 
-  Screen(this.id, this.action, this.stack, this.children, {this.appBar, this.routes});
+
+  Screen(this.id, this.action, this.stack, this.children, {this.appBar, this.routes, this.showOnlyFields});
 
   factory Screen.fromJson(Map<String, dynamic> json) => _$ScreenFromJson(json);
 

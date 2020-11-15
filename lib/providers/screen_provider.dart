@@ -21,6 +21,8 @@ enum NssScreenState { idle, progress, error }
 
 enum ScreenAction { submit, api, socialLogin }
 
+enum NssShowOnlyFields { none, empty }
+
 extension ScreenActionExt on ScreenAction {
   String get name => describeEnum(this);
 }
@@ -286,11 +288,22 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
     screen.children.asMap().forEach((index, widget) {
       // Addiing showIf expression.
       if (widget.showIf != null) {
+        // Check if `showOnlyFields` is `true` then override the expression to showing by empty.
+        if (screen.showOnlyFields == NssShowOnlyFields.empty && widget.bind != null) {
+          widget.showIf += " && ${widget.bind} == null";
+        }
         // Add expression with hierarchy index as unique key.
         expressionMap[index.toString()] = widget.showIf;
 
         // Overrite markup expression field with index.
         widget.showIf = index.toString();
+      } else {
+        // Note: only when `showIf` if empty.
+        // Check if `showOnlyFields` is `true` then add expression to showing by empty.
+        if (screen.showOnlyFields == NssShowOnlyFields.empty && widget.bind != null) {
+          expressionMap[index.toString()] = "${widget.bind} == null";
+          widget.showIf = index.toString();
+        }
       }
     });
     return expressionMap;

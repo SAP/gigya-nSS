@@ -21,39 +21,32 @@ class ContainerWidget extends StatelessWidget with StyleMixin, DecorationMixin {
   @override
   Widget build(BuildContext context) {
     var background = getStyle(Styles.background, styles: data.style);
-    return Container(
-      child: Consumer2<ScreenViewModel, BindingModel>(
-        builder: (context, viewModel, binding, widget) {
-          return Visibility(
-            visible: containerVisible(viewModel),
-            child: Padding(
-              padding: getStyle(Styles.margin, styles: data.style),
-              child: Opacity(
-                opacity: getStyle(Styles.opacity, styles: data.style),
-                child: Stack(
-                  children: <Widget>[
-                    (background is ImageWidget) ? Positioned.fill(child: background) : Container(),
-                    Container(
-                      width: containerWidth(),
-                      height: containerHeight(),
-                      decoration: BoxDecoration(
-                        color: background is Color ? background : Colors.transparent,
-                      ),
-                      child: child,
+    return Consumer2<ScreenViewModel, BindingModel>(
+      builder: (context, viewModel, binding, widget) {
+        return Visibility(
+          visible: isVisible(viewModel, data.showIf),
+          child: Padding(
+            padding: getStyle(Styles.margin, styles: data.style),
+            child: Opacity(
+              opacity: getStyle(Styles.opacity, styles: data.style),
+              child: Stack(
+                children: <Widget>[
+                  (background is ImageWidget) ? Positioned.fill(child: background) : Container(),
+                  Container(
+                    width: containerWidth(),
+                    height: containerHeight(),
+                    decoration: BoxDecoration(
+                      color: background is Color ? background : Colors.transparent,
                     ),
-                  ],
-                ),
+                    child: child,
+                  ),
+                ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
-  }
-
-  bool containerVisible(viewModel) {
-    String showIf = viewModel.expressions[data.showIf] ?? 'true';
-    return showIf.toLowerCase() == 'true';
   }
 
   double containerWidth() {

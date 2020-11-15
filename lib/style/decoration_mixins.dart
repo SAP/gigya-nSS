@@ -46,4 +46,9 @@ mixin DecorationMixin {
       child: child,
     );
   }
+
+  bool isVisible(viewModel, showIf) {
+    String result = viewModel.expressions[showIf] ?? 'true';
+    return result.toLowerCase() == 'true';
+  }
 }

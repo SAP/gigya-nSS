@@ -37,28 +37,32 @@ class LabelWidget extends StatelessWidget
         final Linkify linkify = Linkify(text ?? '');
         final bool linkified = linkify.containLinks(text);
         if (!linkified) linkify.dispose();
-        return Padding(
-          padding: getStyle(Styles.margin, data: data),
-          child: customSizeWidget(
-            data,
-            Opacity(
-              opacity: getStyle(Styles.opacity, data: data),
-              child: Container(
-                child: linkified
-                    ? linkify.linkify(data, (link) {
-                        viewModel.linkifyTap(link);
-                      },
-                        getStyle(Styles.linkColor, data: data, themeProperty: 'linkColor') ??
-                            getColor('blue'))
-                    : Text(
-                        text,
-                        textAlign: getStyle(Styles.textAlign, data: data) ?? TextAlign.start,
-                        style: TextStyle(
-                          fontSize: getStyle(Styles.fontSize, data: data),
-                          color: getStyle(Styles.fontColor, data: data, themeProperty: 'textColor'),
-                          fontWeight: getStyle(Styles.fontWeight, data: data),
+
+        return Visibility(
+          visible: isVisible(viewModel, data.showIf),
+          child: Padding(
+            padding: getStyle(Styles.margin, data: data),
+            child: customSizeWidget(
+              data,
+              Opacity(
+                opacity: getStyle(Styles.opacity, data: data),
+                child: Container(
+                  child: linkified
+                      ? linkify.linkify(data, (link) {
+                          viewModel.linkifyTap(link);
+                        },
+                          getStyle(Styles.linkColor, data: data, themeProperty: 'linkColor') ??
+                              getColor('blue'))
+                      : Text(
+                          text,
+                          textAlign: getStyle(Styles.textAlign, data: data) ?? TextAlign.start,
+                          style: TextStyle(
+                            fontSize: getStyle(Styles.fontSize, data: data),
+                            color: getStyle(Styles.fontColor, data: data, themeProperty: 'textColor'),
+                            fontWeight: getStyle(Styles.fontWeight, data: data),
+                          ),
                         ),
-                      ),
+                ),
               ),
             ),
           ),
