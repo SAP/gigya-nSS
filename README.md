@@ -111,7 +111,7 @@ allprojects {
 Copy the following Android archive libraries into your application's /libs folder and add these references to your application's build.gradle file:
 ```
 // Referencing the NSS native library (via Jitpack)
-implementation 'com.github.SAP.gigya-android-sdk:gigya-android-nss:nss-v1.0.0'
+implementation 'com.github.SAP.gigya-android-sdk:gigya-android-nss:nss-v1.1.0'
 ```
 ```
 // Referencing the NSS engine.
@@ -137,6 +137,10 @@ described in detail below).
 **iOS**
  - Add the file to your project (does not require special folder placement).
 
+```
+Using Native-Screensets is available by hosting your markup internally on your application or using a hosted markup on your site console page.
+```
+
 ### iOS - Swift
 
 Add the following line to your AppDelegate.swift class.
@@ -144,10 +148,26 @@ Add the following line to your AppDelegate.swift class.
 GigyaNss.shared.register(scheme: <YOUR_SCHEME>.self)
 ```
 
-To start the NSS flow:
+Initiate the Nss flow using a markup resource.
 ```
 GigyaNss.shared
    .load(asset: "init")
+```
+
+Or
+
+Initiate the Nss flow using a hosted markup.
+```
+GigyaNss.shared
+   .load(screenSetId: "DEFAULT")
+   .lang(name: "en")
+```
+
+A complete example:
+```
+GigyaNss.shared
+   .load(screenSetId: "DEFAULT")
+   .lang(name: "en")
    .initialRoute(name: "login")
    .events(UserHost.self) { result in
       switch result {
@@ -161,13 +181,25 @@ GigyaNss.shared
    }
    .show(viewController: self)
 ```
-```
-Hosting and loading the NSS JSON from the SAP Customer Data Cloud Admin Console is not currently supported.
-```
 
 ### Android
 
-To start the Native Screen-Sets flow:
+Initiate the Nss flow using a markup resource.
+```
+GigyaNss.getInstance()
+   .load("gigya-nss-example") // No need to add the .json suffix.
+```
+
+Or
+
+Initiate the Nss flow using a hosted markup.
+```
+GigyaNss.getInstance()
+   .load("DEFAULT") // DEFAULT is currently the supported hosted name.
+   .lang("en)
+```
+
+A complete example:
 ```
 GigyaNss.getInstance()
    .load("gigya-nss-example") // No need to add the .json suffix.
@@ -190,6 +222,7 @@ GigyaNss.getInstance()
   })
   .show(this)
 ```
+
 ## Introduction to the Native Screen-Set JSON Schema
 
 In order for the Native Screen-Sets engine to interpret and display the customized screens, we provide a simple JSON based markup language pattern.
@@ -483,6 +516,13 @@ The NSS Library does not implement them for you.
 }
 ```
 
+If you do not want the provider title to be displayed, add the *hideTitles* property.
+{
+ ...
+ "hideTitles" : true
+ ...
+}
+
 #### image
 
 Use the image compnent to display remote hosted image files or native internal assets.
@@ -493,6 +533,12 @@ Use the image compnent to display remote hosted image files or native internal a
   "fallback": "FALLBACK IMAGE URL OR INTERNAL ASSET FILE NAME"
 ```
 You are able to use the *"bind"* property to bind the image component to any schema field that contains an image link.
+
+```
+Components background property is also a good way to bind an image to certain component.
+It supports both internal & external image resources.
+Note that when using an internal image you are required to use the resource name only. No need for the file extension.
+```
 
 #### profilePhoto
 
@@ -576,6 +622,20 @@ The dropdown component displays a drop-down list of options from which the user 
      }
    ]
 }
+```
+
+### Disabling
+
+You are also able to specifically disable a widget in order to disallow click events.
+Use the *disabled* property to achive this.
+```
+{
+ ...
+ "disabled" : true
+ ...
+}
+Disabling a component will grey out its display and and add an opacity effect to it.
+
 ```
 
 ### Input validations
@@ -914,6 +974,106 @@ When using component binding you will be required to distinguish between two fie
   "textKey": "common-email",
   "theme": "input"
  },
+```
+
+The *sendAs* property is also available in order to extend the basic binding scheme.
+For instance, if you would like to bind a specific value to an input field but send it as a different property on submission.
+```json
+{
+    "type": "input"
+    "bind": "profile.email"
+    "saveAs": "loginID"
+}
+In this example the display will be bound to the *profile.email* field but on submission the parameter sent to the adjacent action
+endpoint will be **loginID**.
+```
+
+## Evaluating expressions
+
+Added in version 1.1.0 is the ability to conditionaly display a *container* according to a specific expression.
+This pattern is useful in specifc flows in which you would like to display certain components according to available data or the actual data content.
+
+To use this add the **showIf** property to your **container** and add an expression to evaluate the data.
+```
+Expression are written in JavaScript much like the web screen-sets feature
+```
+
+Here is an example:
+```json
+ {
+   "type": "container",
+   "showIf": "conflictingAccounts.loginProviders.includes('site')",
+   "children": [
+   ...
+   ]
+```
+In this example (Accout linking) wea re evaluating if our conflicting accounts object contains the 'site' provider.
+In this case the container will only be visible if the expression is true.
+
+## Account linking
+
+Account linking is a common flow when using a combination of social/site login providers.
+In order to complete this flow without any additional coding you are able to use the **onLoginIdentifierExists** routing interruption.
+
+Here is a complete example:
+
+First add the interruption to your required markup screen.
+In this case we chose the login screen.
+
+```json
+"login": {
+      "routing": {
+        "onPendingRegistration": "account-update",
+        "onLoginIdentifierExists": "link-account",
+        "onSuccess": "_dismiss"
+      },
+      ...
+}
+```
+
+Next add your **link-account** screen markup implementation.
+A detailed example is available in both SDK example applications (Android & iOS).
+
+```
+When a "onLoginIdentifierExists" interruption occurs, a specific **conflictingAccounts** object will be available for evaluation
+within your **link-account** screen.
+This object is a part of the core SDK. Please review it in order to familiarise with the object structure.
+```
+
+In the example implementation of the **link-account** screen we added two **conditionaly visible containers**
+This in order to dynamically detect what kind of linking is required. Site or social.
+
+```json
+{
+  "type": "container",
+  "showIf": "conflictingAccounts.loginProviders.filter(p => p != 'site').length > 0",
+  "children": [
+       {
+         "type": "socialLoginGrid",
+         ...
+       }
+  ]
+}
+{
+  "type": "container",
+  "showIf": "conflictingAccounts.loginProviders.includes('site')",
+   "children": [
+   ...
+   ]
+}
+```
+Here each container uses the **showIf** conditional parameter in order to determine its visibility state.
+
+The first condition idicates when there are social providers available for display within the **conflictingAccounts** object
+And therefore will show a **socialLoginGrid* accordigly. Note that the **socialLoginGrid** is smart enough to decide what providers
+are needed to be displayed when the **onflictingAccounts** object is available therefore you do not need to specifiy its providers manually.
+
+The second condition idicates if the **conflictingAccounts** object contains a 'site' provider and therefore the user will be
+required to link his account using his loginID/password combination.
+
+```
+No addition coding is needed. When linknig a social account the social componenets will take care of the linking process.
+If liking to a 'site' provider, be sure to add a **submit** component in order to correctly sumbit the input data.
 ```
 
 ## Localization
