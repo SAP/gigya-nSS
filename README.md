@@ -340,6 +340,15 @@ The screen component is a container component. It may contain children component
 }
 ```
 
+##### showOnlyFields
+
+The **showOnlyFields** property is an additional screen specific property which allows the engeine to perform
+background evaluation for bound fields.
+
+Currently available options:
+* empty - Bound fields which are considered "empty" will only be displayed. This is useful when user is required to input only missing data.
+
+
 #### submit
 
 The submit component is a button for triggering the screen's action.
