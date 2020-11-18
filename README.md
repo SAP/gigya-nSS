@@ -37,7 +37,7 @@ To receive the Native Screen-Sets binaries - please open a support ticket.
 ```
 SAP Customer Data Cloud Android SDK v 4.1 or above.
 JAVA8 compatibility is required (update via the application's Gradle script).
-MinSDK version 16 or above.
+MinSDK version 19 or above.
 Android devices running on ARM processors only (99% of devices).
 ```
 
