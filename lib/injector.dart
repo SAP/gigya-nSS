@@ -48,8 +48,8 @@ class NssIoc {
 }
 
 class NssContainer {
-  StartupWidget startEngine({bool asMock = false}) {
-    return NssIoc()
+  void startEngine({bool asMock = false}) {
+    NssIoc()
         .register(NssConfig, (ioc) => NssConfig(isMock: asMock), singleton: true)
         .register(NssChannels, (ioc) => NssChannels(), singleton: true)
         .register(BindingModel, (ioc) => BindingModel())
@@ -74,16 +74,15 @@ class NssContainer {
         )
         .register(ApiService, (ioc) => ApiService(ioc.use(NssChannels)))
         .register(ScreenService, (ioc) => ScreenService(ioc.use(NssChannels)))
-        .register(ScreenViewModel, (ioc) => ScreenViewModel(ioc.use(ApiService), ioc.use(ScreenService)))
-        .register(StartupWorker, (ioc) => StartupWorker(ioc.use(NssConfig), ioc.use(NssChannels)))
         .register(
-          StartupWidget,
-          (ioc) => StartupWidget(
-            worker: ioc.use(StartupWorker),
-            config: ioc.use(NssConfig),
-            channels: ioc.use(NssChannels),
-          ),
-        )
-        .use(StartupWidget);
+            ScreenViewModel, (ioc) => ScreenViewModel(ioc.use(ApiService), ioc.use(ScreenService)))
+        .register(
+            StartupWidget,
+            (ioc) =>
+                StartupWidget(
+                  config: ioc.use(NssConfig),
+                  channels: ioc.use(NssChannels),
+                ),
+            singleton: true);
   }
 }

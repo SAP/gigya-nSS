@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
+import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
@@ -16,6 +17,7 @@ import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 enum NssSocialProvider {
   facebook,
   google,
+  googleplus,
   yahoo,
   apple,
   twitter,
@@ -28,13 +30,22 @@ enum NssSocialProvider {
 }
 
 extension NssSocialProviderEx on NssSocialProvider {
-  String get name => describeEnum(this);
+  String get name {
+    switch (this) {
+      case NssSocialProvider.googleplus:
+      case NssSocialProvider.google:
+        return "google";
+      default:
+        return describeEnum(this);
+    }
+  }
 
   /// Get main provider color as designed by provider brand guidelines.
   Color getColor({bool forGrid = false}) {
     switch (this) {
       case NssSocialProvider.facebook:
         return Color(0xff0074fa);
+      case NssSocialProvider.googleplus:
       case NssSocialProvider.google:
         return forGrid ? Colors.white : Color(0xff4285F4);
       case NssSocialProvider.yahoo:
@@ -70,79 +81,70 @@ class SocialButtonWidget extends StatefulWidget {
   _SocialButtonWidgetState createState() => _SocialButtonWidgetState();
 }
 
-class _SocialButtonWidgetState extends State<SocialButtonWidget>
-    with DecorationMixin, StyleMixin, LocalizationMixin {
+class _SocialButtonWidgetState extends State<SocialButtonWidget> with DecorationMixin, StyleMixin, LocalizationMixin {
   @override
   Widget build(BuildContext context) {
-    return expandIfNeeded(
-      widget.data,
-      Padding(
-        padding: getStyle(Styles.margin, data: widget.data),
-        child: sizeIfNeeded(
-          widget.data,
-          Consumer<ScreenViewModel>(
-            builder: (context, viewModel, child) {
-              final text = widget.data.textKey == null
-                  ? 'Sign in with ${widget.data.provider.name.inCaps}'
-                  : localizedStringFor(widget.data.textKey);
+    return Padding(
+      padding: getStyle(Styles.margin, data: widget.data),
+      child: customSizeWidget(
+        widget.data,
+        Consumer<ScreenViewModel>(
+          builder: (context, viewModel, child) {
+            final text = widget.data.textKey == null
+                ? 'Sign in with ${widget.data.provider.name.inCaps}'
+                : localizedStringFor(widget.data.textKey);
 
-              var background = getStyle(Styles.background, data: widget.data);
+            var background = getStyle(Styles.background, data: widget.data);
 
-              if (widget.data.style[Styles.background.name] == null) {
-                background = widget.data.provider.getColor();
-              }
+            if (widget.data.style[Styles.background.name] == null) {
+              background = widget.data.provider.getColor();
+            }
 
-              return Opacity(
-                opacity: getStyle(Styles.opacity, data: widget.data),
-                child: ButtonTheme(
-                  buttonColor: background,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                      getStyle(Styles.cornerRadius, data: widget.data),
-                    ),
-                  ),
-                  child: RaisedButton(
-                    padding: EdgeInsets.zero,
-                    elevation: getStyle(Styles.elevation, data: widget.data),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        widget.data.iconEnabled
-                            ? Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image(
-                                  image: widget.data.iconURL != null
-                                      ? NetworkImage(widget.data.iconURL)
-                                      : AssetImage(
-                                          'assets/social_images/${widget.data.provider.name}.png'),
-                                  width: 24,
-                                  height: 24,
-                                ),
-                              )
-                            : SizedBox(width: 8),
-                        Text(
-                          // Get localized submit text.
-                          text,
-                          style: TextStyle(
-                            fontSize:
-                                getStyle(Styles.fontSize, data: widget.data),
-                            color: getStyle(Styles.fontColor,
-                                data: widget.data,
-                                themeProperty: 'secondaryColor'),
-                            fontWeight:
-                                getStyle(Styles.fontWeight, data: widget.data),
-                          ),
-                        ),
-                      ],
-                    ),
-                    onPressed: () {
-                      viewModel.socialLogin(widget.data.provider);
-                    },
+            return Opacity(
+              opacity: getStyle(Styles.opacity, data: widget.data),
+              child: ButtonTheme(
+                buttonColor: background,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    getStyle(Styles.cornerRadius, data: widget.data),
                   ),
                 ),
-              );
-            },
-          ),
+                child: RaisedButton(
+                  padding: EdgeInsets.zero,
+                  elevation: getStyle(Styles.elevation, data: widget.data),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      widget.data.iconEnabled
+                          ? Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image(
+                                image: widget.data.iconURL != null
+                                    ? NetworkImage(widget.data.iconURL)
+                                    : AssetImage('assets/social_images/${widget.data.provider.name}.png'),
+                                width: 24,
+                                height: 24,
+                              ),
+                            )
+                          : SizedBox(width: 8),
+                      Text(
+                        // Get localized submit text.
+                        text,
+                        style: TextStyle(
+                          fontSize: getStyle(Styles.fontSize, data: widget.data),
+                          color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'secondaryColor'),
+                          fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                        ),
+                      ),
+                    ],
+                  ),
+                  onPressed: () {
+                    viewModel.socialLogin(widget.data.provider);
+                  },
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -159,8 +161,7 @@ class SocialLoginGrid extends StatefulWidget {
   _SocialLoginGridState createState() => _SocialLoginGridState();
 }
 
-class _SocialLoginGridState extends State<SocialLoginGrid>
-    with DecorationMixin, StyleMixin, LocalizationMixin {
+class _SocialLoginGridState extends State<SocialLoginGrid> with DecorationMixin, StyleMixin, LocalizationMixin {
   final double maxCellHeight = 94;
   final int maxRows = 2;
 
@@ -178,9 +179,8 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
 
     if (widget.data.rows > 2) {
       widget.data.rows = 2;
-      engineLogger
-          .e('You have specified a row count that exceeds allowed value.\n'
-              'Currently max rows is set to 2');
+      engineLogger.e('You have specified a row count that exceeds allowed value.\n'
+          'Currently max rows is set to 2');
     }
   }
 
@@ -192,73 +192,92 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
 
   @override
   Widget build(BuildContext context) {
-    final int providerCount = widget.data.providers.length;
-    final int maxInPage = widget.data.columns * widget.data.rows;
-    bool paging = (providerCount > (widget.data.columns * widget.data.rows));
-    final int numOfPages = (providerCount / maxInPage).abs().toInt() +
-        (providerCount % maxInPage != 0 ? 1 : 0);
-    return expandIfNeeded(
-      widget.data,
-      Padding(
-        padding: getStyle(Styles.margin, data: widget.data),
-        child: sizeIfNeeded(
-          widget.data,
-          Consumer<ScreenViewModel>(
-            builder: (context, viewModel, child) {
-              return paging
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          height: maxCellHeight * widget.data.rows,
-                          child: PageView.builder(
-                            itemCount: numOfPages,
-                            controller: _pageController,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, position) {
-                              var start = position * maxInPage;
-                              var end = maxInPage * (position + 1);
-                              if (widget.data.providers.length < end) {
-                                var delta = end - widget.data.providers.length;
-                                end = end - delta;
-                              }
-                              return createGrid(viewModel, start, end);
-                            },
-                          ),
+    return Padding(
+      padding: getStyle(Styles.margin, data: widget.data),
+      child: Consumer2<ScreenViewModel, BindingModel>(
+        builder: (context, viewModel, bindings, child) {
+          final List<NssSocialProvider> providers = SocialEvaluator().determineProviders(widget.data.providers, bindings);
+
+          final int providerCount = providers.length;
+          final int maxInPage = widget.data.columns * widget.data.rows;
+          bool paging = (providerCount > (widget.data.columns * widget.data.rows));
+          final int numOfPages = (providerCount / maxInPage).abs().toInt() + (providerCount % maxInPage != 0 ? 1 : 0);
+
+          // If the number of providers does not require an actual grid to be built.
+          if (providerCount < 3) {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                createGridItem(viewModel, providers[0]),
+                providers.length == 2
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: 22.0),
+                        child: createGridItem(viewModel, providers[1]),
+                      )
+                    : Container()
+              ],
+            );
+          }
+
+          // debugPrint(
+          //     'Social login grid: paging = $paging, numberOfPages = $numOfPages, aproximateHeight = ${maxCellHeight * widget.data.rows}');
+
+          return paging
+              ? NotificationListener<OverscrollIndicatorNotification>(
+                  onNotification: (overscroll) {
+                    overscroll.disallowGlow();
+                    return;
+                  },
+                  child: ListView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    primary: false,
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      Container(
+                        height: (maxCellHeight * widget.data.rows),
+                        child: PageView.builder(
+                          itemCount: numOfPages,
+                          controller: _pageController,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, position) {
+                            var start = position * maxInPage;
+                            var end = maxInPage * (position + 1);
+                            if (providers.length < end) {
+                              var delta = end - providers.length;
+                              end = end - delta;
+                            }
+                            return createGrid(viewModel, providers, start, end);
+                          },
                         ),
-                        Container(
-                          height: 10,
-                          child: PageIndicator(
-                            controller: _pageController,
-                            color: getStyle(Styles.indicatorColor,
-                                data: widget.data,
-                                themeProperty: 'enabledColor'),
-                            itemCount: numOfPages,
-                          ),
-                        )
-                      ],
-                    )
-                  : createGrid(
-                      viewModel,
-                      0,
-                      widget.data.providers.length,
-                    );
-            },
-          ),
-        ),
+                      ),
+                      Container(
+                        height: 10,
+                        child: PageIndicator(
+                          controller: _pageController,
+                          color: getStyle(Styles.indicatorColor, data: widget.data, themeProperty: 'enabledColor'),
+                          itemCount: numOfPages,
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              : createGrid(
+                  viewModel,
+                  providers,
+                  0,
+                  providers.length,
+                );
+        },
       ),
     );
   }
 
   /// Create grid layouting of the given provider indexes.
-  Widget createGrid(ScreenViewModel viewModel, int start, int end) {
-    return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
+  Widget createGrid(ScreenViewModel viewModel, List<NssSocialProvider> providers, int start, int end) {
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       int crossAxisCount = widget.data.columns;
       double axisSpacing = 4;
-      var width = (MediaQuery.of(context).size.width -
-              ((crossAxisCount - 1) * axisSpacing)) /
-          crossAxisCount;
+      var width = (MediaQuery.of(context).size.width - ((crossAxisCount - 1) * axisSpacing)) / crossAxisCount;
       var cellHeight = 100;
       var aspectRatio = width / cellHeight;
       return GridView.count(
@@ -267,7 +286,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
         mainAxisSpacing: axisSpacing,
         childAspectRatio: aspectRatio,
         crossAxisCount: crossAxisCount,
-        children: widget.data.providers
+        children: providers
             .map<Widget>((provider) {
               return createGridItem(
                 viewModel,
@@ -315,10 +334,8 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
                           fadeInDuration: Duration(milliseconds: 100),
                           width: 32,
                           height: 32,
-                          image: AssetImage(
-                              'assets/social_images/g_${provider.name}.png'),
-                          placeholder: AssetImage(
-                              'assets/social_images/${provider.name}.png'),
+                          image: AssetImage('assets/social_images/g_${provider.name}.png'),
+                          placeholder: AssetImage('assets/social_images/${provider.name}.png'),
                         ),
                       ),
                     ),
@@ -330,16 +347,41 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
           SizedBox(
             height: 8,
           ),
-          Text(
-            provider.name.inCaps,
-            style: TextStyle(
-              fontSize: getStyle(Styles.fontSize, data: widget.data),
-              color: getStyle(Styles.fontColor, data: widget.data),
-              fontWeight: getStyle(Styles.fontWeight, data: widget.data),
-            ),
-          ),
+          widget.data.hideTitles
+              ? Container()
+              : Text(
+                  provider.name.inCaps,
+                  style: TextStyle(
+                    fontSize: getStyle(Styles.fontSize, data: widget.data),
+                    color: getStyle(Styles.fontColor, data: widget.data),
+                    fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                  ),
+                ),
         ],
       ),
     );
+  }
+}
+
+/// Helper class for evaluating social providers injected to the [SocialLoginGrid] widget.
+class SocialEvaluator {
+  List<NssSocialProvider> determineProviders(List<NssSocialProvider> markupProviders, BindingModel bindings) {
+    // Default provider list is taken from markup.
+    List<NssSocialProvider> providers = markupProviders ?? [];
+    if (bindings.savedBindingData.containsKey('conflictingAccount')) {
+      Map<String, dynamic> conflictingAccount = bindings.savedBindingData['conflictingAccount'].cast<String, dynamic>();
+      if (conflictingAccount.containsKey('loginProviders')) {
+        List<String> loginProviders = conflictingAccount['loginProviders'].cast<String>();
+        if (loginProviders.isNotEmpty) {
+          providers.clear();
+          loginProviders.forEach((provider) {
+            if (provider != 'site') {
+              providers.add(NssSocialProvider.values.firstWhere((e) => e.toString() == 'NssSocialProvider.' + provider));
+            }
+          });
+        }
+      }
+    }
+    return providers;
   }
 }

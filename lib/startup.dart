@@ -3,178 +3,94 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
-import 'package:gigya_native_screensets_engine/utils/validation.dart';
-import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
+import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
-import 'package:gigya_native_screensets_engine/utils/logging.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/profile_photo.dart';
-
-enum StartupAction { ignition, ready_for_display, load_schema }
-
-extension StartupActionExt on StartupAction {
-  String get action {
-    return describeEnum(this);
-  }
-}
+import 'package:gigya_native_screensets_engine/utils/error.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
+import 'package:gigya_native_screensets_engine/widgets/router.dart';
 
 /// Engine initialization root widget.
 /// The Main purpose of this widget is to open a channel to the native code in order to obtain all
 /// the necessary initialization data/configuration and determine the actual theme of the main app along
 /// with obtaining & parsing the main JSON data.
-class StartupWidget extends StatelessWidget {
-  final StartupWorker worker;
+class StartupWidget extends StatefulWidget {
   final NssConfig config;
   final NssChannels channels;
 
-  const StartupWidget({Key key, this.worker, this.config, this.channels})
-      : super(key: key);
+  const StartupWidget({Key key, this.config, this.channels}) : super(key: key);
 
+  @override
+  _StartupWidgetState createState() => _StartupWidgetState();
+}
+
+class _StartupWidgetState extends State<StartupWidget> {
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: worker.ignite(),
-      builder: (context, AsyncSnapshot<Ignition> snapshot) {
-        if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.hasData) {
-          engineLogger.d('ignition - state - done');
-          return prepareApp(snapshot.data);
-        } else {
-          return onPreparingApp();
-        }
-      },
-    );
+    return FutureBuilder<bool>(
+        future: fetchMarkupAndSchema(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+            return buildInitialScreen();
+          }
+          return Container(
+            color: Colors.transparent,
+          );
+        });
   }
 
-  /// Commence Flutter application buildup according to provided [Spark] markup.
-  @visibleForTesting
-  Widget prepareApp(Ignition ignition) {
-    config.markup = ignition.markup;
-    config.isPlatformAware = ignition.markup.platformAware ?? false;
-    if (ignition.schema != null) {
-      config.schema = ignition.schema;
-    }
+  /// Build and display the initial screen when platfom data is available.
+  /// //TODO: Currently hard coded to Material only.
+  Widget buildInitialScreen() {
+    // Reference required factory and route.
+    MaterialRouter router = NssIoc().use(MaterialRouter);
+    var nextRoute = router.getNextRoute(widget.config.markup.routing.initial);
+    Screen initial = router.nextScreen(nextRoute);
+    MaterialWidgetFactory factory = NssIoc().use(MaterialWidgetFactory);
 
-    // Add default localization values that are needed (can be overriden by client).
-    addDefultStringValues();
-
-    // Notify native that we are ready to display. Pre-warm up done.
-    issueNativeReadyForDisplay();
-
-    WidgetFactory factory = NssIoc().use(config.isPlatformAware
-        ? CupertinoWidgetFactory
-        : MaterialWidgetFactory);
-    return Container(color: Colors.white, child: factory.buildApp());
+    // Build screen and trigger native display.
+    Widget screen = factory.buildScreen(initial, {});
+    return screen;
   }
 
-  /// Indication state shown when Flutter application is pre/during buildup.
-  @visibleForTesting
-  Widget onPreparingApp() {
-    return Container(
-      color: Colors.transparent,
-    );
-  }
-
-  /// Trigger native side that the Flutter UI is ready for display. This is used to minimize any
-  /// Jitter caused from widget buildup during initial flow.
-  void issueNativeReadyForDisplay() {
-    if (config.isMock) {
-      return;
-    }
-    engineLogger.d('Ignition - invoke ready for display');
-    try {
-      channels.ignitionChannel
-          .invokeMethod<void>(StartupAction.ready_for_display.action);
-    } on MissingPluginException catch (ex) {
-      engineLogger.e('Missing channel connection: check mock state?');
-    }
-  }
-
-  //TODO: Future versions - move to a specific logic class. Task may grow in time.
-  void addDefultStringValues() {
-    var localization = config.markup.localization;
-    if (!localization[NssInputValidator.defaultLangKey]
-        .containsKey(NssInputValidator.schemaErrorKeyRequired)) {
-      config.markup.localization[NssInputValidator.defaultLangKey]
-          [NssInputValidator.schemaErrorKeyRequired] = 'This field is required';
-    }
-    if (!localization[NssInputValidator.defaultLangKey]
-        .containsKey(NssInputValidator.schemaErrorKeyRegEx)) {
-      config.markup.localization[NssInputValidator.defaultLangKey]
-              [NssInputValidator.schemaErrorKeyRegEx] =
-          'Please enter a valid value';
-    }
-    if (!localization[NssInputValidator.defaultLangKey]
-        .containsKey(NssInputValidator.schemaErrorKeyCheckbox)) {
-      config.markup.localization[NssInputValidator.defaultLangKey]
-              [NssInputValidator.schemaErrorKeyCheckbox] =
-          'Checked field is mandatory';
-    }
-    if (!localization[NssInputValidator.defaultLangKey]
-        .containsKey(ProfilePhotoWidget.profileErrorImageUpload)) {
-      config.markup.localization[NssInputValidator.defaultLangKey]
-              [ProfilePhotoWidget.profileErrorImageUpload] =
-          'Failed to upload. Please try again';
-    }
-    if (!localization[NssInputValidator.defaultLangKey]
-        .containsKey(ProfilePhotoWidget.profileErrorImageSize)) {
-      config.markup.localization[NssInputValidator.defaultLangKey]
-              [ProfilePhotoWidget.profileErrorImageSize] =
-          'Image exceeded file-size limits';
-    }
-  }
-}
-
-class Ignition {
-  final Markup markup;
-  Map<dynamic, dynamic> schema;
-
-  Ignition(this.markup, {this.schema});
-}
-
-/// Async worker used to fetch the JSON markup from the native controller.
-class StartupWorker {
-  final NssConfig config;
-  final NssChannels channels;
-
-  StartupWorker(this.config, this.channels);
-
-  @visibleForTesting
-  Future<Ignition> ignite() async {
-    // Fetch and parse the markup.
-    var fetchData =
-        config.isMock ? await _markupFromMock() : await _markupFromChannel();
+  /// Fetch and propagate the required data injected from the platform.
+  /// Markup is required in order to correctly run the engine.
+  /// Schema is optional and is markup dependant.
+  Future<bool> fetchMarkupAndSchema() async {
+    var fetchData = widget.config.isMock ? await _markupFromMock() : await _markupFromChannel();
     final Markup markup = Markup.fromJson(fetchData.cast<String, dynamic>());
-    Ignition ignition = Ignition(markup);
+    widget.config.markup = markup;
+    widget.config.isPlatformAware = markup.platformAware ?? false;
 
-    // Fetch and parse the schema if needed.
-    if (!config.isMock && markup.useSchemaValidations) {
-      var rawSchema = await channels.ignitionChannel
-          .invokeMethod<Map<dynamic, dynamic>>(
-              StartupAction.load_schema.action);
+    // Fetch and parse the schema if required in markup preference (and not in mock mode).
+    if (markup.useSchemaValidations && !widget.config.isMock) {
+      var rawSchema =
+          await widget.channels.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>('load_schema');
       var newSchema = {
         'profile': rawSchema['profileSchema']['fields'],
         'data': rawSchema['dataSchema']['fields'],
         'subscriptions': rawSchema['subscriptionsSchema']['fields'],
         'preferences': rawSchema['preferencesSchema']['fields']
       };
-      ignition.schema = newSchema;
+      widget.config.schema = newSchema;
     }
-    return ignition;
+
+    // Add default localization values that are needed (can be overriden by client).
+    ErrorUtils().addDefultStringValues(widget.config.markup.localization);
+    return true;
   }
 
-  /// Get the [Spark] markup from asset JSON file.
+  /// Fetch markup from example JSON asset.
+  /// This is used for development & testing.
   Future<Map<dynamic, dynamic>> _markupFromMock() async {
     final String json = await AssetUtils.jsonFromAssets('assets/example.json');
     return jsonDecode(json);
   }
 
-  /// Get the [Spark] markup from native component using the ignition channel.
+  /// Fetch markup from the running platfrom.
   Future<Map<dynamic, dynamic>> _markupFromChannel() async {
-    return channels.ignitionChannel
-        .invokeMethod<Map<dynamic, dynamic>>(StartupAction.ignition.action);
+    return widget.channels.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>('ignition');
   }
 }

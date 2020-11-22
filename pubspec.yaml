@@ -15,7 +15,7 @@ description: A new Flutter module.
 # This version is used _only_ for the Runner app, which is used if you just do
 # a `flutter run` or a `flutter make-host-app-editable`. It has no impact
 # on any other native host app that you embed your Flutter project into.
-version: 1.0.0+1
+version: 1.1.0+1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -23,7 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  provider: ^4.0.4
+  provider: ^4.3.2+2
   json_annotation: ^3.0.1
   ioc: ^0.3.0
 
@@ -90,5 +90,6 @@ flutter:
   # They also do not have any bearing on your native host application's
   # identifiers, which may be completely independent or the same as these.
   module:
+    androidX: true
     androidPackage: com.gigya.nss.engine
     iosBundleIdentifier: com.gigya.gigyaNativeScreensetsEngine

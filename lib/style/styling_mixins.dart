@@ -5,6 +5,28 @@ import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
+
+enum Styles {
+  margin,
+  fontColor,
+  fontSize,
+  fontWeight,
+  background,
+  cornerRadius,
+  borderColor,
+  borderSize,
+  opacity,
+  elevation,
+  indicatorColor,
+  textAlign,
+  linkColor,
+  placeholderColor
+}
+
+extension StylesExt on Styles {
+  String get name => describeEnum(this);
+}
 
 mixin StyleMixin {
   final NssConfig config = NssIoc().use(NssConfig);
@@ -21,6 +43,8 @@ mixin StyleMixin {
     'borderColor': 'transparent',
     'borderSize': 0,
     'cornerRadius': 0,
+    'linkColor': 'blue',
+    'placeholderColor': 'black'
   };
 
   /// Default theme mapping.
@@ -34,8 +58,7 @@ mixin StyleMixin {
   };
 
   /// Get the relevant style value.
-  dynamic getStyle(
-    Styles style, {
+  dynamic getStyle(Styles style, {
     NssWidgetData data,
     Map<String, dynamic> styles,
     String themeProperty,
@@ -49,12 +72,9 @@ mixin StyleMixin {
           config.markup.theme != null &&
           config.markup.customThemes != null &&
           config.markup.customThemes.containsKey(customTheme)) {
-        if (config.markup.customThemes[customTheme]
-            .containsKey(style.name)) {
-          value = getStyleValue(
-              style,
-              config.markup.customThemes[customTheme]
-                  .cast<String, dynamic>());
+        if (config.markup.customThemes[customTheme].containsKey(style.name)) {
+          value =
+              getStyleValue(style, config.markup.customThemes[customTheme].cast<String, dynamic>());
         }
       }
     }
@@ -78,6 +98,8 @@ mixin StyleMixin {
       case Styles.borderColor:
       case Styles.fontColor:
       case Styles.indicatorColor:
+      case Styles.linkColor:
+      case Styles.placeholderColor:
         var platformAware = config.isPlatformAware ?? false;
         return getColor(value, platformAware: platformAware);
       case Styles.fontWeight:
@@ -110,7 +132,7 @@ mixin StyleMixin {
   }
 
   /// Get the theme color according to provided theme specific [key].
-  getThemeColor(String key) {
+  Color getThemeColor(String key) {
     return (config.markup.theme == null || config.markup.theme[key] == null)
         ? getColor(defaultTheme[key])
         : getColor(config.markup.theme[key]);
@@ -212,46 +234,30 @@ mixin StyleMixin {
   getBackground(background, {bool platformAware}) {
     if (background.contains("#"))
       return _getHexColor(background);
-    else if (background.contains("http://") ||
-        background.contains("https://")) {
+    else if (background.contains("http://") || background.contains("https://")) {
       return NetworkImage(background);
+    }
+    else if (background.substring(0,1) == "/") {
+      var data = NssWidgetData.fromJson({"url": background.substring(2)});
+      return ImageWidget(key: UniqueKey(), data: data);
     } else {
-      return _getColorWithName(background,
-          platformAware: platformAware ?? false);
+      return _getColorWithName(background, platformAware: platformAware ?? false);
     }
   }
 
   getTextAlign(align) {
     align = "NssTextAlign.$align";
-    NssTextAlign a = NssTextAlign.values.firstWhere((f)=> f.toString() == align, orElse: () => NssTextAlign.none);
+    NssTextAlign a = NssTextAlign.values
+        .firstWhere((f) => f.toString() == align, orElse: () => NssTextAlign.none);
     return a.getValue;
   }
-}
-
-enum Styles {
-  margin,
-  fontColor,
-  fontSize,
-  fontWeight,
-  background,
-  cornerRadius,
-  borderColor,
-  borderSize,
-  opacity,
-  elevation,
-  indicatorColor,
-  textAlign,
-}
-
-extension StylesExt on Styles {
-  String get name => describeEnum(this);
 }
 
 enum NssTextAlign { start, end, center, none }
 
 extension NssTextAlignExt on NssTextAlign {
   TextAlign get getValue {
-    switch(this) {
+    switch (this) {
       case NssTextAlign.start:
         return TextAlign.start;
       case NssTextAlign.end:

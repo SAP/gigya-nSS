@@ -9,50 +9,50 @@ import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:provider/provider.dart';
 
-class LabelWidget extends StatelessWidget with DecorationMixin, StyleMixin, LocalizationMixin, BindingMixin {
+class LabelWidget extends StatelessWidget
+    with DecorationMixin, StyleMixin, LocalizationMixin, BindingMixin {
   final NssWidgetData data;
 
   LabelWidget({Key key, this.data}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return expandIfNeeded(
-      data,
-      Padding(
-        padding: getStyle(Styles.margin, data: data),
-        child: sizeIfNeeded(
-          data,
-          Consumer2<ScreenViewModel, BindingModel>(
-            builder: (context, viewModel, bindings, child) {
-              BindingValue bindingValue = getBindingText(data, bindings);
+    return Consumer2<ScreenViewModel, BindingModel>(
+      builder: (context, viewModel, bindings, child) {
+        BindingValue bindingValue = getBindingText(data, bindings);
 
-              // Check for binding error.
-              if (bindingValue.error && !kReleaseMode) {
-                return showBindingDoesNotMatchError(data.bind, errorText: bindingValue.errorText);
-              }
+        // Check for binding error.
+        if (bindingValue.error && !kReleaseMode) {
+          return showBindingDoesNotMatchError(data.bind, errorText: bindingValue.errorText);
+        }
 
-              // Binding validated.
-              String text = bindingValue.value;
-              if (text == null) {
-                // Get localized label text.
-                text = localizedStringFor(data.textKey);
-              }
+        // Binding validated.
+        String text = bindingValue.value;
+        if (text == null) {
+          // Get localized label text.
+          text = localizedStringFor(data.textKey);
+        }
 
-              // Apply Linkification if needed.
-              final Linkify linkify = Linkify(text);
-              final bool linkified = linkify.containLinks(text);
-              if (!linkified) linkify.dispose();
+        // Apply Linkification if needed.
+        final Linkify linkify = Linkify(text ?? '');
+        final bool linkified = linkify.containLinks(text);
+        if (!linkified) linkify.dispose();
 
-              return Opacity(
+        return Visibility(
+          visible: isVisible(viewModel, data.showIf),
+          child: Padding(
+            padding: getStyle(Styles.margin, data: data),
+            child: customSizeWidget(
+              data,
+              Opacity(
                 opacity: getStyle(Styles.opacity, data: data),
                 child: Container(
                   child: linkified
-                      ? linkify.linkify(
-                          data,
-                          (link) {
-                            viewModel.linkifyTap(link);
-                          },
-                        )
+                      ? linkify.linkify(data, (link) {
+                          viewModel.linkifyTap(link);
+                        },
+                          getStyle(Styles.linkColor, data: data, themeProperty: 'linkColor') ??
+                              getColor('blue'))
                       : Text(
                           text,
                           textAlign: getStyle(Styles.textAlign, data: data) ?? TextAlign.start,
@@ -63,11 +63,11 @@ class LabelWidget extends StatelessWidget with DecorationMixin, StyleMixin, Loca
                           ),
                         ),
                 ),
-              );
-            },
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

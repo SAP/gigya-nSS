@@ -37,51 +37,43 @@ To receive the Native Screen-Sets binaries - please open a support ticket.
 ```
 SAP Customer Data Cloud Android SDK v 4.1 or above.
 JAVA8 compatibility is required (update via the application's Gradle script).
-MinSDK version 16 or above.
+MinSDK version 19 or above.
 Android devices running on ARM processors only (99% of devices).
 ```
+
 ## Integrating the Screen-Sets Engine
 
 ### iOS - Swift
 
-The native screen-sets package is available via CocoaPods.
+Download the GigyaNss bundle.
 
-In order to add the Gigya Native Screen-Sets library via CocoaPods to your project, you need to create a specific target per configuration (Debug / Release).
-
-Now add the following to you *pod* file:
-
+Unzip and place the entire folder into your project folder.
 ```
-// For Debug target:
-pod 'GigyaNss'
- 
-// For Release target:
-pod 'GigyaNssRelease'
+It is important to place the downloaded bundle as is. Do not move files from the GigyaNss bundle, it will break the build.
 ```
-So, your code should look similar to this:
+In order to link the provided debug library:
 
+Go to the "GigyaNss/Debug" folder. Drag both frameworks to the Project -> General -> Frameworks -> Libraries and Embedded Content.
+
+Mark them as Embed & Sign.
+
+Go to Build Settings -> Framework Search Paths and Update GigyaNss/Debug to GigyaNss/$(CONFIGURATION) in both available options (Debug & Release)
 ```
-target 'GigyaDemoApp-Debug' do
-  pod 'Gigya'
-  pod 'GigyaTfa'
-  pod 'GigyaAuth'
-  pod 'GigyaNss'
-end
- 
-target 'GigyaDemoApp-Release' do
-  pod 'Gigya'
-  pod 'GigyaTfa'
-  pod 'GigyaAuth'
-  pod 'GigyaNssRelease'
-end
+If your application contains a custom configuration, update the above code to support your configuration.
 ```
+Go to Build Phases. Add new Run Script Phase (tap on "+" icon).
 
-Once you have completed the changes above, run the pod install command.
-
+Open and then add the following:
+```
+bash
+“${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/GigyaNss.framework/engine.sh” GigyaNss
+```
+Check the Run script only when installing option.
+```
+Make sure the new script is placed before the Remove unused architectures script that is required for the core SDK setup.
+```
 
 ## Android
-
-[Download](https://github.com/SAP/gigya-android-sdk/releases/download/nss-v1.0.0/sdk-nss-engine.zip) the latest engine file.
-Unpack and move the folder into your application root folder.
 
 ```
 To avoid crashing non ARM devices. Please use the"isSupported()" method of the GigyaNss instance in order to determine if the
@@ -96,8 +88,9 @@ android {
   }
 }
 ```
+Unzip the gigya-sdk-nss-engine.zip file and drag the folder to your root application folder.
 
-In your project build.gradle file, add the following:
+In your project build.gradle file, add the following (this will allow the application to import the necessary Flutter dependencies and will link the NSS engine as a local reference).:
 ```
 allprojects {
   repositories {
@@ -106,7 +99,7 @@ allprojects {
     mavenCentral()
     maven { url 'https://jitpack.io' }
     maven {
-      url '../sdk-nss-engine/host/outputs/repo'
+      url '../gigya-sdk-nss-engine/host/outputs/repo'
     }
     maven {
       url 'https://storage.googleapis.com/download.flutter.io'
@@ -114,13 +107,11 @@ allprojects {
   }
 }
 ```
-This will allow the application to import the necessary Flutter dependencies and will link the NSS engine as a local reference.
-It is important that the engine's folder name and the local maven url that u have set will be the same.
 
 Copy the following Android archive libraries into your application's /libs folder and add these references to your application's build.gradle file:
 ```
 // Referencing the NSS native library (via Jitpack)
-implementation 'com.github.SAP.gigya-android-sdk:gigya-android-nss:nss-v1.0.0'
+implementation 'com.github.SAP.gigya-android-sdk:gigya-android-nss:nss-v1.1.0'
 ```
 ```
 // Referencing the NSS engine.
@@ -131,12 +122,8 @@ releaseImplementation 'com.gigya.nss.engine:flutter_release:+'
 Finally, add the *NativeScreensetsActivity.class* reference to your application's *AndroidManifest.xml* file.
 
 The NSS libraries are released as debug/release pairs. This is due to various build configurations in the Flutter framework that are builtto provide better performance definitions for debug/release builds.
-```xml
- <activity
-    android:name="com.gigya.android.sdk.nss.NssActivity"
-    android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-    android:hardwareAccelerated="true"
-    android:windowSoftInputMode="adjustResize" />
+```
+<activity android:name="com.gigya.android.sdk.nss.NativeScreenSetsActivity" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|loca le|layoutDirection|fontScale|screenLayout|density|uiMode" android:hardwareAccelerated="true" android:windowSoftInputMode="adjustResize" />
 ```
 
 ## Enabling Native Screen-Sets
@@ -150,6 +137,10 @@ described in detail below).
 **iOS**
  - Add the file to your project (does not require special folder placement).
 
+```
+Using Native-Screensets is available by hosting your markup internally on your application or using a hosted markup on your site console page.
+```
+
 ### iOS - Swift
 
 Add the following line to your AppDelegate.swift class.
@@ -157,10 +148,26 @@ Add the following line to your AppDelegate.swift class.
 GigyaNss.shared.register(scheme: <YOUR_SCHEME>.self)
 ```
 
-To start the NSS flow:
+Initiate the Nss flow using a markup resource.
 ```
 GigyaNss.shared
    .load(asset: "init")
+```
+
+Or
+
+Initiate the Nss flow using a hosted markup.
+```
+GigyaNss.shared
+   .load(screenSetId: "DEFAULT")
+   .lang(name: "en")
+```
+
+A complete example:
+```
+GigyaNss.shared
+   .load(screenSetId: "DEFAULT")
+   .lang(name: "en")
    .initialRoute(name: "login")
    .events(UserHost.self) { result in
       switch result {
@@ -174,13 +181,25 @@ GigyaNss.shared
    }
    .show(viewController: self)
 ```
-```
-Hosting and loading the NSS JSON from the SAP Customer Data Cloud Admin Console is not currently supported.
-```
 
 ### Android
 
-To start the Native Screen-Sets flow:
+Initiate the Nss flow using a markup resource.
+```
+GigyaNss.getInstance()
+   .load("gigya-nss-example") // No need to add the .json suffix.
+```
+
+Or
+
+Initiate the Nss flow using a hosted markup.
+```
+GigyaNss.getInstance()
+   .load("DEFAULT") // DEFAULT is currently the supported hosted name.
+   .lang("en)
+```
+
+A complete example:
 ```
 GigyaNss.getInstance()
    .load("gigya-nss-example") // No need to add the .json suffix.
@@ -203,6 +222,7 @@ GigyaNss.getInstance()
   })
   .show(this)
 ```
+
 ## Introduction to the Native Screen-Set JSON Schema
 
 In order for the Native Screen-Sets engine to interpret and display the customized screens, we provide a simple JSON based markup language pattern.
@@ -320,6 +340,15 @@ The screen component is a container component. It may contain children component
 }
 ```
 
+##### showOnlyFields
+
+The **showOnlyFields** property is an additional screen specific property which allows the engeine to perform
+background evaluation for bound fields.
+
+Currently available options:
+* empty - Bound fields which are considered "empty" will only be displayed. This is useful when user is required to input only missing data.
+
+
 #### submit
 
 The submit component is a button for triggering the screen's action.
@@ -388,7 +417,7 @@ Example Uses
 ```json
 {
   "type": "label",
-  "textKey": "I don't have an account. [Register now](register).", 
+  "textKey": "I don't have an account. [Register now](register)."
 }
 ```
 Will result in the following displayed text:
@@ -398,7 +427,7 @@ Pressing on the words 'Register now' will navigate the user to the registration 
 ```json
 {
   "type": "label",
-  "textKey": "By clicking submit you are agreeing to these [terms of use](https://www.yourtermsofuseurl.com).",
+  "textKey": "By clicking submit you are agreeing to these [terms of use](https://www.yourtermsofuseurl.com)."
 }
 ```
 Will result in the following displayed text:
@@ -406,6 +435,9 @@ Will result in the following displayed text:
  - By clicking submit you are agreeing to these terms of use.
 
 Pressing on the words "terms of use" will open the devices default browser and display the defined URL.
+
+Linking is currently available for *label* and *checkbox* componenets.
+Use style property "linkColor" to change to touch active link text.
 
 #### textInput
 
@@ -493,6 +525,13 @@ The NSS Library does not implement them for you.
 }
 ```
 
+If you do not want the provider title to be displayed, add the *hideTitles* property.
+{
+ ...
+ "hideTitles" : true
+ ...
+}
+
 #### image
 
 Use the image compnent to display remote hosted image files or native internal assets.
@@ -503,6 +542,12 @@ Use the image compnent to display remote hosted image files or native internal a
   "fallback": "FALLBACK IMAGE URL OR INTERNAL ASSET FILE NAME"
 ```
 You are able to use the *"bind"* property to bind the image component to any schema field that contains an image link.
+
+```
+Components background property is also a good way to bind an image to certain component.
+It supports both internal & external image resources.
+Note that when using an internal image you are required to use the resource name only. No need for the file extension.
+```
 
 #### profilePhoto
 
@@ -588,6 +633,20 @@ The dropdown component displays a drop-down list of options from which the user 
 }
 ```
 
+### Disabling
+
+You are also able to specifically disable a widget in order to disallow click events.
+Use the *disabled* property to achive this.
+```
+{
+ ...
+ "disabled" : true
+ ...
+}
+Disabling a component will grey out its display and and add an opacity effect to it.
+
+```
+
 ### Input validations
 
 All input components support these two validation options:
@@ -632,13 +691,13 @@ In order to style your screen-set, you are able to add specific styling properti
 
 Available styling parameters:
 
- - margin - Will set the outer component margin and space it from its adjacent components.
+ - **margin** - Will set the outer component margin and space it from its adjacent components.
     - Supported values:
         - Number (floating point available) - Will be used for all directions.
         - Array of numbers (floating point available) following this pattern: [left, top, right, bottom].
     - Supported Components:
         - all
- - size - Set the exact component size (in pixels).
+ - **size** - Set the exact component size (in pixels).
     - Supported values:
         - Array of numbers (floating point available) following this pattern: [width, height]
     - Supported Components:
@@ -651,7 +710,7 @@ Available styling parameters:
         - radio
         - image
         - profilePhoto
- - background - Set the component background.
+ - **background** - Set the component background.
     - Supported values:
         - Color - (string) You can pass the color value using either any of the supported colors by name, or any hex formatted CSS color.
             - name - available options:
@@ -675,7 +734,7 @@ Available styling parameters:
         - radio
         - image
         - profilePhoto
- - fontColor - Set the color of the displayed component text.
+ - **fontColor** - Set the color of the displayed component text.
     - Supported values:
         - Color - (string) You can pass the color value using either any of the supported colors by name, or any hex formatted CSS color.
             - name - available options:
@@ -697,7 +756,7 @@ Available styling parameters:
         - checkbox
         - dropdown
         - radio
- - fontSize - Sets the size of the displayed component text.
+ - **fontSize** - Sets the size of the displayed component text.
     - Supported values:
         - Number (floating point available).
     - Supported Components:
@@ -707,7 +766,7 @@ Available styling parameters:
         - checkbox
         - dropdown
         - radio
- - fontWeight - Set the weight of the displayed component text.
+ - **fontWeight** - Set the weight of the displayed component text.
     - Supported values:
         - Number (integer) between 1-9.
         - bold
@@ -718,7 +777,7 @@ Available styling parameters:
         - checkbox
         - dropdown
         - radio
- - cornerRadius - Round component corners.
+ - **cornerRadius** - Round component corners.
     - Supported values:
         - Number (floating point available). Be sure not to use a number that is bigger than (component.height / 2).
     - Supported Components:
@@ -726,7 +785,7 @@ Available styling parameters:
         - submit
         - image
         - profilePhoto
- - borderColor - Sets the color of the component border.
+ - **borderColor** - Sets the color of the component border.
     - Supported values:
         - Color - (string) You can pass the color value using either any of the supported colors by name, or any hex formatted CSS color.
         - name - available options:
@@ -746,7 +805,7 @@ Available styling parameters:
         - dropdown
         - image
         - profilePhoto
- - borderSize - Sets the size of the component border.
+ - **borderSize** - Sets the size of the component border.
     - Supported values:
         - Number (floating point available)
     - Supported Components:
@@ -754,7 +813,7 @@ Available styling parameters:
         - dropdown
         - image
         - profilePhoto
- - Opacity - Sets the component opacity value.
+ - **opacity** - Sets the component opacity value.
     - Supported values:
         - Number - between 0-1.
     - Supported Components:
@@ -765,13 +824,17 @@ Available styling parameters:
         - checkbox
         - dropdown
         - radio
- - Elevation - Sets the Z axis position of the component.
+ - **elevation** - Sets the Z axis position of the component.
     - Supported values:
         - Number (floating point available) between 0-10.
     - Supported Components:
         - submit
         - image
         - profilePhoto
+ - **linkColor** - Sets the color of the touch active link text when using links.
+    - Supported Componenets:
+        - label
+        - checkbox
 
 #### Theme
 
@@ -922,6 +985,106 @@ When using component binding you will be required to distinguish between two fie
  },
 ```
 
+The *sendAs* property is also available in order to extend the basic binding scheme.
+For instance, if you would like to bind a specific value to an input field but send it as a different property on submission.
+```json
+{
+    "type": "input"
+    "bind": "profile.email"
+    "saveAs": "loginID"
+}
+In this example the display will be bound to the *profile.email* field but on submission the parameter sent to the adjacent action
+endpoint will be **loginID**.
+```
+
+## Evaluating expressions
+
+Added in version 1.1.0 is the ability to conditionaly display a *container* according to a specific expression.
+This pattern is useful in specifc flows in which you would like to display certain components according to available data or the actual data content.
+
+To use this add the **showIf** property to your **container** and add an expression to evaluate the data.
+```
+Expression are written in JavaScript much like the web screen-sets feature
+```
+
+Here is an example:
+```json
+ {
+   "type": "container",
+   "showIf": "conflictingAccounts.loginProviders.includes('site')",
+   "children": [
+   ...
+   ]
+```
+In this example (Accout linking) wea re evaluating if our conflicting accounts object contains the 'site' provider.
+In this case the container will only be visible if the expression is true.
+
+## Account linking
+
+Account linking is a common flow when using a combination of social/site login providers.
+In order to complete this flow without any additional coding you are able to use the **onLoginIdentifierExists** routing interruption.
+
+Here is a complete example:
+
+First add the interruption to your required markup screen.
+In this case we chose the login screen.
+
+```json
+"login": {
+      "routing": {
+        "onPendingRegistration": "account-update",
+        "onLoginIdentifierExists": "link-account",
+        "onSuccess": "_dismiss"
+      },
+      ...
+}
+```
+
+Next add your **link-account** screen markup implementation.
+A detailed example is available in both SDK example applications (Android & iOS).
+
+```
+When a "onLoginIdentifierExists" interruption occurs, a specific **conflictingAccounts** object will be available for evaluation
+within your **link-account** screen.
+This object is a part of the core SDK. Please review it in order to familiarise with the object structure.
+```
+
+In the example implementation of the **link-account** screen we added two **conditionaly visible containers**
+This in order to dynamically detect what kind of linking is required. Site or social.
+
+```json
+{
+  "type": "container",
+  "showIf": "conflictingAccounts.loginProviders.filter(p => p != 'site').length > 0",
+  "children": [
+       {
+         "type": "socialLoginGrid",
+         ...
+       }
+  ]
+}
+{
+  "type": "container",
+  "showIf": "conflictingAccounts.loginProviders.includes('site')",
+   "children": [
+   ...
+   ]
+}
+```
+Here each container uses the **showIf** conditional parameter in order to determine its visibility state.
+
+The first condition idicates when there are social providers available for display within the **conflictingAccounts** object
+And therefore will show a **socialLoginGrid* accordigly. Note that the **socialLoginGrid** is smart enough to decide what providers
+are needed to be displayed when the **onflictingAccounts** object is available therefore you do not need to specifiy its providers manually.
+
+The second condition idicates if the **conflictingAccounts** object contains a 'site' provider and therefore the user will be
+required to link his account using his loginID/password combination.
+
+```
+No addition coding is needed. When linknig a social account the social componenets will take care of the linking process.
+If liking to a 'site' provider, be sure to add a **submit** component in order to correctly sumbit the input data.
+```
+
 ## Localization
 In order to utilize the **"textKey"** property of each UI component, adding a localization key/value map is
 available using the following format:
@@ -932,7 +1095,7 @@ available using the following format:
              "login": "Login"
          },
          "es": {
-            "login": "Iniciar sesión",
+            "login": "Iniciar sesión"
          }
     }
 }
@@ -986,6 +1149,97 @@ Available keys:
 **error-photo-failed-upload** for a failed profile photo upload.
 **error-photo-image-size** for indicating that the profile photo image exceeds the size limit.
 
+## Screen events
+The NSS engine provides the ability to listen and interact with varius screen events.
+Registring to these events is done in the native application using the NSS builder.
+
+Android
+```
+GigyaNss.getInstance()...
+    .eventsFor("login", object: NssScreenEvents() {
+    
+          override fun screenDidLoad() {
+               // Screen loaded.
+          }
+          
+          override fun routeFrom(screen: ScreenEventsModel) {
+              screen.`continue`()
+          }
+          
+          override fun routeTo(screen: ScreenEventsModel) {
+              screen.`continue`()    
+          }
+          
+          override fun submit(screen: ScreenEventsModel) {
+              screen.`continue`()         
+          }
+          
+          override fun fieldDidChange(screen: ScreenEventsModel, field: FieldEventModel) {
+               when (field.id) {
+                  "profile.zip" -> {
+                    // Do some kind of validation.
+                  }
+                  else -> {
+                     screen.`continue`()
+                  }
+               }           
+          }
+```
+
+iOS
+```
+GigyaNss.shared...
+        }.eventsFor(screen: "login", handler: { (event) in
+            switch event {
+            case .screenDidLoad:
+                break
+            case .routeFrom(screen: let screen):
+                screen.continue()
+            case .routeTo(screen: var screen):
+                screen.continue()
+            case .submit(var screen):
+                screen.continue()
+            case .fieldDidChange(let screen, let field):
+                switch field.id {
+                case "profile.zip":
+                    // Do some kind of validation.
+                    screen.showError("profile.zip is not valid")
+                    // or
+                    screen.continue()
+                    break
+                default:
+                    screen.continue()
+                }
+                break
+            }
+```
+
+### Available events:
+**screenDidLoad** - Screen finished it's first load and is fully rendered.
+**routeFrom** - Indicates the entry point of the current screen.
+    You are able to mutate the data passed in the *screen* model.
+**routeTo** - Indicates the expected route once screen submission is done.
+    You are able to mutate both the data passed in the *screen* model and the *nextRoute* if needed.
+**submit** - Exposes the submission data after the screen has been validated.
+    You are able to mutate the submission data passed in the *screen* model.
+    You are able to inject an error message to the screen.
+**fieldDidChange** - Event triggered when an input component has changed its data.
+    The field's identifier corresponds withe the **bind** property you have set in the markup.
+    You are able to inject an error message to the screen.
+ 
+**How to properly use NSS events:**
+When you override a specific event you are able to use the provided *screen* model in order to evaluate or mutate its current
+*data*. 
+
+In order for the flow to be completed, when overriding the event, you must call the *continue* method on the *screen* model.
+This will ensure that the connection to the engine will hang as it awaits your result.
+Events such as *submit* and *fieldDidChange* also provide the option to inject an error to the screen using the *showError* method 
+of the *screen* model.
+
+**Note:**
+**When overriding the *fieldDidChange* event you are required to use the *screen* model's *continue* method.**
+
+
 ## Known Issues
 
 Native Screen-Sets engine versioning is still under development.
@@ -999,4 +1253,3 @@ Via pull request to this repository.
 
 ## Known Issues
 iOS – Debugging is currently available only on simulators.
-

@@ -20,8 +20,18 @@ class ApiService {
     }).catchError((error) {
       engineLogger.d('Invocation error with: ${error.message}');
       return throw ApiBaseResult.platformException(error);
-    }).timeout(Duration(seconds: _defaultTimeout), onTimeout: () {
+    }).timeout(Duration(seconds: configTimeout(method)), onTimeout: () {
       return ApiBaseResult.timedOut();
     });
+  }
+
+  /// Timeout can vary with specific flows.
+  int configTimeout(String method) {
+    switch (method) {
+      case 'socialLogin':
+        return 300;
+      default:
+        return _defaultTimeout;
+    }
   }
 }

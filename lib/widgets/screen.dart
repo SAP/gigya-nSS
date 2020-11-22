@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
+import 'package:gigya_native_screensets_engine/widgets/events.dart';
 import 'package:provider/provider.dart';
 
 enum ScreenChannelAction { flow, submit }
@@ -12,7 +13,7 @@ extension ScreenChannelActionExt on ScreenChannelAction {
   }
 }
 
-abstract class ScreenWidgetState<T extends StatefulWidget> extends State<T> {
+abstract class ScreenWidgetState<T extends StatefulWidget> extends State<T> with EngineEvents {
   final ScreenViewModel viewModel;
   final BindingModel bindings;
 

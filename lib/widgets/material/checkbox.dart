@@ -21,12 +21,7 @@ class CheckboxWidget extends StatefulWidget {
 }
 
 class _CheckboxWidgetState extends State<CheckboxWidget>
-    with
-        DecorationMixin,
-        BindingMixin,
-        StyleMixin,
-        LocalizationMixin,
-        ValidationMixin {
+    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin {
   bool _currentValue;
 
   @override
@@ -43,8 +38,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
     final Linkify linkify = Linkify(displayText);
     final bool linkified = linkify.containLinks(displayText);
     if (!linkified) linkify.dispose();
-    return expandIfNeeded(
-      widget.data,
+    return
       FormField(
         validator: (val) {
           return validateField(_currentValue.toString(), widget.data.bind);
@@ -52,15 +46,15 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
         builder: (state) {
           return Padding(
             padding: getStyle(Styles.margin, data: widget.data),
-            child: sizeIfNeeded(
+            child: customSizeWidget(
               widget.data,
               Consumer2<ScreenViewModel, BindingModel>(
                 builder: (context, viewModel, bindings, child) {
-                  BindingValue bindingValue =
-                      getBindingBool(widget.data, bindings);
+                  BindingValue bindingValue = getBindingBool(widget.data, bindings);
 
                   if (bindingValue.error && !kReleaseMode) {
-                    return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);
+                    return showBindingDoesNotMatchError(widget.data.bind,
+                        errorText: bindingValue.errorText);
                   }
 
                   _currentValue = bindingValue.value;
@@ -71,13 +65,20 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Checkbox(
-                            activeColor: getThemeColor('enabledColor'),
+                            activeColor: widget.data.disabled
+                                ? getThemeColor('disabledColor').withOpacity(0.3)
+                                : getThemeColor('enabledColor'),
                             // TODO: need to verify if can improve it.
-                            checkColor: getThemeColor('secondaryColor'),
+                            checkColor: widget.data.disabled
+                                ? getThemeColor('disabledColor').withOpacity(0.3)
+                                : getThemeColor('secondaryColor'),
                             value: _currentValue,
                             onChanged: (bool val) {
+                              if (widget.data.disabled) {
+                                return null;
+                              }
                               setState(() {
-                                bindings.save(widget.data.bind, val);
+                                bindings.save<bool>(widget.data.bind, val, saveAs: widget.data.sendAs);
                               });
                             },
                           ),
@@ -85,29 +86,25 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                             child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    bindings.save(
-                                        widget.data.bind, !_currentValue);
+                                    bindings.save<bool>(widget.data.bind, !_currentValue, saveAs: widget.data.sendAs);
                                   });
                                 },
                                 child: Container(
                                   child: linkified
-                                      ? linkify.linkify(
-                                          widget.data,
-                                          (link) {
-                                            viewModel.linkifyTap(link);
-                                          },
-                                        )
+                                      ? linkify.linkify(widget.data, (link) {
+                                          viewModel.linkifyTap(link);
+                                        },
+                                          getStyle(Styles.linkColor,
+                                                  data: widget.data, themeProperty: 'linkColor') ??
+                                              getColor('blue'))
                                       : Text(
                                           displayText,
                                           style: TextStyle(
-                                              color: getStyle(Styles.fontColor,
-                                                  data: widget.data),
-                                              fontSize: getStyle(
-                                                  Styles.fontSize,
-                                                  data: widget.data),
-                                              fontWeight: getStyle(
-                                                  Styles.fontWeight,
-                                                  data: widget.data)),
+                                              color: getStyle(Styles.fontColor, data: widget.data),
+                                              fontSize:
+                                                  getStyle(Styles.fontSize, data: widget.data),
+                                              fontWeight:
+                                                  getStyle(Styles.fontWeight, data: widget.data)),
                                         ),
                                 )),
                           ),
@@ -128,7 +125,6 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
             ),
           );
         },
-      ),
     );
   }
 }

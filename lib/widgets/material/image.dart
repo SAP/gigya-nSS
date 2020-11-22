@@ -123,6 +123,7 @@ class ImageWidget extends StatefulWidget {
 
   @override
   _ImageWidgetState createState() => _ImageWidgetState();
+
 }
 
 class _ImageWidgetState extends ImageWidgetState<ImageWidget> {
@@ -140,7 +141,7 @@ class _ImageWidgetState extends ImageWidgetState<ImageWidget> {
 
     return Padding(
       padding: getStyle(Styles.margin, data: widget.data),
-      child: sizeIfNeeded(
+      child: customSizeWidget(
         widget.data,
         Consumer<BindingModel>(
           builder: (context, bindings, child) {

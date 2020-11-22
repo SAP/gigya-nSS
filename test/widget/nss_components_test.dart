@@ -28,7 +28,6 @@ void main() {
       var data = NssWidgetData(
         type: NssWidgetType.label,
         textKey: textKey,
-        expand: false,
       );
 
       var widget = LabelWidget(

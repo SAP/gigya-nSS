@@ -9,7 +9,6 @@ import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/services/api_service.dart';
-import 'package:gigya_native_screensets_engine/startup.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:mockito/mockito.dart';
@@ -42,8 +41,6 @@ class MockConfig extends Mock implements NssConfig {}
 class MockChannels extends Mock implements NssChannels {}
 
 class MockMaterialWidgetFactory extends Mock implements MaterialWidgetFactory {}
-
-class MockIgnitionWorker extends Mock implements StartupWorker {}
 
 class MockApiChannel extends Mock implements MethodChannel {}
 

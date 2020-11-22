@@ -17,8 +17,6 @@ class NssWidgetData {
   List<NssWidgetData> children;
   String api;
   dynamic defaultValue;
-  @JsonKey(defaultValue: false)
-  bool expand;
   List<NssOption> options;
   @JsonKey(defaultValue: {})
   Map<String, dynamic> style;
@@ -28,6 +26,7 @@ class NssWidgetData {
 
   // Optional values: 'number'|'boolean'|'string'
   String parseAs;
+  String sendAs;
 
   // social login button
   NssSocialProvider provider;
@@ -40,6 +39,8 @@ class NssWidgetData {
   int columns;
   @JsonKey(defaultValue: 1)
   int rows;
+  @JsonKey(defaultValue: false)
+  bool hideTitles;
 
   // Image widget
   String url;
@@ -51,6 +52,11 @@ class NssWidgetData {
   @JsonKey(defaultValue: true)
   bool allowUpload;
 
+  @JsonKey(defaultValue: false)
+  bool disabled;
+
+  String showIf;
+
   NssWidgetData({
     this.textKey,
     this.type,
@@ -60,22 +66,25 @@ class NssWidgetData {
     this.children,
     this.api,
     this.defaultValue,
-    this.expand,
     this.options,
     this.style,
     this.theme,
     this.validations,
     this.parseAs,
+    this.sendAs,
     this.provider,
     this.iconURL,
     this.iconEnabled,
     this.providers,
     this.columns,
     this.rows,
+    this.hideTitles,
     this.url,
     this.fallback,
     this.defaultPlaceholder,
     this.allowUpload,
+    this.disabled,
+    this.showIf,
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) =>

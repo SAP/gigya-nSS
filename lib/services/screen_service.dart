@@ -14,12 +14,13 @@ class ScreenService {
   /// Trigger the native SDK to instantiate the adjacent screen action.
   /// The screen action native component is responsible for performing all native SDK logic.
   Future<Map<String, dynamic>> initiateAction(
-      String actionId, String screenId) async {
+      String actionId, String screenId, Map<String, String> expressions) async {
     var map = await channels.screenChannel.invokeMethod<Map<dynamic, dynamic>>(
       'action',
       {
         'actionId': actionId,
         'screenId': screenId,
+        'expressions': expressions,
       },
     ).catchError((error) {
       return {};

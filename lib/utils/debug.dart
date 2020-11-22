@@ -8,8 +8,6 @@ mixin DebugUtils {
       action();
     });
   }
-
-  bool isMock() => NssIoc().use(NssConfig).isMock;
 }
 
 /// Widget is used to add a "watermark" like tag on the bottom right of the screen that indicates

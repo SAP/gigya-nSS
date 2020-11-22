@@ -24,7 +24,7 @@ class BindingModel with ChangeNotifier {
   /// Update biding data once available. Updating the data will trigger rebuild for
   /// every child widget in the view tree.
   void updateWith(Map<String, dynamic> map) {
-    _bindingData = map;
+    _bindingData.addAll(map);
     notifyListeners();
   }
 
@@ -73,7 +73,10 @@ class BindingModel with ChangeNotifier {
   }
 
   /// Save a new [key] / [value] pair for form submission.
-  save<T>(String key, T value) {
+  save<T>(String key, T value, { String saveAs }) {
+    // Change the bind to real param before sending the request.
+    if (saveAs != null && saveAs.isNotEmpty) key = saveAs;
+
     // Remove `#` mark before submit.
     final String checkedKey = key.removeHashtagPrefix();
 
@@ -107,7 +110,7 @@ class BindingModel with ChangeNotifier {
       }
 
       if (nextData != null) {
-        if (nextData[keys[nextKey]] is T) {
+        if (nextData[keys[nextKey]] is T && nextData[keys[nextKey]] != null) {
           nextData[keys[nextKey]] = value;
           return;
         }

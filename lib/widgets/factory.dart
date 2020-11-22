@@ -8,6 +8,7 @@ import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/app.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/buttons.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/checkbox.dart';
@@ -54,45 +55,39 @@ enum NssAlignment { start, end, center, equal_spacing, spread }
 abstract class WidgetFactory {
   Widget buildApp();
 
-  Widget buildScreen(Screen screen);
+  Widget buildScreen(Screen screen, Map<String, dynamic> routingData);
 
   Widget buildComponent(NssWidgetType type, NssWidgetData data);
 
-  Widget buildContainer(List<Widget> childrenWidgets, NssStack stack,
-      {NssAlignment alignment,
-      Map<String, dynamic> style,
-      bool isScreen = false}) {
-    if (stack == null) {
-      //TODO: Markup error.
+  Widget buildContainer(List<Widget> children, NssWidgetData data) {
+    if (data.stack == null) {
+      engineLogger.e('Invalid null value for container stack property');
       return Container();
     }
 
-    switch (stack) {
+    switch (data.stack) {
       case NssStack.vertical:
         return ContainerWidget(
-          isScreen: isScreen,
-          style: style,
+          data: data,
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: getMainAxisAlignment(alignment),
-            children: childrenWidgets,
+            mainAxisAlignment: getMainAxisAlignment(data.alignment),
+            children: children,
           ),
         );
       case NssStack.horizontal:
         return ContainerWidget(
-          isScreen: isScreen,
-          style: style,
+          data: data,
           child: Row(
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: getMainAxisAlignment(alignment),
-            children: childrenWidgets,
+            mainAxisAlignment: getMainAxisAlignment(data.alignment),
+            children: children,
           ),
         );
       default:
         return ContainerWidget(
-          isScreen: isScreen,
-          style: style,
-          child: Column(children: childrenWidgets),
+          data: data,
+          child: Column(children: children),
         );
     }
   }
@@ -106,12 +101,7 @@ abstract class WidgetFactory {
       if (widget.type == NssWidgetType.container) {
         // View group required.
         widgets.add(
-          buildContainer(
-            buildWidgets(widget.children),
-            widget.stack,
-            alignment: widget.alignment,
-            style: widget.style,
-          ),
+          buildContainer(buildWidgets(widget.children), widget),
         );
       } else {
         widgets.add(
@@ -153,13 +143,35 @@ class MaterialWidgetFactory extends WidgetFactory {
   }
 
   @override
-  Widget buildScreen(Screen screen) {
+  Widget buildScreen(Screen screen, Map<String, dynamic> arguments) {
+    ScreenViewModel viewModel = NssIoc().use(ScreenViewModel);
+
+    // Make sure screen routing data is beeing passed on with every screen transition.
+    Map<String, dynamic> routingData = {};
+    if (arguments is Map<String, dynamic>) {
+      if (arguments.containsKey('routingData')) {
+        routingData.addAll(arguments['routingData']);
+      }
+      if (arguments.containsKey('expressions')) {
+        viewModel.expressions = arguments['expressions'];
+      }
+    }
+
+    BindingModel binding =  NssIoc().use(BindingModel);
+    binding.savedBindingData.addAll(routingData);
+
     return MaterialScreenWidget(
-      viewModel: NssIoc().use(ScreenViewModel),
-      bindingModel: NssIoc().use(BindingModel),
+      viewModel: viewModel,
+      bindingModel: binding,
+      routingData: routingData,
       screen: screen,
-      content: buildContainer(buildWidgets(screen.children), screen.stack,
-          style: screen.style, isScreen: true),
+      content: buildContainer(
+        buildWidgets(screen.children),
+        NssWidgetData(
+          style: screen.style ?? {},
+          stack: screen.stack ?? NssStack.vertical,
+        ),
+      ),
     );
   }
 
@@ -188,6 +200,8 @@ class MaterialWidgetFactory extends WidgetFactory {
         return ImageWidget(key: UniqueKey(), data: data);
       case NssWidgetType.profilePhoto:
         return ProfilePhotoWidget(key: UniqueKey(), data: data);
+      case NssWidgetType.container:
+        return buildContainer(buildWidgets(data.children), data);
       default:
         return Container();
     }
@@ -203,7 +217,7 @@ class CupertinoWidgetFactory extends WidgetFactory {
   }
 
   @override
-  Widget buildScreen(Screen screen) {
+  Widget buildScreen(Screen screen, Map<String, dynamic> routingData) {
     // TODO: implement buildScreen
     return null;
   }

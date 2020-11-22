@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 
 /// General widget decoration mixin.
 /// Includes useful UI builders that correspond with the applied markup.
@@ -16,31 +15,40 @@ mixin DecorationMixin {
   /// which should be treated as double but are parsed as integer.
   double ensureDouble(num) => (num is int) ? num.toDouble() : num;
 
-  /// Determine if this widget should be nested within an [Expanded] widget.
-  Widget expandIfNeeded(NssWidgetData data, Widget child) {
-    return data.expand ? Expanded(child: child) : Flexible(child: child);
-  }
-
   /// Apply a specific size to the selected element.
   /// Will check the [data] for any "size" property and apply it accordingly.
-  Widget sizeIfNeeded(NssWidgetData data, Widget child) {
-    if (data.style == null) data.style = {};
-    var size = data.style['size'];
+  Widget customSizeWidget(NssWidgetData data, Widget child) {
+    var size;
     // Check for size parameter in available custom theme. Override current if exists.
     final String customTheme = data.theme ?? '';
-    if (customTheme != null && config.markup.theme != null && config.markup.theme.containsKey(customTheme)) {
-      Map<String, dynamic> themeMap = config.markup.theme[customTheme].cast<String, dynamic>();
-      if (themeMap.containsKey('size')) {
-        size = themeMap['size'];
+    // Check if this widget has a size attached in attached custom theme.
+    if (customTheme != null &&
+        config.markup.customThemes != null &&
+        config.markup.customThemes.containsKey(customTheme)) {
+      if (config.markup.customThemes[customTheme].containsKey('size')) {
+        size = config.markup.customThemes[customTheme]['size'];
       }
     }
+
+    // Explicit size declaration will always get priority over custom theme declaration.
+    if (data.style == null) data.style = {};
+    if (data.style.containsKey('size')) {
+      size = data.style['size'];
+    }
+
     if (size == null) {
       return child;
     }
+
     return SizedBox(
       width: ensureDouble(size[0]),
       height: ensureDouble(size[1]),
       child: child,
     );
+  }
+
+  bool isVisible(viewModel, showIf) {
+    String result = viewModel.expressions[showIf] ?? 'true';
+    return result.toLowerCase() == 'true';
   }
 }
