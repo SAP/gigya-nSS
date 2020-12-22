@@ -1,5 +1,5 @@
 name: gigya_native_screensets_engine
-description: A new Flutter module.
+description: Native screensets engine module.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -91,5 +91,5 @@ flutter:
   # identifiers, which may be completely independent or the same as these.
   module:
     androidX: true
-    androidPackage: com.gigya.nss.engine
+    androidPackage: com.gigya.gigyaNativeScreensetsEngine
     iosBundleIdentifier: com.gigya.gigyaNativeScreensetsEngine

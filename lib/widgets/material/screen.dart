@@ -1,12 +1,11 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/injector.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
-import 'package:gigya_native_screensets_engine/utils/logging.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/errors.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/widgets/screen.dart';
@@ -92,7 +91,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
                   fontWeight: getStyle(Styles.fontWeight, styles: widget.screen.appBar.style),
                 ),
               ),
-              leading: Platform.isIOS
+              leading: kIsWeb ?  null : Platform.isIOS
                   ? Container(
                       child: IconButton(
                         icon: Icon(
