@@ -91,7 +91,7 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
   /// Binary data is also needed in order to display the updated image.
   void _onProfileImageTap() async {
     debugPrint('_onProfileImageTap');
-    final MethodChannel channel = NssIoc().use(NssChannels).dataChannel;
+    final dynamic channel = NssIoc().use(NssChannels).dataChannel;
     var data = await channel.invokeMethod<Uint8List>('pick_image', {
       'text': widget.data.textKey
     }).timeout(Duration(minutes: 5), onTimeout: () {

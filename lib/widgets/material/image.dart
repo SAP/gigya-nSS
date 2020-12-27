@@ -92,7 +92,7 @@ abstract class ImageWidgetState<T extends StatefulWidget> extends State<T>
       error();
       return null;
     }
-    final MethodChannel channel = NssIoc().use(NssChannels).dataChannel;
+    final dynamic channel = NssIoc().use(NssChannels).dataChannel;
     var data = await channel
         .invokeMethod<Uint8List>('image_resource', {'url': url}).timeout(
             Duration(seconds: 4), onTimeout: () {

@@ -16,7 +16,7 @@ class Logger {
       return;
     }
     try {
-      channels.logChannel.invokeMethod<void>('debug', {'tag': tag, 'message': message});
+      channels.logChannel.invokeMethod<void>('debug',  {'tag': tag, 'message': message});
     } on MissingPluginException catch (ex) {
       // No need to print the exception here.
     }

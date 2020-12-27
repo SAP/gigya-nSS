@@ -53,7 +53,7 @@ class NssContainer {
   void startEngine({bool asMock = false}) {
     NssIoc()
         .register(NssConfig, (ioc) => NssConfig(isMock: asMock), singleton: true)
-        .register(NssChannels, (ioc) => kIsWeb ? MobileChannels() : WebChannels.instance().channels, singleton: true)
+        .register(NssChannels, (ioc) => !kIsWeb ? MobileChannels() : WebChannels.instance().channels, singleton: true)
         .register(BindingModel, (ioc) => BindingModel())
         .register(Logger, (ioc) => Logger(ioc.use(NssConfig), ioc.use(NssChannels)))
         .register(MaterialWidgetFactory, (ioc) => MaterialWidgetFactory())

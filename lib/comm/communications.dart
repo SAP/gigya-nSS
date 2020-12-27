@@ -43,22 +43,41 @@ class NssWebChannels extends NssChannels {
 }
 
 class NssWebMethodChannel {
+  Future<T> invokeMethod<T>(String method, [ dynamic arguments ]) async {
+    var data = {
+      'method': method,
+      'data': arguments ?? {},
+    };
+    html.window.parent.postMessage(jsonEncode(data), '*');
+    html.MessageEvent msg = await html.window.onMessage.firstWhere((element) {
+      var json = jsonDecode(element.data).cast<String, dynamic>();
+      debugPrint(json["method"]);
+      if (json["method"] == null) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    var json = jsonDecode(msg.data).cast<String, dynamic>();
+    return json;
+  }
+
   Future<Map<K, V>> invokeMapMethod<K, V>(String method, [dynamic arguments]) async {
     var data = {
       'method': method,
-      'data': arguments,
+      'data': arguments ?? {},
     };
     html.window.parent.postMessage(jsonEncode(data), '*');
-    html.window.addEventListener(
-      'message',
-      (event) {
-        // Remove listener.
-        debugPrint(event.toString());
-        var json = jsonDecode(event.toString()).cast<String, dynamic>();
-        return json;
-      },
-    );
-    //TODO: Check if thread is locked.
-    return Future.delayed(Duration(seconds: 120), () => {});
+    html.MessageEvent msg = await html.window.onMessage.firstWhere((element) {
+      var json = jsonDecode(element.data).cast<String, dynamic>();
+      debugPrint(json["method"]);
+      if (json["method"] == null) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    var json = jsonDecode(msg.data).cast<String, dynamic>();
+    return json;
   }
 }

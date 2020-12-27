@@ -14,7 +14,7 @@ extension EventIdenfierExt on EventIdenfier {
 
 /// Screen native events handler class used to interact with dynamic native code.
 mixin EngineEvents {
-  final MethodChannel eventChannel = NssIoc().use(NssChannels).eventsChannel;
+  final dynamic eventChannel = NssIoc().use(NssChannels).eventsChannel;
   final bool isMock = NssIoc().use(NssConfig).isMock;
 
   // Setting the timeout for all event channel invocations.
