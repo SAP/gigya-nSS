@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gigya_native_screensets_engine/comm/communications.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
@@ -92,7 +93,7 @@ abstract class ImageWidgetState<T extends StatefulWidget> extends State<T>
       error();
       return null;
     }
-    final dynamic channel = NssIoc().use(NssChannels).dataChannel;
+    final NssChannel channel = NssIoc().use(NssChannels).dataChannel;
     var data = await channel
         .invokeMethod<Uint8List>('image_resource', {'url': url}).timeout(
             Duration(seconds: 4), onTimeout: () {

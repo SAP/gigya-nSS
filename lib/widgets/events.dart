@@ -1,12 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:gigya_native_screensets_engine/comm/communications.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
-enum EventIdenfier { routeFrom, routeTo, submit, fieldDidChange }
+enum EventIdentifier { routeFrom, routeTo, submit, fieldDidChange }
 
-extension EventIdenfierExt on EventIdenfier {
+extension EventIdentifierExt on EventIdentifier {
   String get name {
     return describeEnum(this);
   }
@@ -14,7 +15,7 @@ extension EventIdenfierExt on EventIdenfier {
 
 /// Screen native events handler class used to interact with dynamic native code.
 mixin EngineEvents {
-  final dynamic eventChannel = NssIoc().use(NssChannels).eventsChannel;
+  final NssChannel eventChannel = NssIoc().use(NssChannels).eventsChannel;
   final bool isMock = NssIoc().use(NssConfig).isMock;
 
   // Setting the timeout for all event channel invocations.
@@ -40,7 +41,7 @@ mixin EngineEvents {
     }
     engineLogger.d('Screen route from $pid with ${routingData.toString()}');
     var eventData =
-        await eventChannel.invokeMethod<Map<dynamic, dynamic>>(EventIdenfier.routeFrom.name, {
+        await eventChannel.invokeMethod<Map<dynamic, dynamic>>(EventIdentifier.routeFrom.name, {
       'sid': sid,
       'pid': pid,
       'data': routingData,
@@ -58,7 +59,7 @@ mixin EngineEvents {
     }
     engineLogger.d('Screen route to $nid with ${routingData.toString()}');
     var eventData =
-        await eventChannel.invokeMethod<Map<dynamic, dynamic>>(EventIdenfier.routeTo.name, {
+        await eventChannel.invokeMethod<Map<dynamic, dynamic>>(EventIdentifier.routeTo.name, {
       'sid': sid,
       'nid': nid,
       'data': routingData,
@@ -76,7 +77,7 @@ mixin EngineEvents {
     }
     engineLogger.d('Submission with submission data ${submission.toString()}');
     var eventData = await eventChannel.invokeMethod<Map<dynamic, dynamic>>(
-        EventIdenfier.submit.name, {
+        EventIdentifier.submit.name, {
       'sid': sid,
       'data': submission
     }).timeout(Duration(seconds: eventTimeoutDuration), onTimeout: () {
@@ -92,7 +93,7 @@ mixin EngineEvents {
     }
     engineLogger.d('fieldDidChange from $sid with $binding and value from $from to $to');
     var eventData =
-        await eventChannel.invokeMethod<Map<dynamic, dynamic>>(EventIdenfier.fieldDidChange.name, {
+        await eventChannel.invokeMethod<Map<dynamic, dynamic>>(EventIdentifier.fieldDidChange.name, {
       'sid': sid,
       'data': {
         'field': binding,

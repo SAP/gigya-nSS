@@ -13,13 +13,19 @@ class ChannelManager {}
 class MobileChannels extends NssChannels {
   MobileChannels()
       : super(
-          NssMobileMethodChannel('gigya_nss_engine/method/ignition'),
-          NssMobileMethodChannel('gigya_nss_engine/method/screen'),
-          NssMobileMethodChannel('gigya_nss_engine/method/screen'),
-          NssMobileMethodChannel('gigya_nss_engine/method/log'),
-          NssMobileMethodChannel('gigya_nss_engine/method/data'),
-          NssMobileMethodChannel('gigya_nss_engine/method/events'),
+          NssMobileMethodChannel('gigya_nss_engine/method/ignition') as NssChannel,
+          NssMobileMethodChannel('gigya_nss_engine/method/screen') as NssChannel,
+          NssMobileMethodChannel('gigya_nss_engine/method/screen') as NssChannel,
+          NssMobileMethodChannel('gigya_nss_engine/method/log') as NssChannel,
+          NssMobileMethodChannel('gigya_nss_engine/method/data') as NssChannel,
+          NssMobileMethodChannel('gigya_nss_engine/method/events') as NssChannel,
         );
+}
+
+abstract class NssChannel {
+  Future<T> invokeMethod<T>(String method, [ dynamic arguments ]);
+
+  Future<Map<K, V>> invokeMapMethod<K, V>(String method, [dynamic arguments]);
 }
 
 class NssMobileMethodChannel extends MethodChannel {
@@ -42,7 +48,7 @@ class NssWebChannels extends NssChannels {
   NssWebChannels(channel) : super(channel, channel, channel, channel, channel, channel);
 }
 
-class NssWebMethodChannel {
+class NssWebMethodChannel extends NssChannel {
   Future<T> invokeMethod<T>(String method, [ dynamic arguments ]) async {
     var data = {
       'method': method,
