@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
-import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 
 mixin DebugUtils {
   void postDelayed(seconds, Function action) {

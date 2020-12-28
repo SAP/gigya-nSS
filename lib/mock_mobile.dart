@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/ioc/injector.dart';
+import 'package:gigya_native_screensets_engine/ioc/ioc_mobile.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
 
 void main() => runApp(MyApp());
@@ -24,6 +25,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    NssContainer().startEngine(asMock: true);
+    MobileContainer().startEngine(asMock: true);
   }
 }

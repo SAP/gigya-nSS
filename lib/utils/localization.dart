@@ -1,5 +1,5 @@
 import 'package:gigya_native_screensets_engine/config.dart';
-import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 
 mixin LocalizationMixin {
   /// Selected language. Injected to markup using native builder.

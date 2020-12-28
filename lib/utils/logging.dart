@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
-import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 
 /// Logging is directed to the native controller using the static log method channel.
 /// Default pattern uses the tag/message construct.

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
+import 'package:gigya_native_screensets_engine/ioc/ioc_web.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
-
-import 'ioc/ioc_mobile.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,6 +24,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    MobileContainer().startEngine();
+    WebContainer().startEngine();
   }
 }
