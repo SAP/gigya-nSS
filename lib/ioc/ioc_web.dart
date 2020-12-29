@@ -1,4 +1,5 @@
 import 'package:gigya_native_screensets_engine/comm/communications.dart';
+import 'package:gigya_native_screensets_engine/comm/web_channel.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
