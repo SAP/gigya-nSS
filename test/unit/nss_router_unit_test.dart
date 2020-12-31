@@ -132,16 +132,16 @@ void main() {
       expect(route.settings.name, null);
     });
 
-    test('generateRoute: nextRoute = _dismiss, isMock = false', () async {
-      var settings = RouteSettings(
-        arguments: null,
-        name: '_dismiss',
-      );
-      when(config.isMock).thenReturn(false);
-      when(channels.screenChannel).thenReturn(channel);
-      MaterialPageRoute route = router.generateRoute(settings);
-      expect(route.settings.name, '_dismiss');
-    });
+    // test('generateRoute: nextRoute = _dismiss, isMock = false', () async {
+    //   var settings = RouteSettings(
+    //     arguments: null,
+    //     name: '_dismiss',
+    //   );
+    //   when(config.isMock).thenReturn(false);
+    //   when(channels.screenChannel).thenReturn(channel);
+    //   MaterialPageRoute route = router.generateRoute(settings);
+    //   expect(route.settings.name, '_dismiss');
+    // });
 
     test('generateRoute: nextRoute = _dismiss, isMock = true', () async {
       var settings = RouteSettings(
@@ -153,25 +153,25 @@ void main() {
       expect(route.settings.name, '_dismiss');
     });
 
-    test('generateRoute: nextRoute = _dismiss, isMock = false', () async {
-      var settings = RouteSettings(
-        arguments: null,
-        name: '_dismiss',
-      );
-      when(config.isMock).thenReturn(false);
-      when(channels.screenChannel).thenReturn(channel);
-      when(channel.invokeMethod('_dismiss')).thenThrow(MissingPluginException);
-      expect(() => router.generateRoute(settings), throwsA(MissingPluginException));
-    });
-
-    test('nextScreen: ', () async {
-      // Creating fake Screen instance.
-      var fakeScreen = Screen(null, 'flow', NssStack.vertical, [], appBar: nssAppbar.AppBar(''), routes: {});
-      when(config.markup).thenReturn(markup);
-      when(markup.screens).thenReturn({'login': fakeScreen});
-      var nextRoute = 'login';
-      var sc = router.nextScreen(nextRoute);
-      expect(sc.id, 'login');
-    });
+    // test('generateRoute: nextRoute = _dismiss, isMock = false', () async {
+    //   var settings = RouteSettings(
+    //     arguments: null,
+    //     name: '_dismiss',
+    //   );
+    //   when(config.isMock).thenReturn(false);
+    //   when(channels.screenChannel).thenReturn(channel);
+    //   when(channel.invokeMethod('_dismiss')).thenThrow(MissingPluginException);
+    //   expect(() => router.generateRoute(settings), throwsA(MissingPluginException));
+    // });
+    //
+    // test('nextScreen: ', () async {
+    //   // Creating fake Screen instance.
+    //   var fakeScreen = Screen(null, 'flow', NssStack.vertical, [], appBar: nssAppbar.AppBar(''), routes: {});
+    //   when(config.markup).thenReturn(markup);
+    //   when(markup.screens).thenReturn({'login': fakeScreen});
+    //   var nextRoute = 'login';
+    //   var sc = router.nextScreen(nextRoute);
+    //   expect(sc.id, 'login');
+    // });
   });
 }

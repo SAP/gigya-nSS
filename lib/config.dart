@@ -1,4 +1,4 @@
-import 'package:gigya_native_screensets_engine/comm/communications.dart';
+import 'package:gigya_native_screensets_engine/comm/moblie_channel.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 
 class NssConfig {
@@ -18,5 +18,12 @@ class NssChannels {
   final NssChannel dataChannel;
   final NssChannel eventsChannel;
 
-  NssChannels(this.ignitionChannel, this.screenChannel, this.apiChannel, this.logChannel, this.dataChannel, this.eventsChannel);
+  NssChannels(
+    this.ignitionChannel,
+    this.screenChannel,
+    this.apiChannel,
+    this.logChannel,
+    this.dataChannel,
+    this.eventsChannel,
+  );
 }

@@ -13,8 +13,6 @@ import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
 
-import 'comm/communications.dart';
-
 /// Engine initialization root widget.
 /// The Main purpose of this widget is to open a channel to the native code in order to obtain all
 /// the necessary initialization data/configuration and determine the actual theme of the main app along

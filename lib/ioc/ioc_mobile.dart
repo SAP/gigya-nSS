@@ -1,5 +1,4 @@
-import 'package:flutter/foundation.dart';
-import 'package:gigya_native_screensets_engine/comm/communications.dart';
+import 'package:gigya_native_screensets_engine/comm/moblie_channel.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
@@ -22,30 +21,13 @@ class MobileContainer {
         .register(MaterialWidgetFactory, (ioc) => MaterialWidgetFactory())
         .register(CupertinoWidgetFactory, (ioc) => CupertinoWidgetFactory())
         .register(
-          MaterialRouter,
-          (ioc) => MaterialRouter(
-            ioc.use(NssConfig),
-            ioc.use(NssChannels),
-            ioc.use(MaterialWidgetFactory),
-          ),
-        )
+            MaterialRouter, (ioc) => MaterialRouter(ioc.use(NssConfig), ioc.use(NssChannels), ioc.use(MaterialWidgetFactory)))
         .register(
-          CupertinoRouter,
-          (ioc) => CupertinoRouter(
-            ioc.use(NssConfig),
-            ioc.use(NssChannels),
-            ioc.use(CupertinoWidgetFactory),
-          ),
-        )
+            CupertinoRouter, (ioc) => CupertinoRouter(ioc.use(NssConfig), ioc.use(NssChannels), ioc.use(CupertinoWidgetFactory)))
         .register(ApiService, (ioc) => ApiService(ioc.use(NssChannels)))
         .register(ScreenService, (ioc) => ScreenService(ioc.use(NssChannels)))
         .register(ScreenViewModel, (ioc) => ScreenViewModel(ioc.use(ApiService), ioc.use(ScreenService)))
-        .register(
-            StartupWidget,
-            (ioc) => StartupWidget(
-                  config: ioc.use(NssConfig),
-                  channels: ioc.use(NssChannels),
-                ),
+        .register(StartupWidget, (ioc) => StartupWidget(config: ioc.use(NssConfig), channels: ioc.use(NssChannels)),
             singleton: true);
   }
 }

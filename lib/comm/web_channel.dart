@@ -1,42 +1,41 @@
-
 import 'dart:convert';
+
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html';
 
 import 'package:flutter/foundation.dart';
 
 import '../config.dart';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html';
-import 'communications.dart';
+import 'moblie_channel.dart';
 
-
-class WebChannels {
-  WebChannels();
-
-  NssWebChannels channels;
-
-  factory WebChannels.instance() {
-    WebChannels wc = WebChannels();
-    wc.channels = NssWebChannels(NssWebMethodChannel());
-    return wc;
-  }
-}
-
-
-class NssWebChannels extends NssChannels {
-  NssWebChannels(channel) : super(channel, channel, channel, channel, channel, channel);
+class WebChannels extends NssChannels {
+  WebChannels()
+      : super(
+          NssWebMethodChannel('ignition'),
+          NssWebMethodChannel('screen'),
+          NssWebMethodChannel('api'),
+          NssWebMethodChannel('log'),
+          NssWebMethodChannel('data'),
+          NssWebMethodChannel('events'),
+        );
 }
 
 class NssWebMethodChannel extends NssChannel {
-  Future<T> invokeMethod<T>(String method, [ dynamic arguments ]) async {
+  final String channel;
+
+  NssWebMethodChannel(this.channel);
+
+  Future<T> invokeMethod<T>(String method, [dynamic arguments]) async {
     var data = {
+      'channel': channel,
       'method': method,
       'data': arguments ?? {},
     };
     window.parent.postMessage(jsonEncode(data), '*');
     MessageEvent msg = await window.onMessage.firstWhere((element) {
       var json = jsonDecode(element.data).cast<String, dynamic>();
-      debugPrint(json["method"]);
-      if (json["method"] == null) {
+      debugPrint(json['method']);
+      if (json['method'] == null) {
         return true;
       } else {
         return false;
@@ -48,14 +47,15 @@ class NssWebMethodChannel extends NssChannel {
 
   Future<Map<K, V>> invokeMapMethod<K, V>(String method, [dynamic arguments]) async {
     var data = {
+      'channel': channel,
       'method': method,
       'data': arguments ?? {},
     };
     window.parent.postMessage(jsonEncode(data), '*');
     MessageEvent msg = await window.onMessage.firstWhere((element) {
       var json = jsonDecode(element.data).cast<String, dynamic>();
-      debugPrint(json["method"]);
-      if (json["method"] == null) {
+      debugPrint(json['method']);
+      if (json['method'] == null) {
         return true;
       } else {
         return false;
