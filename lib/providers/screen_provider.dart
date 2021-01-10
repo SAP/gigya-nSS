@@ -260,7 +260,7 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
       return {};
     }
     final Markup markup = NssIoc().use(NssConfig).markup;
-    final String linkAction = markup.screens[link].action;
+    final String linkAction = markup.screens[link] != null ? markup.screens[link].action : null;
     if (linkAction == null || linkAction.isEmpty) {
       return {};
     }

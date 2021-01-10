@@ -74,7 +74,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   @override
   Widget buildScaffold() {
     var appBackground = getStyle(Styles.background,
-        styles: widget.screen.appBar.style, themeProperty: 'primaryColor');
+        styles: widget.screen.appBar == null ? null : widget.screen.appBar.style, themeProperty: 'primaryColor');
 
     return Scaffold(
       extendBodyBehindAppBar: appBackground == Colors.transparent,
