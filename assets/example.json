@@ -594,8 +594,21 @@
       "stack": "vertical",
       "children": [
         {
+          "type": "label",
+          "textKey": "Account linking",
+          "theme": "title",
+          "style": {
+            "margin": [
+              16,
+              20,
+              16,
+              0
+            ]
+          }
+        },
+        {
           "type": "container",
-          "showIf": "1 == 1",
+          "showIf": "conflictingAccounts.loginProviders.filter(p => p != 'site').length > 0",
           "children": [
             {
               "type": "socialLoginGrid",
@@ -615,20 +628,50 @@
         },
         {
           "type": "container",
-          "showIf": "1 == 0",
+          "showIf": "conflictingAccounts.loginProviders.includes('site')",
+          "style": {
+            "margin": [
+              16,
+              20,
+              16,
+              0
+            ]
+          },
           "children": [
             {
-              "bind": "loginID",
+              "type": "label",
+              "textKey": "Enter your account password in order to link you account",
+              "style": {
+                "fontSize": 14,
+                "margin": [
+                  16,
+                  10,
+                  16,
+                  0
+                ]
+              }
+            },
+            {
+              "bind": "#conflictingAccounts.loginID",
+              "sendAs": "loginID",
               "disabled": true,
-              "type": "emailInput",
+              "type": "textInput",
               "textKey": "common-email",
               "theme": "input"
             },
             {
-              "bind": "password",
+              "bind": "#password",
               "type": "passwordInput",
               "textKey": "common-password",
               "theme": "input",
+              "style": {
+                "margin": [
+                  0,
+                  10,
+                  0,
+                  0
+                ]
+              },
               "validations": {
                 "required": {
                   "enabled": true,
@@ -643,7 +686,7 @@
               "style": {
                 "margin": [
                   0,
-                  40,
+                  20,
                   0,
                   0
                 ],
