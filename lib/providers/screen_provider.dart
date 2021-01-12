@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
-import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/utils/debug.dart';
@@ -66,8 +66,7 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
   /// Attach screen action.
   /// Method will use the [ScreenService] to send the correct action to the native to initialize the correct
   /// native logic object.
-  Future<Map<String, dynamic>> attachScreenAction(
-      String action, String screenId, Map<String, String> expressions) async {
+  Future<Map<String, dynamic>> attachScreenAction(String action, String screenId, Map<String, String> expressions) async {
     if (NssIoc().use(NssConfig).isMock) {
       return {};
     }
@@ -171,18 +170,32 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
 
   /// Label widget initiated link action.
   /// Validate option available are URL/route.
-  void linkifyTap(String link) {
+  void linkifyTap(String link) async {
     engineLogger.d('link tap: $link');
 
+    // Linkify browser link.
     if (Linkify.isValidUrl(link)) {
       if (isMock) return;
       engineLogger.d('URL link validated : $link');
       screenService.linkToBrowser(link);
       return;
     }
+
+    // Linkify internal route.
     if (RouteEvaluator.validatedRoute(link)) {
       engineLogger.d('Route link validated : $link');
-      navigationStream.sink.add(NavigationEvent('$link', {}, {}));
+
+      // Initiate next action.
+      final Map<String, dynamic> actionData = await initiateNextLinkAction(link);
+      // Get routing data.
+      Map<String, dynamic> screenData = {};
+      Map<String, dynamic> expressionData = {};
+      if (actionData != null && actionData.isNotEmpty) {
+        screenData = actionData['data'].cast<String, dynamic>();
+        expressionData = actionData['expressions'].cast<String, dynamic>();
+      }
+
+      navigationStream.sink.add(NavigationEvent('$link', screenData, expressionData));
       return;
     }
   }
@@ -199,13 +212,12 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
 
         // Initiate next action.
         final Map<String, dynamic> actionData = await initiateNextAction('onSuccess');
-
+        // Get routing data.
         Map<String, dynamic> screenData = {};
         Map<String, dynamic> expressionData = {};
-
         if (actionData != null && actionData.isNotEmpty) {
           screenData = actionData['data'].cast<String, dynamic>();
-          actionData['expressions'].cast<String, dynamic>();
+          expressionData = actionData['expressions'].cast<String, dynamic>();
         }
 
         setIdle();
@@ -221,14 +233,14 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
 
           // Initiate next action.
           final Map<String, dynamic> actionData = await initiateNextAction(routeNamed);
-
+          // Get routing data.
           Map<String, dynamic> screenData = {};
           Map<String, dynamic> expressionData = {};
-
           if (actionData != null && actionData.isNotEmpty) {
             screenData = actionData['data'].cast<String, dynamic>();
             expressionData = actionData['expressions'].cast<String, dynamic>();
           }
+
           setIdle();
 
           navigationStream.sink.add(NavigationEvent('$id/$routeNamed', screenData, expressionData));
@@ -241,6 +253,27 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
         engineLogger.d('Api request error: ${error.errorMessage}');
       },
     );
+  }
+
+  Future<Map<String, dynamic>> initiateNextLinkAction(String link) async {
+    if (link == null) {
+      return {};
+    }
+    final Markup markup = NssIoc().use(NssConfig).markup;
+    final String linkAction = markup.screens[link] != null ? markup.screens[link].action : null;
+    if (linkAction == null || linkAction.isEmpty) {
+      return {};
+    }
+
+    engineLogger.d('initiateNextAction: for next screen id = $link and action = $linkAction');
+
+    // Action initialization data fetch.
+    var dataMap = await attachScreenAction(
+      linkAction,
+      link,
+      {}, // No expressions when linking.
+    );
+    return dataMap;
   }
 
   /// Initiate the next screen's native action.
@@ -270,8 +303,7 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
     final Screen nextScreen = markup.screens[nextScreenId];
     var nextScreenExpressions = mapScreenExpressions(nextScreen);
 
-    engineLogger
-        .d('initiateNextAction: for next screen id = $nextScreenId and action = $nextScreenAction');
+    engineLogger.d('initiateNextAction: for next screen id = $nextScreenId and action = $nextScreenAction');
 
     // Action initialization data fetch.
     var dataMap = await attachScreenAction(

@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
-import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 
 /// Logging is directed to the native controller using the static log method channel.
 /// Default pattern uses the tag/message construct.
@@ -16,7 +16,7 @@ class Logger {
       return;
     }
     try {
-      channels.logChannel.invokeMethod<void>('debug', {'tag': tag, 'message': message});
+      channels.logChannel.invokeMethod<void>('debug',  {'tag': tag, 'message': message});
     } on MissingPluginException catch (ex) {
       // No need to print the exception here.
     }

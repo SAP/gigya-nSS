@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
-import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/utils/assets.dart';
@@ -91,6 +91,7 @@ class _StartupWidgetState extends State<StartupWidget> {
 
   /// Fetch markup from the running platfrom.
   Future<Map<dynamic, dynamic>> _markupFromChannel() async {
+//    var channel = widget.channels.ignitionChannel as NssWebMethodChannel;
     return widget.channels.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>('ignition');
   }
 }

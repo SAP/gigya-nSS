@@ -2,8 +2,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gigya_native_screensets_engine/comm/moblie_channel.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
-import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
@@ -91,7 +92,7 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
   /// Binary data is also needed in order to display the updated image.
   void _onProfileImageTap() async {
     debugPrint('_onProfileImageTap');
-    final MethodChannel channel = NssIoc().use(NssChannels).dataChannel;
+    final NssChannel channel = NssIoc().use(NssChannels).dataChannel;
     var data = await channel.invokeMethod<Uint8List>('pick_image', {
       'text': widget.data.textKey
     }).timeout(Duration(minutes: 5), onTimeout: () {

@@ -116,8 +116,9 @@
       "error-schema-checkbox-validation": "Validación fallida. campo booleano"
     }
   },
+  "useSchemaValidations": false,
   "routing": {
-    "initial": "register",
+    "initial": "login",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"

@@ -2,8 +2,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gigya_native_screensets_engine/comm/moblie_channel.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
-import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
@@ -92,7 +93,7 @@ abstract class ImageWidgetState<T extends StatefulWidget> extends State<T>
       error();
       return null;
     }
-    final MethodChannel channel = NssIoc().use(NssChannels).dataChannel;
+    final NssChannel channel = NssIoc().use(NssChannels).dataChannel;
     var data = await channel
         .invokeMethod<Uint8List>('image_resource', {'url': url}).timeout(
             Duration(seconds: 4), onTimeout: () {

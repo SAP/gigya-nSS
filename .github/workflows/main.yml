@@ -29,6 +29,7 @@ jobs:
         run: |
           flutter config --enable-web
           flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
       - name: Build
         run: flutter build web
       
@@ -38,7 +39,8 @@ jobs:
           aws_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
           aws_bucket: ${{ secrets.AWS_BUCKET }}
-          source_dir: 'nSS/web/'
+          source_dir: 'build/web/'
+          destination_dir: 'nSS/web/'
 
         
       

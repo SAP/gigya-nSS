@@ -1,5 +1,5 @@
 import 'package:gigya_native_screensets_engine/config.dart';
-import 'package:gigya_native_screensets_engine/injector.dart';
+import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';

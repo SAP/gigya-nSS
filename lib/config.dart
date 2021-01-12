@@ -1,4 +1,4 @@
-import 'package:flutter/services.dart';
+import 'package:gigya_native_screensets_engine/comm/moblie_channel.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 
 class NssConfig {
@@ -11,10 +11,19 @@ class NssConfig {
 }
 
 class NssChannels {
-  final MethodChannel ignitionChannel = const MethodChannel('gigya_nss_engine/method/ignition');
-  final MethodChannel screenChannel = const MethodChannel('gigya_nss_engine/method/screen');
-  final MethodChannel apiChannel = const MethodChannel('gigya_nss_engine/method/api');
-  final MethodChannel logChannel = const MethodChannel('gigya_nss_engine/method/log');
-  final MethodChannel dataChannel = const MethodChannel('gigya_nss_engine/method/data');
-  final MethodChannel eventsChannel = const MethodChannel('gigya_nss_engine/method/events');
+  final NssChannel ignitionChannel;
+  final NssChannel screenChannel;
+  final NssChannel apiChannel;
+  final NssChannel logChannel;
+  final NssChannel dataChannel;
+  final NssChannel eventsChannel;
+
+  NssChannels(
+    this.ignitionChannel,
+    this.screenChannel,
+    this.apiChannel,
+    this.logChannel,
+    this.dataChannel,
+    this.eventsChannel,
+  );
 }
