@@ -24,6 +24,7 @@ jobs:
         uses: subosito/flutter-action@v1.4.0
         with:
           channel: beta
+          flutter-version: '1.25.0-8.1.pre'
       
       - name: Configuration
         run: |
