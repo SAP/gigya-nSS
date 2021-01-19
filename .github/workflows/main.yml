@@ -2,9 +2,9 @@ name: Nss Preview CI
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ master ]
   pull_request:
-    branches: [ develop ]
+    branches: [ master ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -19,20 +19,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      
+
       - name: Install Flutter
         uses: subosito/flutter-action@v1.4.0
         with:
           channel: beta
-      
+          flutter-version: '1.25.0-8.1.pre'
+
       - name: Configuration
         run: |
           flutter config --enable-web
           flutter pub get
           flutter pub run build_runner build --delete-conflicting-outputs
       - name: Build
-        run: flutter build web
-      
+        run: flutter build web -t lib/main_web.dart
+
       - name: Deploy
         uses: shallwefootball/s3-upload-action@master
         with:
@@ -40,8 +41,4 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
           aws_bucket: ${{ secrets.AWS_BUCKET }}
           source_dir: 'build/web/'
-          destination_dir: 'nSS/web/'
-
-        
-      
-
+          destination_dir: ''
