@@ -92,6 +92,6 @@ class _StartupWidgetState extends State<StartupWidget> {
   /// Fetch markup from the running platfrom.
   Future<Map<dynamic, dynamic>> _markupFromChannel() async {
 //    var channel = widget.channels.ignitionChannel as NssWebMethodChannel;
-    return widget.channels.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>('ignition');
+    return widget.channels.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>('ignition', {'version': widget.config.version});
   }
 }
