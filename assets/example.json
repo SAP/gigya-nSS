@@ -1,4 +1,8 @@
 {
+  "platform": {
+    "aware": false,
+    "locale":"il"
+  },
   "theme": {
     "primaryColor": "blue",
     "secondaryColor": "white",
@@ -116,9 +120,8 @@
       "error-schema-checkbox-validation": "Validación fallida. campo booleano"
     }
   },
-  "useSchemaValidations": false,
   "routing": {
-    "initial": "login",
+    "initial": "phone-login",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -694,6 +697,111 @@
               }
             }
           ]
+        }
+      ]
+    },
+    "phone-login": {
+      "routing": {
+        "onSuccess": "phone-verification"
+      },
+      "action": "otp",
+      "appBar": {
+        "textKey": "login"
+      },
+      "stack": "vertical",
+      "children": [
+        {
+          "type": "label",
+          "textKey": "Login with your phone number",
+          "theme": "title",
+          "style": {
+            "margin": [
+              16,
+              20,
+              16,
+              0
+            ]
+          }
+        },
+        {
+          "type": "phoneInput",
+          "bind": "phoneNumber",
+          "textKey": "enter your phone number",
+          "style": {
+            "margin": [
+              16,
+              20,
+              16,
+              4
+            ]
+          }
+        },
+        {
+          "type": "submit",
+          "textKey": "common-submit",
+          "theme": "raisedButton",
+          "style": {
+            "margin": [
+              0,
+              40,
+              0,
+              0
+            ],
+            "cornerRadius": 5
+          }
+        }
+      ]
+    },
+    "phone-verification": {
+      "routing": {
+        "onSuccess": "_dismiss"
+      },
+      "action": "otp",
+      "appBar": {
+        "textKey": "verify SMS"
+      },
+      "stack": "vertical",
+      "children": [
+        {
+          "type": "label",
+          "textKey": "Login with your phone number",
+          "theme": "title",
+          "style": {
+            "margin": [
+              16,
+              20,
+              16,
+              0
+            ]
+          }
+        },
+        {
+          "type": "textInput",
+          "bind": "code",
+          "textKey": "Verify SMS code",
+          "theme": "input",
+          "style": {
+            "margin": [
+              16,
+              20,
+              16,
+              4
+            ]
+          }
+        },
+        {
+          "type": "submit",
+          "textKey": "common-submit",
+          "theme": "raisedButton",
+          "style": {
+            "margin": [
+              0,
+              40,
+              0,
+              0
+            ],
+            "cornerRadius": 5
+          }
         }
       ]
     }

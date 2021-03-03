@@ -17,6 +17,7 @@ import 'package:gigya_native_screensets_engine/widgets/material/dropdown.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/inputs.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/labels.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/phone.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/profile_photo.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/radio.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/screen.dart';
@@ -32,6 +33,7 @@ enum NssWidgetType {
   textInput,
   emailInput,
   passwordInput,
+  phoneInput,
   submit,
   checkbox,
   radio,
@@ -157,7 +159,7 @@ class MaterialWidgetFactory extends WidgetFactory {
       }
     }
 
-    BindingModel binding =  NssIoc().use(BindingModel);
+    BindingModel binding = NssIoc().use(BindingModel);
     binding.savedBindingData.addAll(routingData);
 
     return MaterialScreenWidget(
@@ -202,6 +204,8 @@ class MaterialWidgetFactory extends WidgetFactory {
         return ProfilePhotoWidget(key: UniqueKey(), data: data);
       case NssWidgetType.container:
         return buildContainer(buildWidgets(data.children), data);
+      case NssWidgetType.phoneInput:
+        return PhoneInputWidget(key: UniqueKey(), data: data);
       default:
         return Container();
     }

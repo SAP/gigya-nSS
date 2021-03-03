@@ -8,8 +8,7 @@ mixin LocalizationMixin {
 
   /// Parsed localization map.
   final Map<String, dynamic> _localizationMap =
-      NssIoc().use(NssConfig).markup.localization.cast<String, dynamic>() ??
-          {'_default': {}};
+      NssIoc().use(NssConfig).markup.localization.cast<String, dynamic>() ?? {'_default': {}};
 
   /// Get the localized string for the provided [textKey].
   /// If the specific key is not available within the selected language map, it will
@@ -26,5 +25,20 @@ mixin LocalizationMixin {
       text = _localizationMap[usedLang][textKey];
     }
     return text;
+  }
+
+  /// Fetch specific entries from localization map that [startWith] a specific string and
+  /// can be split using the provided [pattern].
+  Map<dynamic, dynamic> entriesInMapThat(String startWith, String pattern) {
+    final map = {};
+    _localizationMap.forEach((key, value) {
+      if (key.startsWith(startWith)) {
+        var split = key.split(pattern);
+        if (split.length <= 1) return;
+        // Lowercase value to avoid quality miss matches.
+        map[split[1].toLowerCase()] = value;
+      }
+    });
+    return map;
   }
 }

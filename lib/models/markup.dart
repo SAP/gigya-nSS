@@ -6,6 +6,7 @@ part 'markup.g.dart';
 
 @JsonSerializable(anyMap: true)
 class Markup {
+  Platform platform;
   @JsonKey(defaultValue: false)
   bool platformAware;
   Map<String, Screen> screens;
@@ -30,4 +31,17 @@ class Markup {
   factory Markup.fromJson(Map<String, dynamic> json) => _$MarkupFromJson(json);
 
   Map<String, dynamic> toJson() => _$MarkupToJson(this);
+}
+
+@JsonSerializable(anyMap: true)
+class Platform {
+  String iso3166;
+
+  Platform({
+    this.iso3166,
+  });
+
+  factory Platform.fromJson(Map<String, dynamic> json) => _$PlatformFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PlatformToJson(this);
 }

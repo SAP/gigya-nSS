@@ -41,7 +41,7 @@ class _StartupWidgetState extends State<StartupWidget> {
         });
   }
 
-  /// Build and display the initial screen when platfom data is available.
+  /// Build and display the initial screen when platform data is available.
   /// //TODO: Currently hard coded to Material only.
   Widget buildInitialScreen() {
     // Reference required factory and route.
@@ -77,7 +77,7 @@ class _StartupWidgetState extends State<StartupWidget> {
       widget.config.schema = newSchema;
     }
 
-    // Add default localization values that are needed (can be overriden by client).
+    // Add default localization values that are needed (can be overridden by client).
     ErrorUtils().addDefultStringValues(widget.config.markup.localization);
     return true;
   }
@@ -89,7 +89,7 @@ class _StartupWidgetState extends State<StartupWidget> {
     return jsonDecode(json);
   }
 
-  /// Fetch markup from the running platfrom.
+  /// Fetch markup from the running platform.
   Future<Map<dynamic, dynamic>> _markupFromChannel() async {
 //    var channel = widget.channels.ignitionChannel as NssWebMethodChannel;
     return widget.channels.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>('ignition');
