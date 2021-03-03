@@ -148,6 +148,8 @@ class MaterialWidgetFactory extends WidgetFactory {
   Widget buildScreen(Screen screen, Map<String, dynamic> arguments) {
     ScreenViewModel viewModel = NssIoc().use(ScreenViewModel);
 
+    BindingModel binding =  NssIoc().use(BindingModel);
+
     // Make sure screen routing data is beeing passed on with every screen transition.
     Map<String, dynamic> routingData = {};
     if (arguments is Map<String, dynamic>) {
@@ -157,10 +159,10 @@ class MaterialWidgetFactory extends WidgetFactory {
       if (arguments.containsKey('expressions')) {
         viewModel.expressions = arguments['expressions'];
       }
+      if (arguments.containsKey('initialData')) {
+        binding.updateWith(arguments['initialData']);
+      }
     }
-
-    BindingModel binding = NssIoc().use(BindingModel);
-    binding.savedBindingData.addAll(routingData);
 
     return MaterialScreenWidget(
       viewModel: viewModel,

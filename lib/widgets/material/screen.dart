@@ -44,9 +44,9 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   void initState() {
     // Update dynamic view model screen id because view model is instantiated view IOC.
     viewModel.id = widget.screen.id;
+
     super.initState();
 
-    // Screen Event triggered "routeFrom"
     didRouteFrom();
 
     _registerNavigationStream();
@@ -68,11 +68,13 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       }
 
       screenDidLoad(widget.screen.id);
+
     });
   }
 
   @override
   Widget buildScaffold() {
+
     var appBackground = getStyle(Styles.background,
         styles: widget.screen.appBar == null ? null : widget.screen.appBar.style, themeProperty: 'primaryColor');
 
@@ -144,7 +146,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
 
       // If route data is available, make sure it is added to the routing/binding data.
       if (event.routingData != null && event.routingData.isNotEmpty) {
-        widget.routingData.addAll(event.routingData);
+//        widget.routingData.addAll(event.routingData);
       }
 
       // Trigger "routeTo" event to determine routing override.
@@ -160,6 +162,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         arguments: {
           'pid': viewModel.id,
           'routingData': widget.routingData,
+          'initialData': event.routingData,
           'expressions': event.expressions
         },
       );
@@ -190,7 +193,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
       }
       // Merge routing data into available binding data.
-      bindings.updateWith(widget.routingData);
+      bindings.updateRoutingWith(widget.routingData);
 
       debugPrint('didRouteFrom: data = ${widget.routingData.toString()}');
 
@@ -198,6 +201,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         setState(() {});
       }
     }
+
   }
 
   Future<String> willRouteTo(nid) async {
@@ -206,7 +210,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       // Overrite current routing data if exists.
       widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
       // Merge routing data into available binding data.
-      bindings.updateWith(widget.routingData);
+      bindings.updateRoutingWith(widget.routingData);
 
       // Fetch sid override if exists.
       String sid = eventData['sid'] ?? '';

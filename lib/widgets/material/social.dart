@@ -104,13 +104,15 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget> with Decoration
               opacity: getStyle(Styles.opacity, data: widget.data),
               child: ButtonTheme(
                 buttonColor: background,
+                textTheme: ButtonTextTheme.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
                     getStyle(Styles.cornerRadius, data: widget.data),
                   ),
                 ),
                 child: RaisedButton(
-                  padding: EdgeInsets.zero,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  padding: EdgeInsets.all(0),
                   elevation: getStyle(Styles.elevation, data: widget.data),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -204,7 +206,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid> with DecorationMixin,
           final int numOfPages = (providerCount / maxInPage).abs().toInt() + (providerCount % maxInPage != 0 ? 1 : 0);
 
           // If the number of providers does not require an actual grid to be built.
-          if (providerCount < 3) {
+          if (providerCount < 3 && providerCount > 0) {
             return Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -368,8 +370,8 @@ class SocialEvaluator {
   List<NssSocialProvider> determineProviders(List<NssSocialProvider> markupProviders, BindingModel bindings) {
     // Default provider list is taken from markup.
     List<NssSocialProvider> providers = markupProviders ?? [];
-    if (bindings.savedBindingData.containsKey('conflictingAccount')) {
-      Map<String, dynamic> conflictingAccount = bindings.savedBindingData['conflictingAccount'].cast<String, dynamic>();
+    if (bindings.getMapByKey('conflictingAccount') != null) {
+      Map<String, dynamic> conflictingAccount = bindings.getMapByKey('conflictingAccount').cast<String, dynamic>();
       if (conflictingAccount.containsKey('loginProviders')) {
         List<String> loginProviders = conflictingAccount['loginProviders'].cast<String>();
         if (loginProviders.isNotEmpty) {

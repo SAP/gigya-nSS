@@ -2,9 +2,9 @@ name: Nss Preview CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ bug-fixes-web ]
   pull_request:
-    branches: [ master ]
+    branches: [ bug-fixes-web ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -41,4 +41,4 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
           aws_bucket: ${{ secrets.AWS_BUCKET }}
           source_dir: 'build/web/'
-          destination_dir: ''
+          destination_dir: 'nSS/web/'

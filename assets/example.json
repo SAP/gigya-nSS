@@ -166,7 +166,7 @@
               16,
               0,
               16,
-              0
+              8
             ],
             "cornerRadius": 5,
             "elevation": 0
@@ -180,7 +180,7 @@
               16,
               0,
               16,
-              0
+              8
             ],
             "cornerRadius": 5,
             "elevation": 0
@@ -194,7 +194,7 @@
               16,
               0,
               16,
-              0
+              8
             ],
             "cornerRadius": 5,
             "elevation": 0
@@ -223,9 +223,9 @@
           "style": {
             "margin": [
               16,
-              4,
+              0,
               16,
-              4
+              0
             ],
             "cornerRadius": 22,
             "borderSize": 1
@@ -611,7 +611,7 @@
         },
         {
           "type": "container",
-          "showIf": "conflictingAccounts.loginProviders.filter(p => p != 'site').length > 0",
+          "showIf": "conflictingAccount.loginProviders.filter(p => p != 'site').length > 0",
           "children": [
             {
               "type": "socialLoginGrid",
@@ -631,7 +631,7 @@
         },
         {
           "type": "container",
-          "showIf": "conflictingAccounts.loginProviders.includes('site')",
+          "showIf": "conflictingAccount.loginProviders.includes('site')",
           "style": {
             "margin": [
               16,
@@ -655,7 +655,7 @@
               }
             },
             {
-              "bind": "#conflictingAccounts.loginID",
+              "bind": "conflictingAccount.loginID",
               "sendAs": "loginID",
               "disabled": true,
               "type": "textInput",

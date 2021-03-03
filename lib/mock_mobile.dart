@@ -20,6 +20,7 @@ class _MyAppState extends State<MyApp> {
       initialRoute: '/',
       onGenerateRoute: NssIoc().use(MaterialRouter).generateRoute,
     );
+
   }
 
   @override

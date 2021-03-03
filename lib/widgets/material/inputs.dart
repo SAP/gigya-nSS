@@ -80,19 +80,19 @@ class _TextInputWidgetState extends State<TextInputWidget>
           return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);
         }
 
-        String placeHolder = bindingValue.value;
-        if (_textEditingController.text.isEmpty) {
-          _textEditingController.text = placeHolder;
-        } else {
-          _textEditingController.value = _textEditingController.value.copyWith(
-            text: _textEditingController.text,
-            selection: TextSelection.fromPosition(
-              TextPosition(offset: _textEditingController.text.length),
-            ),
-          );
-        }
-        final borderSize = getStyle(Styles.borderSize, data: widget.data);
-        final borderRadius = getStyle(Styles.cornerRadius, data: widget.data);
+          String placeHolder = bindingValue.value;
+          if (_textEditingController.text.isEmpty || _textEditingController.text != placeHolder) {
+            _textEditingController.text = placeHolder;
+          } else {
+            _textEditingController.value = _textEditingController.value.copyWith(
+              text: _textEditingController.text,
+              selection: TextSelection.fromPosition(
+                TextPosition(offset: _textEditingController.text.length),
+              ),
+            );
+          }
+          final borderSize = getStyle(Styles.borderSize, data: widget.data);
+          final borderRadius = getStyle(Styles.cornerRadius, data: widget.data);
 
         final Color color = getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor');
         return Visibility(
@@ -215,23 +215,30 @@ class _TextInputWidgetState extends State<TextInputWidget>
                             eventInjectedError = null;
                             return null;
                           }
-                          return eventInjectedError;
-                        }
-                        // Field validation triggered.
-                        return validateField(input, widget.data.bind);
-                      },
-                      onChanged: (s) {
-                        onChanged(viewModel, s);
-                      },
-                      onSaved: (value) {
-                        // Form field saved event triggered.
-                        if (value.trim().isEmpty && placeHolder.isEmpty) {
-                          return;
-                        }
-                        // Value needs to be parsed before form can be submitted.
-                        if (widget.data.parseAs != null) {
-                          // Markup parsing applies.
-                          var parsed = parseAs(value.trim(), widget.data.parseAs);
+                          // Field validation triggered.
+                          return validateField(input, widget.data.bind);
+                        },
+                        onChanged: (s) {
+                          onChanged(viewModel, s);
+                        },
+                        onSaved: (value) {
+                          // Form field saved event triggered.
+                          if (value.trim().isEmpty) {
+                            return;
+                          }
+                          // Value needs to be parsed before form can be submitted.
+                          if (widget.data.parseAs != null) {
+                            // Markup parsing applies.
+                            var parsed = parseAs(value.trim(), widget.data.parseAs);
+                            if (parsed == null) {
+                              engineLogger.e('parseAs field is not compatible with provided input');
+                            }
+                            bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
+                            return;
+                          }
+
+                          // If parseAs field is not available try to parse according to schema.
+                          var parsed = parseUsingSchema(value.trim(), widget.data.bind);
                           if (parsed == null) {
                             engineLogger.e('parseAs field is not compatible with provided input');
                           }
