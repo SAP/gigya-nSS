@@ -1,4 +1,4 @@
-name: Nss Schema CI
+name: Nss Schema Dev CI
 
 on:
   push:
