@@ -100,6 +100,8 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget> with Decoration
               background = widget.data.provider.getColor();
             }
 
+            TextAlign textAlign = getStyle(Styles.textAlign, data: widget.data);
+
             return Opacity(
               opacity: getStyle(Styles.opacity, data: widget.data),
               child: ButtonTheme(
@@ -116,22 +118,28 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget> with Decoration
                   elevation: getStyle(Styles.elevation, data: widget.data),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       widget.data.iconEnabled
-                          ? Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Image(
-                                image: widget.data.iconURL != null
-                                    ? NetworkImage(widget.data.iconURL)
-                                    : AssetImage('assets/social_images/${widget.data.provider.name}.png'),
-                                width: 24,
-                                height: 24,
+                          ? SizedBox(
+                            width: 40,
+                            height: 34,
+                            child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Image(
+                                  image: widget.data.iconURL != null
+                                      ? NetworkImage(widget.data.iconURL)
+                                      : AssetImage('assets/social_images/${widget.data.provider.name}.png'),
+                                  width: 24,
+                                  height: 24,
+                                ),
                               ),
-                            )
+                          )
                           : SizedBox(width: 8),
                       Text(
                         // Get localized submit text.
                         text,
+                        textAlign: textAlign,
                         style: TextStyle(
                           fontSize: getStyle(Styles.fontSize, data: widget.data),
                           color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'secondaryColor'),

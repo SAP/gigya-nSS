@@ -22,7 +22,7 @@ enum Styles {
   indicatorColor,
   textAlign,
   linkColor,
-  placeholderColor
+  placeholderColor,
 }
 
 extension StylesExt on Styles {
@@ -46,6 +46,22 @@ extension NssTextAlignExt on NssTextAlign {
     }
   }
 }
+
+extension NssMainAlign on TextAlign {
+  MainAxisAlignment get getMainAlign {
+    switch (this) {
+      case TextAlign.start:
+        return MainAxisAlignment.start;
+      case TextAlign.end:
+        return MainAxisAlignment.end;
+      case TextAlign.center:
+        return MainAxisAlignment.center;
+      default:
+        return MainAxisAlignment.start; // none
+    }
+  }
+}
+
 
 mixin StyleMixin {
   final NssConfig config = NssIoc().use(NssConfig);
