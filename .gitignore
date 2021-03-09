@@ -49,3 +49,5 @@ pubspec.lock
 coverage/
 
 *.log
+
+nss-schema/deploy.ts

@@ -1,0 +1,9 @@
+{
+  "routing": {
+    "initial": "_",
+    "default": {
+      "onSuccess": "_dismiss"
+    }
+  },
+  "screens": {}
+}

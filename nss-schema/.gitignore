@@ -1,0 +1,6 @@
+node_modules/
+.idea/
+output/
+examples/
+*.js
+*.js.map

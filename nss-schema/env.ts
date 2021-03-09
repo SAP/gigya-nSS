@@ -1,0 +1,13 @@
+const path = require('path');
+export const outputDir = 'output';
+export const examplesDir = 'examples';
+export const schemaFile = path.join(outputDir, 'nSS-schema.json');
+export const exampleFile = path.join(outputDir, 'example.json');
+
+const fs = require('fs');
+export function getJsonFiles(dir: string, excludeFiles: string[] = []) {
+    console.log('~~~', path.join(__dirname, dir));
+    return fs.readdirSync(path.join(__dirname, dir))
+        .filter(file => file.match(/.*\.json$/) && !excludeFiles.find(ex => file.startsWith(ex)))
+        .map(file => path.join(dir,file));
+}
