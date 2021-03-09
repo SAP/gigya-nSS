@@ -721,7 +721,7 @@
         },
         {
           "type": "phoneInput",
-          "bind": "phoneNumber",
+          "bind": "#phoneNumber",
           "textKey": "enter your phone number",
           "style": {
             "margin": [
@@ -773,7 +773,7 @@
         },
         {
           "type": "textInput",
-          "bind": "code",
+          "bind": "#code",
           "textKey": "Verify SMS code",
           "theme": "input",
           "style": {
