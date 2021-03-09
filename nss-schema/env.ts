@@ -3,6 +3,7 @@ export const outputDir = 'output';
 export const examplesDir = 'examples';
 export const schemaFile = path.join(outputDir, 'nSS-schema.json');
 export const exampleFile = path.join(outputDir, 'example.json');
+export const exampleDevFile = path.join(outputDir, 'develop/example.json');
 
 const fs = require('fs');
 export function getJsonFiles(dir: string, excludeFiles: string[] = []) {

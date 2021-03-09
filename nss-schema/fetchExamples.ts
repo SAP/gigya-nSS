@@ -1,5 +1,6 @@
 import {examplesDir, getJsonFiles} from "./env";
 const path = require('path');
+const {minVersion} = require('./package.json');
 const existingVersionsExamples = getJsonFiles(examplesDir).map(exm => path.basename(exm).replace(path.extname(exm), ''));
 console.log(`exclude:`, existingVersionsExamples);
 
@@ -14,11 +15,26 @@ request({
         const refs = JSON.parse(body) as Array<{ref: string}>;
         const versions =
             refs.map(ref => ref.ref.replace('refs/tags/v', ''))
-                .filter(ver => !existingVersionsExamples.includes(ver));
+                .filter(ver => !existingVersionsExamples.includes(ver)
+                    && Number(ver.replace('.', '')) >= Number(minVersion.replace('.', '')));
 
         console.log(versions);
 
         const fs = require('fs');
+
+        const lastVersion = versions.slice(-1)[0];
+
+        fs.writeFile('version.txt', lastVersion, function (err) {
+            if (err) return console.log(err);
+            console.log('save version');
+        });
+
+
+        request({
+            url: `https://raw.githubusercontent.com/SAP/gigya-nSS/develop/assets/example.json`
+        }, (error, response, body) => {
+            fs.writeFile(`./examples/develop.json`, body, () => console.log(`~~ created: develop.json`))
+        })
 
         versions.forEach(ver => request({
             url: `https://raw.githubusercontent.com/SAP/gigya-nSS/v${ver}/assets/example.json`

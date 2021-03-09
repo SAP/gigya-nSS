@@ -1,6 +1,7 @@
 {
   "name": "nss-schema",
-  "version": "1.0.0",
+  "version": "1.2.0",
+  "minVersion": "1.0.0",
   "description": "json schema for native-screen-sets",
   "main": "index.ts",
   "scripts": {
