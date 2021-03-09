@@ -27,7 +27,7 @@ jobs:
         run: npm install
 
       - name: Build
-        run: npm run release
+        run: npm config set registry http://registry.npmjs.org && npm run release
       
       - name: Deploy
         uses: shallwefootball/s3-upload-action@master
