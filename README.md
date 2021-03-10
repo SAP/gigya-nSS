@@ -45,33 +45,31 @@ Android devices running on ARM processors only (99% of devices).
 
 ### iOS - Swift
 
-Download the GigyaNss bundle.
-
-Unzip and place the entire folder into your project folder.
+The native screen-sets package is available via CocoaPods.
+In order to add the Gigya Native Screen-Sets library via CocoaPods to your project, you need to create a specific target per configuration (Debug / Release).
+Now add the following to you *pod* file:
 ```
-It is important to place the downloaded bundle as is. Do not move files from the GigyaNss bundle, it will break the build.
+// For Debug target:
+pod 'GigyaNss'
+// For Release target:
+pod 'GigyaNssRelease'
 ```
-In order to link the provided debug library:
-
-Go to the "GigyaNss/Debug" folder. Drag both frameworks to the Project -> General -> Frameworks -> Libraries and Embedded Content.
-
-Mark them as Embed & Sign.
-
-Go to Build Settings -> Framework Search Paths and Update GigyaNss/Debug to GigyaNss/$(CONFIGURATION) in both available options (Debug & Release)
+So, your code should look similar to this:
 ```
-If your application contains a custom configuration, update the above code to support your configuration.
+target 'GigyaDemoApp-Debug' do
+  pod 'Gigya'
+  pod 'GigyaTfa'
+  pod 'GigyaAuth'
+  pod 'GigyaNss'
+end
+target 'GigyaDemoApp-Release' do
+  pod 'Gigya'
+  pod 'GigyaTfa'
+  pod 'GigyaAuth'
+  pod 'GigyaNssRelease'
+end
 ```
-Go to Build Phases. Add new Run Script Phase (tap on "+" icon).
-
-Open and then add the following:
-```
-bash
-“${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/GigyaNss.framework/engine.sh” GigyaNss
-```
-Check the Run script only when installing option.
-```
-Make sure the new script is placed before the Remove unused architectures script that is required for the core SDK setup.
-```
+Once you have completed the changes above, run the pod install command.
 
 ## Android
 
