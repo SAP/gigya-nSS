@@ -69,6 +69,11 @@ jobs:
           
       - name: Build
         run: flutter build web -t lib/main_web.dart
+      
+      - name: print files
+      - shell: bash
+        run: |
+          ls
         
       - uses: actions/checkout@master
       - name: copy file
