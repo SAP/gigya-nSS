@@ -73,14 +73,14 @@ jobs:
       - name: print files
         shell: bash
         run: |
-          ls
+          cd build && ls
         
       - uses: actions/checkout@master
       - name: copy file
         uses: canastro/copy-file-action@master
         with:
-          source: "build/web"
-          target: "versions/*/web"
+          source: "build/web/*"
+          target: "versions/*/web/*"
           flags: "-r"
         
       - name: Deploy
