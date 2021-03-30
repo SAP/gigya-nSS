@@ -70,18 +70,10 @@ jobs:
       - name: Build
         run: flutter build web -t lib/main_web.dart
       
-      - name: print files
+      - name: Copy files
         shell: bash
         run: |
-          cd build && ls
-        
-      - uses: actions/checkout@master
-      - name: copy file
-        uses: canastro/copy-file-action@master
-        with:
-          source: "build/web/*"
-          target: "versions/*/web/*"
-          flags: "-r"
+          cp -r build/web versions/*/
         
       - name: Deploy
         uses: shallwefootball/s3-upload-action@master
