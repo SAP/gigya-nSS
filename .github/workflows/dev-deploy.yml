@@ -71,7 +71,7 @@ jobs:
         run: flutter build web -t lib/main_web.dart
       
       - name: print files
-      - shell: bash
+        shell: bash
         run: |
           ls
         
