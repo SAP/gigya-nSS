@@ -100,9 +100,11 @@ abstract class WidgetFactory {
     if (widgetsToBuild == null || widgetsToBuild.isEmpty) {
       return [];
     }
+
     List<Widget> widgets = [];
     widgetsToBuild.forEach((widget) {
       if (widget.type == NssWidgetType.container) {
+        widget.isNestedContainer = true;
         // View group required.
         widgets.add(
           buildContainer(buildWidgets(widget.children), widget),
