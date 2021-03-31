@@ -58,18 +58,21 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
               elevation: getStyle(Styles.elevation, data: widget.data),
               child: Stack(
                 children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: borderColor,
-                        width: borderSize,
+                  Opacity(
+                    opacity: getStyle(Styles.opacity, data: widget.data),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: borderColor,
+                          width: borderSize,
+                        ),
+                        borderRadius: BorderRadius.circular(
+                          cornerRadius,
+                        ),
+                        color: getStyle(Styles.background, data: widget.data),
+                        image: DecorationImage(
+                            image: imageProvider, fit: BoxFit.fill),
                       ),
-                      borderRadius: BorderRadius.circular(
-                        cornerRadius,
-                      ),
-                      color: getStyle(Styles.background, data: widget.data),
-                      image: DecorationImage(
-                          image: imageProvider, fit: BoxFit.fill),
                     ),
                   ),
                   InkWell(
