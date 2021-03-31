@@ -73,7 +73,8 @@ abstract class WidgetFactory {
           data: data,
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: getMainAxisAlignment(data.alignment),
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: getCrossAxisAlignment(data.alignment),
             children: children,
           ),
         );
@@ -83,6 +84,7 @@ abstract class WidgetFactory {
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: getMainAxisAlignment(data.alignment),
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: children,
           ),
         );
@@ -133,6 +135,20 @@ abstract class WidgetFactory {
         return MainAxisAlignment.start;
     }
   }
+
+  CrossAxisAlignment getCrossAxisAlignment(NssAlignment alignment) {
+    if (alignment == null) return CrossAxisAlignment.start;
+    switch (alignment) {
+      case NssAlignment.start:
+        return CrossAxisAlignment.start;
+      case NssAlignment.end:
+        return CrossAxisAlignment.end;
+      case NssAlignment.center:
+        return CrossAxisAlignment.center;
+      default:
+        return CrossAxisAlignment.start;
+    }
+  }
 }
 
 class MaterialWidgetFactory extends WidgetFactory {
@@ -148,9 +164,9 @@ class MaterialWidgetFactory extends WidgetFactory {
   Widget buildScreen(Screen screen, Map<String, dynamic> arguments) {
     ScreenViewModel viewModel = NssIoc().use(ScreenViewModel);
 
-    BindingModel binding =  NssIoc().use(BindingModel);
+    BindingModel binding = NssIoc().use(BindingModel);
 
-    // Make sure screen routing data is beeing passed on with every screen transition.
+    // Make sure screen routing data is being passed on with every screen transition.
     Map<String, dynamic> routingData = {};
     if (arguments is Map<String, dynamic>) {
       if (arguments.containsKey('routingData')) {
@@ -172,9 +188,9 @@ class MaterialWidgetFactory extends WidgetFactory {
       content: buildContainer(
         buildWidgets(screen.children),
         NssWidgetData(
-          style: screen.style ?? {},
-          stack: screen.stack ?? NssStack.vertical,
-        ),
+            style: screen.style ?? {},
+            stack: screen.stack ?? NssStack.vertical,
+            alignment: screen.alignment ?? NssAlignment.center),
       ),
     );
   }

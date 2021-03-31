@@ -131,6 +131,7 @@
         "onSuccess": "account-update"
       },
       "action": "login",
+      "alignment": "center",
       "appBar": {
         "textKey": "login"
       },
@@ -317,6 +318,7 @@
         "textKey": "Register"
       },
       "stack": "vertical",
+      "alignment": "start",
       "children": [
         {
           "type": "container",
@@ -374,9 +376,9 @@
           "textKey": "register-already+link",
           "style": {
             "margin": [
-              0,
+              16,
               26,
-              0,
+              16,
               16
             ]
           }
