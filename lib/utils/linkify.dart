@@ -47,6 +47,7 @@ class Linkify with StyleMixin {
     }
     return RichText(
       overflow: TextOverflow.visible,
+      textAlign: getStyle(Styles.textAlign, data: data) ?? TextAlign.start,
       text: TextSpan(children: span),
     );
   }

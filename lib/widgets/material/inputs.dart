@@ -139,6 +139,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       ),
                       disabledBorder: borderRadius == 0
                           ? UnderlineInputBorder(
+                              borderRadius: BorderRadius.zero,
                               borderSide: BorderSide(
                                 color: getThemeColor('disabledColor').withOpacity(0.3),
                                 width: borderSize + 2,
@@ -153,6 +154,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                             ),
                       errorBorder: borderRadius == 0
                           ? UnderlineInputBorder(
+                              borderRadius: BorderRadius.zero,
                               borderSide: BorderSide(
                                 color: getThemeColor('errorColor'),
                                 width: borderSize + 2,
@@ -167,6 +169,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                             ),
                       focusedErrorBorder: borderRadius == 0
                           ? UnderlineInputBorder(
+                              borderRadius: BorderRadius.zero,
                               borderSide: BorderSide(
                                 color: getThemeColor('errorColor'),
                                 width: borderSize + 2,
@@ -181,6 +184,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                             ),
                       focusedBorder: borderRadius == 0
                           ? UnderlineInputBorder(
+                              borderRadius: BorderRadius.zero,
                               borderSide: BorderSide(
                                 color: getThemeColor('enabledColor'),
                                 width: borderSize + 2,
@@ -195,6 +199,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                             ),
                       enabledBorder: borderRadius == 0
                           ? UnderlineInputBorder(
+                              borderRadius: BorderRadius.zero,
                               borderSide: BorderSide(
                                 color: getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
                                 width: borderSize,

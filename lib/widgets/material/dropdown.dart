@@ -68,81 +68,88 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
 
       return Visibility(
         visible: isVisible(viewModel, widget.data.showIf),
-        child: Padding(
-          padding: getStyle(Styles.margin, data: widget.data),
-          child: customSizeWidget(
-              widget.data,
-              IgnorePointer(
-                ignoring: widget.data.disabled,
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  value: _dropdownValue,
-                  icon: Icon(
-                    Icons.arrow_drop_down,
-                    color: widget.data.disabled
-                        ? getThemeColor('disabledColor').withOpacity(0.3)
-                        : getStyle(Styles.borderColor,
-                            data: widget.data,
-                            themeProperty:
-                                'primaryColor'), // TODO: need to change the getter from theme.
-                  ),
-                  iconSize: 24,
-                  elevation: 4,
-                  underline: Container(
-                    height: 1,
-                    color: widget.data.disabled
-                        ? getThemeColor('disabledColor').withOpacity(0.3)
-                        : getStyle(Styles.borderColor,
-                            data: widget
-                                .data), // TODO: need to change the getter from theme or borderColor.
-                  ),
-                  onChanged: (String newValue) {
-                    if (widget.data.disabled) {
-                      return;
-                    }
-                    setState(() {
-                      var index = indexFromDisplayValue(newValue);
-                      var updated = widget.data.options[index].value;
-
-                      // Value needs to be parsed before form can be submitted.
-                      if (widget.data.parseAs != null) {
-                        // Markup parsing applies.
-                        var parsed = parseAs(updated, widget.data.parseAs);
-                        if (parsed == null) {
-                          engineLogger.e('parseAs field is not compatible with provided input');
-                        }
-                        bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
-                        return;
-                      }
-                      // If parseAs field is not available try to parse according to schema.
-                      var parsed = parseUsingSchema(updated, widget.data.bind);
-                      if (parsed == null) {
-                        engineLogger.e('Schema type is not compatible with provided input');
-                      }
-                      bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
-                    });
-                  },
-                  items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {
-                    TextAlign align =
-                        getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start;
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Align(
-                        alignment: align.toAlignment(widget.data.type),
-                        child: Text(value,
-                            style: TextStyle(
-                              color: widget.data.disabled
-                                  ? getThemeColor('disabledColor').withOpacity(0.3)
-                                  : getStyle(Styles.fontColor,
-                                      data: widget.data, themeProperty: 'textColor'),
-                              fontSize: getStyle(Styles.fontSize, data: widget.data),
-                              fontWeight: getStyle(Styles.fontWeight, data: widget.data),
-                            )),
+        child: Opacity(
+          opacity: getStyle(Styles.opacity, data: widget.data),
+          child: Container(
+            color: getStyle(Styles.background, data: widget.data),
+            child: Padding(
+              padding: getStyle(Styles.margin, data: widget.data),
+              child: customSizeWidget(
+                  widget.data,
+                  IgnorePointer(
+                    ignoring: widget.data.disabled,
+                    child: DropdownButton<String>(
+                      dropdownColor: getStyle(Styles.background, data: widget.data),
+                      isExpanded: true,
+                      value: _dropdownValue,
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                        color: widget.data.disabled
+                            ? getThemeColor('disabledColor').withOpacity(0.3)
+                            : getStyle(Styles.borderColor,
+                                data: widget.data,
+                                themeProperty:
+                                    'primaryColor'), // TODO: need to change the getter from theme.
                       ),
-                    );
-                  }).toList(),
-                ),
-              )),
+                      iconSize: 24,
+                      elevation: 4,
+                      underline: Container(
+                        height: 1,
+                        color: widget.data.disabled
+                            ? getThemeColor('disabledColor').withOpacity(0.3)
+                            : getStyle(Styles.borderColor,
+                                data: widget
+                                    .data), // TODO: need to change the getter from theme or borderColor.
+                      ),
+                      onChanged: (String newValue) {
+                        if (widget.data.disabled) {
+                          return;
+                        }
+                        setState(() {
+                          var index = indexFromDisplayValue(newValue);
+                          var updated = widget.data.options[index].value;
+
+                          // Value needs to be parsed before form can be submitted.
+                          if (widget.data.parseAs != null) {
+                            // Markup parsing applies.
+                            var parsed = parseAs(updated, widget.data.parseAs);
+                            if (parsed == null) {
+                              engineLogger.e('parseAs field is not compatible with provided input');
+                            }
+                            bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
+                            return;
+                          }
+                          // If parseAs field is not available try to parse according to schema.
+                          var parsed = parseUsingSchema(updated, widget.data.bind);
+                          if (parsed == null) {
+                            engineLogger.e('Schema type is not compatible with provided input');
+                          }
+                          bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
+                        });
+                      },
+                      items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {
+                        TextAlign align =
+                            getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start;
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Align(
+                            alignment: align.toAlignment(widget.data.type),
+                            child: Text(value,
+                                style: TextStyle(
+                                  color: widget.data.disabled
+                                      ? getThemeColor('disabledColor').withOpacity(0.3)
+                                      : getStyle(Styles.fontColor,
+                                          data: widget.data, themeProperty: 'textColor'),
+                                  fontSize: getStyle(Styles.fontSize, data: widget.data),
+                                  fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                                )),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  )),
+            ),
+          ),
         ),
       );
     });
