@@ -1,4 +1,4 @@
-import {examplesDir, getJsonFiles} from "./env";
+import {examplesDir, getJsonFiles, outputDir, versionsDir} from "./env";
 const path = require('path');
 const {minVersion} = require('./package.json');
 const existingVersionsExamples = getJsonFiles(examplesDir).map(exm => path.basename(exm).replace(path.extname(exm), ''));
@@ -24,11 +24,17 @@ request({
 
         const lastVersion = versions.slice(-1)[0];
 
-        fs.writeFile('version.txt', lastVersion, function (err) {
-            if (err) return console.log(err);
-            console.log('save version');
-        });
+        const versionsJson = {'latest': lastVersion, 'versions': versions};
+        console.log(versionsJson);
 
+        if (!fs.existsSync(versionsDir)){
+            fs.mkdirSync(versionsDir);
+        }
+
+        fs.writeFile(`${outputDir}/versions/ver.json`, JSON.stringify(versionsJson), function (err) {
+            if (err) return console.log(err);
+            console.log('save versions');
+        });
 
         request({
             url: `https://raw.githubusercontent.com/SAP/gigya-nSS/develop/assets/example.json`
