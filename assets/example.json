@@ -28,7 +28,7 @@
       "fontSize": 14,
       "fontColor": "white",
       "fontWeight": 6,
-      "elevation": 2,
+      "elevation": 0,
       "background": "blue",
       "size": [
         300,
@@ -39,7 +39,7 @@
       "fontSize": 14,
       "fontColor": "white",
       "fontWeight": 4,
-      "elevation": 0,
+      "elevation": 4,
       "background": "blue",
       "size": [
         300,
@@ -117,7 +117,7 @@
     }
   },
   "routing": {
-    "initial": "login",
+    "initial": "register",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -430,14 +430,13 @@
         {
           "type": "submit",
           "textKey": "common-submit",
-          "theme": "raisedButton",
           "style": {
+            "elevation": 4,
             "size": [
               280,
               44
             ],
-            "margin": 16,
-            "cornerRadius": 6
+            "margin": 16
           }
         }
       ]
