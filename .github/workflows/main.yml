@@ -33,7 +33,12 @@ jobs:
           flutter pub run build_runner build --delete-conflicting-outputs
       - name: Build
         run: flutter build web -t lib/main_web.dart
-
+        
+      - name: Remove base line
+        shell: bash
+        run: |
+          sed '14d' ./build/web/index.html | tee ./build/web/index.html
+          
       - name: Deploy
         uses: shallwefootball/s3-upload-action@master
         with:
