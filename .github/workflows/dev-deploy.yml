@@ -73,7 +73,7 @@ jobs:
       - name: Remove base line
         shell: bash
         run: |
-          sed '14d' ./build/web/index.html | tee ./build/web/index.html
+          sed -i '14d' build/web/index.html
           
       - name: Copy files
         shell: bash
