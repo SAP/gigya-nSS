@@ -68,6 +68,7 @@ class _SubmitWidgetState extends State<SubmitWidget> with DecorationMixin, NssAc
                       focusElevation: isFlat() ? 0 : null,
                       highlightElevation: isFlat() ? 0 : null,
                       child: Align(
+                        widthFactor: 1,
                         alignment: textAlign.toAlignment(widget.data.type),
                         child: Text(
                           // Get localized submit text.
