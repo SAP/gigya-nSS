@@ -72,7 +72,7 @@ mixin StyleMixin {
     'fontSize': 14,
     'fontColor': 'black',
     'fontWeight': 4,
-    'background': 'transparent',
+    'background': 'white',
     'elevation': 0,
     'opacity': 1.0,
     'borderColor': 'transparent',
