@@ -66,14 +66,23 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
       });
       _dropdownValue = _dropdownItems[indexFromValue(bindValue)];
 
+      var borderSize = getStyle(Styles.borderSize, data: widget.data);
+      var cornerRadius = getStyle(Styles.cornerRadius, data: widget.data);
+      var borderColor = getStyle(Styles.borderColor, data: widget.data);
+
       return Visibility(
         visible: isVisible(viewModel, widget.data.showIf),
         child: Opacity(
           opacity: getStyle(Styles.opacity, data: widget.data),
-          child: Container(
-            color: getStyle(Styles.background, data: widget.data),
-            child: Padding(
-              padding: getStyle(Styles.margin, data: widget.data),
+          child: Padding(
+            padding: getStyle(Styles.margin, data: widget.data),
+            child: Container(
+              decoration: BoxDecoration(
+                  color: getStyle(Styles.background, data: widget.data),
+                  borderRadius: cornerRadius == 0 ? null : BorderRadius.circular(cornerRadius),
+                  border: cornerRadius >= 1
+                      ? Border.all(color: borderColor, width: borderSize)
+                      : Border(bottom: BorderSide(width: borderSize, color: borderColor))),
               child: customSizeWidget(
                   widget.data,
                   IgnorePointer(
@@ -93,14 +102,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                       ),
                       iconSize: 24,
                       elevation: 4,
-                      underline: Container(
-                        height: 1,
-                        color: widget.data.disabled
-                            ? getThemeColor('disabledColor').withOpacity(0.3)
-                            : getStyle(Styles.borderColor,
-                                data: widget
-                                    .data), // TODO: need to change the getter from theme or borderColor.
-                      ),
+                      underline: Container(),
                       onChanged: (String newValue) {
                         if (widget.data.disabled) {
                           return;
@@ -116,7 +118,8 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                             if (parsed == null) {
                               engineLogger.e('parseAs field is not compatible with provided input');
                             }
-                            bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
+                            bindings.save<String>(widget.data.bind, parsed,
+                                saveAs: widget.data.sendAs);
                             return;
                           }
                           // If parseAs field is not available try to parse according to schema.
@@ -124,7 +127,8 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                           if (parsed == null) {
                             engineLogger.e('Schema type is not compatible with provided input');
                           }
-                          bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
+                          bindings.save<String>(widget.data.bind, parsed,
+                              saveAs: widget.data.sendAs);
                         });
                       },
                       items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {
