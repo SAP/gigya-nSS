@@ -70,11 +70,16 @@ jobs:
       - name: Build
         run: flutter build web -t lib/main_web.dart
       
+      - name: Remove base line
+        shell: bash
+        run: |
+          sed -i '14d' build/web/index.html
+          
       - name: Copy files
         shell: bash
         run: |
           cp -r build/web versions/*/
-        
+          
       - name: Deploy
         uses: shallwefootball/s3-upload-action@master
         with:

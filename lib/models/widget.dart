@@ -58,6 +58,9 @@ class NssWidgetData {
 
   Countries countries;
 
+  @JsonKey(defaultValue: false)
+  bool isNestedContainer;
+
   NssWidgetData({
     this.textKey,
     this.type,
@@ -87,6 +90,7 @@ class NssWidgetData {
     this.disabled,
     this.showIf,
     this.countries,
+    this.isNestedContainer,
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);
