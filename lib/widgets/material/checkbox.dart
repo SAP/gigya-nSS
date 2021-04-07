@@ -53,78 +53,85 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
 
           return Visibility(
             visible: isVisible(viewModel, widget.data.showIf),
-            child: Opacity(
-              opacity: getStyle(Styles.opacity, data: widget.data),
-              child: Container(
-                color: getStyle(Styles.background, data: widget.data),
-                child: Padding(
-                  padding: getStyle(Styles.margin, data: widget.data),
-                  child: customSizeWidget(
-                    widget.data,
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Checkbox(
-                              activeColor: widget.data.disabled
-                                  ? getThemeColor('disabledColor').withOpacity(0.3)
-                                  : getThemeColor('enabledColor'),
-                              // TODO: need to verify if can improve it.
-                              checkColor: widget.data.disabled
-                                  ? getThemeColor('disabledColor').withOpacity(0.3)
-                                  : getThemeColor('secondaryColor'),
-                              value: _currentValue,
-                              onChanged: (bool val) {
-                                if (widget.data.disabled) {
-                                  return null;
-                                }
-                                setState(() {
-                                  bindings.save<bool>(widget.data.bind, val, saveAs: widget.data.sendAs);
-                                });
-                              },
-                            ),
-                            Flexible(
-                              child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      bindings.save<bool>(widget.data.bind, !_currentValue, saveAs: widget.data.sendAs);
-                                    });
-                                  },
-                                  child: Container(
-                                    child: linkified
-                                        ? linkify.linkify(widget.data, (link) {
-                                            viewModel.linkifyTap(link);
-                                          },
-                                            getStyle(Styles.linkColor, data: widget.data, themeProperty: 'linkColor') ??
-                                                getColor('blue'))
-                                        : Text(
-                                            displayText,
-                                            textAlign: getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
-                                            style: TextStyle(
-                                                color: getStyle(Styles.fontColor, data: widget.data),
-                                                fontSize: getStyle(Styles.fontSize, data: widget.data),
-                                                fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
-                                          ),
-                                  )),
-                            ),
-                          ],
-                        ),
-                        Visibility(
-                          visible: state.errorText != null,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              state.errorText != null ? state.errorText : '',
-                              textAlign: TextAlign.start,
-                              style: TextStyle(color: Colors.red, fontSize: 12),
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                unselectedWidgetColor: getStyle(Styles.fontColor,
+                    data: widget.data, themeProperty: 'textColor'),
+                disabledColor: getThemeColor('disabledColor'),
+              ),
+              child: Opacity(
+                opacity: getStyle(Styles.opacity, data: widget.data),
+                child: Container(
+                  color: getStyle(Styles.background, data: widget.data),
+                  child: Padding(
+                    padding: getStyle(Styles.margin, data: widget.data),
+                    child: customSizeWidget(
+                      widget.data,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Checkbox(
+                                activeColor: widget.data.disabled
+                                    ? getThemeColor('disabledColor').withOpacity(0.3)
+                                    : getThemeColor('enabledColor'),
+                                // TODO: need to verify if can improve it.
+                                checkColor: widget.data.disabled
+                                    ? getThemeColor('disabledColor').withOpacity(0.3)
+                                    : getThemeColor('secondaryColor'),
+                                value: _currentValue,
+                                onChanged: (bool val) {
+                                  if (widget.data.disabled) {
+                                    return null;
+                                  }
+                                  setState(() {
+                                    bindings.save<bool>(widget.data.bind, val, saveAs: widget.data.sendAs);
+                                  });
+                                },
+                              ),
+                              Flexible(
+                                child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        bindings.save<bool>(widget.data.bind, !_currentValue, saveAs: widget.data.sendAs);
+                                      });
+                                    },
+                                    child: Container(
+                                      child: linkified
+                                          ? linkify.linkify(widget.data, (link) {
+                                              viewModel.linkifyTap(link);
+                                            },
+                                              getStyle(Styles.linkColor, data: widget.data, themeProperty: 'linkColor') ??
+                                                  getColor('blue'))
+                                          : Text(
+                                              displayText,
+                                              textAlign: getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
+                                              style: TextStyle(
+                                                  color: getStyle(Styles.fontColor, data: widget.data),
+                                                  fontSize: getStyle(Styles.fontSize, data: widget.data),
+                                                  fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
+                                            ),
+                                    )),
+                              ),
+                            ],
+                          ),
+                          Visibility(
+                            visible: state.errorText != null,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Text(
+                                state.errorText != null ? state.errorText : '',
+                                textAlign: TextAlign.start,
+                                style: TextStyle(color: Colors.red, fontSize: 12),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
