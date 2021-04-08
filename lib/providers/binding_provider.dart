@@ -42,6 +42,9 @@ class BindingModel with ChangeNotifier {
 
   /// Get the relevant bound data using the String [key] reference.
   dynamic getValue<T>(String key, [Map<String, dynamic> dataObject]) {
+    // Remove `#` mark before submit.
+    key = key.removeHashtagPrefix();
+
     var bindingData = dataObject ?? _routingBindingData;
 
     var keys = key.split('.');
