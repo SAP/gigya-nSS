@@ -105,6 +105,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                 Opacity(
                   opacity: getStyle(Styles.opacity, data: widget.data),
                   child: TextFormField(
+                    maxLines: _obscuredText ? 1: widget.data.style.containsKey("size") ? 1000 : 1,
                     enabled: !widget.data.disabled,
                     keyboardType: getKeyboardType(widget.data.bind),
                     obscureText: _obscuredText,
@@ -115,6 +116,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                         fontSize: getStyle(Styles.fontSize, data: widget.data),
                         fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
                     decoration: InputDecoration(
+                      isDense: true,
                       errorMaxLines: _errorMaxLines,
                       filled: true,
                       suffixIcon: widget.data.type == NssWidgetType.passwordInput
