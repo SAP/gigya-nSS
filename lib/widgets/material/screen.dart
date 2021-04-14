@@ -60,7 +60,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
           NssIoc().use(NssChannels).ignitionChannel.invokeMethod<void>('ready_for_display');
 
           // Attach the initial screen action only.
-          // Follwing actions will be initiated as a part of the navigation flow moving forward.
+          // Following actions will be initiated as a part of the navigation flow moving forward.
           _attachInitialScreenAction();
         }
       }
@@ -180,7 +180,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     // Merge routing data into injected screen data and update bindings.
     viewModel.expressions = dataMap['expressions'];
     dataMap.addAll(widget.routingData);
-    bindings.updateWith(dataMap);
+    bindings.updateWith(dataMap['data'].cast<String, dynamic>());
   }
 
   void didRouteFrom() async {
