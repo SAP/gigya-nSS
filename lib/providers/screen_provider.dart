@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
+import 'package:gigya_native_screensets_engine/models/api.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/utils/debug.dart';
@@ -340,6 +341,8 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
     });
     return expressionMap;
   }
+
+
 }
 
 class NavigationEvent {

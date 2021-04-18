@@ -1,0 +1,8 @@
+{
+  "screens": {
+    "login": {
+      "action": "__INVALID__",
+      "children": []
+    }
+  }
+}

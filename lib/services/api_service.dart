@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/models/api.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
@@ -17,7 +18,7 @@ class ApiService {
       final result = ApiBaseResult.fromJson(dataMap);
       result.data = dataMap;
       return result;
-    }).catchError((error) {
+    }).catchError((dynamic error) {
       engineLogger.d('Invocation error with: ${error.message}');
       return throw ApiBaseResult.platformException(error);
     }).timeout(Duration(seconds: configTimeout(method)), onTimeout: () {

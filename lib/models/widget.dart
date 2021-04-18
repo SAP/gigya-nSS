@@ -1,6 +1,5 @@
-import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
-import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/models/option.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -57,6 +56,11 @@ class NssWidgetData {
 
   String showIf;
 
+  Countries countries;
+
+  @JsonKey(defaultValue: false)
+  bool isNestedContainer;
+
   NssWidgetData({
     this.textKey,
     this.type,
@@ -85,12 +89,37 @@ class NssWidgetData {
     this.allowUpload,
     this.disabled,
     this.showIf,
+    this.countries,
+    this.isNestedContainer,
   });
 
-  factory NssWidgetData.fromJson(Map<String, dynamic> json) =>
-      _$NssWidgetDataFromJson(json);
+  factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$NssWidgetDataToJson(this);
 
   bool boolDefaultValue() => defaultValue as bool;
+}
+
+@JsonSerializable(anyMap: true)
+class Countries {
+  @JsonKey(defaultValue: 'auto')
+  String defaultSelected;
+  @JsonKey(defaultValue: [])
+  List<String> include;
+  @JsonKey(defaultValue: [])
+  List<String> exclude;
+  @JsonKey(defaultValue: true)
+  bool showIcons;
+
+  Countries({
+    this.defaultSelected,
+    this.include,
+    this.exclude,
+    this.showIcons
+  });
+
+  factory Countries.fromJson(Map<String, dynamic> json) => _$CountriesFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CountriesToJson(this);
+
 }

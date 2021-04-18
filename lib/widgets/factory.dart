@@ -17,6 +17,7 @@ import 'package:gigya_native_screensets_engine/widgets/material/dropdown.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/inputs.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/labels.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/phone.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/profile_photo.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/radio.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/screen.dart';
@@ -32,6 +33,7 @@ enum NssWidgetType {
   textInput,
   emailInput,
   passwordInput,
+  phoneInput,
   submit,
   checkbox,
   radio,
@@ -71,7 +73,8 @@ abstract class WidgetFactory {
           data: data,
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: getMainAxisAlignment(data.alignment),
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: getCrossAxisAlignment(data.alignment),
             children: children,
           ),
         );
@@ -81,6 +84,7 @@ abstract class WidgetFactory {
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: getMainAxisAlignment(data.alignment),
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: children,
           ),
         );
@@ -96,9 +100,11 @@ abstract class WidgetFactory {
     if (widgetsToBuild == null || widgetsToBuild.isEmpty) {
       return [];
     }
+
     List<Widget> widgets = [];
     widgetsToBuild.forEach((widget) {
       if (widget.type == NssWidgetType.container) {
+        widget.isNestedContainer = true;
         // View group required.
         widgets.add(
           buildContainer(buildWidgets(widget.children), widget),
@@ -131,6 +137,20 @@ abstract class WidgetFactory {
         return MainAxisAlignment.start;
     }
   }
+
+  CrossAxisAlignment getCrossAxisAlignment(NssAlignment alignment) {
+    if (alignment == null) return CrossAxisAlignment.start;
+    switch (alignment) {
+      case NssAlignment.start:
+        return CrossAxisAlignment.start;
+      case NssAlignment.end:
+        return CrossAxisAlignment.end;
+      case NssAlignment.center:
+        return CrossAxisAlignment.center;
+      default:
+        return CrossAxisAlignment.start;
+    }
+  }
 }
 
 class MaterialWidgetFactory extends WidgetFactory {
@@ -146,7 +166,9 @@ class MaterialWidgetFactory extends WidgetFactory {
   Widget buildScreen(Screen screen, Map<String, dynamic> arguments) {
     ScreenViewModel viewModel = NssIoc().use(ScreenViewModel);
 
-    // Make sure screen routing data is beeing passed on with every screen transition.
+    BindingModel binding = NssIoc().use(BindingModel);
+
+    // Make sure screen routing data is being passed on with every screen transition.
     Map<String, dynamic> routingData = {};
     if (arguments is Map<String, dynamic>) {
       if (arguments.containsKey('routingData')) {
@@ -155,10 +177,10 @@ class MaterialWidgetFactory extends WidgetFactory {
       if (arguments.containsKey('expressions')) {
         viewModel.expressions = arguments['expressions'];
       }
+      if (arguments.containsKey('initialData')) {
+        binding.updateWith(arguments['initialData']);
+      }
     }
-
-    BindingModel binding =  NssIoc().use(BindingModel);
-    binding.savedBindingData.addAll(routingData);
 
     return MaterialScreenWidget(
       viewModel: viewModel,
@@ -168,9 +190,9 @@ class MaterialWidgetFactory extends WidgetFactory {
       content: buildContainer(
         buildWidgets(screen.children),
         NssWidgetData(
-          style: screen.style ?? {},
-          stack: screen.stack ?? NssStack.vertical,
-        ),
+            style: screen.style ?? {},
+            stack: screen.stack ?? NssStack.vertical,
+            alignment: screen.alignment ?? NssAlignment.center),
       ),
     );
   }
@@ -202,6 +224,8 @@ class MaterialWidgetFactory extends WidgetFactory {
         return ProfilePhotoWidget(key: UniqueKey(), data: data);
       case NssWidgetType.container:
         return buildContainer(buildWidgets(data.children), data);
+      case NssWidgetType.phoneInput:
+        return PhoneInputWidget(key: UniqueKey(), data: data);
       default:
         return Container();
     }

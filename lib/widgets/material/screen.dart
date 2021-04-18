@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
-import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
-import 'package:gigya_native_screensets_engine/widgets/screen.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
+import 'package:gigya_native_screensets_engine/utils/localization.dart';
+import 'package:gigya_native_screensets_engine/widgets/screen.dart';
 import 'package:provider/provider.dart';
 
 class MaterialScreenWidget extends StatefulWidget {
@@ -35,18 +35,16 @@ class MaterialScreenWidget extends StatefulWidget {
   _MaterialScreenWidgetState createState() => _MaterialScreenWidgetState(viewModel, bindingModel);
 }
 
-class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
-    with StyleMixin, LocalizationMixin {
-  _MaterialScreenWidgetState(ScreenViewModel viewModel, BindingModel bindings)
-      : super(viewModel, bindings);
+class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget> with StyleMixin, LocalizationMixin {
+  _MaterialScreenWidgetState(ScreenViewModel viewModel, BindingModel bindings) : super(viewModel, bindings);
 
   @override
   void initState() {
     // Update dynamic view model screen id because view model is instantiated view IOC.
     viewModel.id = widget.screen.id;
+
     super.initState();
 
-    // Screen Event triggered "routeFrom"
     didRouteFrom();
 
     _registerNavigationStream();
@@ -62,7 +60,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
           NssIoc().use(NssChannels).ignitionChannel.invokeMethod<void>('ready_for_display');
 
           // Attach the initial screen action only.
-          // Follwing actions will be initiated as a part of the navigation flow moving forward.
+          // Following actions will be initiated as a part of the navigation flow moving forward.
           _attachInitialScreenAction();
         }
       }
@@ -73,36 +71,39 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
 
   @override
   Widget buildScaffold() {
-    var appBackground = getStyle(Styles.background,
+    var appBarBackground = getStyle(Styles.background,
         styles: widget.screen.appBar == null ? null : widget.screen.appBar.style, themeProperty: 'primaryColor');
+    var scaffoldBackground = getStyle(Styles.background, styles: widget.screen.style) ?? Colors.white;
 
     return Scaffold(
-      extendBodyBehindAppBar: appBackground == Colors.transparent,
+      backgroundColor: scaffoldBackground,
+      extendBodyBehindAppBar: true,
       appBar: widget.screen.appBar == null
           ? null
           : AppBar(
               elevation: getStyle(Styles.elevation, styles: widget.screen.appBar.style),
-              backgroundColor: appBackground,
+              backgroundColor: appBarBackground,
               title: Text(
                 localizedStringFor(widget.screen.appBar.textKey) ?? '',
                 style: TextStyle(
-                  color: getStyle(Styles.fontColor,
-                      styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
+                  color: getStyle(Styles.fontColor, styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
                   fontWeight: getStyle(Styles.fontWeight, styles: widget.screen.appBar.style),
                 ),
               ),
-              leading: kIsWeb ?  null : Platform.isIOS
-                  ? Container(
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.close,
-                          color: getStyle(Styles.fontColor,
-                              styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
-                        ),
-                        onPressed: () => Navigator.pushNamed(context, '_canceled'),
-                      ),
-                    )
-                  : null,
+              leading: kIsWeb
+                  ? null
+                  : Platform.isIOS
+                      ? Container(
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.close,
+                              color:
+                                  getStyle(Styles.fontColor, styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
+                            ),
+                            onPressed: () => Navigator.pushNamed(context, '_canceled'),
+                          ),
+                        )
+                      : null,
             ),
       body: Container(
         child: SafeArea(
@@ -144,7 +145,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
 
       // If route data is available, make sure it is added to the routing/binding data.
       if (event.routingData != null && event.routingData.isNotEmpty) {
-        widget.routingData.addAll(event.routingData);
+//        widget.routingData.addAll(event.routingData);
       }
 
       // Trigger "routeTo" event to determine routing override.
@@ -160,6 +161,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         arguments: {
           'pid': viewModel.id,
           'routingData': widget.routingData,
+          'initialData': event.routingData,
           'expressions': event.expressions
         },
       );
@@ -178,19 +180,18 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     // Merge routing data into injected screen data and update bindings.
     viewModel.expressions = dataMap['expressions'];
     dataMap.addAll(widget.routingData);
-    bindings.updateWith(dataMap);
+    bindings.updateWith(dataMap['data'].cast<String, dynamic>());
   }
 
   void didRouteFrom() async {
-    Map<String, dynamic> eventData =
-        await routeFrom(viewModel.id, viewModel.pid, widget.routingData);
+    Map<String, dynamic> eventData = await routeFrom(viewModel.id, viewModel.pid, widget.routingData);
     if (eventData != null) {
       // Overrite current routing data if exists.
       if (eventData['data'] != null) {
         widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
       }
       // Merge routing data into available binding data.
-      bindings.updateWith(widget.routingData);
+      bindings.updateRoutingWith(widget.routingData);
 
       debugPrint('didRouteFrom: data = ${widget.routingData.toString()}');
 
@@ -206,7 +207,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       // Overrite current routing data if exists.
       widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
       // Merge routing data into available binding data.
-      bindings.updateWith(widget.routingData);
+      bindings.updateRoutingWith(widget.routingData);
 
       // Fetch sid override if exists.
       String sid = eventData['sid'] ?? '';

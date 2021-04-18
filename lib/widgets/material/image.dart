@@ -32,7 +32,7 @@ abstract class ImageWidgetState<T extends StatefulWidget> extends State<T>
         resolveFallback(fallback);
       });
     } else {
-      resovleAssetResource(url, () {
+      resolveAssetResource(url, () {
         // Error -> fallback.
         resolveFallback(fallback);
       });
@@ -52,7 +52,7 @@ abstract class ImageWidgetState<T extends StatefulWidget> extends State<T>
         resolveStaticPlaceholder();
       });
     } else {
-      resovleAssetResource(fallbackPath, () {
+      resolveAssetResource(fallbackPath, () {
         resolveStaticPlaceholder();
       });
     }
@@ -88,7 +88,7 @@ abstract class ImageWidgetState<T extends StatefulWidget> extends State<T>
   }
 
   /// Try to fetch the image form a native asset resource.
-  Future<void> resovleAssetResource(String url, ErrorCallback error) async {
+  Future<void> resolveAssetResource(String url, ErrorCallback error) async {
     if (url.isEmpty) {
       error();
       return null;
@@ -150,21 +150,24 @@ class _ImageWidgetState extends ImageWidgetState<ImageWidget> {
               borderRadius: BorderRadius.circular(cornerRadius),
               color: Colors.transparent,
               elevation: getStyle(Styles.elevation, data: widget.data),
-              child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: borderColor,
-                        width: borderSize,
+              child: Opacity(
+                opacity: getStyle(Styles.opacity, data: widget.data),
+                child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: borderColor,
+                          width: borderSize,
+                        ),
+                        borderRadius: BorderRadius.circular(
+                          cornerRadius,
+                        ),
+                        color: getStyle(Styles.background, data: widget.data),
+                        image: DecorationImage(
+                            image: imageProvider, fit: BoxFit.fill),
                       ),
-                      borderRadius: BorderRadius.circular(
-                        cornerRadius,
-                      ),
-                      color: getStyle(Styles.background, data: widget.data),
-                      image: DecorationImage(
-                          image: imageProvider, fit: BoxFit.fill),
-                    ),
-                  ) ??
-                  Container(),
+                    ) ??
+                    Container(),
+              ),
             );
           },
         ),

@@ -47,6 +47,7 @@ class LabelWidget extends StatelessWidget
               Opacity(
                 opacity: getStyle(Styles.opacity, data: data),
                 child: Container(
+                  color: getStyle(Styles.background, data: data),
                   child: linkified
                       ? linkify.linkify(data, (link) {
                           viewModel.linkifyTap(link);

@@ -1,0 +1,31 @@
+{
+  "name": "nss-schema",
+  "version": "1.2.0",
+  "minVersion": "1.0.0",
+  "description": "json schema for native-screen-sets",
+  "main": "index.ts",
+  "scripts": {
+    "build": "ts-node index.ts",
+    "fetchExamples": "ts-node fetchExamples.ts",
+    "test": "tsc ./spec/index.ts && jasmine \"spec/index.js\"",
+    "exportExample": "ts-node exportExample.ts",
+    "release": "npm run build && npm run fetchExamples && npm run test && npm run exportExample",
+    "deploy": "ts-node deploy.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/json-schema": "^7.0.4",
+    "@types/node": "^14.0.5",
+    "aws-sdk": "^2.696.0",
+    "request": "^2.88.2",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.9.3",
+    "yargs": "^15.3.1"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^3.5.10",
+    "jasmine": "^3.5.0",
+    "jsonschema": "^1.2.6"
+  }
+}

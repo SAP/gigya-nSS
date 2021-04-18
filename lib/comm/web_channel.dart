@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 import '../config.dart';
 import 'moblie_channel.dart';
@@ -42,7 +44,11 @@ class NssWebMethodChannel extends NssChannel {
       }
     });
     var json = jsonDecode(msg.data).cast<String, dynamic>();
+    if (json['details'] != null) {
+      return Future.error(PlatformException(code: json['code'], message: json['message'], details: json['details']));
+    }
     return json;
+
   }
 
   Future<Map<K, V>> invokeMapMethod<K, V>(String method, [dynamic arguments]) async {
@@ -62,6 +68,9 @@ class NssWebMethodChannel extends NssChannel {
       }
     });
     var json = jsonDecode(msg.data).cast<String, dynamic>();
+    if (json['details'] != null) {
+      return Future.error(PlatformException(code: json['code'], message: json['message'], details: json['details']));
+    }
     return json;
   }
 }

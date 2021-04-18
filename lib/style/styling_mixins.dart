@@ -7,6 +7,7 @@ import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
 
+/// Supported styles enum.
 enum Styles {
   margin,
   fontColor,
@@ -21,12 +22,46 @@ enum Styles {
   indicatorColor,
   textAlign,
   linkColor,
-  placeholderColor
+  placeholderColor,
 }
 
 extension StylesExt on Styles {
   String get name => describeEnum(this);
 }
+
+/// Supported text alignment enum.
+enum NssTextAlign { start, end, center, none }
+
+extension NssTextAlignExt on NssTextAlign {
+  TextAlign get getValue {
+    switch (this) {
+      case NssTextAlign.start:
+        return TextAlign.start;
+      case NssTextAlign.end:
+        return TextAlign.end;
+      case NssTextAlign.center:
+        return TextAlign.center;
+      default:
+        return null; // none
+    }
+  }
+}
+
+extension NssMainAlign on TextAlign {
+  MainAxisAlignment get getMainAlign {
+    switch (this) {
+      case TextAlign.start:
+        return MainAxisAlignment.start;
+      case TextAlign.end:
+        return MainAxisAlignment.end;
+      case TextAlign.center:
+        return MainAxisAlignment.center;
+      default:
+        return MainAxisAlignment.start; // none
+    }
+  }
+}
+
 
 mixin StyleMixin {
   final NssConfig config = NssIoc().use(NssConfig);
@@ -37,7 +72,7 @@ mixin StyleMixin {
     'fontSize': 14,
     'fontColor': 'black',
     'fontWeight': 4,
-    'background': 'transparent',
+    'background': 'white',
     'elevation': 0,
     'opacity': 1.0,
     'borderColor': 'transparent',
@@ -58,7 +93,8 @@ mixin StyleMixin {
   };
 
   /// Get the relevant style value.
-  dynamic getStyle(Styles style, {
+  dynamic getStyle(
+    Styles style, {
     NssWidgetData data,
     Map<String, dynamic> styles,
     String themeProperty,
@@ -73,8 +109,7 @@ mixin StyleMixin {
           config.markup.customThemes != null &&
           config.markup.customThemes.containsKey(customTheme)) {
         if (config.markup.customThemes[customTheme].containsKey(style.name)) {
-          value =
-              getStyleValue(style, config.markup.customThemes[customTheme].cast<String, dynamic>());
+          value = getStyleValue(style, config.markup.customThemes[customTheme].cast<String, dynamic>());
         }
       }
     }
@@ -236,8 +271,7 @@ mixin StyleMixin {
       return _getHexColor(background);
     else if (background.contains("http://") || background.contains("https://")) {
       return NetworkImage(background);
-    }
-    else if (background.substring(0,1) == "/") {
+    } else if (background.substring(0, 1) == "/") {
       var data = NssWidgetData.fromJson({"url": background.substring(2)});
       return ImageWidget(key: UniqueKey(), data: data);
     } else {
@@ -247,25 +281,37 @@ mixin StyleMixin {
 
   getTextAlign(align) {
     align = "NssTextAlign.$align";
-    NssTextAlign a = NssTextAlign.values
-        .firstWhere((f) => f.toString() == align, orElse: () => NssTextAlign.none);
+    NssTextAlign a = NssTextAlign.values.firstWhere((f) => f.toString() == align, orElse: () => NssTextAlign.none);
     return a.getValue;
   }
-}
 
-enum NssTextAlign { start, end, center, none }
+  //region SIMPLIFIED STYLE GETTERS
 
-extension NssTextAlignExt on NssTextAlign {
-  TextAlign get getValue {
-    switch (this) {
-      case NssTextAlign.start:
-        return TextAlign.start;
-      case NssTextAlign.end:
-        return TextAlign.end;
-      case NssTextAlign.center:
-        return TextAlign.center;
-      default:
-        return null; // none
-    }
-  }
+  dynamic styleBackground(data) => getStyle(Styles.background, data: data);
+
+  Color styleFontColor(data, disabled) => disabled
+      ? getStyle(Styles.fontColor, data: data, themeProperty: 'textColor').withOpacity(0.3)
+      : getStyle(Styles.fontColor, data: data, themeProperty: 'textColor');
+
+  dynamic styleFontSize(data) => getStyle(Styles.fontSize, data: data);
+
+  dynamic styleFontWeight(data) => getStyle(Styles.fontWeight, data: data);
+
+  dynamic styleBorderSize(data) => getStyle(Styles.borderSize, data: data);
+
+  dynamic styleBorderRadius(data) => getStyle(Styles.cornerRadius, data: data);
+
+  dynamic styleBorderColor(data) => getStyle(Styles.borderColor, data: data, themeProperty: "disabledColor");
+
+  TextAlign styleTextAlign(data) => getStyle(Styles.textAlign, data: data) ?? TextAlign.start;
+
+  dynamic styleOpacity(data) => getStyle(Styles.opacity, data: data);
+
+  dynamic stylePadding(data) => getStyle(Styles.margin, data: data);
+
+  dynamic stylePlaceholder(data, bool disabled) => disabled
+      ? getStyle(Styles.placeholderColor, data: data, themeProperty: 'disabledColor').withOpacity(0.3)
+      : getStyle(Styles.placeholderColor, data: data, themeProperty: 'textColor').withOpacity(0.5);
+
+//endregion
 }

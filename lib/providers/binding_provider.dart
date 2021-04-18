@@ -20,11 +20,19 @@ class BindingModel with ChangeNotifier {
 
   Map<String, dynamic> _bindingData = {};
   Map<String, dynamic> savedBindingData = {};
+  Map<String, dynamic> _routingBindingData = {};
 
   /// Update biding data once available. Updating the data will trigger rebuild for
   /// every child widget in the view tree.
   void updateWith(Map<String, dynamic> map) {
     _bindingData.addAll(map);
+
+    notifyListeners();
+  }
+
+  void updateRoutingWith(Map<String, dynamic> map) {
+    _routingBindingData.addAll(map);
+
     notifyListeners();
   }
 
@@ -34,7 +42,10 @@ class BindingModel with ChangeNotifier {
 
   /// Get the relevant bound data using the String [key] reference.
   dynamic getValue<T>(String key, [Map<String, dynamic> dataObject]) {
-    var bindingData = dataObject ?? _bindingData;
+    // Remove `#` mark before submit.
+    key = key.removeHashtagPrefix();
+
+    var bindingData = dataObject ?? _routingBindingData;
 
     var keys = key.split('.');
     var nextKey = 0;
@@ -42,7 +53,12 @@ class BindingModel with ChangeNotifier {
     dynamic value;
 
     if (keys.length >= _limit || nextData == null) {
-      return typeSupported[T] ?? defaultReturn;
+      if (dataObject != _bindingData) {
+        var vv = getValue<T>(key, _bindingData);
+        return vv;
+      } else {
+        return typeSupported[T] ?? defaultReturn;
+      }
     }
 
     while (value == null) {
@@ -60,7 +76,12 @@ class BindingModel with ChangeNotifier {
       } else {
         nextKey++;
         if (nextKey > keys.length - 1) {
-          return typeSupported[T] ?? defaultReturn;
+          if (dataObject != _bindingData) {
+            var vv = getValue<T>(key, _bindingData);
+            return vv ?? defaultReturn;
+          } else {
+            return typeSupported[T] ?? defaultReturn;
+          }
         }
 
         if (nextData[keys[nextKey]] != null) {
@@ -72,6 +93,10 @@ class BindingModel with ChangeNotifier {
     return value;
   }
 
+  dynamic getMapByKey(String key) {
+    return _bindingData[key];
+  }
+  
   /// Save a new [key] / [value] pair for form submission.
   save<T>(String key, T value, { String saveAs }) {
     // Change the bind to real param before sending the request.

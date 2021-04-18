@@ -13,6 +13,7 @@ class Screen {
   String action;
   @JsonKey(defaultValue: NssStack.vertical)
   NssStack stack;
+  NssAlignment alignment;
   AppBar appBar;
   List<NssWidgetData> children;
   @JsonKey(name: 'routing')
@@ -23,7 +24,7 @@ class Screen {
   NssShowOnlyFields showOnlyFields;
 
 
-  Screen(this.id, this.action, this.stack, this.children, {this.appBar, this.routes, this.showOnlyFields});
+  Screen(this.id, this.action, this.stack, this.alignment, this.children, {this.appBar, this.routes, this.showOnlyFields});
 
   factory Screen.fromJson(Map<String, dynamic> json) => _$ScreenFromJson(json);
 
