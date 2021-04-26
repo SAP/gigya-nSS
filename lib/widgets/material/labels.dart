@@ -5,12 +5,12 @@ import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
+import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:provider/provider.dart';
 
-class LabelWidget extends StatelessWidget
-    with DecorationMixin, StyleMixin, LocalizationMixin, BindingMixin {
+class LabelWidget extends StatelessWidget with DecorationMixin, StyleMixin, LocalizationMixin, BindingMixin {
   final NssWidgetData data;
 
   LabelWidget({Key key, this.data}) : super(key: key);
@@ -33,36 +33,37 @@ class LabelWidget extends StatelessWidget
           text = localizedStringFor(data.textKey);
         }
 
-        // Apply Linkification if needed.
+        // Apply link action if needed.
         final Linkify linkify = Linkify(text ?? '');
         final bool linkified = linkify.containLinks(text);
         if (!linkified) linkify.dispose();
 
-        return Visibility(
-          visible: isVisible(viewModel, data.showIf),
-          child: Padding(
-            padding: getStyle(Styles.margin, data: data),
-            child: customSizeWidget(
-              data,
-              Opacity(
-                opacity: getStyle(Styles.opacity, data: data),
-                child: Container(
-                  color: getStyle(Styles.background, data: data),
-                  child: linkified
-                      ? linkify.linkify(data, (link) {
-                          viewModel.linkifyTap(link);
-                        },
-                          getStyle(Styles.linkColor, data: data, themeProperty: 'linkColor') ??
-                              getColor('blue'))
-                      : Text(
-                          text,
-                          textAlign: getStyle(Styles.textAlign, data: data) ?? TextAlign.start,
-                          style: TextStyle(
-                            fontSize: getStyle(Styles.fontSize, data: data),
-                            color: getStyle(Styles.fontColor, data: data, themeProperty: 'textColor'),
-                            fontWeight: getStyle(Styles.fontWeight, data: data),
+        return SemanticsWrapperWidget(
+          accessibility: data.accessibility,
+          child: Visibility(
+            visible: isVisible(viewModel, data.showIf),
+            child: Padding(
+              padding: getStyle(Styles.margin, data: data),
+              child: NssCustomSizeWidget(
+                data: data,
+                child: Opacity(
+                  opacity: getStyle(Styles.opacity, data: data),
+                  child: Container(
+                    color: getStyle(Styles.background, data: data),
+                    child: linkified
+                        ? linkify.linkify(data, (link) {
+                            viewModel.linkifyTap(link);
+                          }, getStyle(Styles.linkColor, data: data, themeProperty: 'linkColor') ?? getColor('blue'))
+                        : Text(
+                            text,
+                            textAlign: getStyle(Styles.textAlign, data: data) ?? TextAlign.start,
+                            style: TextStyle(
+                              fontSize: getStyle(Styles.fontSize, data: data),
+                              color: getStyle(Styles.fontColor, data: data, themeProperty: 'textColor'),
+                              fontWeight: getStyle(Styles.fontWeight, data: data),
+                            ),
                           ),
-                        ),
+                  ),
                 ),
               ),
             ),

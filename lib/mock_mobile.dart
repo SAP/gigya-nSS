@@ -15,12 +15,12 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // showSemanticsDebugger: true,
       debugShowCheckedModeBanner: false,
       color: Colors.white,
       initialRoute: '/',
       onGenerateRoute: NssIoc().use(MaterialRouter).generateRoute,
     );
-
   }
 
   @override

@@ -5,6 +5,7 @@ import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
+import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
@@ -65,9 +66,9 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                   color: getStyle(Styles.background, data: widget.data),
                   child: Padding(
                     padding: getStyle(Styles.margin, data: widget.data),
-                    child: customSizeWidget(
-                      widget.data,
-                      Column(
+                    child: NssCustomSizeWidget(
+                      data: widget.data,
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
@@ -75,23 +76,26 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
-                              Checkbox(
-                                activeColor: widget.data.disabled
-                                    ? getThemeColor('disabledColor').withOpacity(0.3)
-                                    : getThemeColor('enabledColor'),
-                                // TODO: need to verify if can improve it.
-                                checkColor: widget.data.disabled
-                                    ? getThemeColor('disabledColor').withOpacity(0.3)
-                                    : getThemeColor('secondaryColor'),
-                                value: _currentValue,
-                                onChanged: (bool val) {
-                                  if (widget.data.disabled) {
-                                    return null;
-                                  }
-                                  setState(() {
-                                    bindings.save<bool>(widget.data.bind, val, saveAs: widget.data.sendAs);
-                                  });
-                                },
+                              SemanticsWrapperWidget(
+                                accessibility: widget.data.accessibility,
+                                child: Checkbox(
+                                  activeColor: widget.data.disabled
+                                      ? getThemeColor('disabledColor').withOpacity(0.3)
+                                      : getThemeColor('enabledColor'),
+                                  // TODO: need to verify if can improve it.
+                                  checkColor: widget.data.disabled
+                                      ? getThemeColor('disabledColor').withOpacity(0.3)
+                                      : getThemeColor('secondaryColor'),
+                                  value: _currentValue,
+                                  onChanged: (bool val) {
+                                    if (widget.data.disabled) {
+                                      return null;
+                                    }
+                                    setState(() {
+                                      bindings.save<bool>(widget.data.bind, val, saveAs: widget.data.sendAs);
+                                    });
+                                  },
+                                ),
                               ),
                               Flexible(
                                 child: GestureDetector(

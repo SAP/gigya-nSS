@@ -7,11 +7,12 @@ import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
+import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
+import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/widgets/decoration/page_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 
 /// Supported providers.
 enum NssSocialProvider {
@@ -86,9 +87,9 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget> with Decoration
   Widget build(BuildContext context) {
     return Padding(
       padding: getStyle(Styles.margin, data: widget.data),
-      child: customSizeWidget(
-        widget.data,
-        Consumer<ScreenViewModel>(
+      child: NssCustomSizeWidget(
+        data: widget.data,
+        child: Consumer<ScreenViewModel>(
           builder: (context, viewModel, child) {
             final text = widget.data.textKey == null
                 ? 'Sign in with ${widget.data.provider.name.inCaps}'
@@ -116,37 +117,40 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget> with Decoration
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   padding: EdgeInsets.all(0),
                   elevation: getStyle(Styles.elevation, data: widget.data),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      widget.data.iconEnabled
-                          ? SizedBox(
-                            width: 40,
-                            height: 34,
-                            child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image(
-                                  image: widget.data.iconURL != null
-                                      ? NetworkImage(widget.data.iconURL)
-                                      : AssetImage('assets/social_images/${widget.data.provider.name}.png'),
-                                  width: 24,
-                                  height: 24,
+                  child: SemanticsWrapperWidget(
+                    accessibility: widget.data.accessibility,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        widget.data.iconEnabled
+                            ? SizedBox(
+                                width: 40,
+                                height: 34,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Image(
+                                    image: widget.data.iconURL != null
+                                        ? NetworkImage(widget.data.iconURL)
+                                        : AssetImage('assets/social_images/${widget.data.provider.name}.png'),
+                                    width: 24,
+                                    height: 24,
+                                  ),
                                 ),
-                              ),
-                          )
-                          : SizedBox(width: 8),
-                      Text(
-                        // Get localized submit text.
-                        text,
-                        textAlign: textAlign,
-                        style: TextStyle(
-                          fontSize: getStyle(Styles.fontSize, data: widget.data),
-                          color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'secondaryColor'),
-                          fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                              )
+                            : SizedBox(width: 8),
+                        Text(
+                          // Get localized submit text.
+                          text,
+                          textAlign: textAlign,
+                          style: TextStyle(
+                            fontSize: getStyle(Styles.fontSize, data: widget.data),
+                            color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'secondaryColor'),
+                            fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   onPressed: () {
                     viewModel.socialLogin(widget.data.provider);
@@ -202,82 +206,85 @@ class _SocialLoginGridState extends State<SocialLoginGrid> with DecorationMixin,
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: getStyle(Styles.margin, data: widget.data),
-      child: Consumer2<ScreenViewModel, BindingModel>(
-        builder: (context, viewModel, bindings, child) {
-          final List<NssSocialProvider> providers = SocialEvaluator().determineProviders(widget.data.providers, bindings);
+    return SemanticsWrapperWidget(
+      accessibility: widget.data.accessibility,
+      child: Padding(
+        padding: getStyle(Styles.margin, data: widget.data),
+        child: Consumer2<ScreenViewModel, BindingModel>(
+          builder: (context, viewModel, bindings, child) {
+            final List<NssSocialProvider> providers = SocialEvaluator().determineProviders(widget.data.providers, bindings);
 
-          final int providerCount = providers.length;
-          final int maxInPage = widget.data.columns * widget.data.rows;
-          bool paging = (providerCount > (widget.data.columns * widget.data.rows));
-          final int numOfPages = (providerCount / maxInPage).abs().toInt() + (providerCount % maxInPage != 0 ? 1 : 0);
+            final int providerCount = providers.length;
+            final int maxInPage = widget.data.columns * widget.data.rows;
+            bool paging = (providerCount > (widget.data.columns * widget.data.rows));
+            final int numOfPages = (providerCount / maxInPage).abs().toInt() + (providerCount % maxInPage != 0 ? 1 : 0);
 
-          // If the number of providers does not require an actual grid to be built.
-          if (providerCount < 3 && providerCount > 0) {
-            return Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                createGridItem(viewModel, providers[0]),
-                providers.length == 2
-                    ? Padding(
-                        padding: const EdgeInsets.only(left: 22.0),
-                        child: createGridItem(viewModel, providers[1]),
-                      )
-                    : Container()
-              ],
-            );
-          }
+            // If the number of providers does not require an actual grid to be built.
+            if (providerCount < 3 && providerCount > 0) {
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  createGridItem(viewModel, providers[0]),
+                  providers.length == 2
+                      ? Padding(
+                          padding: const EdgeInsets.only(left: 22.0),
+                          child: createGridItem(viewModel, providers[1]),
+                        )
+                      : Container()
+                ],
+              );
+            }
 
-          // debugPrint(
-          //     'Social login grid: paging = $paging, numberOfPages = $numOfPages, aproximateHeight = ${maxCellHeight * widget.data.rows}');
+            // debugPrint(
+            //     'Social login grid: paging = $paging, numberOfPages = $numOfPages, aproximateHeight = ${maxCellHeight * widget.data.rows}');
 
-          return paging
-              ? NotificationListener<OverscrollIndicatorNotification>(
-                  onNotification: (overscroll) {
-                    overscroll.disallowGlow();
-                    return;
-                  },
-                  child: ListView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    primary: false,
-                    shrinkWrap: true,
-                    children: <Widget>[
-                      Container(
-                        height: (maxCellHeight * widget.data.rows),
-                        child: PageView.builder(
-                          itemCount: numOfPages,
-                          controller: _pageController,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, position) {
-                            var start = position * maxInPage;
-                            var end = maxInPage * (position + 1);
-                            if (providers.length < end) {
-                              var delta = end - providers.length;
-                              end = end - delta;
-                            }
-                            return createGrid(viewModel, providers, start, end);
-                          },
+            return paging
+                ? NotificationListener<OverscrollIndicatorNotification>(
+                    onNotification: (overscroll) {
+                      overscroll.disallowGlow();
+                      return;
+                    },
+                    child: ListView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      primary: false,
+                      shrinkWrap: true,
+                      children: <Widget>[
+                        Container(
+                          height: (maxCellHeight * widget.data.rows),
+                          child: PageView.builder(
+                            itemCount: numOfPages,
+                            controller: _pageController,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, position) {
+                              var start = position * maxInPage;
+                              var end = maxInPage * (position + 1);
+                              if (providers.length < end) {
+                                var delta = end - providers.length;
+                                end = end - delta;
+                              }
+                              return createGrid(viewModel, providers, start, end);
+                            },
+                          ),
                         ),
-                      ),
-                      Container(
-                        height: 10,
-                        child: PageIndicator(
-                          controller: _pageController,
-                          color: getStyle(Styles.indicatorColor, data: widget.data, themeProperty: 'enabledColor'),
-                          itemCount: numOfPages,
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              : createGrid(
-                  viewModel,
-                  providers,
-                  0,
-                  providers.length,
-                );
-        },
+                        Container(
+                          height: 10,
+                          child: PageIndicator(
+                            controller: _pageController,
+                            color: getStyle(Styles.indicatorColor, data: widget.data, themeProperty: 'enabledColor'),
+                            itemCount: numOfPages,
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                : createGrid(
+                    viewModel,
+                    providers,
+                    0,
+                    providers.length,
+                  );
+          },
+        ),
       ),
     );
   }
@@ -311,41 +318,44 @@ class _SocialLoginGridState extends State<SocialLoginGrid> with DecorationMixin,
 
   /// Create grid social button widget.
   Widget createGridItem(ScreenViewModel viewModel, NssSocialProvider provider) {
-    return Container(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 4.0),
-            child: InkWell(
-              onTap: () {
-                viewModel.socialLogin(provider);
-              },
-              child: Material(
-                elevation: getStyle(Styles.elevation, data: widget.data),
-                borderRadius: BorderRadius.circular(
-                  getStyle(Styles.cornerRadius, data: widget.data),
-                ),
-                child: Container(
-                  height: 48,
-                  width: 48,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(
-                      getStyle(Styles.cornerRadius, data: widget.data),
-                    ),
-                    color: provider.getColor(forGrid: true),
+    return Semantics(
+      label: provider.name,
+      child: Container(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 4.0),
+              child: InkWell(
+                onTap: () {
+                  viewModel.socialLogin(provider);
+                },
+                child: Material(
+                  elevation: getStyle(Styles.elevation, data: widget.data),
+                  borderRadius: BorderRadius.circular(
+                    getStyle(Styles.cornerRadius, data: widget.data),
                   ),
-                  padding: EdgeInsets.zero,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(2),
-                      child: Center(
-                        child: FadeInImage(
-                          fadeInDuration: Duration(milliseconds: 100),
-                          width: 32,
-                          height: 32,
-                          image: AssetImage('assets/social_images/g_${provider.name}.png'),
-                          placeholder: AssetImage('assets/social_images/${provider.name}.png'),
+                  child: Container(
+                    height: 48,
+                    width: 48,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        getStyle(Styles.cornerRadius, data: widget.data),
+                      ),
+                      color: provider.getColor(forGrid: true),
+                    ),
+                    padding: EdgeInsets.zero,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(2),
+                        child: Center(
+                          child: FadeInImage(
+                            fadeInDuration: Duration(milliseconds: 100),
+                            width: 32,
+                            height: 32,
+                            image: AssetImage('assets/social_images/g_${provider.name}.png'),
+                            placeholder: AssetImage('assets/social_images/${provider.name}.png'),
+                          ),
                         ),
                       ),
                     ),
@@ -353,21 +363,21 @@ class _SocialLoginGridState extends State<SocialLoginGrid> with DecorationMixin,
                 ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          widget.data.hideTitles
-              ? Container()
-              : Text(
-                  provider.name.inCaps,
-                  style: TextStyle(
-                    fontSize: getStyle(Styles.fontSize, data: widget.data),
-                    color: getStyle(Styles.fontColor, data: widget.data),
-                    fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+            SizedBox(
+              height: 8,
+            ),
+            widget.data.hideTitles
+                ? Container()
+                : Text(
+                    provider.name.inCaps,
+                    style: TextStyle(
+                      fontSize: getStyle(Styles.fontSize, data: widget.data),
+                      color: getStyle(Styles.fontColor, data: widget.data),
+                      fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                    ),
                   ),
-                ),
-        ],
+          ],
+        ),
       ),
     );
   }

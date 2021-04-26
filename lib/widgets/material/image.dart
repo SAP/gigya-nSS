@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/comm/moblie_channel.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
@@ -9,6 +8,7 @@ import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
+import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:provider/provider.dart';
@@ -17,8 +17,7 @@ enum ImageSource { web, asset }
 
 typedef ErrorCallback();
 
-abstract class ImageWidgetState<T extends StatefulWidget> extends State<T>
-    with DecorationMixin, BindingMixin, StyleMixin {
+abstract class ImageWidgetState<T extends StatefulWidget> extends State<T> with DecorationMixin, BindingMixin, StyleMixin {
   ImageProvider imageProvider = MemoryImage(kTransparentImage);
 
   /// Fetch the image according to provided specs.
@@ -94,9 +93,7 @@ abstract class ImageWidgetState<T extends StatefulWidget> extends State<T>
       return null;
     }
     final NssChannel channel = NssIoc().use(NssChannels).dataChannel;
-    var data = await channel
-        .invokeMethod<Uint8List>('image_resource', {'url': url}).timeout(
-            Duration(seconds: 4), onTimeout: () {
+    var data = await channel.invokeMethod<Uint8List>('image_resource', {'url': url}).timeout(Duration(seconds: 4), onTimeout: () {
       // Timeout
       return null;
     }).catchError((error) {
@@ -124,7 +121,6 @@ class ImageWidget extends StatefulWidget {
 
   @override
   _ImageWidgetState createState() => _ImageWidgetState();
-
 }
 
 class _ImageWidgetState extends ImageWidgetState<ImageWidget> {
@@ -140,36 +136,38 @@ class _ImageWidgetState extends ImageWidgetState<ImageWidget> {
     final borderColor = getStyle(Styles.borderColor, data: widget.data);
     final cornerRadius = getStyle(Styles.cornerRadius, data: widget.data);
 
-    return Padding(
-      padding: getStyle(Styles.margin, data: widget.data),
-      child: customSizeWidget(
-        widget.data,
-        Consumer<BindingModel>(
-          builder: (context, bindings, child) {
-            return Material(
-              borderRadius: BorderRadius.circular(cornerRadius),
-              color: Colors.transparent,
-              elevation: getStyle(Styles.elevation, data: widget.data),
-              child: Opacity(
-                opacity: getStyle(Styles.opacity, data: widget.data),
-                child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: borderColor,
-                          width: borderSize,
+    return SemanticsWrapperWidget(
+      accessibility: widget.data.accessibility,
+      child: Padding(
+        padding: getStyle(Styles.margin, data: widget.data),
+        child: NssCustomSizeWidget(
+          data: widget.data,
+          child: Consumer<BindingModel>(
+            builder: (context, bindings, child) {
+              return Material(
+                borderRadius: BorderRadius.circular(cornerRadius),
+                color: Colors.transparent,
+                elevation: getStyle(Styles.elevation, data: widget.data),
+                child: Opacity(
+                  opacity: getStyle(Styles.opacity, data: widget.data),
+                  child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: borderColor,
+                            width: borderSize,
+                          ),
+                          borderRadius: BorderRadius.circular(
+                            cornerRadius,
+                          ),
+                          color: getStyle(Styles.background, data: widget.data),
+                          image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
                         ),
-                        borderRadius: BorderRadius.circular(
-                          cornerRadius,
-                        ),
-                        color: getStyle(Styles.background, data: widget.data),
-                        image: DecorationImage(
-                            image: imageProvider, fit: BoxFit.fill),
-                      ),
-                    ) ??
-                    Container(),
-              ),
-            );
-          },
+                      ) ??
+                      Container(),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

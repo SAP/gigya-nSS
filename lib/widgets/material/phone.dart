@@ -9,6 +9,7 @@ import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
+import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:provider/provider.dart';
@@ -69,9 +70,9 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
   Widget _ccPlaceHolderView() {
     return Padding(
       padding: stylePadding(widget.data),
-      child: customSizeWidget(
-        widget.data,
-        Container(
+      child: NssCustomSizeWidget(
+        data: widget.data,
+        child: Container(
           color: styleBackground(widget.data),
           child: Row(
             children: [
@@ -115,10 +116,10 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
       // Style padding.
       padding: stylePadding(widget.data),
       // Style sizing.
-      child: customSizeWidget(
-        widget.data,
+      child: NssCustomSizeWidget(
+        data: widget.data,
         // Style opacity.
-        Opacity(
+        child: Opacity(
           opacity: styleOpacity(widget.data),
           child: Container(
             // Style background.
@@ -158,104 +159,107 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                   ),
                 ),
                 Expanded(
-                  child: TextFormField(
-                    controller: _textEditingController,
-                    // Style enabled/disabled.
-                    enabled: !widget.data.disabled,
-                    // Style textAlign.
-                    textAlign: styleTextAlign(widget.data),
-                    style: TextStyle(
-                      // Style font color.
-                      color: styleFontColor(widget.data, widget.data.disabled),
-                      // Style font size.
-                      fontSize: styleFontSize(widget.data),
-                      // Style font weight.
-                      fontWeight: styleFontWeight(widget.data),
-                    ),
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
-                        hintText: localizedStringFor(widget.data.textKey),
-                        // Style placeholder/hint.
-                        hintStyle: TextStyle(
-                          color: stylePlaceholder(widget.data, widget.data.disabled),
-                        ),
-                        disabledBorder: borderRadius == 0
-                            ? UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: getThemeColor('disabledColor').withOpacity(0.3),
-                                  width: borderSize + 2,
+                  child: SemanticsWrapperWidget(
+                    accessibility: widget.data.accessibility,
+                    child: TextFormField(
+                      controller: _textEditingController,
+                      // Style enabled/disabled.
+                      enabled: !widget.data.disabled,
+                      // Style textAlign.
+                      textAlign: styleTextAlign(widget.data),
+                      style: TextStyle(
+                        // Style font color.
+                        color: styleFontColor(widget.data, widget.data.disabled),
+                        // Style font size.
+                        fontSize: styleFontSize(widget.data),
+                        // Style font weight.
+                        fontWeight: styleFontWeight(widget.data),
+                      ),
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                          hintText: localizedStringFor(widget.data.textKey),
+                          // Style placeholder/hint.
+                          hintStyle: TextStyle(
+                            color: stylePlaceholder(widget.data, widget.data.disabled),
+                          ),
+                          disabledBorder: borderRadius == 0
+                              ? UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('disabledColor').withOpacity(0.3),
+                                    width: borderSize + 2,
+                                  ),
+                                )
+                              : OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('disabledColor').withOpacity(0.3),
+                                    width: borderSize,
+                                  ),
                                 ),
-                              )
-                            : OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-                                borderSide: BorderSide(
-                                  color: getThemeColor('disabledColor').withOpacity(0.3),
-                                  width: borderSize,
+                          errorBorder: borderRadius == 0
+                              ? UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('errorColor'),
+                                    width: borderSize + 2,
+                                  ),
+                                )
+                              : OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('errorColor'),
+                                    width: borderSize,
+                                  ),
                                 ),
-                              ),
-                        errorBorder: borderRadius == 0
-                            ? UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: getThemeColor('errorColor'),
-                                  width: borderSize + 2,
+                          focusedErrorBorder: borderRadius == 0
+                              ? UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('errorColor'),
+                                    width: borderSize + 2,
+                                  ),
+                                )
+                              : OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('errorColor'),
+                                    width: borderSize,
+                                  ),
                                 ),
-                              )
-                            : OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-                                borderSide: BorderSide(
-                                  color: getThemeColor('errorColor'),
-                                  width: borderSize,
+                          focusedBorder: borderRadius == 0
+                              ? UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('enabledColor'),
+                                    width: borderSize + 2,
+                                  ),
+                                )
+                              : OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('enabledColor'),
+                                    width: borderSize,
+                                  ),
                                 ),
-                              ),
-                        focusedErrorBorder: borderRadius == 0
-                            ? UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: getThemeColor('errorColor'),
-                                  width: borderSize + 2,
-                                ),
-                              )
-                            : OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-                                borderSide: BorderSide(
-                                  color: getThemeColor('errorColor'),
-                                  width: borderSize,
-                                ),
-                              ),
-                        focusedBorder: borderRadius == 0
-                            ? UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: getThemeColor('enabledColor'),
-                                  width: borderSize + 2,
-                                ),
-                              )
-                            : OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-                                borderSide: BorderSide(
-                                  color: getThemeColor('enabledColor'),
-                                  width: borderSize,
-                                ),
-                              ),
-                        enabledBorder: borderRadius == 0
-                            ? UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: styleBorderColor(widget.data),
-                                  width: borderSize,
-                                ),
-                              )
-                            : OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-                                borderSide: BorderSide(
-                                  color: styleBorderColor(widget.data),
-                                  width: borderSize,
-                                ),
-                              )),
-                    onSaved: (input) {
-                      // Combine text from code selection & phone number.
-                      final String phone = _countryCodePick.dialCode + input.trim();
+                          enabledBorder: borderRadius == 0
+                              ? UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: styleBorderColor(widget.data),
+                                    width: borderSize,
+                                  ),
+                                )
+                              : OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                                  borderSide: BorderSide(
+                                    color: styleBorderColor(widget.data),
+                                    width: borderSize,
+                                  ),
+                                )),
+                      onSaved: (input) {
+                        // Combine text from code selection & phone number.
+                        final String phone = _countryCodePick.dialCode + input.trim();
 
-                      // Field can only be bound using the bind tag.
-                      bindings.save<String>(widget.data.bind, phone);
-                    },
+                        // Field can only be bound using the bind tag.
+                        bindings.save<String>(widget.data.bind, phone);
+                      },
+                    ),
                   ),
                 ),
               ],
