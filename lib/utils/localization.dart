@@ -23,6 +23,8 @@ mixin LocalizationMixin {
     }
     if (_localizationMap[usedLang].containsKey(textKey)) {
       text = _localizationMap[usedLang][textKey];
+    } else if (_localizationMap['_default'].containsKey(textKey)) {
+      text = _localizationMap['_default'][textKey];
     }
     return text;
   }
