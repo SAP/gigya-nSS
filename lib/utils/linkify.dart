@@ -45,10 +45,10 @@ class Linkify with StyleMixin {
       final RegExpMatch match = matches.elementAt(i);
       _linkSingle(wrappers[i], match.group(1), match.group(2), tap, data, span, linkColor);
     }
-    return RichText(
+    return Text.rich(
+      TextSpan(children: span),
       overflow: TextOverflow.visible,
       textAlign: getStyle(Styles.textAlign, data: data) ?? TextAlign.start,
-      text: TextSpan(children: span),
     );
   }
 
