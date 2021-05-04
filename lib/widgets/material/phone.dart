@@ -51,16 +51,19 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
   Widget build(BuildContext context) {
     return Consumer2<ScreenViewModel, BindingModel>(
       builder: (context, viewModel, bindings, child) {
-        return FutureBuilder<List<CountryCodePick>>(
-          future: _countryCodeList.isEmpty ? loadCC() : cachedCC(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              _countryCodeList = snapshot.data;
-              // Need to set the default pick.
-              return _ccPhoneView(bindings);
-            }
-            return _ccPlaceHolderView();
-          },
+        return Visibility(
+          visible: isVisible(viewModel, widget.data.showIf),
+          child: FutureBuilder<List<CountryCodePick>>(
+            future: _countryCodeList.isEmpty ? loadCC() : cachedCC(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                _countryCodeList = snapshot.data;
+                // Need to set the default pick.
+                return _ccPhoneView(bindings);
+              }
+              return _ccPlaceHolderView();
+            },
+          ),
         );
       },
     );

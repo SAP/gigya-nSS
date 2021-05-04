@@ -103,58 +103,61 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget> with Decoration
 
             TextAlign textAlign = getStyle(Styles.textAlign, data: widget.data);
 
-            return Opacity(
-              opacity: getStyle(Styles.opacity, data: widget.data),
-              child: ButtonTheme(
-                buttonColor: background,
-                textTheme: ButtonTextTheme.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    getStyle(Styles.cornerRadius, data: widget.data),
-                  ),
-                ),
-                child: RaisedButton(
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  padding: EdgeInsets.all(0),
-                  elevation: getStyle(Styles.elevation, data: widget.data),
-                  child: SemanticsWrapperWidget(
-                    accessibility: widget.data.accessibility,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        widget.data.iconEnabled
-                            ? SizedBox(
-                                width: 40,
-                                height: 34,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Image(
-                                    image: widget.data.iconURL != null
-                                        ? NetworkImage(widget.data.iconURL)
-                                        : AssetImage('assets/social_images/${widget.data.provider.name}.png'),
-                                    width: 24,
-                                    height: 24,
-                                  ),
-                                ),
-                              )
-                            : SizedBox(width: 8),
-                        Text(
-                          // Get localized submit text.
-                          text,
-                          textAlign: textAlign,
-                          style: TextStyle(
-                            fontSize: getStyle(Styles.fontSize, data: widget.data),
-                            color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'secondaryColor'),
-                            fontWeight: getStyle(Styles.fontWeight, data: widget.data),
-                          ),
-                        ),
-                      ],
+            return Visibility(
+              visible: isVisible(viewModel, widget.data.showIf),
+              child: Opacity(
+                opacity: getStyle(Styles.opacity, data: widget.data),
+                child: ButtonTheme(
+                  buttonColor: background,
+                  textTheme: ButtonTextTheme.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      getStyle(Styles.cornerRadius, data: widget.data),
                     ),
                   ),
-                  onPressed: () {
-                    viewModel.socialLogin(widget.data.provider);
-                  },
+                  child: RaisedButton(
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    padding: EdgeInsets.all(0),
+                    elevation: getStyle(Styles.elevation, data: widget.data),
+                    child: SemanticsWrapperWidget(
+                      accessibility: widget.data.accessibility,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          widget.data.iconEnabled
+                              ? SizedBox(
+                                  width: 40,
+                                  height: 34,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Image(
+                                      image: widget.data.iconURL != null
+                                          ? NetworkImage(widget.data.iconURL)
+                                          : AssetImage('assets/social_images/${widget.data.provider.name}.png'),
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                )
+                              : SizedBox(width: 8),
+                          Text(
+                            // Get localized submit text.
+                            text,
+                            textAlign: textAlign,
+                            style: TextStyle(
+                              fontSize: getStyle(Styles.fontSize, data: widget.data),
+                              color: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'secondaryColor'),
+                              fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    onPressed: () {
+                      viewModel.socialLogin(widget.data.provider);
+                    },
+                  ),
                 ),
               ),
             );
@@ -221,68 +224,71 @@ class _SocialLoginGridState extends State<SocialLoginGrid> with DecorationMixin,
 
             // If the number of providers does not require an actual grid to be built.
             if (providerCount < 3 && providerCount > 0) {
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  createGridItem(viewModel, providers[0]),
-                  providers.length == 2
-                      ? Padding(
-                          padding: const EdgeInsets.only(left: 22.0),
-                          child: createGridItem(viewModel, providers[1]),
-                        )
-                      : Container()
-                ],
+              return Visibility(
+                visible: isVisible(viewModel, widget.data.showIf),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    createGridItem(viewModel, providers[0]),
+                    providers.length == 2
+                        ? Padding(
+                            padding: const EdgeInsets.only(left: 22.0),
+                            child: createGridItem(viewModel, providers[1]),
+                          )
+                        : Container()
+                  ],
+                ),
               );
             }
 
-            // debugPrint(
-            //     'Social login grid: paging = $paging, numberOfPages = $numOfPages, aproximateHeight = ${maxCellHeight * widget.data.rows}');
-
-            return paging
-                ? NotificationListener<OverscrollIndicatorNotification>(
-                    onNotification: (overscroll) {
-                      overscroll.disallowGlow();
-                      return;
-                    },
-                    child: ListView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      primary: false,
-                      shrinkWrap: true,
-                      children: <Widget>[
-                        Container(
-                          height: (maxCellHeight * widget.data.rows),
-                          child: PageView.builder(
-                            itemCount: numOfPages,
-                            controller: _pageController,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, position) {
-                              var start = position * maxInPage;
-                              var end = maxInPage * (position + 1);
-                              if (providers.length < end) {
-                                var delta = end - providers.length;
-                                end = end - delta;
-                              }
-                              return createGrid(viewModel, providers, start, end);
-                            },
+            return Visibility(
+              visible: isVisible(viewModel, widget.data.showIf),
+              child: paging
+                  ? NotificationListener<OverscrollIndicatorNotification>(
+                      onNotification: (overscroll) {
+                        overscroll.disallowGlow();
+                        return;
+                      },
+                      child: ListView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        primary: false,
+                        shrinkWrap: true,
+                        children: <Widget>[
+                          Container(
+                            height: (maxCellHeight * widget.data.rows),
+                            child: PageView.builder(
+                              itemCount: numOfPages,
+                              controller: _pageController,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, position) {
+                                var start = position * maxInPage;
+                                var end = maxInPage * (position + 1);
+                                if (providers.length < end) {
+                                  var delta = end - providers.length;
+                                  end = end - delta;
+                                }
+                                return createGrid(viewModel, providers, start, end);
+                              },
+                            ),
                           ),
-                        ),
-                        Container(
-                          height: 10,
-                          child: PageIndicator(
-                            controller: _pageController,
-                            color: getStyle(Styles.indicatorColor, data: widget.data, themeProperty: 'enabledColor'),
-                            itemCount: numOfPages,
-                          ),
-                        )
-                      ],
+                          Container(
+                            height: 10,
+                            child: PageIndicator(
+                              controller: _pageController,
+                              color: getStyle(Styles.indicatorColor, data: widget.data, themeProperty: 'enabledColor'),
+                              itemCount: numOfPages,
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  : createGrid(
+                      viewModel,
+                      providers,
+                      0,
+                      providers.length,
                     ),
-                  )
-                : createGrid(
-                    viewModel,
-                    providers,
-                    0,
-                    providers.length,
-                  );
+            );
           },
         ),
       ),
