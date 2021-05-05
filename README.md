@@ -1250,6 +1250,10 @@ https://developers.gigya.com/display/GD/Opening+A+Support+Incident
 
 ## Contributing
 Via pull request to this repository.
+Please read CONTRIBUTING file for guidelines.
 
 ## Known Issues
 iOS – Debugging is currently available only on simulators.
+
+## Licensing
+Please see our [LICENSE](https://github.com/SAP/gigya-nSS/blob/main/LICENSES/Apache-2.0.txt) for copyright and license information.
