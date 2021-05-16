@@ -75,59 +75,62 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         styles: widget.screen.appBar == null ? null : widget.screen.appBar.style, themeProperty: 'primaryColor');
     var scaffoldBackground = getStyle(Styles.background, styles: widget.screen.style) ?? Colors.white;
 
-    return Scaffold(
-      backgroundColor: scaffoldBackground,
-      extendBodyBehindAppBar: true,
-      appBar: widget.screen.appBar == null
-          ? null
-          : AppBar(
-              elevation: getStyle(Styles.elevation, styles: widget.screen.appBar.style),
-              backgroundColor: appBarBackground,
-              title: Text(
-                localizedStringFor(widget.screen.appBar.textKey) ?? '',
-                style: TextStyle(
-                  color: getStyle(Styles.fontColor, styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
-                  fontWeight: getStyle(Styles.fontWeight, styles: widget.screen.appBar.style),
-                ),
-              ),
-              leading: kIsWeb
-                  ? null
-                  : Platform.isIOS
-                      ? Container(
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.close,
-                              color:
-                                  getStyle(Styles.fontColor, styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
-                            ),
-                            onPressed: () => Navigator.pushNamed(context, '_canceled'),
-                          ),
-                        )
-                      : null,
-            ),
-      body: Container(
-        child: SafeArea(
-          child: Stack(
-            children: <Widget>[
-              SingleChildScrollView(
-                child: Form(
-                  key: widget.viewModel.formKey,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: widget.content,
+    return Directionality(
+      textDirection: isRTL(),
+      child: Scaffold(
+        backgroundColor: scaffoldBackground,
+        extendBodyBehindAppBar: true,
+        appBar: widget.screen.appBar == null
+            ? null
+            : AppBar(
+                elevation: getStyle(Styles.elevation, styles: widget.screen.appBar.style),
+                backgroundColor: appBarBackground,
+                title: Text(
+                  localizedStringFor(widget.screen.appBar.textKey) ?? '',
+                  style: TextStyle(
+                    color: getStyle(Styles.fontColor, styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
+                    fontWeight: getStyle(Styles.fontWeight, styles: widget.screen.appBar.style),
                   ),
                 ),
+                leading: kIsWeb
+                    ? null
+                    : Platform.isIOS
+                        ? Container(
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.close,
+                                color:
+                                    getStyle(Styles.fontColor, styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
+                              ),
+                              onPressed: () => Navigator.pushNamed(context, '_canceled'),
+                            ),
+                          )
+                        : null,
               ),
-              Consumer<ScreenViewModel>(
-                builder: (context, vm, child) {
-                  if (vm.isProgress()) {
-                    return MaterialScreenProgressWidget();
-                  } else {
-                    return Container();
-                  }
-                },
-              )
-            ],
+        body: Container(
+          child: SafeArea(
+            child: Stack(
+              children: <Widget>[
+                SingleChildScrollView(
+                  child: Form(
+                    key: widget.viewModel.formKey,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: widget.content,
+                    ),
+                  ),
+                ),
+                Consumer<ScreenViewModel>(
+                  builder: (context, vm, child) {
+                    if (vm.isProgress()) {
+                      return MaterialScreenProgressWidget();
+                    } else {
+                      return Container();
+                    }
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),
