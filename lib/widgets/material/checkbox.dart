@@ -56,8 +56,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
             visible: isVisible(viewModel, widget.data.showIf),
             child: Theme(
               data: Theme.of(context).copyWith(
-                unselectedWidgetColor: getStyle(Styles.fontColor,
-                    data: widget.data, themeProperty: 'textColor'),
+                unselectedWidgetColor: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
                 disabledColor: getThemeColor('disabledColor'),
               ),
               child: Opacity(
@@ -78,23 +77,29 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                             children: <Widget>[
                               SemanticsWrapperWidget(
                                 accessibility: widget.data.accessibility,
-                                child: Checkbox(
-                                  activeColor: widget.data.disabled
-                                      ? getThemeColor('disabledColor').withOpacity(0.3)
-                                      : getThemeColor('enabledColor'),
-                                  // TODO: need to verify if can improve it.
-                                  checkColor: widget.data.disabled
-                                      ? getThemeColor('disabledColor').withOpacity(0.3)
-                                      : getThemeColor('secondaryColor'),
-                                  value: _currentValue,
-                                  onChanged: (bool val) {
-                                    if (widget.data.disabled) {
-                                      return null;
-                                    }
-                                    setState(() {
-                                      bindings.save<bool>(widget.data.bind, val, saveAs: widget.data.sendAs);
-                                    });
-                                  },
+                                child: Theme(
+                                  data: ThemeData(
+                                      unselectedWidgetColor: widget.data.disabled
+                                          ? getThemeColor('disabledColor').withOpacity(0.3)
+                                          : getThemeColor('enabledColor')),
+                                  child: Checkbox(
+                                    tristate: false,
+                                    activeColor: widget.data.disabled
+                                        ? getThemeColor('disabledColor').withOpacity(0.3)
+                                        : getThemeColor('enabledColor'),
+                                    checkColor: widget.data.disabled
+                                        ? getThemeColor('disabledColor').withOpacity(0.3)
+                                        : getThemeColor('secondaryColor'),
+                                    value: _currentValue,
+                                    onChanged: (bool val) {
+                                      if (widget.data.disabled) {
+                                        return null;
+                                      }
+                                      setState(() {
+                                        bindings.save<bool>(widget.data.bind, val, saveAs: widget.data.sendAs);
+                                      });
+                                    },
+                                  ),
                                 ),
                               ),
                               Flexible(
