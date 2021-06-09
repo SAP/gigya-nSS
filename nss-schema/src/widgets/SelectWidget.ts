@@ -29,7 +29,8 @@ export default new WidgetEntity('Select', mergeDeep({},
                             'boolean'
                         ]
                     }
-                }
+                },
+                additionalProperties: false
             })
         }
     }
