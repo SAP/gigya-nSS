@@ -6,11 +6,11 @@ import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
+import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:provider/provider.dart';
-import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 
 /// Dropdown group UI selection component.
 class DropDownButtonWidget extends StatefulWidget {
@@ -26,6 +26,13 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
     with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin {
   String _dropdownValue;
   List<String> _dropdownItems = [];
+  String _placeholder;
+
+  @override
+  void initState() {
+    _placeholder = widget.data.placeholder ?? null;
+    super.initState();
+  }
 
   int indexFromDisplayValue(String value) {
     int index = 0;
@@ -59,17 +66,29 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
       }
 
       var bindValue = bindingValue.value;
+      var defaultValue;
       widget.data.options.forEach((option) {
         _dropdownItems.add(localizedStringFor(option.textKey));
-        if (bindValue == null && option.defaultValue != null && option.defaultValue) {
-          bindValue = option.value;
+        if (option.defaultValue != null && option.defaultValue) {
+          defaultValue = option.value;
         }
       });
-      _dropdownValue = _dropdownItems[indexFromValue(bindValue)];
+
+      if (bindingValue.value == null && _placeholder != null) {
+        _dropdownValue = null;
+        debugPrint('No binding value for dropdown -> will display placeholder');
+      } else if (defaultValue != null) {
+        _dropdownValue = _dropdownItems[indexFromValue(defaultValue)];
+        debugPrint('No binding value for dropdown -> default value will be displayed');
+      } else {
+        _dropdownValue = _dropdownItems[indexFromValue(bindValue)];
+        debugPrint('Binding value available for dropdown and will be displayed');
+      }
 
       var borderSize = getStyle(Styles.borderSize, data: widget.data);
-      var cornerRadius = getStyle(Styles.cornerRadius, data: widget.data);
-      var borderColor = getStyle(Styles.borderColor, data: widget.data);
+      var borderRadius = getStyle(Styles.cornerRadius, data: widget.data);
+      var borderColor = getStyle(Styles.borderColor, data: widget.data, themeProperty: 'disabledColor');
+      final Color color = getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor');
 
       return SemanticsWrapperWidget(
         accessibility: widget.data.accessibility,
@@ -82,82 +101,89 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
               child: Container(
                 decoration: BoxDecoration(
                     color: getStyle(Styles.background, data: widget.data),
-                    borderRadius: cornerRadius == 0 ? null : BorderRadius.circular(cornerRadius),
-                    border: cornerRadius >= 1
+                    borderRadius: borderRadius == 0 ? null : BorderRadius.circular(borderRadius),
+                    border: borderRadius >= 1
                         ? Border.all(color: borderColor, width: borderSize)
                         : Border(bottom: BorderSide(width: borderSize, color: borderColor))),
                 child: NssCustomSizeWidget(
-                    data: widget.data,
-                    child: IgnorePointer(
-                      ignoring: widget.data.disabled,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: DropdownButton<String>(
-                          dropdownColor: getStyle(Styles.background, data: widget.data),
-                          isExpanded: true,
-                          value: _dropdownValue,
-                          icon: Icon(
-                            Icons.arrow_drop_down,
+                  data: widget.data,
+                  child: IgnorePointer(
+                    ignoring: widget.data.disabled,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        underline: Container(),
+                        style: TextStyle(
+                            color: widget.data.disabled ? color.withOpacity(0.3) : color,
+                            fontSize: getStyle(Styles.fontSize, data: widget.data),
+                            fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
+                        hint: Text(
+                          localizedStringFor(_placeholder) ?? '',
+                          style: TextStyle(
                             color: widget.data.disabled
-                                ? getThemeColor('disabledColor').withOpacity(0.3)
-                                : getStyle(Styles.borderColor,
-                                    data: widget.data,
-                                    themeProperty:
-                                        'primaryColor'), // TODO: need to change the getter from theme.
+                                ? getStyle(Styles.placeholderColor, data: widget.data, themeProperty: 'disabledColor')
+                                    .withOpacity(0.3)
+                                : getStyle(Styles.placeholderColor, data: widget.data, themeProperty: 'textColor')
+                                    .withOpacity(0.5),
                           ),
-                          iconSize: 24,
-                          elevation: 4,
-                          underline: Container(),
-                          onChanged: (String newValue) {
-                            if (widget.data.disabled) {
+                        ),
+                        dropdownColor: getStyle(Styles.background, data: widget.data),
+                        value: _dropdownValue,
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: widget.data.disabled
+                              ? getThemeColor('disabledColor').withOpacity(0.3)
+                              : getStyle(Styles.borderColor, data: widget.data, themeProperty: 'primaryColor'),
+                        ),
+                        elevation: 4,
+                        onChanged: (String newValue) {
+                          if (widget.data.disabled) {
+                            return;
+                          }
+                          setState(() {
+                            var index = indexFromDisplayValue(newValue);
+                            var updated = widget.data.options[index].value;
+
+                            // Value needs to be parsed before form can be submitted.
+                            if (widget.data.parseAs != null) {
+                              // Markup parsing applies.
+                              var parsed = parseAs(updated, widget.data.parseAs);
+                              if (parsed == null) {
+                                engineLogger.e('parseAs field is not compatible with provided input');
+                              }
+                              bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
                               return;
                             }
-                            setState(() {
-                              var index = indexFromDisplayValue(newValue);
-                              var updated = widget.data.options[index].value;
-
-                              // Value needs to be parsed before form can be submitted.
-                              if (widget.data.parseAs != null) {
-                                // Markup parsing applies.
-                                var parsed = parseAs(updated, widget.data.parseAs);
-                                if (parsed == null) {
-                                  engineLogger.e('parseAs field is not compatible with provided input');
-                                }
-                                bindings.save<String>(widget.data.bind, parsed,
-                                    saveAs: widget.data.sendAs);
-                                return;
-                              }
-                              // If parseAs field is not available try to parse according to schema.
-                              var parsed = parseUsingSchema(updated, widget.data.bind);
-                              if (parsed == null) {
-                                engineLogger.e('Schema type is not compatible with provided input');
-                              }
-                              bindings.save<String>(widget.data.bind, parsed,
-                                  saveAs: widget.data.sendAs);
-                            });
-                          },
-                          items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {
-                            TextAlign align =
-                                getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start;
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Align(
-                                alignment: align.toAlignment(widget.data.type),
-                                child: Text(value,
-                                    style: TextStyle(
-                                      color: widget.data.disabled
-                                          ? getThemeColor('disabledColor').withOpacity(0.3)
-                                          : getStyle(Styles.fontColor,
-                                              data: widget.data, themeProperty: 'textColor'),
-                                      fontSize: getStyle(Styles.fontSize, data: widget.data),
-                                      fontWeight: getStyle(Styles.fontWeight, data: widget.data),
-                                    )),
-                              ),
-                            );
-                          }).toList(),
-                        ),
+                            // If parseAs field is not available try to parse according to schema.
+                            var parsed = parseUsingSchema(updated, widget.data.bind);
+                            if (parsed == null) {
+                              engineLogger.e('Schema type is not compatible with provided input');
+                            }
+                            bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
+                          });
+                        },
+                        items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {
+                          TextAlign align = getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start;
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Align(
+                              alignment: align.toAlignment(widget.data.type),
+                              child: Text(value,
+                                  style: TextStyle(
+                                    color: widget.data.disabled
+                                        ? getThemeColor('disabledColor').withOpacity(0.3)
+                                        : getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
+                                    fontSize: getStyle(Styles.fontSize, data: widget.data),
+                                    fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                                  )),
+                            ),
+                          );
+                        }).toList(),
                       ),
-                    )),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),

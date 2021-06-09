@@ -64,6 +64,8 @@ class NssWidgetData {
   @JsonKey(defaultValue: {'label': '', 'hint': ''})
   Accessibility accessibility;
 
+  String placeholder;
+
   NssWidgetData({
     this.textKey,
     this.type,
@@ -95,6 +97,7 @@ class NssWidgetData {
     this.countries,
     this.isNestedContainer,
     this.accessibility,
+    this.placeholder,
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);
