@@ -5,6 +5,7 @@
         {
           "bind": "profile.birthYear",
           "disabled": false,
+          "placeholder": "dasd",
           "options": [
             {
               "default": true,
