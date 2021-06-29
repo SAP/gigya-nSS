@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 
 /// General widget decoration mixin.
 /// Includes useful UI builders that correspond with the applied markup.
@@ -32,7 +33,9 @@ class NssCustomSizeWidget extends StatelessWidget {
     // Check for size parameter in available custom theme. Override current if exists.
     final String customTheme = data.theme ?? '';
     // Check if this widget has a size attached in attached custom theme.
-    if (customTheme != null && config.markup.customThemes != null && config.markup.customThemes.containsKey(customTheme)) {
+    if (customTheme != null &&
+        config.markup.customThemes != null &&
+        config.markup.customThemes.containsKey(customTheme)) {
       if (config.markup.customThemes[customTheme].containsKey('size')) {
         size = config.markup.customThemes[customTheme]['size'];
       }
@@ -45,7 +48,7 @@ class NssCustomSizeWidget extends StatelessWidget {
     }
 
     if (size == null) {
-      return child;
+      return applySizeRestriction();
     }
 
     return SizedBox(
@@ -53,6 +56,22 @@ class NssCustomSizeWidget extends StatelessWidget {
       height: ensureDouble(size[1]),
       child: child,
     );
+  }
+
+  /// Specific widgets such as image widget must have a size restriction.
+  /// If the user did not specify any, 100/100 will be applied.
+  Widget applySizeRestriction() {
+    switch (data.type) {
+      case NssWidgetType.profilePhoto:
+      case NssWidgetType.image:
+        return SizedBox(
+          width: 100.0,
+          height: 100.0,
+          child: child,
+        );
+      default:
+        return child;
+    }
   }
 
   /// Make sure this value will be treated as a double.
