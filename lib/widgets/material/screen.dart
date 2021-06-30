@@ -75,59 +75,62 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         styles: widget.screen.appBar == null ? null : widget.screen.appBar.style, themeProperty: 'primaryColor');
     var scaffoldBackground = getStyle(Styles.background, styles: widget.screen.style) ?? Colors.white;
 
-    return Scaffold(
-      backgroundColor: scaffoldBackground,
-      extendBodyBehindAppBar: true,
-      appBar: widget.screen.appBar == null
-          ? null
-          : AppBar(
-              elevation: getStyle(Styles.elevation, styles: widget.screen.appBar.style),
-              backgroundColor: appBarBackground,
-              title: Text(
-                localizedStringFor(widget.screen.appBar.textKey) ?? '',
-                style: TextStyle(
-                  color: getStyle(Styles.fontColor, styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
-                  fontWeight: getStyle(Styles.fontWeight, styles: widget.screen.appBar.style),
-                ),
-              ),
-              leading: kIsWeb
-                  ? null
-                  : Platform.isIOS
-                      ? Container(
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.close,
-                              color:
-                                  getStyle(Styles.fontColor, styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
-                            ),
-                            onPressed: () => Navigator.pushNamed(context, '_canceled'),
-                          ),
-                        )
-                      : null,
-            ),
-      body: Container(
-        child: SafeArea(
-          child: Stack(
-            children: <Widget>[
-              SingleChildScrollView(
-                child: Form(
-                  key: widget.viewModel.formKey,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: widget.content,
+    return Directionality(
+      textDirection: isRTL(),
+      child: Scaffold(
+        backgroundColor: scaffoldBackground,
+        extendBodyBehindAppBar: true,
+        appBar: widget.screen.appBar == null
+            ? null
+            : AppBar(
+                elevation: getStyle(Styles.elevation, styles: widget.screen.appBar.style),
+                backgroundColor: appBarBackground,
+                title: Text(
+                  localizedStringFor(widget.screen.appBar.textKey) ?? '',
+                  style: TextStyle(
+                    color: getStyle(Styles.fontColor, styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
+                    fontWeight: getStyle(Styles.fontWeight, styles: widget.screen.appBar.style),
                   ),
                 ),
+                leading: kIsWeb
+                    ? null
+                    : Platform.isIOS
+                        ? Container(
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.close,
+                                color: getStyle(Styles.fontColor,
+                                    styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
+                              ),
+                              onPressed: () => Navigator.pushNamed(context, '_canceled'),
+                            ),
+                          )
+                        : null,
               ),
-              Consumer<ScreenViewModel>(
-                builder: (context, vm, child) {
-                  if (vm.isProgress()) {
-                    return MaterialScreenProgressWidget();
-                  } else {
-                    return Container();
-                  }
-                },
-              )
-            ],
+        body: Container(
+          child: SafeArea(
+            child: Stack(
+              children: <Widget>[
+                SingleChildScrollView(
+                  child: Form(
+                    key: widget.viewModel.formKey,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: widget.content,
+                    ),
+                  ),
+                ),
+                Consumer<ScreenViewModel>(
+                  builder: (context, vm, child) {
+                    if (vm.isProgress()) {
+                      return MaterialScreenProgressWidget();
+                    } else {
+                      return Container();
+                    }
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -143,29 +146,37 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         return;
       }
 
-      // If route data is available, make sure it is added to the routing/binding data.
-      if (event.routingData != null && event.routingData.isNotEmpty) {
-//        widget.routingData.addAll(event.routingData);
-      }
-
       // Trigger "routeTo" event to determine routing override.
       String routingOverride = await willRouteTo(event.route);
 
       // Merge bindings & routing data to avoid data loss between screens.
       widget.routingData.addAll(bindings.savedBindingData);
 
-      // Route.
-      Navigator.pushReplacementNamed(
-        context,
-        routingOverride.isNotEmpty ? routingOverride : event.route,
-        arguments: {
-          'pid': viewModel.id,
-          'routingData': widget.routingData,
-          'initialData': event.routingData,
-          'expressions': event.expressions
-        },
-      );
+      // Apply navigation.
+      final String route = routingOverride.isNotEmpty ? routingOverride : event.route;
+      _navigateToScreen(route, event);
     });
+  }
+
+  /// Remove all sensitive data from the widget routing data before screen transitions.
+  _removeUnsecureRoutingData() {
+    // Remove password field from widget routing.
+    widget.routingData.remove('password');
+  }
+
+  /// Route to next screen.
+  _navigateToScreen(route, event) {
+    _removeUnsecureRoutingData();
+    Navigator.pushReplacementNamed(
+      context,
+      route,
+      arguments: {
+        'pid': viewModel.id,
+        'routingData': widget.routingData,
+        'initialData': event.routingData,
+        'expressions': event.expressions
+      },
+    );
   }
 
   /// Attach the relevant screen action.
@@ -183,10 +194,11 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     bindings.updateWith(dataMap['data'].cast<String, dynamic>());
   }
 
+  /// Handle "didRouteFrom" native event injection.
   void didRouteFrom() async {
     Map<String, dynamic> eventData = await routeFrom(viewModel.id, viewModel.pid, widget.routingData);
     if (eventData != null) {
-      // Overrite current routing data if exists.
+      // Override current routing data if exists.
       if (eventData['data'] != null) {
         widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
       }
@@ -201,10 +213,11 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     }
   }
 
+  /// Handle "willRouteTo" native event injection.
   Future<String> willRouteTo(nid) async {
     Map<String, dynamic> eventData = await routeTo(viewModel.id, nid, bindings.savedBindingData);
     if (eventData != null && eventData.isNotEmpty) {
-      // Overrite current routing data if exists.
+      // Override current routing data if exists.
       widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
       // Merge routing data into available binding data.
       bindings.updateRoutingWith(widget.routingData);

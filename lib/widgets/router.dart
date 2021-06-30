@@ -105,10 +105,10 @@ abstract class Router {
 
     var nextRoute = getNextRoute(settings.name);
 
-    //TODO: Specific errors may be more apropriate here.
     if (nextRoute == null) {
       engineLogger.e('Failed to parse routing for name: ${settings.name}');
-      return getErrorRoute(settings, 'Failed to parse desired route.\nPlease verify markup.');
+      return getErrorRoute(settings, 'Failed to parse desired route: ${settings.name}.'
+          '\nPlease verify markup and make sure your route exists and is written correctly.');
     }
     if (shouldCancel(nextRoute)) {
       return dismissEngine(settings, '_canceled');
@@ -126,7 +126,7 @@ abstract class Router {
   }
 }
 
-/// Engeine internal routing event class.
+/// Engine internal routing event class.
 /// Used to group all relevant routing stream data before passing it to the
 class RoutingEvent {
   final String route;

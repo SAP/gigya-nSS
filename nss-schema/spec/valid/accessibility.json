@@ -1,0 +1,16 @@
+{
+  "screens": {
+    "accessibility": {
+      "children": [
+        {
+          "type": "label",
+          "textKey": "Login with your phone number",
+          "accessibility": {
+            "label": "check",
+            "hint": "check"
+          }
+        }
+      ]
+    }
+  }
+}

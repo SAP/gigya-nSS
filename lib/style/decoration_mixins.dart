@@ -4,20 +4,31 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 
 /// General widget decoration mixin.
 /// Includes useful UI builders that correspond with the applied markup.
 mixin DecorationMixin {
   final NssConfig config = NssIoc().use(NssConfig);
 
-  /// Make sure this value will be treated as a double.
-  /// Useful for JSON parsed elements
-  /// which should be treated as double but are parsed as integer.
-  double ensureDouble(num) => (num is int) ? num.toDouble() : num;
+  bool isVisible(viewModel, showIf) {
+    String result = viewModel.expressions[showIf] ?? 'true';
+    return result.toLowerCase() == 'true';
+  }
+}
 
-  /// Apply a specific size to the selected element.
-  /// Will check the [data] for any "size" property and apply it accordingly.
-  Widget customSizeWidget(NssWidgetData data, Widget child) {
+/// Apply a specific size to the selected element.
+/// Will check the [data] for any "size" property and apply it accordingly.
+class NssCustomSizeWidget extends StatelessWidget {
+  final NssWidgetData data;
+  final Widget child;
+
+  const NssCustomSizeWidget({Key key, this.data, this.child}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final NssConfig config = NssIoc().use(NssConfig);
+
     var size;
     // Check for size parameter in available custom theme. Override current if exists.
     final String customTheme = data.theme ?? '';
@@ -37,7 +48,7 @@ mixin DecorationMixin {
     }
 
     if (size == null) {
-      return child;
+      return applySizeRestriction();
     }
 
     return SizedBox(
@@ -47,8 +58,24 @@ mixin DecorationMixin {
     );
   }
 
-  bool isVisible(viewModel, showIf) {
-    String result = viewModel.expressions[showIf] ?? 'true';
-    return result.toLowerCase() == 'true';
+  /// Specific widgets such as image widget must have a size restriction.
+  /// If the user did not specify any, 100/100 will be applied.
+  Widget applySizeRestriction() {
+    switch (data.type) {
+      case NssWidgetType.profilePhoto:
+      case NssWidgetType.image:
+        return SizedBox(
+          width: 100.0,
+          height: 100.0,
+          child: child,
+        );
+      default:
+        return child;
+    }
   }
+
+  /// Make sure this value will be treated as a double.
+  /// Useful for JSON parsed elements
+  /// which should be treated as double but are parsed as integer.
+  double ensureDouble(num) => (num is int) ? num.toDouble() : num;
 }

@@ -1,8 +1,8 @@
 import {mergeDeep} from "../common/utils";
-import {WithComment} from "../common";
+import {withAccessibility, WithComment} from "../common";
 
 export default mergeDeep({}, WithComment, {
     type: 'object',
     additionalProperties: false,
     required: ['type']
-});
+}, withAccessibility);

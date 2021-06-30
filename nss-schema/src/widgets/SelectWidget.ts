@@ -10,6 +10,7 @@ export default new WidgetEntity('Select', mergeDeep({},
     withStyle(margin, size, background, opacity, ...font, ...border), {
     properties: {
         type: {enum: ['radio', 'dropdown']},
+        placeholder: {type: 'string'},
         options: {
             type: 'array',
             items: mergeDeep({}, WithText, {
@@ -29,7 +30,8 @@ export default new WidgetEntity('Select', mergeDeep({},
                             'boolean'
                         ]
                     }
-                }
+                },
+                additionalProperties: false
             })
         }
     }

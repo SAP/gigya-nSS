@@ -1,0 +1,34 @@
+{
+  "screens": {
+    "op": {
+      "children": [
+        {
+          "bind": "profile.birthYear",
+          "disabled": false,
+          "placeholder": "dasd",
+          "options": [
+            {
+              "default": true,
+
+              "textKey": "account-update-option-year",
+              "value": "null",
+              "propertynotallowed": "nana"
+            },
+            {
+              "textKey": "account-update-option-1920",
+              "value": "1920"
+            }
+          ],
+          "style": {
+            "borderColor": "#E0E0E0",
+            "borderSize": 1,
+            "cornerRadius": 22,
+            "margin": 10,
+            "opacity": 1
+          },
+          "type": "dropdown"
+        }
+      ]
+    }
+  }
+}

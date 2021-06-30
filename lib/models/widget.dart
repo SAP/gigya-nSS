@@ -61,6 +61,11 @@ class NssWidgetData {
   @JsonKey(defaultValue: false)
   bool isNestedContainer;
 
+  @JsonKey(defaultValue: {'label': '', 'hint': ''})
+  Accessibility accessibility;
+
+  String placeholder;
+
   NssWidgetData({
     this.textKey,
     this.type,
@@ -91,6 +96,8 @@ class NssWidgetData {
     this.showIf,
     this.countries,
     this.isNestedContainer,
+    this.accessibility,
+    this.placeholder,
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);
@@ -111,15 +118,26 @@ class Countries {
   @JsonKey(defaultValue: true)
   bool showIcons;
 
-  Countries({
-    this.defaultSelected,
-    this.include,
-    this.exclude,
-    this.showIcons
-  });
+  Countries({this.defaultSelected, this.include, this.exclude, this.showIcons});
 
   factory Countries.fromJson(Map<String, dynamic> json) => _$CountriesFromJson(json);
 
   Map<String, dynamic> toJson() => _$CountriesToJson(this);
+}
 
+@JsonSerializable(anyMap: true)
+class Accessibility {
+  @JsonKey(defaultValue: '')
+  String label;
+  @JsonKey(defaultValue: '')
+  String hint;
+
+  Accessibility({
+    this.label,
+    this.hint,
+  });
+
+  factory Accessibility.fromJson(Map<String, dynamic> json) => _$AccessibilityFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AccessibilityToJson(this);
 }

@@ -17,3 +17,20 @@ export const WithText = {
         }
     }
 } as JSONSchema7;
+
+export const withAccessibility = {
+    properties: {
+        accessibility: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                label: {
+                    type: 'string',
+                },
+                hint: {
+                    type: 'string'
+                }
+            }
+        },
+    }
+} as JSONSchema7;

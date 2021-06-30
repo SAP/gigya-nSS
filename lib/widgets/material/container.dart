@@ -5,6 +5,7 @@ import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
+import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
 import 'package:provider/provider.dart';
 
@@ -23,13 +24,16 @@ class ContainerWidget extends StatelessWidget with StyleMixin, DecorationMixin {
     bool isNested = data.isNestedContainer ?? false;
     return Consumer2<ScreenViewModel, BindingModel>(
       builder: (context, viewModel, binding, widget) {
-        return Visibility(
-          visible: isVisible(viewModel, data.showIf),
-          child: isNested
-              ? Flexible(
-                  child: containerContent(),
-                )
-              : containerContent(),
+        return SemanticsWrapperWidget(
+          accessibility: data.accessibility,
+          child: Visibility(
+            visible: isVisible(viewModel, data.showIf),
+            child: isNested
+                ? Flexible(
+                    child: containerContent(),
+                  )
+                : containerContent(),
+          ),
         );
       },
     );

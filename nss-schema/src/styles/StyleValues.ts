@@ -26,3 +26,4 @@ export function withStyle(...styleProps: StyleProperty[]) {
         }
     } as JSONSchema7;
 }
+

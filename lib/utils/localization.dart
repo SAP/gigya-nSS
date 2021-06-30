@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 
@@ -9,6 +11,13 @@ mixin LocalizationMixin {
   /// Parsed localization map.
   final Map<String, dynamic> _localizationMap =
       NssIoc().use(NssConfig).markup.localization.cast<String, dynamic>() ?? {'_default': {}};
+
+  /// Determine right to left text directionality.
+  TextDirection isRTL() {
+    var rtlLanguages = ['ar', 'arc', 'dv', 'fa', 'ha', 'he', 'khw', 'ks', 'ku', 'ps', 'ur', 'yi'];
+    if (rtlLanguages.contains(lang.toLowerCase())) return TextDirection.rtl;
+    return TextDirection.ltr;
+  }
 
   /// Get the localized string for the provided [textKey].
   /// If the specific key is not available within the selected language map, it will
