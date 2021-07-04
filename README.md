@@ -209,9 +209,9 @@ Default templates will be provided with each upcoming release in order to give c
 
 An object map of the Native Screen-Sets screen IDs to their screen component.
 
-## [Components](https://sap.github.io/gigya-nSS/docs/COMPONENTS.md)
+## [Components](https://github.com/SAP/gigya-nSS/blob/main/docs/COMPONENTS.md)
 
-## [Styling](https://sap.github.io/gigya-nSS/docs/STYLING.md)
+## [Styling](https://github.com/SAP/gigya-nSS/blob/main/docs/STYLING.md)
 
 ## Input validations
 
