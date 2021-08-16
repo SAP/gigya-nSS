@@ -234,7 +234,7 @@ Example for loginID email input with email regex validations.
     },
     "regex": {
        "enabled": true,
-       "value": "^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\\.[a-zA-Z]+",
+       "format": "^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\\.[a-zA-Z]+",
        "errorKey": "Invalid email format."
     }
   }
