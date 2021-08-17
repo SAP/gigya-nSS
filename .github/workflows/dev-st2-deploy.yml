@@ -81,7 +81,7 @@ jobs:
           cp -r build/web versions/*/
           cp -r build/web temp/
           cp -r example.json temp/example.json
-          cp -r schema.json temp/schema.json
+          cp -r nSS-schema.json temp/schema.json
           cp -r versions temp/
           
       - name: Deploy
