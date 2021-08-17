@@ -79,10 +79,10 @@ jobs:
         shell: bash
         run: |
           cp -r build/web versions/*/
-          cp -r build/web temp/web/
           cp -r example.json temp/example.json
           cp -r nSS-schema.json temp/schema.json
           cp -r versions temp/
+          cp -r build/web temp/web/
           
       - name: Deploy
         uses: shallwefootball/s3-upload-action@master
