@@ -1,5 +1,7 @@
 # SAP CDC (Gigya) Native Screen Sets
 
+[![REUSE status](https://api.reuse.software/badge/github.com/SAP/gigya-nSS)](https://api.reuse.software/info/github.com/SAP/gigya-nSS)
+
 ## Description
 Native Screen-Sets allow your app to maintain the native experience while enjoying the benefits of SAP Customer Data Cloud web Screen-Sets.
  It is a low-code solution for delivering a highly customizable user interface for a consistent user experience.
@@ -597,4 +599,4 @@ Via pull request to this repository.
 iOS – Debugging is currently available only on simulators.
 
 ## Licensing
-Please see our [LICENSE](https://github.com/SAP/gigya-nSS/blob/main/LICENSES/Apache-2.0.txt) for copyright and license information.
+Please see our [LICENSE](https://github.com/SAP/gigya-nSS/blob/main/LICENSES/Apache-2.0.txt) for copyright and license information. Detailed information including third-party components and their licensing/copyright information is available [via the REUSE tool](https://api.reuse.software/info/github.com/SAP/gigya-nSS).
