@@ -51,3 +51,5 @@ coverage/
 *.log
 
 nss-schema/deploy.ts
+
+scripts_local

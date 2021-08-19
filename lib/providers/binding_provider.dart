@@ -6,6 +6,8 @@ import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
+enum BindingType { none, date }
+
 /// Screen data binding model used for each [NssScreen]. Data is injected using the
 /// flow initialization process from the native bridge.
 class BindingModel with ChangeNotifier {
@@ -21,6 +23,27 @@ class BindingModel with ChangeNotifier {
   Map<String, dynamic> _bindingData = {};
   Map<String, dynamic> savedBindingData = {};
   Map<String, dynamic> _routingBindingData = {};
+
+  /// Check if dynamic [bind] field is of type [List] which will indicate that
+  /// there are multiple bind fields for the requesting widget.
+  bool isArrayTypeBinding(dynamic bind) {
+    if (bind is List) return true;
+    return false;
+  }
+
+  /// Check if dynamic [bind] field is of type [Map].
+  /// Will indicate that we are binding to a concrete class.
+  bool isObjectTypeBinding(dynamic bind) {
+    if (bind is Map) return true;
+    return false;
+  }
+
+  /// Check if dynamic [bind] field is of type [String].
+  /// Simple String value bind.
+  bool isStringTypeBinding(dynamic bind) {
+    if (bind is String) return true;
+    return false;
+  }
 
   /// Update biding data once available. Updating the data will trigger rebuild for
   /// every child widget in the view tree.
@@ -96,9 +119,9 @@ class BindingModel with ChangeNotifier {
   dynamic getMapByKey(String key) {
     return _bindingData[key];
   }
-  
+
   /// Save a new [key] / [value] pair for form submission.
-  save<T>(String key, T value, { String saveAs }) {
+  save<T>(String key, T value, {String saveAs}) {
     // Change the bind to real param before sending the request.
     if (saveAs != null && saveAs.isNotEmpty) key = saveAs;
 
@@ -176,7 +199,7 @@ mixin BindingMixin {
   /// Fetch the text [String] bound value of the provided text display component [data] & validate it according the site schema.
   /// Schema validation is only available when "useSchemaValidations" is applied.
   BindingValue getBindingText(NssWidgetData data, BindingModel bindings) {
-    if (data.bind.isNullOrEmpty()) {
+    if (data.bind == null) {
       return BindingValue(null);
     }
     // Check binding matches.
