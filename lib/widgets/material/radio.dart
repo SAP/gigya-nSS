@@ -45,14 +45,20 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
           }
         });
       }
+
+      if (_groupValue != null && bindingValue.value == null) {
+        setOption(_groupValue, bindings);
+        debugPrint('No binding value for radio -> default value will be displayed');
+      }
+
       return SemanticsWrapperWidget(
         accessibility: widget.data.accessibility,
         child: Visibility(
           visible: isVisible(viewModel, widget.data.showIf),
           child: Theme(
             data: Theme.of(context).copyWith(
-              unselectedWidgetColor: getStyle(Styles.fontColor,
-                  data: widget.data, themeProperty: 'textColor'),
+              unselectedWidgetColor:
+                  getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
               disabledColor: getThemeColor('disabledColor'),
             ),
             child: Opacity(
@@ -91,29 +97,8 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                               : getThemeColor('enabledColor'),
                           // TODO: need to change the getter from theme.
                           onChanged: (String value) {
-                            if (widget.data.disabled) {
-                              return null;
-                            }
                             setState(() {
-                              // Value needs to be parsed before form can be submitted.
-                              if (widget.data.parseAs != null) {
-                                // Markup parsing applies.
-                                var parsed = parseAs(value.trim(), widget.data.parseAs);
-                                if (parsed == null) {
-                                  engineLogger
-                                      .e('parseAs field is not compatible with provided input');
-                                }
-                                bindings.save<String>(widget.data.bind, parsed,
-                                    saveAs: widget.data.sendAs);
-                                return;
-                              }
-                              // If parseAs field is not available try to parse according to schema.
-                              var parsed = parseUsingSchema(value.trim(), widget.data.bind);
-                              if (parsed == null) {
-                                engineLogger.e('Schema type is not compatible with provided input');
-                              }
-                              bindings.save<String>(widget.data.bind, parsed,
-                                  saveAs: widget.data.sendAs);
+                              setOption(value, bindings);
                             });
                           },
                         );
@@ -127,5 +112,27 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
         ),
       );
     });
+  }
+
+  setOption(String value, BindingModel bindings) {
+    if (widget.data.disabled) {
+      return null;
+    }
+    // Value needs to be parsed before form can be submitted.
+    if (widget.data.parseAs != null) {
+      // Markup parsing applies.
+      var parsed = parseAs(value.trim(), widget.data.parseAs);
+      if (parsed == null) {
+        engineLogger.e('parseAs field is not compatible with provided input');
+      }
+      bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
+      return;
+    }
+    // If parseAs field is not available try to parse according to schema.
+    var parsed = parseUsingSchema(value.trim(), widget.data.bind);
+    if (parsed == null) {
+      engineLogger.e('Schema type is not compatible with provided input');
+    }
+    bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
   }
 }
