@@ -13,10 +13,12 @@ class BindingModel with ChangeNotifier {
   final regExp = new RegExp(r'^(.*)[[0-9]]$');
 
   // map of supported types with default return value.
-  final typeSupported = {String: '', bool: false};
+  final typeSupported = {"String": '', "bool": false, "List<Map<String, String>>": []};
 
   // default return when type not supported
   final defaultReturn = '';
+
+  AsArrayHelper asArrayHelper = AsArrayHelper();
 
   Map<String, dynamic> _bindingData = {};
   Map<String, dynamic> savedBindingData = {};
@@ -36,12 +38,18 @@ class BindingModel with ChangeNotifier {
     notifyListeners();
   }
 
-  dynamic getSavedValue<T>(String key) {
-    return getValue<T>(key, savedBindingData);
+  dynamic getSavedValue<T>(String key, [dynamic asArray]) {
+    return getValue<T>(key, savedBindingData, asArray);
   }
 
   /// Get the relevant bound data using the String [key] reference.
-  dynamic getValue<T>(String key, [Map<String, dynamic> dataObject]) {
+  dynamic getValue<T>(String key, [Map<String, dynamic> dataObject, dynamic asArray]) {
+
+    if (asArray != null) {
+
+      return asArrayHelper.getValue(getValue(key), asArray, key);
+    }
+
     // Remove `#` mark before submit.
     key = key.removeHashtagPrefix();
 
@@ -57,12 +65,12 @@ class BindingModel with ChangeNotifier {
         var vv = getValue<T>(key, _bindingData);
         return vv;
       } else {
-        return typeSupported[T] ?? defaultReturn;
+        return typeSupported[T.toString()] ?? defaultReturn;
       }
     }
 
     while (value == null) {
-      if (typeSupported[nextData.runtimeType] != null) {
+      if (typeSupported[nextData.runtimeType.toString()] != null) {
         value = nextData;
       } else if (regExp.hasMatch(keys[nextKey])) {
         var arrayKeyData = keys[nextKey].split('[');
@@ -80,7 +88,7 @@ class BindingModel with ChangeNotifier {
             var vv = getValue<T>(key, _bindingData);
             return vv ?? defaultReturn;
           } else {
-            return typeSupported[T] ?? defaultReturn;
+            return typeSupported[T.toString()] ?? defaultReturn;
           }
         }
 
@@ -98,15 +106,22 @@ class BindingModel with ChangeNotifier {
   }
   
   /// Save a new [key] / [value] pair for form submission.
-  save<T>(String key, T value, { String saveAs }) {
-    // Change the bind to real param before sending the request.
-    if (saveAs != null && saveAs.isNotEmpty) key = saveAs;
+  save<T>(String key, T value, {String saveAs , dynamic asArray}) {
+      // Change the bind to real param before sending the request.
+      if (saveAs != null && saveAs.isNotEmpty) key = saveAs;
 
-    // Remove `#` mark before submit.
-    final String checkedKey = key.removeHashtagPrefix();
+      // Remove `#` mark before submit.
+      final String checkedKey = key.removeHashtagPrefix();
 
-    saveTo(checkedKey, value, savedBindingData);
-    saveTo(checkedKey, value, _bindingData);
+      if (asArray != null) {
+        List<Map<String, String>> asArrayValue;
+        asArrayValue = asArrayHelper.getValueForSave(getValue(key), asArray, key, value);
+        saveTo(checkedKey, asArrayValue, savedBindingData);
+        saveTo(checkedKey, asArrayValue, _bindingData);
+      } else {
+        saveTo(checkedKey, value, savedBindingData);
+        saveTo(checkedKey, value, _bindingData);
+      }
   }
 
   /// Update the binding data map with required [key] and [value].
@@ -299,4 +314,45 @@ class BindingValue {
       : value = value,
         error = true,
         errorText = errorText;
+}
+
+class AsArrayHelper {
+  dynamic getValue<T>(List<Map<String, String>> data, dynamic asArray, String bindKey) {
+    var keys = bindKey.split('.');
+    var arrayDetails = asArray as Map<String, dynamic>;
+    for (dynamic obj in data) {
+      if (obj[arrayDetails['key']] != null) {
+        return obj[keys.last];
+      }
+    }
+
+    return "";
+  }
+
+  dynamic getValueForSave<T>(List<Map<String, String>> data, dynamic asArray, String bindKey, dynamic value) {
+    var keys = bindKey.split('.');
+
+    var arrayDetails = asArray as Map<String, dynamic>;
+    bool isExists = false;
+    var tempData = List<Map<String, String>>.from(data);
+
+    for (dynamic obj in data) {
+      if (obj[arrayDetails['key']] != null) {
+        isExists = true;
+        if (value == null || value == false) {
+          tempData.remove(obj);
+        }
+        if (value != obj[keys.last]) {
+          tempData.remove(obj);
+          isExists = false;
+        }
+      }
+    }
+
+    if (isExists == false) {
+      tempData.add({arrayDetails['key']: arrayDetails['value'], keys.last: value});
+    }
+
+    return tempData;
+  }
 }

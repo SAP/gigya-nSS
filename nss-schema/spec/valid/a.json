@@ -1,0 +1,1395 @@
+{
+  "description": "ScreenSet's configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "screens"
+  ],
+  "properties": {
+    "useSchemaValidations": {
+      "type": "boolean",
+      "default": false
+    },
+    "routing": {
+      "description": "General routing definitions",
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "initial"
+      ],
+      "properties": {
+        "initial": {
+          "$ref": "#/definitions/dynamic/ScreenId"
+        },
+        "default": {
+          "$ref": "#/definitions/routes/Routes"
+        }
+      }
+    },
+    "screens": {
+      "description": "Available screens in the set. Each property is the screen's id",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/Screen"
+        }
+      }
+    },
+    "i18n": {
+      "$ref": "#/definitions/i18n"
+    },
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "primaryColor": {
+          "$ref": "#/definitions/Color"
+        },
+        "secondaryColor": {
+          "$ref": "#/definitions/Color"
+        },
+        "textColor": {
+          "$ref": "#/definitions/Color"
+        },
+        "enabledColor": {
+          "$ref": "#/definitions/Color"
+        },
+        "disabledColor": {
+          "$ref": "#/definitions/Color"
+        },
+        "errorColor": {
+          "$ref": "#/definitions/Color"
+        },
+        "linkColor": {
+          "$ref": "#/definitions/Color"
+        }
+      }
+    },
+    "customThemes": {
+      "patternProperties": {
+        ".*": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/styles/margin"
+            },
+            {
+              "$ref": "#/definitions/styles/background"
+            },
+            {
+              "$ref": "#/definitions/styles/opacity"
+            },
+            {
+              "$ref": "#/definitions/styles/size"
+            },
+            {
+              "$ref": "#/definitions/styles/borderColor"
+            },
+            {
+              "$ref": "#/definitions/styles/cornerRadius"
+            },
+            {
+              "$ref": "#/definitions/styles/elevation"
+            },
+            {
+              "$ref": "#/definitions/styles/borderSize"
+            },
+            {
+              "$ref": "#/definitions/styles/fontSize"
+            },
+            {
+              "$ref": "#/definitions/styles/fontWeight"
+            },
+            {
+              "$ref": "#/definitions/styles/fontColor"
+            },
+            {
+              "$ref": "#/definitions/styles/textAlign"
+            },
+            {
+              "$ref": "#/definitions/styles/linkColor"
+            },
+            {
+              "$ref": "#/definitions/styles/placeholderColor"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "definitions": {
+    "dynamic": {
+      "ScreenId": {
+        "description": "Available screens to navigate to - populated dynamically according to the json",
+        "type": "string"
+      },
+      "AccountField": {
+        "type": "string",
+        "pattern": "^(profile|data|subscriptions|preferences|conflictingAccounts)\\."
+      },
+      "Theme": {
+        "type": "string"
+      }
+    },
+    "routes": {
+      "RouteAction": {
+        "description": "The action to be taken from a routing event, e.g onSuccess",
+        "anyOf": [
+          {
+            "$ref": "#/definitions/dynamic/ScreenId"
+          },
+          {
+            "description": "Special actions effecting navigations",
+            "enum": [
+              "_dismiss"
+            ]
+          }
+        ]
+      },
+      "Routes": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "onPendingRegistration": {
+            "$ref": "#/definitions/routes/RouteAction"
+          },
+          "onPendingEmailVerification": {
+            "$ref": "#/definitions/routes/RouteAction"
+          },
+          "onLoginIdentifierExists": {
+            "$ref": "#/definitions/routes/RouteAction"
+          },
+          "onError": {
+            "$ref": "#/definitions/routes/RouteAction"
+          },
+          "onSuccess": {
+            "$ref": "#/definitions/routes/RouteAction"
+          }
+        }
+      }
+    },
+    "Screen": {
+      "description": "A screen in the set",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "children"
+      ],
+      "properties": {
+        "action": {
+          "enum": [
+            "login",
+            "register",
+            "setAccount",
+            "forgotPassword",
+            "none"
+          ],
+          "default": "none"
+        },
+        "routing": {
+          "$ref": "#/definitions/routes/Routes"
+        },
+        "appBar": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "textKey"
+          ],
+          "properties": {
+            "textKey": {
+              "type": "string"
+            }
+          }
+        },
+        "onlyShowFields": {
+          "enum": [
+            "empty"
+          ]
+        },
+        "$comment": {
+          "type": "string"
+        },
+        "stack": {
+          "enum": [
+            "vertical",
+            "horizontal"
+          ],
+          "default": "vertical"
+        },
+        "alignment": {
+          "enum": [
+            "start",
+            "end",
+            "center",
+            "spread",
+            "equal_spacing"
+          ],
+          "default": "start"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ChildWidget"
+          }
+        }
+      }
+    },
+    "SpecialField": {
+      "description": "special fields",
+      "anyOf": [
+        {
+          "enum": [
+            "#loginID",
+            "#email",
+            "#password"
+          ]
+        },
+        {
+          "type": "string",
+          "pattern": "^#"
+        }
+      ]
+    },
+    "Validations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "errorKey": {
+              "type": "string"
+            }
+          }
+        },
+        "regex": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "errorKey": {
+              "type": "string"
+            },
+            "format": {
+              "type": "string",
+              "format": "regex"
+            }
+          }
+        }
+      }
+    },
+    "styles": {
+      "margin": {
+        "properties": {
+          "margin": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "array",
+                "items": [
+                  {
+                    "type": "number",
+                    "description": "left"
+                  },
+                  {
+                    "type": "number",
+                    "description": "top"
+                  },
+                  {
+                    "type": "number",
+                    "description": "right"
+                  },
+                  {
+                    "type": "number",
+                    "description": "bottom"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "background": {
+        "properties": {
+          "background": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/Color"
+              },
+              {
+                "$ref": "#/definitions/Asset"
+              }
+            ]
+          }
+        }
+      },
+      "opacity": {
+        "properties": {
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      },
+      "size": {
+        "properties": {
+          "size": {
+            "type": "array",
+            "items": [
+              {
+                "type": "number",
+                "description": "width"
+              },
+              {
+                "type": "number",
+                "description": "height"
+              }
+            ]
+          }
+        }
+      },
+      "borderColor": {
+        "properties": {
+          "borderColor": {
+            "$ref": "#/definitions/Color"
+          }
+        }
+      },
+      "cornerRadius": {
+        "properties": {
+          "cornerRadius": {
+            "type": "number"
+          }
+        }
+      },
+      "elevation": {
+        "properties": {
+          "elevation": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10
+          }
+        }
+      },
+      "borderSize": {
+        "properties": {
+          "borderSize": {
+            "type": "number"
+          }
+        }
+      },
+      "fontSize": {
+        "properties": {
+          "fontSize": {
+            "type": "number"
+          }
+        }
+      },
+      "fontWeight": {
+        "properties": {
+          "fontWeight": {
+            "oneOf": [
+              {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 9
+              },
+              {
+                "enum": [
+                  "bold"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "fontColor": {
+        "properties": {
+          "fontColor": {
+            "$ref": "#/definitions/Color"
+          }
+        }
+      },
+      "textAlign": {
+        "properties": {
+          "textAlign": {
+            "enum": [
+              "start",
+              "end",
+              "center"
+            ],
+            "default": "start"
+          }
+        }
+      },
+      "linkColor": {
+        "properties": {
+          "linkColor": {
+            "$ref": "#/definitions/Color"
+          }
+        }
+      },
+      "placeholderColor": {
+        "properties": {
+          "placeholderColor": {
+            "$ref": "#/definitions/Color"
+          }
+        }
+      }
+    },
+    "Color": {
+      "oneOf": [
+        {
+          "description": "color name",
+          "type": "string",
+          "enum": [
+            "blue",
+            "red",
+            "green",
+            "gray",
+            "yellow",
+            "orange",
+            "white",
+            "black",
+            "transparent",
+            "grey"
+          ]
+        },
+        {
+          "description": "color hex",
+          "type": "string",
+          "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+        }
+      ]
+    },
+    "Asset": {
+      "anyOf": [
+        {
+          "description": "External url asset",
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "description": "internal asset",
+          "type": "string"
+        }
+      ]
+    },
+    "widgets": {
+      "Select": {
+        "properties": {
+          "type": {
+            "enum": [
+              "radio",
+              "dropdown"
+            ]
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "textKey",
+                "value"
+              ],
+              "properties": {
+                "default": {
+                  "const": true
+                },
+                "value": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean"
+                  ]
+                },
+                "textKey": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "theme": {
+            "$ref": "#/definitions/dynamic/Theme"
+          },
+          "style": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/styles/margin"
+              },
+              {
+                "$ref": "#/definitions/styles/size"
+              },
+              {
+                "$ref": "#/definitions/styles/background"
+              },
+              {
+                "$ref": "#/definitions/styles/opacity"
+              },
+              {
+                "$ref": "#/definitions/styles/fontSize"
+              },
+              {
+                "$ref": "#/definitions/styles/fontWeight"
+              },
+              {
+                "$ref": "#/definitions/styles/fontColor"
+              },
+              {
+                "$ref": "#/definitions/styles/linkColor"
+              },
+              {
+                "$ref": "#/definitions/styles/textAlign"
+              },
+              {
+                "$ref": "#/definitions/styles/borderColor"
+              },
+              {
+                "$ref": "#/definitions/styles/borderSize"
+              }
+            ]
+          },
+          "disabled": {
+            "type": "boolean",
+            "default": false
+          },
+          "bind": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/SpecialField"
+              },
+              {
+                "$ref": "#/definitions/dynamic/AccountField"
+              }
+            ]
+          },
+          "sendAs": {
+            "type": "string"
+          },
+          "validations": {
+            "$ref": "#/definitions/Validations"
+          },
+          "parseAs": {
+            "enum": [
+              "number",
+              "boolean",
+              "string"
+            ]
+          },
+          "$comment": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "Input": {
+        "properties": {
+          "type": {
+            "enum": [
+              "textInput",
+              "emailInput",
+              "passwordInput"
+            ]
+          },
+          "theme": {
+            "$ref": "#/definitions/dynamic/Theme"
+          },
+          "style": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/styles/margin"
+              },
+              {
+                "$ref": "#/definitions/styles/size"
+              },
+              {
+                "$ref": "#/definitions/styles/background"
+              },
+              {
+                "$ref": "#/definitions/styles/cornerRadius"
+              },
+              {
+                "$ref": "#/definitions/styles/opacity"
+              },
+              {
+                "$ref": "#/definitions/styles/placeholderColor"
+              },
+              {
+                "$ref": "#/definitions/styles/borderColor"
+              },
+              {
+                "$ref": "#/definitions/styles/borderSize"
+              },
+              {
+                "$ref": "#/definitions/styles/fontSize"
+              },
+              {
+                "$ref": "#/definitions/styles/fontWeight"
+              },
+              {
+                "$ref": "#/definitions/styles/fontColor"
+              },
+              {
+                "$ref": "#/definitions/styles/linkColor"
+              },
+              {
+                "$ref": "#/definitions/styles/textAlign"
+              }
+            ]
+          },
+          "textKey": {
+            "type": "string"
+          },
+          "disabled": {
+            "type": "boolean",
+            "default": false
+          },
+          "bind": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/SpecialField"
+              },
+              {
+                "$ref": "#/definitions/dynamic/AccountField"
+              }
+            ]
+          },
+          "sendAs": {
+            "type": "string"
+          },
+          "validations": {
+            "$ref": "#/definitions/Validations"
+          },
+          "parseAs": {
+            "enum": [
+              "number",
+              "boolean",
+              "string"
+            ]
+          },
+          "$comment": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "Container": {
+        "properties": {
+          "type": {
+            "enum": [
+              "container"
+            ]
+          },
+          "showIf": {
+            "$ref": "#/definitions/JsExp"
+          },
+          "theme": {
+            "$ref": "#/definitions/dynamic/Theme"
+          },
+          "style": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/styles/margin"
+              },
+              {
+                "$ref": "#/definitions/styles/size"
+              },
+              {
+                "$ref": "#/definitions/styles/opacity"
+              }
+            ]
+          },
+          "stack": {
+            "enum": [
+              "vertical",
+              "horizontal"
+            ],
+            "default": "vertical"
+          },
+          "alignment": {
+            "enum": [
+              "start",
+              "end",
+              "center",
+              "spread",
+              "equal_spacing"
+            ],
+            "default": "start"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ChildWidget"
+            }
+          },
+          "$comment": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type"
+        ]
+      },
+      "Button": {
+        "properties": {
+          "type": {
+            "enum": [
+              "submit"
+            ]
+          },
+          "theme": {
+            "$ref": "#/definitions/dynamic/Theme"
+          },
+          "style": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/styles/margin"
+              },
+              {
+                "$ref": "#/definitions/styles/size"
+              },
+              {
+                "$ref": "#/definitions/styles/opacity"
+              },
+              {
+                "$ref": "#/definitions/styles/elevation"
+              },
+              {
+                "$ref": "#/definitions/styles/cornerRadius"
+              },
+              {
+                "$ref": "#/definitions/styles/background"
+              },
+              {
+                "$ref": "#/definitions/styles/fontSize"
+              },
+              {
+                "$ref": "#/definitions/styles/fontWeight"
+              },
+              {
+                "$ref": "#/definitions/styles/fontColor"
+              },
+              {
+                "$ref": "#/definitions/styles/linkColor"
+              },
+              {
+                "$ref": "#/definitions/styles/textAlign"
+              },
+              {
+                "$ref": "#/definitions/styles/borderColor"
+              },
+              {
+                "$ref": "#/definitions/styles/borderSize"
+              }
+            ]
+          },
+          "textKey": {
+            "type": "string"
+          },
+          "$comment": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type"
+        ]
+      },
+      "Label": {
+        "properties": {
+          "type": {
+            "enum": [
+              "label"
+            ]
+          },
+          "theme": {
+            "$ref": "#/definitions/dynamic/Theme"
+          },
+          "style": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/styles/margin"
+              },
+              {
+                "$ref": "#/definitions/styles/size"
+              },
+              {
+                "$ref": "#/definitions/styles/opacity"
+              },
+              {
+                "$ref": "#/definitions/styles/fontSize"
+              },
+              {
+                "$ref": "#/definitions/styles/fontWeight"
+              },
+              {
+                "$ref": "#/definitions/styles/fontColor"
+              },
+              {
+                "$ref": "#/definitions/styles/linkColor"
+              },
+              {
+                "$ref": "#/definitions/styles/textAlign"
+              }
+            ]
+          },
+          "textKey": {
+            "type": "string"
+          },
+          "$comment": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type"
+        ]
+      },
+      "Checkbox": {
+        "properties": {
+          "type": {
+            "enum": [
+              "checkbox"
+            ]
+          },
+          "default": {
+            "type": "boolean"
+          },
+          "theme": {
+            "$ref": "#/definitions/dynamic/Theme"
+          },
+          "style": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/styles/margin"
+              },
+              {
+                "$ref": "#/definitions/styles/size"
+              },
+              {
+                "$ref": "#/definitions/styles/background"
+              },
+              {
+                "$ref": "#/definitions/styles/opacity"
+              },
+              {
+                "$ref": "#/definitions/styles/fontSize"
+              },
+              {
+                "$ref": "#/definitions/styles/fontWeight"
+              },
+              {
+                "$ref": "#/definitions/styles/fontColor"
+              },
+              {
+                "$ref": "#/definitions/styles/linkColor"
+              },
+              {
+                "$ref": "#/definitions/styles/textAlign"
+              }
+            ]
+          },
+          "textKey": {
+            "type": "string"
+          },
+          "disabled": {
+            "type": "boolean",
+            "default": false
+          },
+          "bind": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/SpecialField"
+              },
+              {
+                "$ref": "#/definitions/dynamic/AccountField"
+              }
+            ]
+          },
+          "sendAs": {
+            "type": "string"
+          },
+          "validations": {
+            "$ref": "#/definitions/Validations"
+          },
+          "parseAs": {
+            "enum": [
+              "number",
+              "boolean",
+              "string"
+            ]
+          },
+          "$comment": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SocialLoginButton": {
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "socialLoginButton"
+            ]
+          },
+          "provider": {
+            "$ref": "#/definitions/SocialProvider"
+          },
+          "iconEnabled": {
+            "type": "boolean"
+          },
+          "iconURL": {
+            "$ref": "#/definitions/Asset"
+          },
+          "theme": {
+            "$ref": "#/definitions/dynamic/Theme"
+          },
+          "style": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/styles/margin"
+              },
+              {
+                "$ref": "#/definitions/styles/size"
+              },
+              {
+                "$ref": "#/definitions/styles/opacity"
+              },
+              {
+                "$ref": "#/definitions/styles/elevation"
+              },
+              {
+                "$ref": "#/definitions/styles/cornerRadius"
+              },
+              {
+                "$ref": "#/definitions/styles/background"
+              },
+              {
+                "$ref": "#/definitions/styles/fontSize"
+              },
+              {
+                "$ref": "#/definitions/styles/fontWeight"
+              },
+              {
+                "$ref": "#/definitions/styles/fontColor"
+              },
+              {
+                "$ref": "#/definitions/styles/linkColor"
+              },
+              {
+                "$ref": "#/definitions/styles/textAlign"
+              },
+              {
+                "$ref": "#/definitions/styles/borderColor"
+              },
+              {
+                "$ref": "#/definitions/styles/borderSize"
+              }
+            ]
+          },
+          "textKey": {
+            "type": "string"
+          },
+          "$comment": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SocialLoginGrid": {
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "socialLoginGrid"
+            ]
+          },
+          "providers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/SocialProvider"
+            }
+          },
+          "columns": {
+            "type": "number"
+          },
+          "rows": {
+            "type": "number"
+          },
+          "hideTitles": {
+            "type": "boolean"
+          },
+          "theme": {
+            "$ref": "#/definitions/dynamic/Theme"
+          },
+          "style": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/styles/margin"
+              },
+              {
+                "$ref": "#/definitions/styles/size"
+              },
+              {
+                "$ref": "#/definitions/styles/opacity"
+              },
+              {
+                "$ref": "#/definitions/styles/elevation"
+              },
+              {
+                "$ref": "#/definitions/styles/cornerRadius"
+              },
+              {
+                "$ref": "#/definitions/styles/background"
+              },
+              {
+                "$ref": "#/definitions/styles/fontSize"
+              },
+              {
+                "$ref": "#/definitions/styles/fontWeight"
+              },
+              {
+                "$ref": "#/definitions/styles/fontColor"
+              },
+              {
+                "$ref": "#/definitions/styles/linkColor"
+              },
+              {
+                "$ref": "#/definitions/styles/textAlign"
+              },
+              {
+                "$ref": "#/definitions/styles/borderColor"
+              },
+              {
+                "$ref": "#/definitions/styles/borderSize"
+              }
+            ]
+          },
+          "$comment": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "Image": {
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "image"
+            ]
+          },
+          "url": {
+            "$ref": "#/definitions/Asset"
+          },
+          "fallback": {
+            "$ref": "#/definitions/Asset"
+          },
+          "theme": {
+            "$ref": "#/definitions/dynamic/Theme"
+          },
+          "style": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/styles/margin"
+              },
+              {
+                "$ref": "#/definitions/styles/size"
+              },
+              {
+                "$ref": "#/definitions/styles/opacity"
+              },
+              {
+                "$ref": "#/definitions/styles/borderColor"
+              },
+              {
+                "$ref": "#/definitions/styles/borderSize"
+              },
+              {
+                "$ref": "#/definitions/styles/elevation"
+              },
+              {
+                "$ref": "#/definitions/styles/cornerRadius"
+              }
+            ]
+          },
+          "$comment": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ProfilePhoto": {
+        "properties": {
+          "type": {
+            "enum": [
+              "profilePhoto"
+            ]
+          },
+          "default": {
+            "$ref": "#/definitions/Asset"
+          },
+          "allowUpload": {
+            "type": "boolean"
+          },
+          "theme": {
+            "$ref": "#/definitions/dynamic/Theme"
+          },
+          "style": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/styles/margin"
+              },
+              {
+                "$ref": "#/definitions/styles/size"
+              },
+              {
+                "$ref": "#/definitions/styles/opacity"
+              },
+              {
+                "$ref": "#/definitions/styles/borderColor"
+              },
+              {
+                "$ref": "#/definitions/styles/borderSize"
+              },
+              {
+                "$ref": "#/definitions/styles/elevation"
+              },
+              {
+                "$ref": "#/definitions/styles/cornerRadius"
+              }
+            ]
+          },
+          "$comment": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type"
+        ]
+      },
+      "PhoneInput": {
+        "properties": {
+          "type": {
+            "enum": [
+              "phoneInput"
+            ]
+          },
+          "countries": {
+            "type": "object",
+            "properties": {
+              "defaultSelected": {
+                "type": "string",
+                "default": "auto"
+              },
+              "showIcons": {
+                "type": "boolean",
+                "default": true
+              },
+              "include": {
+                "type": "array"
+              },
+              "exclude": {
+                "type": "array"
+              }
+            }
+          },
+          "theme": {
+            "$ref": "#/definitions/dynamic/Theme"
+          },
+          "style": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/styles/margin"
+              },
+              {
+                "$ref": "#/definitions/styles/size"
+              },
+              {
+                "$ref": "#/definitions/styles/background"
+              },
+              {
+                "$ref": "#/definitions/styles/cornerRadius"
+              },
+              {
+                "$ref": "#/definitions/styles/opacity"
+              },
+              {
+                "$ref": "#/definitions/styles/placeholderColor"
+              },
+              {
+                "$ref": "#/definitions/styles/borderColor"
+              },
+              {
+                "$ref": "#/definitions/styles/borderSize"
+              },
+              {
+                "$ref": "#/definitions/styles/fontSize"
+              },
+              {
+                "$ref": "#/definitions/styles/fontWeight"
+              },
+              {
+                "$ref": "#/definitions/styles/fontColor"
+              },
+              {
+                "$ref": "#/definitions/styles/linkColor"
+              },
+              {
+                "$ref": "#/definitions/styles/textAlign"
+              }
+            ]
+          },
+          "textKey": {
+            "type": "string"
+          },
+          "disabled": {
+            "type": "boolean",
+            "default": false
+          },
+          "bind": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/SpecialField"
+              },
+              {
+                "$ref": "#/definitions/dynamic/AccountField"
+              }
+            ]
+          },
+          "sendAs": {
+            "type": "string"
+          },
+          "validations": {
+            "$ref": "#/definitions/Validations"
+          },
+          "parseAs": {
+            "enum": [
+              "number",
+              "boolean",
+              "string"
+            ]
+          },
+          "$comment": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    "JsExp": {
+      "type": "string"
+    },
+    "SocialProvider": {
+      "enum": [
+        "amazon",
+        "apple",
+        "facebook",
+        "google",
+        "line",
+        "linkedin",
+        "twitter",
+        "vkontakte",
+        "wechat",
+        "yahoo",
+        "yahooJapan"
+      ]
+    },
+    "ChildWidget": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/widgets/Label"
+        },
+        {
+          "$ref": "#/definitions/widgets/Button"
+        },
+        {
+          "$ref": "#/definitions/widgets/Input"
+        },
+        {
+          "$ref": "#/definitions/widgets/Checkbox"
+        },
+        {
+          "$ref": "#/definitions/widgets/Select"
+        },
+        {
+          "$ref": "#/definitions/widgets/Container"
+        },
+        {
+          "$ref": "#/definitions/widgets/SocialLoginButton"
+        },
+        {
+          "$ref": "#/definitions/widgets/SocialLoginGrid"
+        },
+        {
+          "$ref": "#/definitions/widgets/Image"
+        },
+        {
+          "$ref": "#/definitions/widgets/ProfilePhoto"
+        },
+        {
+          "$ref": "#/definitions/widgets/PhoneInput"
+        }
+      ]
+    },
+    "i18n": {
+      "description": "Localization of texts to different languages",
+      "type": "object",
+      "patternProperties": {
+        "^(_default|[^_]).*": {
+          "type": "object",
+          "description": "Language key to texts",
+          "patternProperties": {
+            ".*": {
+              "type": "string",
+              "description": "Text key to actual text"
+            }
+          }
+        }
+      }
+    }
+  }
+}

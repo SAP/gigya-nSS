@@ -66,6 +66,8 @@ class NssWidgetData {
 
   String placeholder;
 
+  dynamic storeAsArray;
+
   NssWidgetData({
     this.textKey,
     this.type,
@@ -98,6 +100,7 @@ class NssWidgetData {
     this.isNestedContainer,
     this.accessibility,
     this.placeholder,
+    this.storeAsArray,
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) => _$NssWidgetDataFromJson(json);
