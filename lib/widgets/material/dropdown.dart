@@ -77,8 +77,9 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
       if (bindingValue.value == null && _placeholder != null) {
         _dropdownValue = null;
         debugPrint('No binding value for dropdown -> will display placeholder');
-      } else if (defaultValue != null) {
+      } else if (defaultValue != null && bindValue == null) {
         _dropdownValue = _dropdownItems[indexFromValue(defaultValue)];
+        setOption(_dropdownValue, bindings);
         debugPrint('No binding value for dropdown -> default value will be displayed');
       } else {
         _dropdownValue = _dropdownItems[indexFromValue(bindValue)];
@@ -87,7 +88,8 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
 
       var borderSize = getStyle(Styles.borderSize, data: widget.data);
       var borderRadius = getStyle(Styles.cornerRadius, data: widget.data);
-      var borderColor = getStyle(Styles.borderColor, data: widget.data, themeProperty: 'disabledColor');
+      var borderColor =
+          getStyle(Styles.borderColor, data: widget.data, themeProperty: 'disabledColor');
       final Color color = getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor');
 
       return SemanticsWrapperWidget(
@@ -122,9 +124,11 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                           localizedStringFor(_placeholder) ?? '',
                           style: TextStyle(
                             color: widget.data.disabled
-                                ? getStyle(Styles.placeholderColor, data: widget.data, themeProperty: 'disabledColor')
+                                ? getStyle(Styles.placeholderColor,
+                                        data: widget.data, themeProperty: 'disabledColor')
                                     .withOpacity(0.3)
-                                : getStyle(Styles.placeholderColor, data: widget.data, themeProperty: 'textColor')
+                                : getStyle(Styles.placeholderColor,
+                                        data: widget.data, themeProperty: 'textColor')
                                     .withOpacity(0.5),
                           ),
                         ),
@@ -134,37 +138,18 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                           Icons.arrow_drop_down,
                           color: widget.data.disabled
                               ? getThemeColor('disabledColor').withOpacity(0.3)
-                              : getStyle(Styles.borderColor, data: widget.data, themeProperty: 'primaryColor'),
+                              : getStyle(Styles.borderColor,
+                                  data: widget.data, themeProperty: 'primaryColor'),
                         ),
                         elevation: 4,
                         onChanged: (String newValue) {
-                          if (widget.data.disabled) {
-                            return;
-                          }
                           setState(() {
-                            var index = indexFromDisplayValue(newValue);
-                            var updated = widget.data.options[index].value;
-
-                            // Value needs to be parsed before form can be submitted.
-                            if (widget.data.parseAs != null) {
-                              // Markup parsing applies.
-                              var parsed = parseAs(updated, widget.data.parseAs);
-                              if (parsed == null) {
-                                engineLogger.e('parseAs field is not compatible with provided input');
-                              }
-                              bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
-                              return;
-                            }
-                            // If parseAs field is not available try to parse according to schema.
-                            var parsed = parseUsingSchema(updated, widget.data.bind);
-                            if (parsed == null) {
-                              engineLogger.e('Schema type is not compatible with provided input');
-                            }
-                            bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
+                            setOption(newValue, bindings);
                           });
                         },
                         items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {
-                          TextAlign align = getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start;
+                          TextAlign align =
+                              getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start;
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Align(
@@ -173,7 +158,8 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                                   style: TextStyle(
                                     color: widget.data.disabled
                                         ? getThemeColor('disabledColor').withOpacity(0.3)
-                                        : getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
+                                        : getStyle(Styles.fontColor,
+                                            data: widget.data, themeProperty: 'textColor'),
                                     fontSize: getStyle(Styles.fontSize, data: widget.data),
                                     fontWeight: getStyle(Styles.fontWeight, data: widget.data),
                                   )),
@@ -190,5 +176,31 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
         ),
       );
     });
+  }
+
+  setOption(String newValue, BindingModel bindings) {
+    if (widget.data.disabled) {
+      return;
+    }
+
+    var index = indexFromDisplayValue(newValue);
+    var updated = widget.data.options[index].value;
+
+    // Value needs to be parsed before form can be submitted.
+    if (widget.data.parseAs != null) {
+      // Markup parsing applies.
+      var parsed = parseAs(updated, widget.data.parseAs);
+      if (parsed == null) {
+        engineLogger.e('parseAs field is not compatible with provided input');
+      }
+      bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
+      return;
+    }
+    // If parseAs field is not available try to parse according to schema.
+    var parsed = parseUsingSchema(updated, widget.data.bind);
+    if (parsed == null) {
+      engineLogger.e('Schema type is not compatible with provided input');
+    }
+    bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
   }
 }
