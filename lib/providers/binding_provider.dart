@@ -20,9 +20,19 @@ class BindingModel with ChangeNotifier {
   // default return when type not supported
   final defaultReturn = '';
 
+  // Main widget binding date map.
   Map<String, dynamic> _bindingData = {};
+
+  // Binding data that is accumulated with new saved items.
   Map<String, dynamic> savedBindingData = {};
+
+  // Additional routing data added via route events.
   Map<String, dynamic> _routingBindingData = {};
+
+  /// Check if binding data is available for data fetch.
+  bool bindingDataAvailable() {
+    return _bindingData.isNotEmpty;
+  }
 
   /// Check if dynamic [bind] field is of type [List] which will indicate that
   /// there are multiple bind fields for the requesting widget.
@@ -49,18 +59,36 @@ class BindingModel with ChangeNotifier {
   /// every child widget in the view tree.
   void updateWith(Map<String, dynamic> map) {
     _bindingData.addAll(map);
-
     notifyListeners();
   }
 
   void updateRoutingWith(Map<String, dynamic> map) {
     _routingBindingData.addAll(map);
-
     notifyListeners();
   }
 
   dynamic getSavedValue<T>(String key) {
     return getValue<T>(key, savedBindingData);
+  }
+
+  /// Get value from a `Map` by path
+  ///
+  /// Use dot notation in [path] to access nested keys
+  ///
+  /// Use [convertor] to cast the value to your custom type
+  ///
+  T getBindingValue<T>(map, String path, {T Function(dynamic) converter}) {
+    List<String> keys = path.split('.');
+
+    if (keys.length == 1) {
+      return converter != null ? converter(map[keys[0]]) : map[keys[0]] as T;
+    }
+    return getBindingValue(map[keys.removeAt(0)], keys.join('.'));
+  }
+
+  T get<T>(String path, {T Function(dynamic) converter}) {
+    path = path.removeHashtagPrefix();
+    return getBindingValue(_bindingData, path, converter: converter);
   }
 
   /// Get the relevant bound data using the String [key] reference.

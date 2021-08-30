@@ -7,6 +7,7 @@ import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:provider/provider.dart';
 
@@ -36,19 +37,18 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
         BindingMixin,
         ValidationMixin,
         DatePickerStyleMixin {
-  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedDate;
+  DateTime _initialDate;
 
   // Trigger text field controller.
   final TextEditingController _controller = TextEditingController();
 
+  // Custom picker style object. Optional.
   DatePickerStyle _datePickerStyle;
 
   @override
   void initState() {
     super.initState();
-    // Set text controller initial value.
-    _controller.text = _parseValue();
-
     _datePickerStyle = widget.data.datePickerStyle;
   }
 
@@ -76,7 +76,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                 child: InkWell(
                   onTap: () {
                     // Trigger picker.
-                    _selectDate(context);
+                    _showPickerSelection(context);
                   },
                   child: TextFormField(
                     controller: _controller,
@@ -146,20 +146,87 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
 
   /// Sets the initial value of the widget according to available data or default date.
   _setInitialBindingValue(BindingModel bindings) {
-    if (bindings.isStringTypeBinding(widget.data.bind)) {
-      debugPrint('String binding');
-      BindingValue bindingValue = getBindingText(widget.data, bindings);
-      debugPrint('initial binding value = $bindingValue');
-    } else if (bindings.isObjectTypeBinding(widget.data.bind)) {
-      debugPrint('object binding');
+    // Now is the fallback/default value.
+    _initialDate = DateTime.now();
+
+    // Selection has been made. No need to rest the initial value on setState().
+    if (_selectedDate != null) {
+      debugPrint('DatePicker (_setInitialBindingValue) - Selection available');
+      _controller.text = _parseDateValue(_selectedDate);
+      return;
     }
+
+    // Binding data is not available no need for data parsing.
+    if (!bindings.bindingDataAvailable()) {
+      debugPrint(
+          'DatePicker (_setInitialBindingValue) - Binding data is not available yet');
+      _controller.text = _parseDateValue(_initialDate);
+      return;
+    }
+
+    debugPrint(
+        'DatePicker (_setInitialBindingValue) - Binding data is available');
+
+    if (bindings.isStringTypeBinding(widget.data.bind)) {
+      debugPrint('DatePicker (_setInitialBindingValue) - String binding');
+
+      String bindingValue = bindings.getValue(widget.data.bind);
+      debugPrint(
+          'DatePicker (_setInitialBindingValue) - initial binding value = $bindingValue');
+      if (bindingValue != null) {
+        _initialDate = _fromIso8601Value(bindingValue);
+      }
+    } else if (bindings.isObjectTypeBinding(widget.data.bind)) {
+      debugPrint('DatePicker (_setInitialBindingValue) - Object binding');
+
+      if (widget.data.bind['type'] == 'date') {
+        // Map binding object to obtain necessary keys.
+        DatePickerBinding objectBinding =
+            DatePickerBinding.fromJson(widget.data.bind);
+
+        // Default date time object that will act as a fallback value provider.
+        DateTime now = DateTime.now();
+
+        // Get bound values.
+        int day = now.day;
+        if (objectBinding.day.isNotEmpty) {
+          int dayBinding = bindings.get<int>(objectBinding.day,
+              converter: (value) => int.parse(value));
+          if (dayBinding != 0) {
+            day = dayBinding;
+          }
+        }
+        int month = now.month;
+        if (objectBinding.month.isNotEmpty) {
+          int monthBinding = bindings.get<int>(objectBinding.month,
+              converter: (value) => int.parse(value));
+          if (monthBinding != 0) {
+            month = monthBinding;
+          }
+        }
+        int year = now.year;
+        if (objectBinding.year.isNotEmpty) {
+          int yearBinding = bindings.get<int>(objectBinding.year,
+              converter: (value) => int.parse(value));
+          if (yearBinding != 0) {
+            year = yearBinding;
+          }
+        }
+        _initialDate = DateTime(year, month, day);
+      } else {
+        engineLogger.e(
+            'DatePicker (_setInitialBindingValue) - Wrong object binding for widget. Please follow the correct object binding guideline for DatePicker component.');
+      }
+    }
+
+    _controller.text = _parseDateValue(_initialDate);
   }
 
   /// Initiate the date picker when date text is tapped.
-  _selectDate(BuildContext context) async {
+  _showPickerSelection(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: _initialDate,
       // Refer step 1
       firstDate: DateTime(widget.data.startYear),
       lastDate: DateTime(widget.data.endYear),
@@ -193,13 +260,14 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
       setState(() {
         // Update selected value.
         _selectedDate = picked;
-        _controller.text = _parseValue();
+        _controller.text = _parseDateValue(_selectedDate);
       });
   }
 
   /// Parse the display value of the picker.
-  String _parseValue() {
-    return "${_selectedDate.toLocal()}".split(' ')[0];
+  String _parseDateValue(DateTime time) {
+    if (time == null) return '';
+    return "${time.toLocal()}".split(' ')[0];
   }
 
   /// Set the date picker selection mode: calendar or input are available.
@@ -217,9 +285,17 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
     return _selectedDate.toIso8601String();
   }
 
+  /// Convert ISO 8601 formatted [value] to [DateTime] object.
+  DateTime _fromIso8601Value(String value) {
+    return DateTime.parse(value);
+  }
+
   /// Logic triggered on form save.
   /// Binding will be performed for widget according to dynamic type and specified binding type.
   _bindOnSaved(BindingModel bindings) {
+    if (_selectedDate == null) {
+      _selectedDate = _initialDate;
+    }
     if (bindings.isObjectTypeBinding(widget.data.bind)) {
       // Parse binding object.
       DatePickerBinding objectBinding =
@@ -270,38 +346,38 @@ class DatePickerBinding {
   String month = '';
   String year = '';
 
-  DatePickerBinding.fromJson(Map<String, dynamic> json)
-      : type = json['type'],
-        day = json['day'],
-        month = json['month'],
-        year = json['year'];
+  DatePickerBinding.fromJson(Map<dynamic, dynamic> json)
+      : type = json['type'] ?? 'date',
+        day = json['day'] ?? '',
+        month = json['month'] ?? '',
+        year = json['year'] ?? '';
 }
 
 /// Custom type mixin class for DatePickerWidget.
 mixin DatePickerStyleMixin on StyleMixin {
+  /// Specific styling for picker background.
   Color getPickerBackground(DatePickerStyle style, themeProperty) {
-    if (style.primaryColor.isNotEmpty) {
+    if (style != null && style.primaryColor.isNotEmpty) {
       return getColor(style.primaryColor);
     } else if (themeProperty != null) {
       if (config.markup.theme != null) {
-        final themeColor =
-            config.markup.theme[themeProperty] ?? defaultTheme[themeProperty];
-        return getThemeColor(themeColor);
+        return getThemeColor(themeProperty);
       }
     }
-    return Colors.black;
+    // Static fallback is white.
+    return Colors.white;
   }
 
+  /// Specific styling for picker font color.
   Color getPickerFontColor(DatePickerStyle style, themeProperty) {
-    if (style.fontColor.isNotEmpty) {
+    if (style != null && style.fontColor.isNotEmpty) {
       return getColor(style.fontColor);
     } else if (themeProperty != null) {
       if (config.markup.theme != null) {
-        final themeColor =
-            config.markup.theme[themeProperty] ?? defaultTheme[themeProperty];
-        return getThemeColor(themeColor);
+        return getThemeColor(themeProperty);
       }
     }
+    // Static fallback is black.
     return Colors.black;
   }
 }

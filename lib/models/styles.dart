@@ -8,6 +8,7 @@ class DatePickerStyle {
 
   @JsonKey(defaultValue: '')
   String primaryColor;
+  @JsonKey(defaultValue: '')
   String fontColor;
   int fontSize;
 
