@@ -218,7 +218,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
             'DatePicker (_setInitialBindingValue) - Wrong object binding for widget. Please follow the correct object binding guideline for DatePicker component.');
       }
     }
-
     _controller.text = _parseDateValue(_initialDate);
   }
 
@@ -226,6 +225,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
   _showPickerSelection(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
+      fieldLabelText: _datePickerStyle.labelText ?? 'Enter Date',
       initialDate: _initialDate,
       // Refer step 1
       firstDate: DateTime(widget.data.startYear),
@@ -237,7 +237,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
             inputDecorationTheme: InputDecorationTheme(
                 labelStyle: TextStyle(
                   fontSize: getStyle(Styles.fontSize, data: widget.data),
-                  color: getPickerFontColor(_datePickerStyle, 'textColor'),
+                  color: getPickerLabelColor(_datePickerStyle, 'textColor'),
                   fontWeight: getStyle(Styles.fontWeight, data: widget.data),
                 ),
                 focusedBorder: UnderlineInputBorder(
@@ -287,6 +287,10 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
 
   /// Convert ISO 8601 formatted [value] to [DateTime] object.
   DateTime _fromIso8601Value(String value) {
+    if (value.isEmpty) {
+      engineLogger
+          .e('DatePicker (_fromIso8601Value) - Value empty. fallback to now');
+    }
     return DateTime.parse(value);
   }
 
@@ -354,6 +358,7 @@ class DatePickerBinding {
 }
 
 /// Custom type mixin class for DatePickerWidget.
+/// Used to distinguish the top level styling of the input trigger to the picker dialog.
 mixin DatePickerStyleMixin on StyleMixin {
   /// Specific styling for picker background.
   Color getPickerBackground(DatePickerStyle style, themeProperty) {
@@ -369,9 +374,9 @@ mixin DatePickerStyleMixin on StyleMixin {
   }
 
   /// Specific styling for picker font color.
-  Color getPickerFontColor(DatePickerStyle style, themeProperty) {
-    if (style != null && style.fontColor.isNotEmpty) {
-      return getColor(style.fontColor);
+  Color getPickerLabelColor(DatePickerStyle style, themeProperty) {
+    if (style != null && style.labelColor.isNotEmpty) {
+      return getColor(style.labelColor);
     } else if (themeProperty != null) {
       if (config.markup.theme != null) {
         return getThemeColor(themeProperty);

@@ -9,13 +9,14 @@ class DatePickerStyle {
   @JsonKey(defaultValue: '')
   String primaryColor;
   @JsonKey(defaultValue: '')
-  String fontColor;
-  int fontSize;
+  String labelColor;
+  @JsonKey(defaultValue: 'Enter Date')
+  String labelText;
 
   DatePickerStyle({
     this.primaryColor,
-    this.fontColor,
-    this.fontSize,
+    this.labelColor,
+    this.labelText,
   });
 
   factory DatePickerStyle.fromJson(Map<String, dynamic> json) =>
