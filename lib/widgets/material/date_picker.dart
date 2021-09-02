@@ -190,24 +190,21 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
         // Get bound values.
         int day = now.day;
         if (objectBinding.day.isNotEmpty) {
-          int dayBinding = bindings.get<int>(objectBinding.day,
-              converter: (value) => int.parse(value));
+          int dayBinding = bindings.getValue<int>(objectBinding.day);
           if (dayBinding != 0) {
             day = dayBinding;
           }
         }
         int month = now.month;
         if (objectBinding.month.isNotEmpty) {
-          int monthBinding = bindings.get<int>(objectBinding.month,
-              converter: (value) => int.parse(value));
+          int monthBinding = bindings.getValue<int>(objectBinding.month);
           if (monthBinding != 0) {
             month = monthBinding;
           }
         }
         int year = now.year;
         if (objectBinding.year.isNotEmpty) {
-          int yearBinding = bindings.get<int>(objectBinding.year,
-              converter: (value) => int.parse(value));
+          int yearBinding = bindings.getValue<int>(objectBinding.year);
           if (yearBinding != 0) {
             year = yearBinding;
           }

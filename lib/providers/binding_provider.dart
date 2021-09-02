@@ -15,7 +15,7 @@ class BindingModel with ChangeNotifier {
   final regExp = new RegExp(r'^(.*)[[0-9]]$');
 
   // map of supported types with default return value.
-  final typeSupported = {String: '', bool: false};
+  final typeSupported = {int: 0, String: '', bool: false};
 
   // default return when type not supported
   final defaultReturn = '';
@@ -69,26 +69,6 @@ class BindingModel with ChangeNotifier {
 
   dynamic getSavedValue<T>(String key) {
     return getValue<T>(key, savedBindingData);
-  }
-
-  /// Get value from a `Map` by path
-  ///
-  /// Use dot notation in [path] to access nested keys
-  ///
-  /// Use [convertor] to cast the value to your custom type
-  ///
-  T getBindingValue<T>(map, String path, {T Function(dynamic) converter}) {
-    List<String> keys = path.split('.');
-
-    if (keys.length == 1) {
-      return converter != null ? converter(map[keys[0]]) : map[keys[0]] as T;
-    }
-    return getBindingValue(map[keys.removeAt(0)], keys.join('.'));
-  }
-
-  T get<T>(String path, {T Function(dynamic) converter}) {
-    path = path.removeHashtagPrefix();
-    return getBindingValue(_bindingData, path, converter: converter);
   }
 
   /// Get the relevant bound data using the String [key] reference.
