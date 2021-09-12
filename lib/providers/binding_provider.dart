@@ -223,7 +223,7 @@ mixin BindingMixin {
   /// Fetch the boolean [bool] bound value of the provided selection component [data] & validate it according the site schema.
   /// Schema validation is only available when "useSchemaValidations" is applied.
   BindingValue getBindingBool(NssWidgetData data, BindingModel bindings) {
-    if (data.bind.isNullOrEmpty()) {
+    if (data.bind == null) {
       return BindingValue(false);
     }
     // Check binding matches.
