@@ -75,32 +75,42 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                       itemCount: widget.data.options.length,
                       itemBuilder: (BuildContext lvbContext, int index) {
                         NssOption option = widget.data.options[index];
-                        return RadioListTile(
-                          controlAffinity: ListTileControlAffinity.leading,
-                          value: option.value,
-                          title: Text(
-                            localizedStringFor(option.textKey),
-                            textAlign:
-                                getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
-                            style: TextStyle(
-                              color: widget.data.disabled
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                              unselectedWidgetColor: widget.data.disabled
                                   ? getThemeColor('disabledColor')
-                                  : getStyle(Styles.fontColor,
-                                      data: widget.data, themeProperty: 'textColor'),
-                              fontSize: getStyle(Styles.fontSize, data: widget.data),
-                              fontWeight: getStyle(Styles.fontWeight, data: widget.data),
-                            ),
+                                  : getThemeColor('enabledColor'),
+                              disabledColor: widget.data.disabled
+                                  ? getThemeColor('disabledColor')
+                                  : getThemeColor('enabledColor')
                           ),
-                          groupValue: _groupValue,
-                          activeColor: widget.data.disabled
-                              ? getThemeColor('disabledColor')
-                              : getThemeColor('enabledColor'),
-                          // TODO: need to change the getter from theme.
-                          onChanged: (String value) {
-                            setState(() {
-                              setOption(value, bindings);
-                            });
-                          },
+                          child: RadioListTile(
+                            controlAffinity: ListTileControlAffinity.leading,
+                            value: option.value,
+                            title: Text(
+                              localizedStringFor(option.textKey),
+                              textAlign:
+                                  getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
+                              style: TextStyle(
+                                color: widget.data.disabled
+                                    ? getThemeColor('disabledColor')
+                                    : getStyle(Styles.fontColor,
+                                        data: widget.data, themeProperty: 'textColor'),
+                                fontSize: getStyle(Styles.fontSize, data: widget.data),
+                                fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                              ),
+                            ),
+                            groupValue: _groupValue,
+                            activeColor: widget.data.disabled
+                                ? getThemeColor('disabledColor')
+                                : getThemeColor('enabledColor'),
+                            // TODO: need to change the getter from theme.
+                            onChanged: (String value) {
+                              setState(() {
+                                setOption(value, bindings);
+                              });
+                            },
+                          ),
                         );
                       },
                     ),
