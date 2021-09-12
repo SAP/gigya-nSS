@@ -127,51 +127,9 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
           opacity: styleOpacity(widget.data),
           child: Container(
             // Style background.
-            color: styleBackground(widget.data),
             child: Row(
               children: [
-                InkWell(
-                  // Verify click.
-                  onTap: widget.data.disabled
-                      ? null
-                      : allowCCTap()
-                          ? () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return _ccSelectionDialog();
-                                  });
-                            }
-                          : null,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      constraints: BoxConstraints(minWidth: 60),
-                      child: Row(
-                        children: [
-                          _showCountryIcons()
-                              ? Text(_countryCodePick.flag)
-                              : Container(),
-                          SizedBox(width: 8),
-                          Text(
-                            _countryCodePick.dialCode,
-                            style: TextStyle(
-                                // Style font color
-                                color: styleFontColor(
-                                    widget.data, widget.data.disabled),
-                                // Style font size.
-                                fontSize: getStyle(Styles.fontSize,
-                                    data: widget.data),
-                                // Style font weight.
-                                fontWeight: getStyle(Styles.fontWeight,
-                                    data: widget.data)),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
+                Flexible(
                   child: SemanticsWrapperWidget(
                     accessibility: widget.data.accessibility,
                     child: TextFormField(
@@ -191,6 +149,51 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                       ),
                       keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
+                          filled: true,
+                          fillColor: styleBackground(widget.data),
+                          prefixIcon: InkWell(
+                            // Verify click.
+                            onTap: widget.data.disabled
+                                ? null
+                                : allowCCTap()
+                                    ? () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return _ccSelectionDialog();
+                                            });
+                                      }
+                                    : null,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 12, right: 8, top: 8, bottom: 8),
+                              child: Container(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _showCountryIcons()
+                                        ? Text(_countryCodePick.flag)
+                                        : Container(),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      _countryCodePick.dialCode,
+                                      style: TextStyle(
+                                          // Style font color
+                                          color: styleFontColor(widget.data,
+                                              widget.data.disabled),
+                                          // Style font size.
+                                          fontSize: getStyle(Styles.fontSize,
+                                              data: widget.data),
+                                          // Style font weight.
+                                          fontWeight: getStyle(
+                                              Styles.fontWeight,
+                                              data: widget.data)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                           hintText: localizedStringFor(widget.data.textKey),
                           // Style placeholder/hint.
                           hintStyle: TextStyle(
