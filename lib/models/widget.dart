@@ -114,8 +114,7 @@ class NssWidgetData {
   String placeholder;
 
   // Date widget year range start.
-  @JsonKey(defaultValue: 1900)
-
+  @JsonKey(defaultValue: 1920)
   int startYear;
   // Date widget year range end.
   @JsonKey(defaultValue: 2025)
