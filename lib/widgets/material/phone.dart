@@ -132,15 +132,17 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
               children: [
                 InkWell(
                   // Verify click.
-                  onTap: allowCCTap()
-                      ? () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return _ccSelectionDialog();
-                              });
-                        }
-                      : null,
+                  onTap: widget.data.disabled
+                      ? null
+                      : allowCCTap()
+                          ? () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return _ccSelectionDialog();
+                                  });
+                            }
+                          : null,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
@@ -154,6 +156,9 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                           Text(
                             _countryCodePick.dialCode,
                             style: TextStyle(
+                                // Style font color
+                                color: styleFontColor(
+                                    widget.data, widget.data.disabled),
                                 // Style font size.
                                 fontSize: getStyle(Styles.fontSize,
                                     data: widget.data),
