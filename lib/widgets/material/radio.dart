@@ -45,14 +45,20 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
           }
         });
       }
+
+      if (_groupValue != null && bindingValue.value == null) {
+        setOption(_groupValue, bindings);
+        debugPrint('No binding value for radio -> default value will be displayed');
+      }
+
       return SemanticsWrapperWidget(
         accessibility: widget.data.accessibility,
         child: Visibility(
           visible: isVisible(viewModel, widget.data.showIf),
           child: Theme(
             data: Theme.of(context).copyWith(
-              unselectedWidgetColor: getStyle(Styles.fontColor,
-                  data: widget.data, themeProperty: 'textColor'),
+              unselectedWidgetColor:
+                  getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
               disabledColor: getThemeColor('disabledColor'),
             ),
             child: Opacity(
@@ -69,53 +75,42 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                       itemCount: widget.data.options.length,
                       itemBuilder: (BuildContext lvbContext, int index) {
                         NssOption option = widget.data.options[index];
-                        return RadioListTile(
-                          controlAffinity: ListTileControlAffinity.leading,
-                          value: option.value,
-                          title: Text(
-                            localizedStringFor(option.textKey),
-                            textAlign:
-                                getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
-                            style: TextStyle(
-                              color: widget.data.disabled
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                              unselectedWidgetColor: widget.data.disabled
                                   ? getThemeColor('disabledColor')
-                                  : getStyle(Styles.fontColor,
-                                      data: widget.data, themeProperty: 'textColor'),
-                              fontSize: getStyle(Styles.fontSize, data: widget.data),
-                              fontWeight: getStyle(Styles.fontWeight, data: widget.data),
-                            ),
+                                  : getThemeColor('enabledColor'),
+                              disabledColor: widget.data.disabled
+                                  ? getThemeColor('disabledColor')
+                                  : getThemeColor('enabledColor')
                           ),
-                          groupValue: _groupValue,
-                          activeColor: widget.data.disabled
-                              ? getThemeColor('disabledColor')
-                              : getThemeColor('enabledColor'),
-                          // TODO: need to change the getter from theme.
-                          onChanged: (String value) {
-                            if (widget.data.disabled) {
-                              return null;
-                            }
-                            setState(() {
-                              // Value needs to be parsed before form can be submitted.
-                              if (widget.data.parseAs != null) {
-                                // Markup parsing applies.
-                                var parsed = parseAs(value.trim(), widget.data.parseAs);
-                                if (parsed == null) {
-                                  engineLogger
-                                      .e('parseAs field is not compatible with provided input');
-                                }
-                                bindings.save<String>(widget.data.bind, parsed,
-                                    saveAs: widget.data.sendAs);
-                                return;
-                              }
-                              // If parseAs field is not available try to parse according to schema.
-                              var parsed = parseUsingSchema(value.trim(), widget.data.bind);
-                              if (parsed == null) {
-                                engineLogger.e('Schema type is not compatible with provided input');
-                              }
-                              bindings.save<String>(widget.data.bind, parsed,
-                                  saveAs: widget.data.sendAs);
-                            });
-                          },
+                          child: RadioListTile(
+                            controlAffinity: ListTileControlAffinity.leading,
+                            value: option.value,
+                            title: Text(
+                              localizedStringFor(option.textKey),
+                              textAlign:
+                                  getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
+                              style: TextStyle(
+                                color: widget.data.disabled
+                                    ? getThemeColor('disabledColor')
+                                    : getStyle(Styles.fontColor,
+                                        data: widget.data, themeProperty: 'textColor'),
+                                fontSize: getStyle(Styles.fontSize, data: widget.data),
+                                fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                              ),
+                            ),
+                            groupValue: _groupValue,
+                            activeColor: widget.data.disabled
+                                ? getThemeColor('disabledColor')
+                                : getThemeColor('enabledColor'),
+                            // TODO: need to change the getter from theme.
+                            onChanged: (String value) {
+                              setState(() {
+                                setOption(value, bindings);
+                              });
+                            },
+                          ),
                         );
                       },
                     ),
@@ -127,5 +122,27 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
         ),
       );
     });
+  }
+
+  setOption(String value, BindingModel bindings) {
+    if (widget.data.disabled) {
+      return null;
+    }
+    // Value needs to be parsed before form can be submitted.
+    if (widget.data.parseAs != null) {
+      // Markup parsing applies.
+      var parsed = parseAs(value.trim(), widget.data.parseAs);
+      if (parsed == null) {
+        engineLogger.e('parseAs field is not compatible with provided input');
+      }
+      bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
+      return;
+    }
+    // If parseAs field is not available try to parse according to schema.
+    var parsed = parseUsingSchema(value.trim(), widget.data.bind);
+    if (parsed == null) {
+      engineLogger.e('Schema type is not compatible with provided input');
+    }
+    bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
   }
 }

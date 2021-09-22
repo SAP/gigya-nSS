@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
@@ -24,6 +25,7 @@ class Logger {
 
   /// Trigger a native error log.
   e(String message, {String tag = 'NssEngine ERROR'}) {
+    debugPrint('Engine error for logger: $message');
     if (config.isMock) {
       return;
     }

@@ -11,6 +11,8 @@ import SocialLoginGridWidget from "./SocialLoginGridWidget";
 import ImageWidget from "./ImageWidget";
 import ProfilePhotoWidget from "./ProfilePhotoWidget";
 import PhoneWidget from "./PhoneWidget";
+import DatePicker from "./DatePickerWidget";
+import DatePickerWidget from "./DatePickerWidget";
 
 const widgets = [
     LabelWidget,
@@ -24,6 +26,7 @@ const widgets = [
     ImageWidget,
     ProfilePhotoWidget,
     PhoneWidget,
+    DatePickerWidget
 ] as SchemaEntity[];
 
 export const ChildWidget = new SchemaEntity(ChildRef, {

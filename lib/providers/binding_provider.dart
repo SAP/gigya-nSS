@@ -6,6 +6,8 @@ import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
+enum BindingType { none, date }
+
 /// Screen data binding model used for each [NssScreen]. Data is injected using the
 /// flow initialization process from the native bridge.
 class BindingModel with ChangeNotifier {
@@ -13,28 +15,57 @@ class BindingModel with ChangeNotifier {
   final regExp = new RegExp(r'^(.*)[[0-9]]$');
 
   // map of supported types with default return value.
-  final typeSupported = {"String": '', "bool": false, "List<dynamic>": [], "dynamic": ""};
+  final typeSupported = {"String": '', "bool": false, "List<dynamic>": [], "dynamic": "", "int": 0};
 
   // default return when type not supported
   final defaultReturn = '';
 
+  // Main widget binding date map.
   AsArrayHelper asArrayHelper = AsArrayHelper();
 
   Map<String, dynamic> _bindingData = {};
+
+  // Binding data that is accumulated with new saved items.
   Map<String, dynamic> savedBindingData = {};
+
+  // Additional routing data added via route events.
   Map<String, dynamic> _routingBindingData = {};
+
+  /// Check if binding data is available for data fetch.
+  bool bindingDataAvailable() {
+    return _bindingData.isNotEmpty;
+  }
+
+  /// Check if dynamic [bind] field is of type [List] which will indicate that
+  /// there are multiple bind fields for the requesting widget.
+  bool isArrayTypeBinding(dynamic bind) {
+    if (bind is List) return true;
+    return false;
+  }
+
+  /// Check if dynamic [bind] field is of type [Map].
+  /// Will indicate that we are binding to a concrete class.
+  bool isObjectTypeBinding(dynamic bind) {
+    if (bind is Map) return true;
+    return false;
+  }
+
+  /// Check if dynamic [bind] field is of type [String].
+  /// Simple String value bind.
+  bool isStringTypeBinding(dynamic bind) {
+    if (bind is String) return true;
+    return false;
+  }
 
   /// Update biding data once available. Updating the data will trigger rebuild for
   /// every child widget in the view tree.
   void updateWith(Map<String, dynamic> map) {
     _bindingData.addAll(map);
-
     notifyListeners();
   }
 
   void updateRoutingWith(Map<String, dynamic> map) {
     _routingBindingData.addAll(map);
-
     notifyListeners();
   }
 
@@ -103,7 +134,7 @@ class BindingModel with ChangeNotifier {
   dynamic getMapByKey(String key) {
     return _bindingData[key];
   }
-  
+
   /// Save a new [key] / [value] pair for form submission.
   save<T>(String key, T value, {String saveAs , dynamic asArray}) {
       // Change the bind to real param before sending the request.
@@ -190,7 +221,7 @@ mixin BindingMixin {
   /// Fetch the text [String] bound value of the provided text display component [data] & validate it according the site schema.
   /// Schema validation is only available when "useSchemaValidations" is applied.
   BindingValue getBindingText(NssWidgetData data, BindingModel bindings, {dynamic asArray}) {
-    if (data.bind.isNullOrEmpty()) {
+    if (data.bind == null) {
       return BindingValue(null);
     }
     // Check binding matches.
@@ -206,7 +237,7 @@ mixin BindingMixin {
   /// Fetch the boolean [bool] bound value of the provided selection component [data] & validate it according the site schema.
   /// Schema validation is only available when "useSchemaValidations" is applied.
   BindingValue getBindingBool(NssWidgetData data, BindingModel bindings, {dynamic asArray}) {
-    if (data.bind.isNullOrEmpty()) {
+    if (data.bind == null) {
       return BindingValue(false);
     }
     // Check binding matches.

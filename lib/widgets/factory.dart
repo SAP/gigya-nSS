@@ -13,6 +13,7 @@ import 'package:gigya_native_screensets_engine/widgets/material/app.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/buttons.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/checkbox.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/container.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/date_picker.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/dropdown.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/inputs.dart';
@@ -42,6 +43,7 @@ enum NssWidgetType {
   socialLoginGrid,
   image,
   profilePhoto,
+  datePicker,
 }
 
 extension NssWidgetTypeExt on NssWidgetType {
@@ -226,6 +228,9 @@ class MaterialWidgetFactory extends WidgetFactory {
         return buildContainer(buildWidgets(data.children), data);
       case NssWidgetType.phoneInput:
         return PhoneInputWidget(key: UniqueKey(), data: data);
+      case NssWidgetType.datePicker:
+        return DatePickerWidget(
+            key: UniqueKey(), data: data, inputType: data.initialDisplay);
       default:
         return Container();
     }

@@ -105,7 +105,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                               ),
                               Flexible(
                                 child: GestureDetector(
-                                    onTap: () {
+                                    onTap: widget.data.disabled ? null : () {
                                       setState(() {
                                         bindings.save<bool>(widget.data.bind, !_currentValue, saveAs: widget.data.sendAs, asArray: widget.data.storeAsArray);
                                       });
