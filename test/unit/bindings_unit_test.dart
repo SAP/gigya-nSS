@@ -72,6 +72,7 @@ void main() {
         'firstName': 'sagi',
         'lastName': 'shmuel',
         'details': {'address': 'test'},
+        "asArray": [{"aaa": "aaa", "asArray": "ccc"}, {"bbb": "bbb", "asArray": "bbb"}],
         'array': [
           '1stItem',
           '2ndItem',
@@ -89,6 +90,26 @@ void main() {
           }
         ]
       }
+    });
+
+    test('get asarray value', () {
+      String value = bindUtils.getValue('profile.asArray', {}, {"key": "bbb", "value": "ccc"});
+
+      expect(value, "bbb");
+    });
+
+    test('test asarray save value', () {
+      bindUtils.save("profile.asArray", "ccc", saveAs: "", asArray: {"key": "bbb", "value": "ccc"});
+
+      String value = bindUtils.getSavedValue('profile.asArray', {"key": "bbb", "value": "ccc"});
+
+      expect(value, 'ccc');
+    });
+
+    test('get array value when object no exists', () {
+      String value = bindUtils.getValue('profile.asArray', {}, {"key": "ddd", "value": "ccc"});
+
+      expect(value, "");
     });
 
     test('get bool value', () {
@@ -234,7 +255,7 @@ void main() {
     });
 
     test('types supported', () {
-      String value = bindUtils.typeSupported[String];
+      String value = bindUtils.typeSupported['String'];
 
       expect(value, '');
     });

@@ -31,7 +31,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
   @override
   Widget build(BuildContext context) {
     return Consumer2<ScreenViewModel, BindingModel>(builder: (context, viewModel, bindings, child) {
-      BindingValue bindingValue = getBindingText(widget.data, bindings);
+      BindingValue bindingValue = getBindingText(widget.data, bindings, asArray: widget.data.storeAsArray);
 
       if (bindingValue.error && !kReleaseMode) {
         return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);
