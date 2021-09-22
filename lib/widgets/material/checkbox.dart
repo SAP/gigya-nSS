@@ -45,7 +45,8 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
       },
       builder: (state) {
         return Consumer2<ScreenViewModel, BindingModel>(builder: (context, viewModel, bindings, child) {
-          BindingValue bindingValue = getBindingBool(widget.data, bindings);
+
+          BindingValue bindingValue = getBindingBool(widget.data, bindings, asArray: widget.data.storeAsArray);
 
           if (bindingValue.error && !kReleaseMode) {
             return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);

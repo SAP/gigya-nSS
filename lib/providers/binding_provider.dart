@@ -13,7 +13,7 @@ class BindingModel with ChangeNotifier {
   final regExp = new RegExp(r'^(.*)[[0-9]]$');
 
   // map of supported types with default return value.
-  final typeSupported = {"String": '', "bool": false, "List<Map<String, String>>": []};
+  final typeSupported = {"String": '', "bool": false, "List<dynamic>": [], "dynamic": ""};
 
   // default return when type not supported
   final defaultReturn = '';
@@ -46,7 +46,6 @@ class BindingModel with ChangeNotifier {
   dynamic getValue<T>(String key, [Map<String, dynamic> dataObject, dynamic asArray]) {
 
     if (asArray != null) {
-
       return asArrayHelper.getValue(getValue(key), asArray, key);
     }
 
@@ -190,7 +189,7 @@ mixin BindingMixin {
 
   /// Fetch the text [String] bound value of the provided text display component [data] & validate it according the site schema.
   /// Schema validation is only available when "useSchemaValidations" is applied.
-  BindingValue getBindingText(NssWidgetData data, BindingModel bindings) {
+  BindingValue getBindingText(NssWidgetData data, BindingModel bindings, {dynamic asArray}) {
     if (data.bind.isNullOrEmpty()) {
       return BindingValue(null);
     }
@@ -200,24 +199,28 @@ mixin BindingMixin {
       return BindingValue.bindingError(data.bind, errorText: bindingMatches);
     }
     // Fetch value.
-    final String value = bindings.getValue<String>(data.bind);
+    final String value = bindings.getValue<String>(data.bind, asArray);
     return BindingValue(value.isEmpty ? null : value);
   }
 
   /// Fetch the boolean [bool] bound value of the provided selection component [data] & validate it according the site schema.
   /// Schema validation is only available when "useSchemaValidations" is applied.
-  BindingValue getBindingBool(NssWidgetData data, BindingModel bindings) {
+  BindingValue getBindingBool(NssWidgetData data, BindingModel bindings, {dynamic asArray}) {
     if (data.bind.isNullOrEmpty()) {
       return BindingValue(false);
     }
     // Check binding matches.
     final String bindingMatches = bindMatches(data.bind, 'boolean');
-    if (bindingMatches != null) {
+    if (bindingMatches != null && asArray != null) {
       return BindingValue.bindingError(data.bind, errorText: bindingMatches);
     }
     // Fetch value.
-    var value = bindings.getValue<bool>(data.bind);
-    return BindingValue(value);
+    try {
+      var value = bindings.getValue<bool>(data.bind, null, asArray);
+      return BindingValue(value);
+    } catch (e) {
+      return BindingValue(false);
+    }
   }
 
   /// Verify that bound value is exact.
@@ -317,16 +320,18 @@ class BindingValue {
 }
 
 class AsArrayHelper {
-  dynamic getValue<T>(List<Map<String, String>> data, dynamic asArray, String bindKey) {
+  dynamic getValue<T>(List<dynamic> data, dynamic asArray, String bindKey) {
+
     var keys = bindKey.split('.');
-    var arrayDetails = asArray as Map<String, dynamic>;
+    var arrayDetails = asArray.cast<String, String>();
     for (dynamic obj in data) {
-      if (obj[arrayDetails['key']] != null) {
+      if (obj[arrayDetails['key']] != null && obj[arrayDetails['key']] == arrayDetails['value']) {
+        // return to "real" value.
         return obj[keys.last];
       }
     }
 
-    return "";
+    return false;
   }
 
   dynamic getValueForSave<T>(List<Map<String, String>> data, dynamic asArray, String bindKey, dynamic value) {
