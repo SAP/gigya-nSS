@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
@@ -144,8 +146,13 @@ class BindingModel with ChangeNotifier {
       final String checkedKey = key.removeHashtagPrefix();
 
       if (asArray != null) {
-        List<Map<String, String>> asArrayValue;
-        asArrayValue = asArrayHelper.getValueForSave(getValue(key), asArray, key, value);
+        List<dynamic> asArrayValue = asArrayHelper.getValueForSave(getValue(key), asArray, key, value);
+        var keys = checkedKey.split('.');
+        keys.removeLast();
+        var k = keys.join('.');
+        saveTo(k, asArrayValue, savedBindingData);
+        saveTo(k, asArrayValue, _bindingData);
+
         saveTo(checkedKey, asArrayValue, savedBindingData);
         saveTo(checkedKey, asArrayValue, _bindingData);
       } else {
@@ -365,19 +372,19 @@ class AsArrayHelper {
     return false;
   }
 
-  dynamic getValueForSave<T>(List<Map<String, String>> data, dynamic asArray, String bindKey, dynamic value) {
+  dynamic getValueForSave<T>(List<dynamic> data, dynamic asArray, String bindKey, dynamic value) {
     var keys = bindKey.split('.');
 
-    var arrayDetails = asArray as Map<String, dynamic>;
+    var arrayDetails = asArray.cast<String, String>();
     bool isExists = false;
-    var tempData = List<Map<String, String>>.from(data);
+    List<dynamic> tempData = [...data];
 
     for (dynamic obj in data) {
-      if (obj[arrayDetails['key']] != null) {
+      if (obj[arrayDetails['key']] != null && obj[arrayDetails['key']] == arrayDetails['value']) {
         isExists = true;
         if (value == null || value == false) {
           tempData.remove(obj);
-        }
+        } else
         if (value != obj[keys.last]) {
           tempData.remove(obj);
           isExists = false;
