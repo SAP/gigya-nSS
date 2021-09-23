@@ -26,7 +26,7 @@ extension StringExt on String {
   /// Remove '#' first character from string if exists.
   /// Will return a new [String] instance.
   String removeHashtagPrefix() {
-    if (this.containsHashtagPrefix()) {
+    if (this != null && this.containsHashtagPrefix()) {
       return this.replaceFirst(NssInputValidator.propertyPrefix, '');
     }
     return this;

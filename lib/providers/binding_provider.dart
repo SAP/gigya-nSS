@@ -139,6 +139,7 @@ class BindingModel with ChangeNotifier {
 
   /// Save a new [key] / [value] pair for form submission.
   save<T>(String key, T value, {String saveAs , dynamic asArray}) {
+      if (key.isNullOrEmpty()) return;
       // Change the bind to real param before sending the request.
       if (saveAs != null && saveAs.isNotEmpty) key = saveAs;
 
