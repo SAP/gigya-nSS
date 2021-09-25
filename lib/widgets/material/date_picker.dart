@@ -54,6 +54,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('DatePicker widget with bind: ${widget.data.bind} build initiated');
     return Flexible(
       child: SemanticsWrapperWidget(
         accessibility: widget.data.accessibility,

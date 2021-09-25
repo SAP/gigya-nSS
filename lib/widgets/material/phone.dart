@@ -53,7 +53,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
     return Consumer2<ScreenViewModel, BindingModel>(
       builder: (context, viewModel, bindings, child) {
         return Visibility(
-          visible: isVisible(viewModel, widget.data.showIf),
+          visible: isVisible(viewModel, widget.data),
           child: FutureBuilder<List<CountryCodePick>>(
             future: _countryCodeList.isEmpty ? loadCC() : cachedCC(),
             builder: (context, snapshot) {

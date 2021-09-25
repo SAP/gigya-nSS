@@ -27,7 +27,7 @@ class ContainerWidget extends StatelessWidget with StyleMixin, DecorationMixin {
         return SemanticsWrapperWidget(
           accessibility: data.accessibility,
           child: Visibility(
-            visible: isVisible(viewModel, data.showIf),
+            visible: isVisible(viewModel, data),
             child: isNested
                 ? Flexible(
                     child: containerContent(),

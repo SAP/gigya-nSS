@@ -146,7 +146,7 @@ class _ImageWidgetState extends ImageWidgetState<ImageWidget> {
           child: Consumer2<ScreenViewModel, BindingModel>(
             builder: (context, viewModel, bindings, child) {
               return Visibility(
-                visible: isVisible(viewModel, widget.data.showIf),
+                visible: isVisible(viewModel, widget.data),
                 child: Material(
                   borderRadius: BorderRadius.circular(cornerRadius),
                   color: Colors.transparent,

@@ -6,6 +6,7 @@ import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
@@ -15,10 +16,11 @@ import 'package:provider/provider.dart';
 class MaterialScreenWidget extends StatefulWidget {
   final ScreenViewModel viewModel;
   final BindingModel bindingModel;
+  final RuntimeStateEvaluator expressionProvider;
   final Screen screen;
   final Widget content;
 
-  /// Routing data is the dyanmic data that is injected or changed in realtime when you edit
+  /// Routing data is the dynamic data that is injected or changed in realtime when you edit
   /// your screen form.
   final Map<String, dynamic> routingData;
 
@@ -26,17 +28,22 @@ class MaterialScreenWidget extends StatefulWidget {
     Key key,
     this.viewModel,
     this.bindingModel,
+    this.expressionProvider,
     this.screen,
     this.content,
     this.routingData,
   }) : super(key: key);
 
   @override
-  _MaterialScreenWidgetState createState() => _MaterialScreenWidgetState(viewModel, bindingModel);
+  _MaterialScreenWidgetState createState() =>
+      _MaterialScreenWidgetState(viewModel, bindingModel, expressionProvider);
 }
 
-class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget> with StyleMixin, LocalizationMixin {
-  _MaterialScreenWidgetState(ScreenViewModel viewModel, BindingModel bindings) : super(viewModel, bindings);
+class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
+    with StyleMixin, LocalizationMixin {
+  _MaterialScreenWidgetState(ScreenViewModel viewModel, BindingModel bindings,
+      RuntimeStateEvaluator expressionProvider)
+      : super(viewModel, bindings, expressionProvider);
 
   @override
   void initState() {
@@ -55,9 +62,13 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Issuing ready for display native trigger only when the initial screen has been rendered.
       // This will occur only once per load.
-      if (viewModel.pid == '' && viewModel.id == NssIoc().use(NssConfig).markup.routing.initial) {
+      if (viewModel.pid == '' &&
+          viewModel.id == NssIoc().use(NssConfig).markup.routing.initial) {
         if (!NssIoc().use(NssConfig).isMock) {
-          NssIoc().use(NssChannels).ignitionChannel.invokeMethod<void>('ready_for_display');
+          NssIoc()
+              .use(NssChannels)
+              .ignitionChannel
+              .invokeMethod<void>('ready_for_display');
 
           // Attach the initial screen action only.
           // Following actions will be initiated as a part of the navigation flow moving forward.
@@ -72,8 +83,12 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   @override
   Widget buildScaffold() {
     var appBarBackground = getStyle(Styles.background,
-        styles: widget.screen.appBar == null ? null : widget.screen.appBar.style, themeProperty: 'primaryColor');
-    var scaffoldBackground = getStyle(Styles.background, styles: widget.screen.style) ?? Colors.white;
+        styles:
+            widget.screen.appBar == null ? null : widget.screen.appBar.style,
+        themeProperty: 'primaryColor');
+    var scaffoldBackground =
+        getStyle(Styles.background, styles: widget.screen.style) ??
+            Colors.white;
 
     return Directionality(
       textDirection: isRTL(),
@@ -83,13 +98,17 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         appBar: widget.screen.appBar == null
             ? null
             : AppBar(
-                elevation: getStyle(Styles.elevation, styles: widget.screen.appBar.style),
+                elevation: getStyle(Styles.elevation,
+                    styles: widget.screen.appBar.style),
                 backgroundColor: appBarBackground,
                 title: Text(
                   localizedStringFor(widget.screen.appBar.textKey) ?? '',
                   style: TextStyle(
-                    color: getStyle(Styles.fontColor, styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
-                    fontWeight: getStyle(Styles.fontWeight, styles: widget.screen.appBar.style),
+                    color: getStyle(Styles.fontColor,
+                        styles: widget.screen.appBar.style,
+                        themeProperty: 'secondaryColor'),
+                    fontWeight: getStyle(Styles.fontWeight,
+                        styles: widget.screen.appBar.style),
                   ),
                 ),
                 leading: kIsWeb
@@ -100,9 +119,11 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
                               icon: Icon(
                                 Icons.close,
                                 color: getStyle(Styles.fontColor,
-                                    styles: widget.screen.appBar.style, themeProperty: 'secondaryColor'),
+                                    styles: widget.screen.appBar.style,
+                                    themeProperty: 'secondaryColor'),
                               ),
-                              onPressed: () => Navigator.pushNamed(context, '_canceled'),
+                              onPressed: () =>
+                                  Navigator.pushNamed(context, '_canceled'),
                             ),
                           )
                         : null,
@@ -153,7 +174,8 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       widget.routingData.addAll(bindings.savedBindingData);
 
       // Apply navigation.
-      final String route = routingOverride.isNotEmpty ? routingOverride : event.route;
+      final String route =
+          routingOverride.isNotEmpty ? routingOverride : event.route;
       _navigateToScreen(route, event);
     });
   }
@@ -190,13 +212,16 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     );
     // Merge routing data into injected screen data and update bindings.
     viewModel.expressions = dataMap['expressions'];
-    dataMap.addAll(widget.routingData);
-    bindings.updateWith(dataMap['data'].cast<String, dynamic>());
+    if (dataMap['expressions'] != null) {
+      dataMap.addAll(widget.routingData);
+      bindings.updateWith(dataMap['data'].cast<String, dynamic>());
+    }
   }
 
   /// Handle "didRouteFrom" native event injection.
   void didRouteFrom() async {
-    Map<String, dynamic> eventData = await routeFrom(viewModel.id, viewModel.pid, widget.routingData);
+    Map<String, dynamic> eventData =
+        await routeFrom(viewModel.id, viewModel.pid, widget.routingData);
     if (eventData != null) {
       // Override current routing data if exists.
       if (eventData['data'] != null) {
@@ -215,7 +240,8 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
 
   /// Handle "willRouteTo" native event injection.
   Future<String> willRouteTo(nid) async {
-    Map<String, dynamic> eventData = await routeTo(viewModel.id, nid, bindings.savedBindingData);
+    Map<String, dynamic> eventData =
+        await routeTo(viewModel.id, nid, bindings.savedBindingData);
     if (eventData != null && eventData.isNotEmpty) {
       // Override current routing data if exists.
       widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
@@ -225,7 +251,8 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       // Fetch sid override if exists.
       String sid = eventData['sid'] ?? '';
 
-      debugPrint('willRouteTo: sid = $sid, data = ${widget.routingData.toString()}');
+      debugPrint(
+          'willRouteTo: sid = $sid, data = ${widget.routingData.toString()}');
       // Update routing override
 
       if (mounted) {

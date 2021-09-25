@@ -95,7 +95,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
       return SemanticsWrapperWidget(
         accessibility: widget.data.accessibility,
         child: Visibility(
-          visible: isVisible(viewModel, widget.data.showIf),
+          visible: isVisible(viewModel, widget.data),
           child: Opacity(
             opacity: getStyle(Styles.opacity, data: widget.data),
             child: Padding(

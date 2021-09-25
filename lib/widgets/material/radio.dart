@@ -54,7 +54,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
       return SemanticsWrapperWidget(
         accessibility: widget.data.accessibility,
         child: Visibility(
-          visible: isVisible(viewModel, widget.data.showIf),
+          visible: isVisible(viewModel, widget.data),
           child: Theme(
             data: Theme.of(context).copyWith(
               unselectedWidgetColor:

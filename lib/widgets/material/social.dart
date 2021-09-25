@@ -104,7 +104,7 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget> with Decoration
             TextAlign textAlign = getStyle(Styles.textAlign, data: widget.data);
 
             return Visibility(
-              visible: isVisible(viewModel, widget.data.showIf),
+              visible: isVisible(viewModel, widget.data),
               child: Opacity(
                 opacity: getStyle(Styles.opacity, data: widget.data),
                 child: ButtonTheme(
@@ -225,7 +225,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid> with DecorationMixin,
             // If the number of providers does not require an actual grid to be built.
             if (providerCount < 3 && providerCount > 0) {
               return Visibility(
-                visible: isVisible(viewModel, widget.data.showIf),
+                visible: isVisible(viewModel, widget.data),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -242,7 +242,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid> with DecorationMixin,
             }
 
             return Visibility(
-              visible: isVisible(viewModel, widget.data.showIf),
+              visible: isVisible(viewModel, widget.data),
               child: paging
                   ? NotificationListener<OverscrollIndicatorNotification>(
                       onNotification: (overscroll) {

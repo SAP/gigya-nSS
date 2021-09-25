@@ -53,7 +53,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
           _currentValue = bindingValue.value;
 
           return Visibility(
-            visible: isVisible(viewModel, widget.data.showIf),
+            visible: isVisible(viewModel, widget.data),
             child: Theme(
               data: Theme.of(context).copyWith(
                 unselectedWidgetColor: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),

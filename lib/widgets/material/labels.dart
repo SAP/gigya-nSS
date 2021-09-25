@@ -41,7 +41,7 @@ class LabelWidget extends StatelessWidget with DecorationMixin, StyleMixin, Loca
         return SemanticsWrapperWidget(
           accessibility: data.accessibility,
           child: Visibility(
-            visible: isVisible(viewModel, data.showIf),
+            visible: isVisible(viewModel, data),
             child: Padding(
               padding: getStyle(Styles.margin, data: data),
               child: NssCustomSizeWidget(
