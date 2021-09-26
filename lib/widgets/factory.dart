@@ -7,6 +7,7 @@ import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/app.dart';
@@ -170,6 +171,8 @@ class MaterialWidgetFactory extends WidgetFactory {
 
     BindingModel binding = NssIoc().use(BindingModel);
 
+    RuntimeStateEvaluator expressionProvider = NssIoc().use(RuntimeStateEvaluator);
+
     // Make sure screen routing data is being passed on with every screen transition.
     Map<String, dynamic> routingData = {};
     if (arguments is Map<String, dynamic>) {
@@ -188,6 +191,7 @@ class MaterialWidgetFactory extends WidgetFactory {
       viewModel: viewModel,
       bindingModel: binding,
       routingData: routingData,
+      expressionProvider: expressionProvider,
       screen: screen,
       content: buildContainer(
         buildWidgets(screen.children),

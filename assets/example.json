@@ -480,7 +480,7 @@
           "bind": "profile.lastName",
           "type": "textInput",
           "textKey": "common-last-name",
-          "theme": "input"
+          "theme": "input",
         },
         {
           "bind": "profile.email",

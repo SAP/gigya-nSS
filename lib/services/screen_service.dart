@@ -41,4 +41,20 @@ class ScreenService {
       debugPrint('Link error returned from native');
     });
   }
+
+  /// Trigger the native SDK to evaluate a single expression with adjacent data.
+  Future<String> evaluateExpression(
+      String expression, Map<String, dynamic> data) async {
+    String eval = await channels.screenChannel.invokeMethod<String>(
+      'eval',
+      {
+        'expression': expression,
+        'data': data,
+      },
+    ).catchError((error) {
+      debugPrint('Link error returned from native');
+      return 'false';
+    });
+    return eval;
+  }
 }

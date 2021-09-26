@@ -1,6 +1,7 @@
 import 'package:gigya_native_screensets_engine/comm/web_channel.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/services/api_service.dart';
 import 'package:gigya_native_screensets_engine/services/screen_service.dart';
@@ -17,6 +18,7 @@ class WebContainer {
         .register(NssConfig, (ioc) => NssConfig(isMock: asMock), singleton: true)
         .register(NssChannels, (ioc) => WebChannels(), singleton: true)
         .register(BindingModel, (ioc) => BindingModel())
+        .register(RuntimeStateEvaluator, (ioc) => RuntimeStateEvaluator())
         .register(Logger, (ioc) => Logger(ioc.use(NssConfig), ioc.use(NssChannels)))
         .register(MaterialWidgetFactory, (ioc) => MaterialWidgetFactory())
         .register(CupertinoWidgetFactory, (ioc) => CupertinoWidgetFactory())

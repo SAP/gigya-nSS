@@ -33,6 +33,11 @@ class BindingModel with ChangeNotifier {
   // Additional routing data added via route events.
   Map<String, dynamic> _routingBindingData = {};
 
+  // Keeping track of binding values and onChanged values.
+  // Key = widget bind field.
+  // Value = current value.
+  Map<String, dynamic> _valueChangeData = {};
+
   /// Check if binding data is available for data fetch.
   bool bindingDataAvailable() {
     return _bindingData.isNotEmpty;
