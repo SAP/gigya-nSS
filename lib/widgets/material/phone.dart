@@ -6,6 +6,7 @@ import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
@@ -26,7 +27,7 @@ class PhoneInputWidget extends StatefulWidget {
 }
 
 class _PhoneInputWidgetState extends State<PhoneInputWidget>
-    with LocalizationMixin, StyleMixin, DecorationMixin, ValidationMixin {
+    with LocalizationMixin, StyleMixin, DecorationMixin, ValidationMixin, VisibilityStateMixin {
   /// Memory allocation of available country codes objects.
   List<CountryCodePick> _countryCodeList = [];
 
@@ -46,6 +47,12 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
 
     // Parsing widget specific data. Can be null if the client does not provide one.
     _countriesData = widget.data.countries;
+
+    registerVisibilityNotifier(context, widget.data, () {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -277,13 +284,16 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                                     width: borderSize,
                                   ),
                                 )),
-                      onSaved: (input) {
-                        // Combine text from code selection & phone number.
-                        final String phone =
-                            _countryCodePick.dialCode + input.trim();
+                      onChanged: (input) {
+                        onValueSave(input, bindings);
 
-                        // Field can only be bound using the bind tag.
-                        bindings.save<String>(widget.data.bind, phone);
+                        // Track runtime data change.
+                        Provider.of<RuntimeStateEvaluator>(context,
+                            listen: false)
+                            .notifyChanged(widget.data.bind, input);
+                      },
+                      onSaved: (input) {
+                          onValueSave(input, bindings);
                       },
                     ),
                   ),
@@ -294,6 +304,15 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
         ),
       ),
     );
+  }
+
+  void onValueSave(input, bindings) {
+    // Combine text from code selection & phone number.
+    final String phone =
+        _countryCodePick.dialCode + input.trim();
+
+    // Field can only be bound using the bind tag.
+    bindings.save<String>(widget.data.bind, phone);
   }
 
   /// Check if click on country code picker area is allowed.

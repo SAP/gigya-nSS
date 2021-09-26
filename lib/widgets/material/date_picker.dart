@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/styles.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
@@ -36,7 +37,8 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
         LocalizationMixin,
         BindingMixin,
         ValidationMixin,
-        DatePickerStyleMixin {
+        DatePickerStyleMixin,
+        VisibilityStateMixin {
   DateTime _selectedDate;
   DateTime _initialDate;
 
@@ -50,11 +52,18 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
   void initState() {
     super.initState();
     _datePickerStyle = widget.data.datePickerStyle;
+
+    registerVisibilityNotifier(context, widget.data, () {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('DatePicker widget with bind: ${widget.data.bind} build initiated');
+    debugPrint(
+        'DatePicker widget with bind: ${widget.data.bind} build initiated');
     return Flexible(
       child: SemanticsWrapperWidget(
         accessibility: widget.data.accessibility,
@@ -72,69 +81,72 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
               final borderRadius =
                   getStyle(Styles.cornerRadius, data: widget.data);
 
-              return Opacity(
-                opacity: getStyle(Styles.opacity, data: widget.data),
-                child: InkWell(
-                  onTap: () {
-                    // Trigger picker.
-                    _showPickerSelection(context);
-                  },
-                  child: TextFormField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      filled: true,
-                      isDense: true,
-                      fillColor: getStyle(Styles.background, data: widget.data),
-                      disabledBorder: borderRadius == 0
-                          ? UnderlineInputBorder(
-                              borderRadius: BorderRadius.zero,
-                              borderSide: BorderSide(
-                                color: getStyle(Styles.borderColor,
-                                    data: widget.data,
-                                    themeProperty: "disabledColor"),
-                                width: borderSize,
+              return Visibility(
+                visible: isVisible(viewModel, widget.data),
+                child: Opacity(
+                  opacity: getStyle(Styles.opacity, data: widget.data),
+                  child: InkWell(
+                    onTap: () {
+                      // Trigger picker.
+                      _showPickerSelection(context);
+                    },
+                    child: TextFormField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        filled: true,
+                        isDense: true,
+                        fillColor: getStyle(Styles.background, data: widget.data),
+                        disabledBorder: borderRadius == 0
+                            ? UnderlineInputBorder(
+                                borderRadius: BorderRadius.zero,
+                                borderSide: BorderSide(
+                                  color: getStyle(Styles.borderColor,
+                                      data: widget.data,
+                                      themeProperty: "disabledColor"),
+                                  width: borderSize,
+                                ),
+                              )
+                            : OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(borderRadius)),
+                                borderSide: BorderSide(
+                                  color: getStyle(Styles.borderColor,
+                                      data: widget.data,
+                                      themeProperty: "disabledColor"),
+                                  width: borderSize,
+                                ),
                               ),
-                            )
-                          : OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(borderRadius)),
-                              borderSide: BorderSide(
-                                color: getStyle(Styles.borderColor,
-                                    data: widget.data,
-                                    themeProperty: "disabledColor"),
-                                width: borderSize,
-                              ),
-                            ),
-                      labelText: localizedStringFor(widget.data.textKey),
-                      labelStyle: TextStyle(
-                          fontSize:
-                              getStyle(Styles.fontSize, data: widget.data),
-                          color: getStyle(Styles.fontColor,
-                              data: widget.data, themeProperty: 'textColor'),
+                        labelText: localizedStringFor(widget.data.textKey),
+                        labelStyle: TextStyle(
+                            fontSize:
+                                getStyle(Styles.fontSize, data: widget.data),
+                            color: getStyle(Styles.fontColor,
+                                data: widget.data, themeProperty: 'textColor'),
+                            fontWeight:
+                                getStyle(Styles.fontWeight, data: widget.data)),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                      ),
+                      maxLines: 1,
+                      enabled: false,
+                      textAlign: getStyle(Styles.textAlign, data: widget.data) ??
+                          TextAlign.start,
+                      style: TextStyle(
+                          color: widget.data.disabled
+                              ? color.withOpacity(0.3)
+                              : color,
+                          fontSize: getStyle(Styles.fontSize, data: widget.data),
                           fontWeight:
                               getStyle(Styles.fontWeight, data: widget.data)),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                    ),
-                    maxLines: 1,
-                    enabled: false,
-                    textAlign: getStyle(Styles.textAlign, data: widget.data) ??
-                        TextAlign.start,
-                    style: TextStyle(
-                        color: widget.data.disabled
-                            ? color.withOpacity(0.3)
-                            : color,
-                        fontSize: getStyle(Styles.fontSize, data: widget.data),
-                        fontWeight:
-                            getStyle(Styles.fontWeight, data: widget.data)),
-                    onSaved: (value) {
-                      if (value.trim().isEmpty || _selectedDate == null) {
-                        return;
-                      }
-                      debugPrint('onSaved with value:$value');
+                      onSaved: (value) {
+                        if (value.trim().isEmpty || _selectedDate == null) {
+                          return;
+                        }
+                        debugPrint('onSaved with value:$value');
 
-                      // Date picker does not currently support "parseAs" & "saveAs" property.
-                      _bindOnSaved(bindings);
-                    },
+                        // Date picker does not currently support "parseAs" & "saveAs" property.
+                        _bindOnSaved(bindings);
+                      },
+                    ),
                   ),
                 ),
               );

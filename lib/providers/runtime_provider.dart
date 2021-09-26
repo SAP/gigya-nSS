@@ -21,6 +21,7 @@ mixin VisibilityStateMixin {
       final RuntimeStateEvaluator runtimeProvider =
           Provider.of<RuntimeStateEvaluator>(context, listen: false);
       if (runtimeProvider == null) return;
+
       if (data.showIf != null) {
         runtimeProvider.addListener(
           () async {

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
@@ -10,27 +11,50 @@ import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:provider/provider.dart';
 
-class LabelWidget extends StatelessWidget with DecorationMixin, StyleMixin, LocalizationMixin, BindingMixin {
+class LabelWidget extends StatefulWidget {
   final NssWidgetData data;
 
   LabelWidget({Key key, this.data}) : super(key: key);
 
   @override
+  _LabelWidgetState createState() => _LabelWidgetState();
+}
+
+class _LabelWidgetState extends State<LabelWidget>
+    with
+        DecorationMixin,
+        StyleMixin,
+        LocalizationMixin,
+        BindingMixin,
+        VisibilityStateMixin {
+  @override
+  void initState() {
+    super.initState();
+
+    registerVisibilityNotifier(context, widget.data, () {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer2<ScreenViewModel, BindingModel>(
       builder: (context, viewModel, bindings, child) {
-        BindingValue bindingValue = getBindingText(data, bindings);
+        BindingValue bindingValue = getBindingText(widget.data, bindings);
 
         // Check for binding error.
         if (bindingValue.error && !kReleaseMode) {
-          return showBindingDoesNotMatchError(data.bind, errorText: bindingValue.errorText);
+          return showBindingDoesNotMatchError(widget.data.bind,
+              errorText: bindingValue.errorText);
         }
 
         // Binding validated.
         String text = bindingValue.value;
         if (text == null) {
           // Get localized label text.
-          text = localizedStringFor(data.textKey);
+          text = localizedStringFor(widget.data.textKey);
         }
 
         // Apply link action if needed.
@@ -39,28 +63,38 @@ class LabelWidget extends StatelessWidget with DecorationMixin, StyleMixin, Loca
         if (!linkified) linkify.dispose();
 
         return SemanticsWrapperWidget(
-          accessibility: data.accessibility,
+          accessibility: widget.data.accessibility,
           child: Visibility(
-            visible: isVisible(viewModel, data),
+            visible: isVisible(viewModel, widget.data),
             child: Padding(
-              padding: getStyle(Styles.margin, data: data),
+              padding: getStyle(Styles.margin, data: widget.data),
               child: NssCustomSizeWidget(
-                data: data,
+                data: widget.data,
                 child: Opacity(
-                  opacity: getStyle(Styles.opacity, data: data),
+                  opacity: getStyle(Styles.opacity, data: widget.data),
                   child: Container(
-                    color: getStyle(Styles.background, data: data),
+                    color: getStyle(Styles.background, data: widget.data),
                     child: linkified
-                        ? linkify.linkify(data, (link) {
+                        ? linkify.linkify(widget.data, (link) {
                             viewModel.linkifyTap(link);
-                          }, getStyle(Styles.linkColor, data: data, themeProperty: 'linkColor') ?? getColor('blue'))
+                          },
+                            getStyle(Styles.linkColor,
+                                    data: widget.data,
+                                    themeProperty: 'linkColor') ??
+                                getColor('blue'))
                         : Text(
                             text,
-                            textAlign: getStyle(Styles.textAlign, data: data) ?? TextAlign.start,
+                            textAlign:
+                                getStyle(Styles.textAlign, data: widget.data) ??
+                                    TextAlign.start,
                             style: TextStyle(
-                              fontSize: getStyle(Styles.fontSize, data: data),
-                              color: getStyle(Styles.fontColor, data: data, themeProperty: 'textColor'),
-                              fontWeight: getStyle(Styles.fontWeight, data: data),
+                              fontSize:
+                                  getStyle(Styles.fontSize, data: widget.data),
+                              color: getStyle(Styles.fontColor,
+                                  data: widget.data,
+                                  themeProperty: 'textColor'),
+                              fontWeight: getStyle(Styles.fontWeight,
+                                  data: widget.data),
                             ),
                           ),
                   ),
