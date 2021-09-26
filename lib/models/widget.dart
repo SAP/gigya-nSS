@@ -113,6 +113,8 @@ class NssWidgetData {
   // Widget placeholder string option.
   String placeholder;
 
+  dynamic storeAsArray;
+
   // Date widget year range start.
   @JsonKey(defaultValue: 1920)
   int startYear;
@@ -162,6 +164,7 @@ class NssWidgetData {
     this.endYear,
     this.datePickerStyle,
     this.initialDisplay,
+    this.storeAsArray,
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) =>

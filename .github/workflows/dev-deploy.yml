@@ -1,4 +1,4 @@
-name: Nss Schema Dev CI
+name: Nss Schema Dev ST1 CI
 
 on:
   push:
@@ -79,6 +79,11 @@ jobs:
         shell: bash
         run: |
           cp -r build/web versions/*/
+          mkdir temp
+          cp -r example.json temp/example.json
+          cp -r nSS-schema.json temp/schema.json
+          cp -r versions temp/
+          cp -r build/web temp/web/
           
       - name: Deploy
         uses: shallwefootball/s3-upload-action@master
@@ -86,5 +91,5 @@ jobs:
           aws_key_id: ${{ secrets.AWS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
           aws_bucket: ${{ secrets.AWS_BUCKET }}
-          source_dir: 'versions/'
-          destination_dir: 'nSS/st1/versions/'
+          source_dir: 'temp/'
+          destination_dir: 'nSS/st1/'

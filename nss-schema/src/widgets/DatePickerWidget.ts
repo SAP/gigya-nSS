@@ -5,7 +5,6 @@ import {background, border, cornerRadius, font, margin, opacity, placeholderColo
 import WidgetEntity from "./WidgetEntity";
 
 export default new WidgetEntity('DatePicker', mergeDeep({},
-    BoundWidget,
     WithText,
     withStyle(margin, size, background, cornerRadius, opacity, ...border, ...font), {
         properties: {
@@ -27,9 +26,11 @@ export default new WidgetEntity('DatePicker', mergeDeep({},
                 default: 2025
             },
             datePickerStyle : {
-                primaryColor: {
-                    type: 'string'
-                },
+                properties: {
+                    primaryColor: {
+                        type: 'string'
+                    },
+                }
             }
         }
     }));
