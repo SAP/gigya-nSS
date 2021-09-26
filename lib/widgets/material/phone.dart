@@ -156,8 +156,12 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                       ),
                       keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
+                          isDense: true,
                           filled: true,
                           fillColor: styleBackground(widget.data),
+                          prefixIconConstraints: BoxConstraints(
+                            maxHeight: 26
+                          ),
                           prefixIcon: InkWell(
                             // Verify click.
                             onTap: widget.data.disabled
@@ -172,8 +176,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                                       }
                                     : null,
                             child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 12, right: 8, top: 8, bottom: 8),
+                              padding: const EdgeInsets.only(left: 12.0, right: 8, top: 0, bottom: 0),
                               child: Container(
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -536,21 +539,31 @@ class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> {
     return Container(
       constraints: BoxConstraints(minHeight: 44),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Visibility(
             visible: showIcons,
-            child: Center(
-              child: Text(pick.flag),
+            child: Row(
+              children: [
+                Center(
+                  child: Text(pick.flag),
+                ),
+                SizedBox(width: 16)
+              ],
             ),
           ),
-          SizedBox(width: 20),
-          Text(
-            pick.dialCode,
-            style: TextStyle(
-              fontSize: 15,
+          Container(
+            constraints: BoxConstraints(
+              minWidth: 60
+            ),
+            child: Text(
+              pick.dialCode,
+              style: TextStyle(
+                fontSize: 15,
+              ),
             ),
           ),
-          SizedBox(width: 20),
           Expanded(
             child: Text(
               pick.name,

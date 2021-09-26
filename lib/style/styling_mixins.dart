@@ -290,7 +290,7 @@ mixin StyleMixin {
   dynamic styleBackground(data) => getStyle(Styles.background, data: data);
 
   Color styleFontColor(data, disabled) => disabled
-      ? getStyle(Styles.fontColor, data: data, themeProperty: 'textColor').withOpacity(0.3)
+      ? getStyle(Styles.fontColor, data: data, themeProperty: 'disabledColor').withOpacity(0.3)
       : getStyle(Styles.fontColor, data: data, themeProperty: 'textColor');
 
   dynamic styleFontSize(data) => getStyle(Styles.fontSize, data: data);
