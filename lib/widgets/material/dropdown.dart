@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
@@ -23,7 +24,7 @@ class DropDownButtonWidget extends StatefulWidget {
 }
 
 class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
-    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin {
+    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin, VisibilityStateMixin {
   String _dropdownValue;
   List<String> _dropdownItems = [];
   String _placeholder;
@@ -32,6 +33,13 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
   void initState() {
     _placeholder = widget.data.placeholder ?? null;
     super.initState();
+
+    registerVisibilityNotifier(context, widget.data, () {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+
   }
 
   int indexFromDisplayValue(String value) {
@@ -59,7 +67,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
     return Consumer2<ScreenViewModel, BindingModel>(builder: (context, viewModel, bindings, child) {
       _dropdownItems.clear();
 
-      BindingValue bindingValue = getBindingText(widget.data, bindings);
+      BindingValue bindingValue = getBindingText(widget.data, bindings, asArray: widget.data.storeAsArray);
 
       if (bindingValue.error && !kReleaseMode) {
         return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);
@@ -95,7 +103,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
       return SemanticsWrapperWidget(
         accessibility: widget.data.accessibility,
         child: Visibility(
-          visible: isVisible(viewModel, widget.data.showIf),
+          visible: isVisible(viewModel, widget.data),
           child: Opacity(
             opacity: getStyle(Styles.opacity, data: widget.data),
             child: Padding(
@@ -145,6 +153,11 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                         onChanged: (String newValue) {
                           setState(() {
                             setOption(newValue, bindings);
+
+                            // Track runtime data change.
+                            Provider.of<RuntimeStateEvaluator>(context,
+                                listen: false)
+                                .notifyChanged(widget.data.bind, newValue);
                           });
                         },
                         items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {

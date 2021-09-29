@@ -6,6 +6,7 @@ import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
@@ -26,7 +27,7 @@ class PhoneInputWidget extends StatefulWidget {
 }
 
 class _PhoneInputWidgetState extends State<PhoneInputWidget>
-    with LocalizationMixin, StyleMixin, DecorationMixin, ValidationMixin {
+    with LocalizationMixin, StyleMixin, DecorationMixin, ValidationMixin, VisibilityStateMixin {
   /// Memory allocation of available country codes objects.
   List<CountryCodePick> _countryCodeList = [];
 
@@ -34,7 +35,8 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
   CountryCodePick _countryCodePick = CountryCodePick.fallback();
 
   /// Phone input text controller.
-  final TextEditingController _textEditingController = TextEditingController(text: '');
+  final TextEditingController _textEditingController =
+      TextEditingController(text: '');
 
   /// Widget specific data that is parsed out of the generic [NssWidgetData] injection.
   Countries _countriesData;
@@ -45,6 +47,12 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
 
     // Parsing widget specific data. Can be null if the client does not provide one.
     _countriesData = widget.data.countries;
+
+    registerVisibilityNotifier(context, widget.data, () {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -52,7 +60,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
     return Consumer2<ScreenViewModel, BindingModel>(
       builder: (context, viewModel, bindings, child) {
         return Visibility(
-          visible: isVisible(viewModel, widget.data.showIf),
+          visible: isVisible(viewModel, widget.data),
           child: FutureBuilder<List<CountryCodePick>>(
             future: _countryCodeList.isEmpty ? loadCC() : cachedCC(),
             builder: (context, snapshot) {
@@ -126,42 +134,9 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
           opacity: styleOpacity(widget.data),
           child: Container(
             // Style background.
-            color: styleBackground(widget.data),
             child: Row(
               children: [
-                InkWell(
-                  // Verify click.
-                  onTap: allowCCTap()
-                      ? () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return _ccSelectionDialog();
-                              });
-                        }
-                      : null,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      constraints: BoxConstraints(minWidth: 60),
-                      child: Row(
-                        children: [
-                          _showCountryIcons() ? Text(_countryCodePick.flag) : Container(),
-                          SizedBox(width: 8),
-                          Text(
-                            _countryCodePick.dialCode,
-                            style: TextStyle(
-                                // Style font size.
-                                fontSize: getStyle(Styles.fontSize, data: widget.data),
-                                // Style font weight.
-                                fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
+                Flexible(
                   child: SemanticsWrapperWidget(
                     accessibility: widget.data.accessibility,
                     child: TextFormField(
@@ -172,7 +147,8 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                       textAlign: styleTextAlign(widget.data),
                       style: TextStyle(
                         // Style font color.
-                        color: styleFontColor(widget.data, widget.data.disabled),
+                        color:
+                            styleFontColor(widget.data, widget.data.disabled),
                         // Style font size.
                         fontSize: styleFontSize(widget.data),
                         // Style font weight.
@@ -180,22 +156,74 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                       ),
                       keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
+                          isDense: true,
+                          filled: true,
+                          fillColor: styleBackground(widget.data),
+                          prefixIconConstraints: BoxConstraints(
+                            maxHeight: 26
+                          ),
+                          prefixIcon: InkWell(
+                            // Verify click.
+                            onTap: widget.data.disabled
+                                ? null
+                                : allowCCTap()
+                                    ? () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return _ccSelectionDialog();
+                                            });
+                                      }
+                                    : null,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 12.0, right: 8, top: 0, bottom: 0),
+                              child: Container(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _showCountryIcons()
+                                        ? Text(_countryCodePick.flag)
+                                        : Container(),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      _countryCodePick.dialCode,
+                                      style: TextStyle(
+                                          // Style font color
+                                          color: styleFontColor(widget.data,
+                                              widget.data.disabled),
+                                          // Style font size.
+                                          fontSize: getStyle(Styles.fontSize,
+                                              data: widget.data),
+                                          // Style font weight.
+                                          fontWeight: getStyle(
+                                              Styles.fontWeight,
+                                              data: widget.data)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                           hintText: localizedStringFor(widget.data.textKey),
                           // Style placeholder/hint.
                           hintStyle: TextStyle(
-                            color: stylePlaceholder(widget.data, widget.data.disabled),
+                            color: stylePlaceholder(
+                                widget.data, widget.data.disabled),
                           ),
                           disabledBorder: borderRadius == 0
                               ? UnderlineInputBorder(
                                   borderSide: BorderSide(
-                                    color: getThemeColor('disabledColor').withOpacity(0.3),
+                                    color: getThemeColor('disabledColor')
+                                        .withOpacity(0.3),
                                     width: borderSize + 2,
                                   ),
                                 )
                               : OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(borderRadius)),
                                   borderSide: BorderSide(
-                                    color: getThemeColor('disabledColor').withOpacity(0.3),
+                                    color: getThemeColor('disabledColor')
+                                        .withOpacity(0.3),
                                     width: borderSize,
                                   ),
                                 ),
@@ -207,7 +235,8 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                                   ),
                                 )
                               : OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(borderRadius)),
                                   borderSide: BorderSide(
                                     color: getThemeColor('errorColor'),
                                     width: borderSize,
@@ -221,7 +250,8 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                                   ),
                                 )
                               : OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(borderRadius)),
                                   borderSide: BorderSide(
                                     color: getThemeColor('errorColor'),
                                     width: borderSize,
@@ -235,7 +265,8 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                                   ),
                                 )
                               : OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(borderRadius)),
                                   borderSide: BorderSide(
                                     color: getThemeColor('enabledColor'),
                                     width: borderSize,
@@ -249,18 +280,23 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                                   ),
                                 )
                               : OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(borderRadius)),
                                   borderSide: BorderSide(
                                     color: styleBorderColor(widget.data),
                                     width: borderSize,
                                   ),
                                 )),
-                      onSaved: (input) {
-                        // Combine text from code selection & phone number.
-                        final String phone = _countryCodePick.dialCode + input.trim();
+                      onChanged: (input) {
+                        onValueSave(input, bindings);
 
-                        // Field can only be bound using the bind tag.
-                        bindings.save<String>(widget.data.bind, phone);
+                        // Track runtime data change.
+                        Provider.of<RuntimeStateEvaluator>(context,
+                            listen: false)
+                            .notifyChanged(widget.data.bind, input);
+                      },
+                      onSaved: (input) {
+                          onValueSave(input, bindings);
                       },
                     ),
                   ),
@@ -271,6 +307,15 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
         ),
       ),
     );
+  }
+
+  void onValueSave(input, bindings) {
+    // Combine text from code selection & phone number.
+    final String phone =
+        _countryCodePick.dialCode + input.trim();
+
+    // Field can only be bound using the bind tag.
+    bindings.save<String>(widget.data.bind, phone);
   }
 
   /// Check if click on country code picker area is allowed.
@@ -296,6 +341,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
         insetPadding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 30.0),
         child: CountryPickerDialogWidget(
           mainList: _countryCodeList,
+          showIcons: _showCountryIcons(),
           onPick: (picked) {
             // Update picked selection.
             setState(() {
@@ -316,8 +362,10 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
   /// Loading needs to take place prior to widget build.
   Future<List<CountryCodePick>> loadCC() async {
     Map tempCCMap = {};
-    String data = await DefaultAssetBundle.of(context).loadString("assets/static/countries.json");
-    tempCCMap = Map.fromIterable(json.decode(data), key: (e) => e['code'], value: (e) => e);
+    String data = await DefaultAssetBundle.of(context)
+        .loadString("assets/static/countries.json");
+    tempCCMap = Map.fromIterable(json.decode(data),
+        key: (e) => e['code'], value: (e) => e);
     includeEntries(tempCCMap);
     excludeEntries(tempCCMap);
     replaceWithLocalizedEntries(tempCCMap);
@@ -331,7 +379,8 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
   void includeEntries(Map ccMap) {
     if (_countriesData == null) return;
     if (_countriesData.include.isEmpty) return;
-    _countriesData.include = _countriesData.include.map((element) => element.toUpperCase()).toList();
+    _countriesData.include =
+        _countriesData.include.map((element) => element.toUpperCase()).toList();
     ccMap.removeWhere((key, value) => !_countriesData.include.contains(key));
   }
 
@@ -340,7 +389,8 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
   void excludeEntries(Map ccMap) {
     if (_countriesData == null) return;
     if (_countriesData.exclude.isEmpty) return;
-    _countriesData.exclude = _countriesData.exclude.map((element) => element.toUpperCase()).toList();
+    _countriesData.exclude =
+        _countriesData.exclude.map((element) => element.toUpperCase()).toList();
     ccMap.removeWhere((key, value) => _countriesData.exclude.contains(key));
   }
 
@@ -367,7 +417,8 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
     // This means that the client have included only one option in the include list which
     // we will treat as a single selection.
     if (ccMap.length == 1) {
-      _countryCodePick = CountryCodePick.fromJson(ccMap.entries.first.value.toUpperCase());
+      _countryCodePick =
+          CountryCodePick.fromJson(ccMap.entries.first.value.toUpperCase());
       return;
     }
 
@@ -380,7 +431,8 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
 
     // Manually set the default selected country code.
     if (_countriesData != null && _countriesData.defaultSelected != 'auto') {
-      _countryCodePick = CountryCodePick.fromJson(ccMap[_countriesData.defaultSelected.toUpperCase()]);
+      _countryCodePick = CountryCodePick.fromJson(
+          ccMap[_countriesData.defaultSelected.toUpperCase()]);
     }
   }
 }
@@ -390,11 +442,15 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
 class CountryPickerDialogWidget extends StatefulWidget {
   final List<CountryCodePick> mainList;
   final OnCountryCodePick onPick;
+  final bool showIcons;
 
-  const CountryPickerDialogWidget({Key key, this.mainList, this.onPick}) : super(key: key);
+  const CountryPickerDialogWidget(
+      {Key key, this.mainList, this.onPick, this.showIcons})
+      : super(key: key);
 
   @override
-  _CountryPickerDialogWidgetState createState() => _CountryPickerDialogWidgetState();
+  _CountryPickerDialogWidgetState createState() =>
+      _CountryPickerDialogWidgetState();
 }
 
 /// Definition for country code picker child widget callback.
@@ -419,10 +475,11 @@ class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
+            padding:
+                const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
             child: TextField(
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: widget.showIcons ? Icon(Icons.search) : null,
               ),
               onChanged: (input) {
                 if (input.isEmpty) {
@@ -437,7 +494,9 @@ class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> {
                 setState(() {
                   _countryCodeSearchList.clear();
                   _countryCodeSearchList.addAll(widget.mainList
-                      .where((CountryCodePick element) => element.name.toLowerCase().startsWith(input.toLowerCase()))
+                      .where((CountryCodePick element) => element.name
+                          .toLowerCase()
+                          .startsWith(input.toLowerCase()))
                       .toList());
                 });
               },
@@ -457,8 +516,10 @@ class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> {
                       Navigator.pop(context);
                     },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                      child: _ccPickerTile(_countryCodeSearchList[index]),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 4),
+                      child: _ccPickerTile(
+                          _countryCodeSearchList[index], widget.showIcons),
                     ),
                   ),
                 );
@@ -474,22 +535,35 @@ class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> {
   /// Constructed of flag image and country name.
   ///
   //TODO: Picker style is not styled.
-  Widget _ccPickerTile(CountryCodePick pick) {
+  Widget _ccPickerTile(CountryCodePick pick, bool showIcons) {
     return Container(
       constraints: BoxConstraints(minHeight: 44),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Center(
-            child: Text(pick.flag),
-          ),
-          SizedBox(width: 20),
-          Text(
-            pick.dialCode,
-            style: TextStyle(
-              fontSize: 15,
+          Visibility(
+            visible: showIcons,
+            child: Row(
+              children: [
+                Center(
+                  child: Text(pick.flag),
+                ),
+                SizedBox(width: 16)
+              ],
             ),
           ),
-          SizedBox(width: 20),
+          Container(
+            constraints: BoxConstraints(
+              minWidth: 60
+            ),
+            child: Text(
+              pick.dialCode,
+              style: TextStyle(
+                fontSize: 15,
+              ),
+            ),
+          ),
           Expanded(
             child: Text(
               pick.name,
@@ -519,7 +593,12 @@ class CountryCodePick {
         dialCode = json['dial_code'];
 
   /// Fallback country code object is set to US.
-  static fallback() => CountryCodePick.fromJson({"name": "United States", "flag": "🇺🇸", "code": "US", "dial_code": "+1"});
+  static fallback() => CountryCodePick.fromJson({
+        "name": "United States",
+        "flag": "🇺🇸",
+        "code": "US",
+        "dial_code": "+1"
+      });
 
   static List<CountryCodePick> listFrom(Map map) {
     List<CountryCodePick> list = [];

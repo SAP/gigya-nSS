@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
@@ -22,7 +23,13 @@ class CheckboxWidget extends StatefulWidget {
 }
 
 class _CheckboxWidgetState extends State<CheckboxWidget>
-    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin {
+    with
+        DecorationMixin,
+        BindingMixin,
+        StyleMixin,
+        LocalizationMixin,
+        ValidationMixin,
+        VisibilityStateMixin {
   bool _currentValue;
 
   @override
@@ -31,6 +38,12 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
 
     // Initialize validators.
     initValidators(widget.data);
+
+    registerVisibilityNotifier(context, widget.data, () {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -44,19 +57,23 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
         return validateField(_currentValue.toString(), widget.data.bind);
       },
       builder: (state) {
-        return Consumer2<ScreenViewModel, BindingModel>(builder: (context, viewModel, bindings, child) {
-          BindingValue bindingValue = getBindingBool(widget.data, bindings);
+        return Consumer2<ScreenViewModel, BindingModel>(
+            builder: (context, viewModel, bindings, child) {
+          BindingValue bindingValue = getBindingBool(widget.data, bindings,
+              asArray: widget.data.storeAsArray);
 
           if (bindingValue.error && !kReleaseMode) {
-            return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);
+            return showBindingDoesNotMatchError(widget.data.bind,
+                errorText: bindingValue.errorText);
           }
           _currentValue = bindingValue.value;
 
           return Visibility(
-            visible: isVisible(viewModel, widget.data.showIf),
+            visible: isVisible(viewModel, widget.data),
             child: Theme(
               data: Theme.of(context).copyWith(
-                unselectedWidgetColor: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
+                unselectedWidgetColor: getStyle(Styles.fontColor,
+                    data: widget.data, themeProperty: 'textColor'),
                 disabledColor: getThemeColor('disabledColor'),
               ),
               child: Opacity(
@@ -79,16 +96,20 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                 accessibility: widget.data.accessibility,
                                 child: Theme(
                                   data: ThemeData(
-                                      unselectedWidgetColor: widget.data.disabled
-                                          ? getThemeColor('disabledColor').withOpacity(0.3)
-                                          : getThemeColor('enabledColor')),
+                                      unselectedWidgetColor:
+                                          widget.data.disabled
+                                              ? getThemeColor('disabledColor')
+                                                  .withOpacity(0.3)
+                                              : getThemeColor('enabledColor')),
                                   child: Checkbox(
                                     tristate: false,
                                     activeColor: widget.data.disabled
-                                        ? getThemeColor('disabledColor').withOpacity(0.3)
+                                        ? getThemeColor('disabledColor')
+                                            .withOpacity(0.3)
                                         : getThemeColor('enabledColor'),
                                     checkColor: widget.data.disabled
-                                        ? getThemeColor('disabledColor').withOpacity(0.3)
+                                        ? getThemeColor('disabledColor')
+                                            .withOpacity(0.3)
                                         : getThemeColor('secondaryColor'),
                                     value: _currentValue,
                                     onChanged: (bool val) {
@@ -96,7 +117,17 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                         return null;
                                       }
                                       setState(() {
-                                        bindings.save<bool>(widget.data.bind, val, saveAs: widget.data.sendAs);
+                                        bindings.save<bool>(
+                                            widget.data.bind, val,
+                                            saveAs: widget.data.sendAs,
+                                            asArray: widget.data.storeAsArray);
+
+                                        // Track runtime data change.
+                                        Provider.of<RuntimeStateEvaluator>(
+                                                context,
+                                                listen: false)
+                                            .notifyChanged(
+                                                widget.data.bind, val);
                                       });
                                     },
                                   ),
@@ -104,25 +135,50 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                               ),
                               Flexible(
                                 child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        bindings.save<bool>(widget.data.bind, !_currentValue, saveAs: widget.data.sendAs);
-                                      });
-                                    },
+                                    onTap: widget.data.disabled
+                                        ? null
+                                        : () {
+                                            setState(() {
+                                              bindings.save<bool>(
+                                                  widget.data.bind,
+                                                  !_currentValue,
+                                                  saveAs: widget.data.sendAs,
+                                                  asArray:
+                                                      widget.data.storeAsArray);
+                                            });
+                                          },
                                     child: Container(
                                       child: linkified
-                                          ? linkify.linkify(widget.data, (link) {
+                                          ? linkify.linkify(widget.data,
+                                              (link) {
                                               viewModel.linkifyTap(link);
                                             },
-                                              getStyle(Styles.linkColor, data: widget.data, themeProperty: 'linkColor') ??
+                                          // link color
+                                              getStyle(Styles.linkColor,
+                                                      data: widget.data,
+                                                      themeProperty:
+                                                          'linkColor') ??
                                                   getColor('blue'))
                                           : Text(
                                               displayText,
-                                              textAlign: getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
+                                              textAlign: getStyle(
+                                                      Styles.textAlign,
+                                                      data: widget.data) ??
+                                                  TextAlign.start,
                                               style: TextStyle(
-                                                  color: getStyle(Styles.fontColor, data: widget.data),
-                                                  fontSize: getStyle(Styles.fontSize, data: widget.data),
-                                                  fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
+                                                  color: widget.data.disabled
+                                                      ? getThemeColor(
+                                                              'disabledColor')
+                                                          .withOpacity(0.3)
+                                                      : getStyle(
+                                                          Styles.fontColor,
+                                                          data: widget.data),
+                                                  fontSize: getStyle(
+                                                      Styles.fontSize,
+                                                      data: widget.data),
+                                                  fontWeight: getStyle(
+                                                      Styles.fontWeight,
+                                                      data: widget.data)),
                                             ),
                                     )),
                               ),
@@ -131,11 +187,13 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                           Visibility(
                             visible: state.errorText != null,
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               child: Text(
                                 state.errorText != null ? state.errorText : '',
                                 textAlign: TextAlign.start,
-                                style: TextStyle(color: Colors.red, fontSize: 12),
+                                style:
+                                    TextStyle(color: Colors.red, fontSize: 12),
                               ),
                             ),
                           ),

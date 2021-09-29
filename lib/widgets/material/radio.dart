@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/option.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
@@ -13,7 +14,7 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:provider/provider.dart';
 
-/// Radio group UI selection componenet.
+/// Radio group UI selection component.
 class RadioGroupWidget extends StatefulWidget {
   final NssWidgetData data;
 
@@ -24,14 +25,25 @@ class RadioGroupWidget extends StatefulWidget {
 }
 
 class _RadioGroupWidgetState extends State<RadioGroupWidget>
-    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin {
+    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin, VisibilityStateMixin {
   String _groupValue;
   String _defaultValue;
 
   @override
+  void initState() {
+    super.initState();
+
+    registerVisibilityNotifier(context, widget.data, () {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer2<ScreenViewModel, BindingModel>(builder: (context, viewModel, bindings, child) {
-      BindingValue bindingValue = getBindingText(widget.data, bindings);
+      BindingValue bindingValue = getBindingText(widget.data, bindings, asArray: widget.data.storeAsArray);
 
       if (bindingValue.error && !kReleaseMode) {
         return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);
@@ -54,7 +66,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
       return SemanticsWrapperWidget(
         accessibility: widget.data.accessibility,
         child: Visibility(
-          visible: isVisible(viewModel, widget.data.showIf),
+          visible: isVisible(viewModel, widget.data),
           child: Theme(
             data: Theme.of(context).copyWith(
               unselectedWidgetColor:
@@ -75,32 +87,47 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                       itemCount: widget.data.options.length,
                       itemBuilder: (BuildContext lvbContext, int index) {
                         NssOption option = widget.data.options[index];
-                        return RadioListTile(
-                          controlAffinity: ListTileControlAffinity.leading,
-                          value: option.value,
-                          title: Text(
-                            localizedStringFor(option.textKey),
-                            textAlign:
-                                getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
-                            style: TextStyle(
-                              color: widget.data.disabled
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                              unselectedWidgetColor: widget.data.disabled
                                   ? getThemeColor('disabledColor')
-                                  : getStyle(Styles.fontColor,
-                                      data: widget.data, themeProperty: 'textColor'),
-                              fontSize: getStyle(Styles.fontSize, data: widget.data),
-                              fontWeight: getStyle(Styles.fontWeight, data: widget.data),
-                            ),
+                                  : getThemeColor('enabledColor'),
+                              disabledColor: widget.data.disabled
+                                  ? getThemeColor('disabledColor')
+                                  : getThemeColor('enabledColor')
                           ),
-                          groupValue: _groupValue,
-                          activeColor: widget.data.disabled
-                              ? getThemeColor('disabledColor')
-                              : getThemeColor('enabledColor'),
-                          // TODO: need to change the getter from theme.
-                          onChanged: (String value) {
-                            setState(() {
-                              setOption(value, bindings);
-                            });
-                          },
+                          child: RadioListTile(
+                            controlAffinity: ListTileControlAffinity.leading,
+                            value: option.value,
+                            title: Text(
+                              localizedStringFor(option.textKey),
+                              textAlign:
+                                  getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
+                              style: TextStyle(
+                                color: widget.data.disabled
+                                    ? getThemeColor('disabledColor')
+                                    : getStyle(Styles.fontColor,
+                                        data: widget.data, themeProperty: 'textColor'),
+                                fontSize: getStyle(Styles.fontSize, data: widget.data),
+                                fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                              ),
+                            ),
+                            groupValue: _groupValue,
+                            activeColor: widget.data.disabled
+                                ? getThemeColor('disabledColor')
+                                : getThemeColor('enabledColor'),
+                            // TODO: need to change the getter from theme.
+                            onChanged: (String value) {
+                              setState(() {
+                                setOption(value, bindings);
+
+                                // Track runtime data change.
+                                Provider.of<RuntimeStateEvaluator>(context,
+                                    listen: false)
+                                    .notifyChanged(widget.data.bind, value);
+                              });
+                            },
+                          ),
                         );
                       },
                     ),

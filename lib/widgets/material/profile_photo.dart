@@ -7,6 +7,7 @@ import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
+import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
@@ -27,7 +28,7 @@ class ProfilePhotoWidget extends StatefulWidget {
 }
 
 class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
-    with LocalizationMixin {
+    with LocalizationMixin, VisibilityStateMixin {
   @override
   void initState() {
     super.initState();
@@ -40,6 +41,12 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
         getImage(imageURL, widget.data.defaultPlaceholder);
       },
     );
+
+    registerVisibilityNotifier(context, widget.data, () {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override

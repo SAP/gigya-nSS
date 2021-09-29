@@ -5,9 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
-import 'package:gigya_native_screensets_engine/models/api.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
+import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/debug.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
@@ -31,9 +31,14 @@ extension ScreenActionExt on ScreenAction {
 /// The view model class acts as the coordinator to the currently displayed screen.
 /// It will handle the current screen visual state and its adjacent form and is responsible for service/repository
 /// action triggering.
-class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, EngineEvents {
+class ScreenViewModel
+    with ChangeNotifier, DebugUtils, LocalizationMixin, EngineEvents {
   final ApiService apiService;
   final ScreenService screenService;
+
+  final bool _isMock = NssIoc().use(NssConfig).isMock;
+
+  final Map<String, String> screenShowIfMapping = {};
 
   Map<dynamic, dynamic> expressions = {};
 
@@ -55,7 +60,8 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
   /// Stream controller responsible for triggering navigation events.
   /// The [NssScreenWidget] holds the correct [BuildContext] which can access the [Navigator]. Therefore it will
   /// be the only one listening to this stream.
-  final StreamController<NavigationEvent> navigationStream = StreamController<NavigationEvent>();
+  final StreamController<NavigationEvent> navigationStream =
+      StreamController<NavigationEvent>();
 
   @override
   void dispose() {
@@ -67,17 +73,38 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
   /// Attach screen action.
   /// Method will use the [ScreenService] to send the correct action to the native to initialize the correct
   /// native logic object.
-  Future<Map<String, dynamic>> attachScreenAction(String action, String screenId, Map<String, String> expressions) async {
-    if (NssIoc().use(NssConfig).isMock) {
+  Future<Map<String, dynamic>> attachScreenAction(
+      String action, String screenId, Map<String, String> expressions) async {
+    if (isMock) {
       return {};
     }
     try {
-      var map = await screenService.initiateAction(action, screenId, expressions);
+      var map =
+          await screenService.initiateAction(action, screenId, expressions);
       engineLogger.d('Screen $screenId flow initialized with data map');
       return map;
     } on MissingPluginException {
       engineLogger.e('Missing channel connection: check mock state?');
       return {};
+    }
+  }
+
+  /// Runtime evaluation request of specific expression & relevant data.
+  Future<void> evaluateExpressionByDemand(
+      NssWidgetData widgetData, Map<String, dynamic> data) async {
+    if (_isMock) {
+      return;
+    }
+
+    String expression = screenShowIfMapping[widgetData.showIf];
+
+    // evaluate expression with adjacent data.
+    String evaluated =
+        await screenService.evaluateExpression(expression, data);
+
+    if (expressions != null) {
+      // Merge expression result with current expression map.
+      expressions[widgetData.showIf] = evaluated;
     }
   }
 
@@ -139,14 +166,16 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
           String error = eventData['error'];
 
           if (error.isEmpty) {
-            engineLogger.d('Provided empty error message from event submission override');
+            engineLogger.d(
+                'Provided empty error message from event submission override');
           }
           setError(error);
           return;
         }
 
-        // Overrite submission data if exists.
-        Map<String, dynamic> submissionData = eventData['data'].cast<String, dynamic>();
+        // Overwrite submission data if exists.
+        Map<String, dynamic> submissionData =
+            eventData['data'].cast<String, dynamic>();
         if (submissionData.isNotEmpty) submission = submissionData;
       }
 
@@ -160,10 +189,10 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
     formKey.currentState.validate();
   }
 
-  /// Trigger natvie social login flow with selected [provider].
+  /// Trigger native social login flow with selected [provider].
   void socialLogin(NssSocialProvider provider) {
     if (isMock) {
-      debugPrint('Requeted social login with ${provider.name}');
+      debugPrint('Requested social login with ${provider.name}');
       return;
     }
     sendApi(ScreenAction.socialLogin.name, {'provider': provider.name});
@@ -187,7 +216,8 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
       engineLogger.d('Route link validated : $link');
 
       // Initiate next action.
-      final Map<String, dynamic> actionData = await initiateNextLinkAction(link);
+      final Map<String, dynamic> actionData =
+          await initiateNextLinkAction(link);
       // Get routing data.
       Map<String, dynamic> screenData = {};
       Map<String, dynamic> expressionData = {};
@@ -196,7 +226,8 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
         expressionData = actionData['expressions'].cast<String, dynamic>();
       }
 
-      navigationStream.sink.add(NavigationEvent('$link', screenData, expressionData));
+      navigationStream.sink
+          .add(NavigationEvent('$link', screenData, expressionData));
       return;
     }
   }
@@ -212,7 +243,8 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
         engineLogger.d('Api request success: ${result.data.toString()}');
 
         // Initiate next action.
-        final Map<String, dynamic> actionData = await initiateNextAction('onSuccess');
+        final Map<String, dynamic> actionData =
+            await initiateNextAction('onSuccess');
         // Get routing data.
         Map<String, dynamic> screenData = {};
         Map<String, dynamic> expressionData = {};
@@ -224,7 +256,8 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
         setIdle();
 
         // Trigger navigation.
-        navigationStream.sink.add(NavigationEvent('$id/onSuccess', screenData, expressionData));
+        navigationStream.sink
+            .add(NavigationEvent('$id/onSuccess', screenData, expressionData));
       },
     ).catchError(
       (error) async {
@@ -233,7 +266,8 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
           final routeNamed = describeEnum(route);
 
           // Initiate next action.
-          final Map<String, dynamic> actionData = await initiateNextAction(routeNamed);
+          final Map<String, dynamic> actionData =
+              await initiateNextAction(routeNamed);
           // Get routing data.
           Map<String, dynamic> screenData = {};
           Map<String, dynamic> expressionData = {};
@@ -244,7 +278,8 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
 
           setIdle();
 
-          navigationStream.sink.add(NavigationEvent('$id/$routeNamed', screenData, expressionData));
+          navigationStream.sink.add(
+              NavigationEvent('$id/$routeNamed', screenData, expressionData));
         } else {
           // Error will be displayed when there is no available routing option.
           setError(error.errorMessage);
@@ -261,12 +296,14 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
       return {};
     }
     final Markup markup = NssIoc().use(NssConfig).markup;
-    final String linkAction = markup.screens[link] != null ? markup.screens[link].action : null;
+    final String linkAction =
+        markup.screens[link] != null ? markup.screens[link].action : null;
     if (linkAction == null || linkAction.isEmpty) {
       return {};
     }
 
-    engineLogger.d('initiateNextAction: for next screen id = $link and action = $linkAction');
+    engineLogger.d(
+        'initiateNextAction: for next screen id = $link and action = $linkAction');
 
     // Action initialization data fetch.
     var dataMap = await attachScreenAction(
@@ -304,7 +341,8 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
     final Screen nextScreen = markup.screens[nextScreenId];
     var nextScreenExpressions = mapScreenExpressions(nextScreen);
 
-    engineLogger.d('initiateNextAction: for next screen id = $nextScreenId and action = $nextScreenAction');
+    engineLogger.d(
+        'initiateNextAction: for next screen id = $nextScreenId and action = $nextScreenAction');
 
     // Action initialization data fetch.
     var dataMap = await attachScreenAction(
@@ -319,30 +357,34 @@ class ScreenViewModel with ChangeNotifier, DebugUtils, LocalizationMixin, Engine
   Map<String, String> mapScreenExpressions(Screen screen) {
     Map<String, String> expressionMap = {};
     screen.children.asMap().forEach((index, widget) {
-      // Addiing showIf expression.
+      // Adding showIf expression.
       if (widget.showIf != null) {
         // Check if `showOnlyFields` is `true` then override the expression to showing by empty.
-        if (screen.showOnlyFields == NssShowOnlyFields.empty && widget.bind != null) {
+        if (screen.showOnlyFields == NssShowOnlyFields.empty &&
+            widget.bind != null) {
           widget.showIf += " && ${widget.bind} == null";
         }
         // Add expression with hierarchy index as unique key.
         expressionMap[index.toString()] = widget.showIf;
 
-        // Overrite markup expression field with index.
+        // Overwrite markup expression field with index.
         widget.showIf = index.toString();
       } else {
         // Note: only when `showIf` if empty.
         // Check if `showOnlyFields` is `true` then add expression to showing by empty.
-        if (screen.showOnlyFields == NssShowOnlyFields.empty && widget.bind != null) {
+        if (screen.showOnlyFields == NssShowOnlyFields.empty &&
+            widget.bind != null) {
           expressionMap[index.toString()] = "${widget.bind} == null";
           widget.showIf = index.toString();
         }
       }
     });
+
+    // Keeping track of showIf mapping.
+    screenShowIfMapping.addAll(expressionMap);
+
     return expressionMap;
   }
-
-
 }
 
 class NavigationEvent {

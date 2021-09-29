@@ -4,6 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
+import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 
 /// General widget decoration mixin.
@@ -11,9 +13,17 @@ import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 mixin DecorationMixin {
   final NssConfig config = NssIoc().use(NssConfig);
 
-  bool isVisible(viewModel, showIf) {
-    String result = viewModel.expressions[showIf] ?? 'true';
-    return result.toLowerCase() == 'true';
+  /// Check widget visible state [showIf] by evaluating the JS expression provided.
+  /// The expression will be evaluated via a native call using each platform JS expression
+  /// task.
+  bool isVisible(ScreenViewModel viewModel, NssWidgetData data) {
+    if (data == null) return true;
+    if (data.showIf != null) {
+      engineLogger.d('isVisible check for bind: ${data.bind} & showIf: ${data.showIf}');
+      String result = viewModel.expressions[data.showIf] ?? 'false';
+      return result.toLowerCase() == 'true';
+    }
+    return true;
   }
 }
 
