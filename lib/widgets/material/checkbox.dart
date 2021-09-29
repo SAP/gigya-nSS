@@ -123,9 +123,11 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                             asArray: widget.data.storeAsArray);
 
                                         // Track runtime data change.
-                                        Provider.of<RuntimeStateEvaluator>(context,
-                                            listen: false)
-                                            .notifyChanged(widget.data.bind, val);
+                                        Provider.of<RuntimeStateEvaluator>(
+                                                context,
+                                                listen: false)
+                                            .notifyChanged(
+                                                widget.data.bind, val);
                                       });
                                     },
                                   ),
@@ -151,6 +153,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                               (link) {
                                               viewModel.linkifyTap(link);
                                             },
+                                          // link color
                                               getStyle(Styles.linkColor,
                                                       data: widget.data,
                                                       themeProperty:
@@ -163,9 +166,13 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                                       data: widget.data) ??
                                                   TextAlign.start,
                                               style: TextStyle(
-                                                  color: getStyle(
-                                                      Styles.fontColor,
-                                                      data: widget.data),
+                                                  color: widget.data.disabled
+                                                      ? getThemeColor(
+                                                              'disabledColor')
+                                                          .withOpacity(0.3)
+                                                      : getStyle(
+                                                          Styles.fontColor,
+                                                          data: widget.data),
                                                   fontSize: getStyle(
                                                       Styles.fontSize,
                                                       data: widget.data),

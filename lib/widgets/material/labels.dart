@@ -78,6 +78,7 @@ class _LabelWidgetState extends State<LabelWidget>
                         ? linkify.linkify(widget.data, (link) {
                             viewModel.linkifyTap(link);
                           },
+                        // link color
                             getStyle(Styles.linkColor,
                                     data: widget.data,
                                     themeProperty: 'linkColor') ??

@@ -43,7 +43,8 @@ class Linkify with StyleMixin {
         break;
       }
       final RegExpMatch match = matches.elementAt(i);
-      _linkSingle(wrappers[i], match.group(1), match.group(2), tap, data, span, linkColor);
+      _linkSingle(wrappers[i], match.group(1), match.group(2), tap, data, span,
+          linkColor);
     }
     return Text.rich(
       TextSpan(children: span),
@@ -67,7 +68,10 @@ class Linkify with StyleMixin {
           text: leading,
           style: TextStyle(
             fontSize: getStyle(Styles.fontSize, data: data),
-            color: getStyle(Styles.fontColor, data: data),
+            color: data.disabled ? getThemeColor(
+                'disabledColor')
+                .withOpacity(0.3) : getStyle(Styles.fontColor,
+                data: data, themeProperty: 'textColor'),
             fontWeight: getStyle(Styles.fontWeight, data: data),
           ),
         ),
@@ -77,7 +81,9 @@ class Linkify with StyleMixin {
           text: actual,
           style: TextStyle(
             fontSize: getStyle(Styles.fontSize, data: data),
-            color: linkColor,
+            color: data.disabled ?  getThemeColor(
+                'disabledColor')
+                .withOpacity(0.3): linkColor,
             fontWeight: getStyle(Styles.fontWeight, data: data),
           ),
           recognizer: TapGestureRecognizer()
