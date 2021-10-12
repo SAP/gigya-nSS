@@ -113,12 +113,12 @@ allprojects {
 Copy the following Android archive libraries into your application's /libs folder and add these references to your application's build.gradle file:
 ```gradle
 // Referencing the NSS native library (via Jitpack)
-implementation 'com.github.SAP.gigya-android-sdk:gigya-android-nss:nss-v1.2.0'
+implementation 'com.github.SAP.gigya-android-sdk:gigya-android-nss:nss-v1.4.0'
 ```
 ```gradle
 // Referencing the NSS engine.
-debugImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_debug:1.2.0'
-releaseImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_release:1.2.0'
+debugImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_debug:1.4.0'
+releaseImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_release:1.4.0'
 ```
 
 Finally, add the *NativeScreensetsActivity.class* reference to your application's *AndroidManifest.xml* file.
