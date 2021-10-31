@@ -24,8 +24,15 @@ class DropDownButtonWidget extends StatefulWidget {
 }
 
 class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
-    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin, VisibilityStateMixin {
-  String _dropdownValue;
+    with
+        DecorationMixin,
+        BindingMixin,
+        StyleMixin,
+        LocalizationMixin,
+        ValidationMixin,
+        VisibilityStateMixin {
+  String _dropdownDisplayValue;
+  String _value;
   List<String> _dropdownItems = [];
   String _placeholder;
 
@@ -34,12 +41,14 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
     _placeholder = widget.data.placeholder ?? null;
     super.initState();
 
+    // Initialize validators.
+    initValidators(widget.data);
+
     registerVisibilityNotifier(context, widget.data, () {
       if (mounted) {
         setState(() {});
       }
     });
-
   }
 
   int indexFromDisplayValue(String value) {
@@ -67,7 +76,8 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
     return Consumer2<ScreenViewModel, BindingModel>(builder: (context, viewModel, bindings, child) {
       _dropdownItems.clear();
 
-      BindingValue bindingValue = getBindingText(widget.data, bindings, asArray: widget.data.storeAsArray);
+      BindingValue bindingValue =
+      getBindingText(widget.data, bindings, asArray: widget.data.storeAsArray);
 
       if (bindingValue.error && !kReleaseMode) {
         return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);
@@ -83,110 +93,217 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
       });
 
       if (bindingValue.value == null && _placeholder != null) {
-        _dropdownValue = null;
+        _dropdownDisplayValue = null;
         debugPrint('No binding value for dropdown -> will display placeholder');
       } else if (defaultValue != null && bindValue == null) {
-        _dropdownValue = _dropdownItems[indexFromValue(defaultValue)];
-        setOption(_dropdownValue, bindings);
+        _dropdownDisplayValue = _dropdownItems[indexFromValue(defaultValue)];
+        _value = defaultValue;
+
+        setOption(_dropdownDisplayValue, bindings);
         debugPrint('No binding value for dropdown -> default value will be displayed');
       } else {
-        _dropdownValue = _dropdownItems[indexFromValue(bindValue)];
+        _dropdownDisplayValue = _dropdownItems[indexFromValue(bindValue)];
+        _value = _dropdownDisplayValue;
         debugPrint('Binding value available for dropdown and will be displayed');
       }
 
       var borderSize = getStyle(Styles.borderSize, data: widget.data);
       var borderRadius = getStyle(Styles.cornerRadius, data: widget.data);
       var borderColor =
-          getStyle(Styles.borderColor, data: widget.data, themeProperty: 'disabledColor');
+      getStyle(Styles.borderColor, data: widget.data, themeProperty: 'disabledColor');
       final Color color = getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor');
 
       return SemanticsWrapperWidget(
         accessibility: widget.data.accessibility,
-        child: Visibility(
-          visible: isVisible(viewModel, widget.data),
-          child: Opacity(
-            opacity: getStyle(Styles.opacity, data: widget.data),
-            child: Padding(
-              padding: getStyle(Styles.margin, data: widget.data),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: getStyle(Styles.background, data: widget.data),
-                    borderRadius: borderRadius == 0 ? null : BorderRadius.circular(borderRadius),
-                    border: borderRadius >= 1
-                        ? Border.all(color: borderColor, width: borderSize)
-                        : Border(bottom: BorderSide(width: borderSize, color: borderColor))),
-                child: NssCustomSizeWidget(
-                  data: widget.data,
-                  child: IgnorePointer(
-                    ignoring: widget.data.disabled,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: DropdownButton<String>(
-                        isExpanded: true,
-                        underline: Container(),
-                        style: TextStyle(
-                            color: widget.data.disabled ? color.withOpacity(0.3) : color,
-                            fontSize: getStyle(Styles.fontSize, data: widget.data),
-                            fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
-                        hint: Text(
-                          localizedStringFor(_placeholder) ?? '',
-                          style: TextStyle(
-                            color: widget.data.disabled
-                                ? getStyle(Styles.placeholderColor,
-                                        data: widget.data, themeProperty: 'disabledColor')
+        child:
+            Visibility(
+              visible: isVisible(viewModel, widget.data),
+              child: Opacity(
+                opacity: getStyle(Styles.opacity, data: widget.data),
+                child: Padding(
+                  padding: getStyle(Styles.margin, data: widget.data),
+                  child: Container(
+                    child: NssCustomSizeWidget(
+                      data: widget.data,
+                      child: IgnorePointer(
+                        ignoring: widget.data.disabled,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: DropdownButtonFormField<String>(
+                            validator: (input) {
+                              // Field validation triggered.
+                              return validateField(_value, widget.data.bind);
+                            },
+                            decoration: InputDecoration(
+                              isDense: true,
+                              filled: true,
+                              fillColor:
+                              getStyle(Styles.background, data: widget.data),
+                              hintText: localizedStringFor(widget.data.textKey),
+                              hintStyle: TextStyle(
+                                color: widget.data.disabled
+                                    ? getStyle(Styles.placeholderColor,
+                                    data: widget.data,
+                                    themeProperty: 'disabledColor')
                                     .withOpacity(0.3)
-                                : getStyle(Styles.placeholderColor,
-                                        data: widget.data, themeProperty: 'textColor')
+                                    : getStyle(Styles.placeholderColor,
+                                    data: widget.data,
+                                    themeProperty: 'textColor')
                                     .withOpacity(0.5),
+                              ),
+                              disabledBorder: borderRadius == 0
+                                  ? UnderlineInputBorder(
+                                borderRadius: BorderRadius.zero,
+                                borderSide: BorderSide(
+                                  color: getThemeColor('disabledColor')
+                                      .withOpacity(0.3),
+                                  width: borderSize + 2,
+                                ),
+                              )
+                                  : OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(borderRadius)),
+                                borderSide: BorderSide(
+                                  color: getThemeColor('disabledColor')
+                                      .withOpacity(0.3),
+                                  width: borderSize,
+                                ),
+                              ),
+                              errorBorder: borderRadius == 0
+                                  ? UnderlineInputBorder(
+                                borderRadius: BorderRadius.zero,
+                                borderSide: BorderSide(
+                                  color: getThemeColor('errorColor'),
+                                  width: borderSize + 2,
+                                ),
+                              )
+                                  : OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(borderRadius)),
+                                borderSide: BorderSide(
+                                  color: getThemeColor('errorColor'),
+                                  width: borderSize,
+                                ),
+                              ),
+                              focusedErrorBorder: borderRadius == 0
+                                  ? UnderlineInputBorder(
+                                borderRadius: BorderRadius.zero,
+                                borderSide: BorderSide(
+                                  color: getThemeColor('errorColor'),
+                                  width: borderSize + 2,
+                                ),
+                              )
+                                  : OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(borderRadius)),
+                                borderSide: BorderSide(
+                                  color: getThemeColor('errorColor'),
+                                  width: borderSize,
+                                ),
+                              ),
+                              focusedBorder: borderRadius == 0
+                                  ? UnderlineInputBorder(
+                                borderRadius: BorderRadius.zero,
+                                borderSide: BorderSide(
+                                  color: getThemeColor('enabledColor'),
+                                  width: borderSize + 2,
+                                ),
+                              )
+                                  : OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(borderRadius)),
+                                borderSide: BorderSide(
+                                  color: getThemeColor('enabledColor'),
+                                  width: borderSize,
+                                ),
+                              ),
+                              enabledBorder: borderRadius == 0
+                                  ? UnderlineInputBorder(
+                                borderRadius: BorderRadius.zero,
+                                borderSide: BorderSide(
+                                  color: getStyle(Styles.borderColor,
+                                      data: widget.data,
+                                      themeProperty: "disabledColor"),
+                                  width: borderSize,
+                                ),
+                              )
+                                  : OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(borderRadius)),
+                                borderSide: BorderSide(
+                                  color: getStyle(Styles.borderColor,
+                                      data: widget.data,
+                                      themeProperty: "disabledColor"),
+                                  width: borderSize,
+                                ),
+                              ),
+                            ),
+
+                            isExpanded: true,
+                            style: TextStyle(
+                                color: widget.data.disabled ? color.withOpacity(0.3) : color,
+                                fontSize: getStyle(Styles.fontSize, data: widget.data),
+                                fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
+                            hint: Text(
+                              localizedStringFor(_placeholder) ?? '',
+                              style: TextStyle(
+                                color: widget.data.disabled
+                                    ? getStyle(Styles.placeholderColor,
+                                    data: widget.data, themeProperty: 'disabledColor')
+                                    .withOpacity(0.3)
+                                    : getStyle(Styles.placeholderColor,
+                                    data: widget.data, themeProperty: 'textColor')
+                                    .withOpacity(0.5),
+                              ),
+                            ),
+                            dropdownColor: getStyle(Styles.background, data: widget.data),
+                            value: _dropdownDisplayValue,
+                            icon: Icon(
+                              Icons.arrow_drop_down,
+                              color: widget.data.disabled
+                                  ? getThemeColor('disabledColor').withOpacity(0.3)
+                                  : getStyle(Styles.borderColor,
+                                  data: widget.data, themeProperty: 'primaryColor'),
+                            ),
+                            elevation: 4,
+                            onChanged: (String newValue) {
+                              setState(() {
+                                setOption(newValue, bindings);
+                                _dropdownDisplayValue = newValue;
+                                _value = newValue;
+
+                                // Track runtime data change.
+                                Provider.of<RuntimeStateEvaluator>(context, listen: false)
+                                    .notifyChanged(widget.data.bind, newValue);
+                              });
+                            },
+                            items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {
+                              TextAlign align =
+                                  getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start;
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Align(
+                                  alignment: align.toAlignment(widget.data.type),
+                                  child: Text(value,
+                                      style: TextStyle(
+                                        color: widget.data.disabled
+                                            ? getThemeColor('disabledColor').withOpacity(0.3)
+                                            : getStyle(Styles.fontColor,
+                                            data: widget.data, themeProperty: 'textColor'),
+                                        fontSize: getStyle(Styles.fontSize, data: widget.data),
+                                        fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                                      )),
+                                ),
+                              );
+                            }).toList(),
                           ),
                         ),
-                        dropdownColor: getStyle(Styles.background, data: widget.data),
-                        value: _dropdownValue,
-                        icon: Icon(
-                          Icons.arrow_drop_down,
-                          color: widget.data.disabled
-                              ? getThemeColor('disabledColor').withOpacity(0.3)
-                              : getStyle(Styles.borderColor,
-                                  data: widget.data, themeProperty: 'primaryColor'),
-                        ),
-                        elevation: 4,
-                        onChanged: (String newValue) {
-                          setState(() {
-                            setOption(newValue, bindings);
-
-                            // Track runtime data change.
-                            Provider.of<RuntimeStateEvaluator>(context,
-                                listen: false)
-                                .notifyChanged(widget.data.bind, newValue);
-                          });
-                        },
-                        items: _dropdownItems.map<DropdownMenuItem<String>>((String value) {
-                          TextAlign align =
-                              getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start;
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Align(
-                              alignment: align.toAlignment(widget.data.type),
-                              child: Text(value,
-                                  style: TextStyle(
-                                    color: widget.data.disabled
-                                        ? getThemeColor('disabledColor').withOpacity(0.3)
-                                        : getStyle(Styles.fontColor,
-                                            data: widget.data, themeProperty: 'textColor'),
-                                    fontSize: getStyle(Styles.fontSize, data: widget.data),
-                                    fontWeight: getStyle(Styles.fontWeight, data: widget.data),
-                                  )),
-                            ),
-                          );
-                        }).toList(),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
       );
     });
   }
