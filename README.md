@@ -113,12 +113,12 @@ allprojects {
 Copy the following Android archive libraries into your application's /libs folder and add these references to your application's build.gradle file:
 ```gradle
 // Referencing the NSS native library (via Jitpack)
-implementation 'com.github.SAP.gigya-android-sdk:gigya-android-nss:nss-v1.4.0'
+implementation 'com.github.SAP.gigya-android-sdk:gigya-android-nss:nss-v1.4.1'
 ```
 ```gradle
 // Referencing the NSS engine.
-debugImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_debug:1.4.0'
-releaseImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_release:1.4.0'
+debugImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_debug:1.4.1'
+releaseImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_release:1.4.1'
 ```
 
 Finally, add the *NativeScreensetsActivity.class* reference to your application's *AndroidManifest.xml* file.
@@ -240,7 +240,7 @@ Example for loginID email input with email regex validations.
        "errorKey": "Invalid email format."
     }
   }
-},
+}
 ```
 
 ```
@@ -287,7 +287,7 @@ When using component binding you will be required to distinguish between two fie
          ```
         Schema validations are irrelevant on property field types and you will be required to use markup Input validations.
          ```
-```json
+```
 {
   "bind": "#loginID",
   "type": "emailInput",
@@ -312,7 +312,7 @@ When using component binding you will be required to distinguish between two fie
  - Schema field
     - This type is used to bind a specific schema field in order to allow the correct data to be displayed or updated accordingly.
     - The following example binds the "profile.lastName" & "profile.firstName" schema fields to allow the correct data to display & update.
-```json
+```
 {
   "bind": "profile.lastName",
   "type": "textInput",
@@ -331,18 +331,18 @@ The *sendAs* property is also available in order to extend the basic binding sch
 For instance, if you would like to bind a specific value to an input field but send it as a different property on submission.
 ```json
 {
-    "type": "input"
-    "bind": "profile.email"
+    "type": "input",
+    "bind": "profile.email",
     "saveAs": "loginID"
 }
+```
 In this example the display will be bound to the *profile.email* field but on submission the parameter sent to the adjacent action
 endpoint will be **loginID**.
-```
 
 ## Evaluating expressions
 
-Added in version 1.1.0 is the ability to conditionaly display a *container* according to a specific expression.
-This pattern is useful in specifc flows in which you would like to display certain components according to available data or the actual data content.
+Added in version 1.1.0 is the ability for conditional display of a *container* according to a specific expression.
+This pattern is useful in specific flows in which you would like to display certain components according to available data or the actual data content.
 
 To use this add the **showIf** property to your **container** and add an expression to evaluate the data.
 ```
@@ -350,7 +350,7 @@ Expression are written in JavaScript much like the web screen-sets feature
 ```
 
 Here is an example:
-```json
+```
  {
    "type": "container",
    "showIf": "conflictingAccounts.loginProviders.includes('site')",
@@ -358,7 +358,7 @@ Here is an example:
    ...
    ]
 ```
-In this example (Accout linking) wea re evaluating if our conflicting accounts object contains the 'site' provider.
+In this example (Account linking) wea re evaluating if our conflicting accounts object contains the 'site' provider.
 In this case the container will only be visible if the expression is true.
 
 ## Account linking
@@ -371,7 +371,7 @@ Here is a complete example:
 First add the interruption to your required markup screen.
 In this case we chose the login screen.
 
-```json
+```
 "login": {
       "routing": {
         "onPendingRegistration": "account-update",
@@ -391,10 +391,10 @@ within your **link-account** screen.
 This object is a part of the core SDK. Please review it in order to familiarise with the object structure.
 ```
 
-In the example implementation of the **link-account** screen we added two **conditionaly visible containers**
+In the example implementation of the **link-account** screen we added two **conditional visible containers**
 This in order to dynamically detect what kind of linking is required. Site or social.
 
-```json
+```
 {
   "type": "container",
   "showIf": "conflictingAccounts.loginProviders.filter(p => p != 'site').length > 0",
@@ -404,7 +404,7 @@ This in order to dynamically detect what kind of linking is required. Site or so
          ...
        }
   ]
-}
+},
 {
   "type": "container",
   "showIf": "conflictingAccounts.loginProviders.includes('site')",
@@ -415,11 +415,11 @@ This in order to dynamically detect what kind of linking is required. Site or so
 ```
 Here each container uses the **showIf** conditional parameter in order to determine its visibility state.
 
-The first condition idicates when there are social providers available for display within the **conflictingAccounts** object
-And therefore will show a **socialLoginGrid* accordigly. Note that the **socialLoginGrid** is smart enough to decide what providers
+The first condition indicates when there are social providers available for display within the **conflictingAccounts** object
+And therefore will show a **socialLoginGrid* accordingly. Note that the **socialLoginGrid** is smart enough to decide what providers
 are needed to be displayed when the **onflictingAccounts** object is available therefore you do not need to specifiy its providers manually.
 
-The second condition idicates if the **conflictingAccounts** object contains a 'site' provider and therefore the user will be
+The second condition indicates if the **conflictingAccounts** object contains a 'site' provider and therefore the user will be
 required to link his account using his loginID/password combination.
 
 ```
@@ -487,16 +487,16 @@ The engine provides several global error keys which are customizable using the l
 <u>Available keys:</u>
 **error-schema-required-validation** for fields that can produce a *"required"* error.
 **error-schema-regex-validation** for fields that can produce a *"regex" error.
-**error-schema-checkbox-validation** for checkbox feilds which are required. 
+**error-schema-checkbox-validation** for checkbox fields which are required. 
 **error-photo-failed-upload** for a failed profile photo upload.
 **error-photo-image-size** for indicating that the profile photo image exceeds the size limit.
 
 ## Screen events
-The NSS engine provides the ability to listen and interact with varius screen events.
-Registring to these events is done in the native application using the NSS builder.
+The NSS engine provides the ability to listen and interact with various screen events.
+Registering to these events is done in the native application using the NSS builder.
 
 Android
-```kotlin
+```
 GigyaNss.getInstance()...
     .eventsFor("login", object: NssScreenEvents() {
     
@@ -581,7 +581,36 @@ This will ensure that the connection to the engine will hang as it awaits your r
 Events such as *submit* and *fieldDidChange* also provide the option to inject an error to the screen using the *showError* method 
 of the *screen* model.
 
+## Store as array
+Certain schema fields can be mapped to an array structure.
+By adding the following to your markup:
+```
+{
+  "bind": "data.check.test",
+  "type": "checkbox",
+  "textKey": "Checkbox 1 display text here",
+  "storeAsArray": {
+      "key": "Key field",
+      "value": "Key value 1"
+  }
+},
+{
+  "bind": "data.check.test",
+  "type": "checkbox",
+  "textKey": "Checkbox 2 display text here",
+  "storeAsArray": {
+      "key": "Key field",
+      "value": "Key value 2"
+  }
+}
+```
 
+The following widgets supports "Store As Array":
+* Checkbox.
+* Input.
+* Radio.
+* Dropdown.
+* Phone input.
 
 
 ## Known Issues
