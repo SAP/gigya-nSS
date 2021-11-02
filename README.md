@@ -1,4 +1,6 @@
 # SAP CDC (Gigya) Native Screen Sets
+[![REUSE status](https://api.reuse.software/badge/github.com/SAP/gigya-nSS)](https://api.reuse.software/info/github.com/SAP/gigya-nSS)
+
 
 ## Description
 Native Screen-Sets allow your app to maintain the native experience while enjoying the benefits of SAP Customer Data Cloud web Screen-Sets.
@@ -111,12 +113,12 @@ allprojects {
 Copy the following Android archive libraries into your application's /libs folder and add these references to your application's build.gradle file:
 ```gradle
 // Referencing the NSS native library (via Jitpack)
-implementation 'com.github.SAP.gigya-android-sdk:gigya-android-nss:nss-v1.2.0'
+implementation 'com.github.SAP.gigya-android-sdk:gigya-android-nss:nss-v1.4.0'
 ```
 ```gradle
 // Referencing the NSS engine.
-debugImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_debug:1.2.0'
-releaseImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_release:1.2.0'
+debugImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_debug:1.4.0'
+releaseImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_release:1.4.0'
 ```
 
 Finally, add the *NativeScreensetsActivity.class* reference to your application's *AndroidManifest.xml* file.
@@ -209,9 +211,9 @@ Default templates will be provided with each upcoming release in order to give c
 
 An object map of the Native Screen-Sets screen IDs to their screen component.
 
-## [Components](https://sap.github.io/gigya-nSS/docs/COMPONENTS.md)
+## [Components](https://github.com/SAP/gigya-nSS/blob/main/docs/COMPONENTS.md)
 
-## [Styling](https://sap.github.io/gigya-nSS/docs/STYLING.md)
+## [Styling](https://github.com/SAP/gigya-nSS/blob/main/docs/STYLING.md)
 
 ## Input validations
 
@@ -234,7 +236,7 @@ Example for loginID email input with email regex validations.
     },
     "regex": {
        "enabled": true,
-       "value": "^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\\.[a-zA-Z]+",
+       "format": "^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\\.[a-zA-Z]+",
        "errorKey": "Invalid email format."
     }
   }
@@ -597,4 +599,4 @@ Via pull request to this repository.
 iOS – Debugging is currently available only on simulators.
 
 ## Licensing
-Please see our [LICENSE](https://github.com/SAP/gigya-nSS/blob/main/LICENSES/Apache-2.0.txt) for copyright and license information.
+Please see our [LICENSE](https://github.com/SAP/gigya-nSS/blob/main/LICENSES/Apache-2.0.txt) for copyright and license information. Detailed information including third-party components and their licensing/copyright information is available [via the REUSE tool](https://api.reuse.software/info/github.com/SAP/gigya-nSS).
