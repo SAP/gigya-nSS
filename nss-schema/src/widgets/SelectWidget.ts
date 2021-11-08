@@ -1,5 +1,5 @@
 import {mergeDeep} from "../common/utils";
-import {TextKey, WithText} from "../common";
+import {TextKey, withStoreAsArray, WithText} from "../common";
 import BoundWidget from "./BoundWidget";
 import {withStyle, margin, size, background, font, border, opacity} from "../styles";
 import WidgetEntity from "./WidgetEntity";
@@ -7,6 +7,7 @@ import WidgetEntity from "./WidgetEntity";
 // TODO: radio without border; dropdown withouot background
 export default new WidgetEntity('Select', mergeDeep({},
     BoundWidget,
+    withStoreAsArray,
     withStyle(margin, size, background, opacity, ...font, ...border), {
     properties: {
         type: {enum: ['radio', 'dropdown']},
