@@ -127,7 +127,7 @@ mixin ValidationMixin {
   /// Validation will pass when null is returned.
   String _validate(String input, Map<String, NssInputValidator> validators) {
     if (input == null) { input = ''; }
-    
+
     // Validate required field.
     if (input.isEmpty && validators.containsKey(Validator.required.name)) {
       final NssInputValidator requiredValidator = validators[Validator.required.name];
