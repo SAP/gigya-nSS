@@ -104,7 +104,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
       } else {
         var index = indexFromValue(bindValue);
         _dropdownDisplayValue = index == -1 ? _dropdownItems[0] : _dropdownItems[index];
-        _value = index == -1 ? widget.data.options[0].value : _dropdownItems[index];
+        _value = index == -1 ? widget.data.options[0].value : widget.data.options[index].value;
         debugPrint('Binding value available for dropdown and will be displayed');
       }
 
