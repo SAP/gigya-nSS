@@ -62,6 +62,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
   }
 
   int indexFromValue(String value) {
+    if (value == null) return -1;
     int index = 0;
     for (var i = 0; i < widget.data.options.length; i++) {
       if (widget.data.options[i].value == value) {
@@ -92,9 +93,8 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
         }
       });
 
-      if (bindingValue.value == null && _placeholder != null) {
+      if (defaultValue == null && bindValue == null && _placeholder != null) {
         _dropdownDisplayValue = null;
-        debugPrint('No binding value for dropdown -> will display placeholder');
       } else if (defaultValue != null && bindValue == null) {
         _dropdownDisplayValue = _dropdownItems[indexFromValue(defaultValue)];
         _value = defaultValue;
@@ -102,8 +102,9 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
         setOption(_dropdownDisplayValue, bindings);
         debugPrint('No binding value for dropdown -> default value will be displayed');
       } else {
-        _dropdownDisplayValue = _dropdownItems[indexFromValue(bindValue)];
-        _value = _dropdownDisplayValue;
+        var index = indexFromValue(bindValue);
+        _dropdownDisplayValue = index == -1 ? _dropdownItems[0] : _dropdownItems[index];
+        _value = index == -1 ? widget.data.options[0].value : _dropdownItems[index];
         debugPrint('Binding value available for dropdown and will be displayed');
       }
 
@@ -270,8 +271,10 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                               setState(() {
                                 setOption(newValue, bindings);
                                 _dropdownDisplayValue = newValue;
-                                _value = newValue;
+                                var index = indexFromDisplayValue(newValue);
+                                _value = index == -1 ? null : widget.data.options[index].value;
 
+                                debugPrint("onchange value:$_value");
                                 // Track runtime data change.
                                 Provider.of<RuntimeStateEvaluator>(context, listen: false)
                                     .notifyChanged(widget.data.bind, newValue);
