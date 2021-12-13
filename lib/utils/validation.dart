@@ -60,14 +60,17 @@ mixin ValidationMixin {
 
   final NssConfig config = NssIoc().use(NssConfig);
 
+  final consentKeyValidation = '.isConsentGranted';
+
   /// Parse schema object according to provided [key].
   Map<dynamic, dynamic> getSchemaObject(String key) {
     if (!config.markup.useSchemaValidations) {
       return null;
     }
     if (config.schema.containsKey(key.split('.').first)) {
+      var fixKey = key.replaceFirst(key.split('.').first + '.', '').replaceFirst(consentKeyValidation, '');
       var schemaObject =
-          config.schema[key.split('.').first][key.replaceFirst(key.split('.').first + '.', '')] ?? {};
+          config.schema[key.split('.').first][fixKey] ?? {};
       return schemaObject;
     }
     return null;
