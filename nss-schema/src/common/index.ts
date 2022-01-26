@@ -34,3 +34,20 @@ export const withAccessibility = {
         },
     }
 } as JSONSchema7;
+
+export const withStoreAsArray = {
+    properties: {
+        storeAsArray: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                key: {
+                    type: 'string'
+                },
+                value: {
+                    type: 'string'
+                }
+            }
+        }
+    }
+} as JSONSchema7;
