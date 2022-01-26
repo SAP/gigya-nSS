@@ -16,9 +16,9 @@ import 'package:provider/provider.dart';
 
 /// Radio group UI selection component.
 class RadioGroupWidget extends StatefulWidget {
-  final NssWidgetData data;
+  final NssWidgetData? data;
 
-  const RadioGroupWidget({Key key, this.data}) : super(key: key);
+  const RadioGroupWidget({Key? key, this.data}) : super(key: key);
 
   @override
   _RadioGroupWidgetState createState() => _RadioGroupWidgetState();
@@ -26,8 +26,8 @@ class RadioGroupWidget extends StatefulWidget {
 
 class _RadioGroupWidgetState extends State<RadioGroupWidget>
     with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin, VisibilityStateMixin {
-  String _groupValue;
-  String _defaultValue;
+  String? _groupValue;
+  String? _defaultValue;
 
   @override
   void initState() {
@@ -43,16 +43,16 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
   @override
   Widget build(BuildContext context) {
     return Consumer2<ScreenViewModel, BindingModel>(builder: (context, viewModel, bindings, child) {
-      BindingValue bindingValue = getBindingText(widget.data, bindings, asArray: widget.data.storeAsArray);
+      BindingValue bindingValue = getBindingText(widget.data!, bindings, asArray: widget.data!.storeAsArray);
 
       if (bindingValue.error && !kReleaseMode) {
-        return showBindingDoesNotMatchError(widget.data.bind, errorText: bindingValue.errorText);
+        return showBindingDoesNotMatchError(widget.data!.bind, errorText: bindingValue.errorText);
       }
 
       _groupValue = bindingValue.value;
-      if (_groupValue.isNullOrEmpty()) {
-        widget.data.options.forEach((option) {
-          if (option.defaultValue != null && option.defaultValue) {
+      if (_groupValue!.isNullOrEmpty()) {
+        widget.data!.options!.forEach((option) {
+          if (option.defaultValue != null && option.defaultValue!) {
             _groupValue = option.value;
           }
         });
@@ -64,7 +64,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
       }
 
       return SemanticsWrapperWidget(
-        accessibility: widget.data.accessibility,
+        accessibility: widget.data!.accessibility,
         child: Visibility(
           visible: isVisible(viewModel, widget.data),
           child: Theme(
@@ -84,27 +84,27 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: widget.data.options.length,
+                      itemCount: widget.data!.options!.length,
                       itemBuilder: (BuildContext lvbContext, int index) {
-                        NssOption option = widget.data.options[index];
+                        NssOption option = widget.data!.options![index];
                         return Theme(
                           data: Theme.of(context).copyWith(
-                              unselectedWidgetColor: widget.data.disabled
+                              unselectedWidgetColor: widget.data!.disabled!
                                   ? getThemeColor('disabledColor')
                                   : getThemeColor('enabledColor'),
-                              disabledColor: widget.data.disabled
+                              disabledColor: widget.data!.disabled!
                                   ? getThemeColor('disabledColor')
                                   : getThemeColor('enabledColor')
                           ),
-                          child: RadioListTile(
+                          child: RadioListTile<String?>(
                             controlAffinity: ListTileControlAffinity.leading,
                             value: option.value,
                             title: Text(
-                              localizedStringFor(option.textKey),
+                              localizedStringFor(option.textKey)!,
                               textAlign:
                                   getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
                               style: TextStyle(
-                                color: widget.data.disabled
+                                color: widget.data!.disabled!
                                     ? getThemeColor('disabledColor')
                                     : getStyle(Styles.fontColor,
                                         data: widget.data, themeProperty: 'textColor'),
@@ -113,18 +113,18 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                               ),
                             ),
                             groupValue: _groupValue,
-                            activeColor: widget.data.disabled
+                            activeColor: widget.data!.disabled!
                                 ? getThemeColor('disabledColor')
                                 : getThemeColor('enabledColor'),
                             // TODO: need to change the getter from theme.
-                            onChanged: (String value) {
+                            onChanged: (String? value) {
                               setState(() {
                                 setOption(value, bindings);
 
                                 // Track runtime data change.
                                 Provider.of<RuntimeStateEvaluator>(context,
                                     listen: false)
-                                    .notifyChanged(widget.data.bind, value);
+                                    .notifyChanged(widget.data!.bind, value);
                               });
                             },
                           ),
@@ -141,25 +141,25 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
     });
   }
 
-  setOption(String value, BindingModel bindings) {
-    if (widget.data.disabled) {
+  setOption(String? value, BindingModel bindings) {
+    if (widget.data!.disabled!) {
       return null;
     }
     // Value needs to be parsed before form can be submitted.
-    if (widget.data.parseAs != null) {
+    if (widget.data!.parseAs != null) {
       // Markup parsing applies.
-      var parsed = parseAs(value.trim(), widget.data.parseAs);
+      var parsed = parseAs(value!.trim(), widget.data!.parseAs);
       if (parsed == null) {
-        engineLogger.e('parseAs field is not compatible with provided input');
+        engineLogger!.e('parseAs field is not compatible with provided input');
       }
-      bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
+      bindings.save<String?>(widget.data!.bind, parsed, saveAs: widget.data!.sendAs);
       return;
     }
     // If parseAs field is not available try to parse according to schema.
-    var parsed = parseUsingSchema(value.trim(), widget.data.bind);
+    var parsed = parseUsingSchema(value!.trim(), widget.data!.bind);
     if (parsed == null) {
-      engineLogger.e('Schema type is not compatible with provided input');
+      engineLogger!.e('Schema type is not compatible with provided input');
     }
-    bindings.save<String>(widget.data.bind, parsed, saveAs: widget.data.sendAs);
+    bindings.save<String?>(widget.data!.bind, parsed, saveAs: widget.data!.sendAs);
   }
 }

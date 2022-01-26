@@ -14,9 +14,9 @@ import 'package:provider/provider.dart';
 
 /// Checkbox selection UI component.
 class CheckboxWidget extends StatefulWidget {
-  final NssWidgetData data;
+  final NssWidgetData? data;
 
-  const CheckboxWidget({Key key, this.data}) : super(key: key);
+  const CheckboxWidget({Key? key, this.data}) : super(key: key);
 
   @override
   _CheckboxWidgetState createState() => _CheckboxWidgetState();
@@ -30,14 +30,14 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
         LocalizationMixin,
         ValidationMixin,
         VisibilityStateMixin {
-  bool _currentValue;
+  bool? _currentValue;
 
   @override
   void initState() {
     super.initState();
 
     // Initialize validators.
-    initValidators(widget.data);
+    initValidators(widget.data!);
 
     registerVisibilityNotifier(context, widget.data, () {
       if (mounted) {
@@ -48,22 +48,22 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
 
   @override
   Widget build(BuildContext context) {
-    final String displayText = localizedStringFor(widget.data.textKey);
+    final String displayText = localizedStringFor(widget.data!.textKey)!;
     final Linkify linkify = Linkify(displayText);
     final bool linkified = linkify.containLinks(displayText);
     if (!linkified) linkify.dispose();
     return FormField(
-      validator: (val) {
-        return validateField(_currentValue.toString(), widget.data.bind);
+      validator: (dynamic val) {
+        return validateField(_currentValue.toString(), widget.data!.bind);
       },
       builder: (state) {
         return Consumer2<ScreenViewModel, BindingModel>(
             builder: (context, viewModel, bindings, child) {
-          BindingValue bindingValue = getBindingBool(widget.data, bindings,
-              asArray: widget.data.storeAsArray);
+          BindingValue bindingValue = getBindingBool(widget.data!, bindings,
+              asArray: widget.data!.storeAsArray);
 
           if (bindingValue.error && !kReleaseMode) {
-            return showBindingDoesNotMatchError(widget.data.bind,
+            return showBindingDoesNotMatchError(widget.data!.bind,
                 errorText: bindingValue.errorText);
           }
           _currentValue = bindingValue.value;
@@ -93,41 +93,41 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               SemanticsWrapperWidget(
-                                accessibility: widget.data.accessibility,
+                                accessibility: widget.data!.accessibility,
                                 child: Theme(
                                   data: ThemeData(
                                       unselectedWidgetColor:
-                                          widget.data.disabled
+                                          widget.data!.disabled!
                                               ? getThemeColor('disabledColor')
                                                   .withOpacity(0.3)
                                               : getThemeColor('enabledColor')),
                                   child: Checkbox(
                                     tristate: false,
-                                    activeColor: widget.data.disabled
+                                    activeColor: widget.data!.disabled!
                                         ? getThemeColor('disabledColor')
                                             .withOpacity(0.3)
                                         : getThemeColor('enabledColor'),
-                                    checkColor: widget.data.disabled
+                                    checkColor: widget.data!.disabled!
                                         ? getThemeColor('disabledColor')
                                             .withOpacity(0.3)
                                         : getThemeColor('secondaryColor'),
                                     value: _currentValue,
-                                    onChanged: (bool val) {
-                                      if (widget.data.disabled) {
+                                    onChanged: (bool? val) {
+                                      if (widget.data!.disabled!) {
                                         return null;
                                       }
                                       setState(() {
-                                        bindings.save<bool>(
-                                            widget.data.bind, val,
-                                            saveAs: widget.data.sendAs,
-                                            asArray: widget.data.storeAsArray);
+                                        bindings.save<bool?>(
+                                            widget.data!.bind, val,
+                                            saveAs: widget.data!.sendAs,
+                                            asArray: widget.data!.storeAsArray);
 
                                         // Track runtime data change.
                                         Provider.of<RuntimeStateEvaluator>(
                                                 context,
                                                 listen: false)
                                             .notifyChanged(
-                                                widget.data.bind, val);
+                                                widget.data!.bind, val);
                                       });
                                     },
                                   ),
@@ -135,23 +135,23 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                               ),
                               Flexible(
                                 child: GestureDetector(
-                                    onTap: widget.data.disabled
+                                    onTap: widget.data!.disabled!
                                         ? null
                                         : () {
                                             setState(() {
                                               bindings.save<bool>(
-                                                  widget.data.bind,
-                                                  !_currentValue,
-                                                  saveAs: widget.data.sendAs,
+                                                  widget.data!.bind,
+                                                  !_currentValue!,
+                                                  saveAs: widget.data!.sendAs,
                                                   asArray:
-                                                      widget.data.storeAsArray);
+                                                      widget.data!.storeAsArray);
                                             });
                                           },
                                     child: Container(
                                       child: linkified
                                           ? linkify.linkify(widget.data,
                                               (link) {
-                                              viewModel.linkifyTap(link);
+                                              viewModel.linkifyTap(link!);
                                             },
                                           // link color
                                               getStyle(Styles.linkColor,
@@ -166,7 +166,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                                       data: widget.data) ??
                                                   TextAlign.start,
                                               style: TextStyle(
-                                                  color: widget.data.disabled
+                                                  color: widget.data!.disabled!
                                                       ? getThemeColor(
                                                               'disabledColor')
                                                           .withOpacity(0.3)
@@ -190,7 +190,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16),
                               child: Text(
-                                state.errorText != null ? state.errorText : '',
+                                state.errorText != null ? state.errorText! : '',
                                 textAlign: TextAlign.start,
                                 style:
                                     TextStyle(color: Colors.red, fontSize: 12),

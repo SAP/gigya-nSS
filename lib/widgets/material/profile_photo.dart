@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ import 'package:provider/provider.dart';
 class ProfilePhotoWidget extends StatefulWidget {
   final NssWidgetData data;
 
-  const ProfilePhotoWidget({Key key, @required this.data}) : super(key: key);
+  const ProfilePhotoWidget({Key? key, required this.data}) : super(key: key);
 
   @override
   _ProfilePhotoWidgetState createState() => _ProfilePhotoWidgetState();
@@ -91,7 +92,7 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
                           cornerRadius,
                         ),
                         onTap:
-                            widget.data.allowUpload ? _onProfileImageTap : null)
+                            widget.data.allowUpload! ? _onProfileImageTap : null)
                   ],
                 ),
               );
@@ -113,15 +114,15 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
     }).timeout(Duration(minutes: 5), onTimeout: () {
       // Timeout
       return null;
-    }).catchError((error) {
-      engineLogger.d('Data error with: ${error.toString()}');
+    } as FutureOr<Uint8List> Function()?).catchError((error) {
+      engineLogger!.d('Data error with: ${error.toString()}');
       // Error
       handleDataErrors(error.code);
       return null;
     });
     if (data == null) {
       // Error fetching image data.
-      engineLogger.d('Error fetching native image data');
+      engineLogger!.d('Error fetching native image data');
     }
     setState(() {
       imageProvider = MemoryImage(data);
@@ -129,7 +130,7 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
   }
 
   /// Handle specific widget errors.
-  void handleDataErrors(String code) {
+  void handleDataErrors(String? code) {
     var provider = Provider.of<ScreenViewModel>(context, listen: false);
     switch (code) {
       case "500":

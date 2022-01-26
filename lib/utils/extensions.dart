@@ -44,7 +44,7 @@ extension MapExt<T, V> on Map<T, V> {
 
 extension TextAlignExt on TextAlign {
 
-  Alignment toAlignment(NssWidgetType type) {
+  Alignment toAlignment(NssWidgetType? type) {
     switch(this) {
       case TextAlign.center:
         return Alignment.center;

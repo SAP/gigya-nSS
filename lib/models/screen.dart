@@ -9,19 +9,19 @@ part 'screen.g.dart';
 
 @JsonSerializable(anyMap: true)
 class Screen {
-  String id;
-  String action;
+  String? id;
+  String? action;
   @JsonKey(defaultValue: NssStack.vertical)
   NssStack stack;
-  NssAlignment alignment;
-  AppBar appBar;
-  List<NssWidgetData> children;
+  NssAlignment? alignment;
+  AppBar? appBar;
+  List<NssWidgetData>? children;
   @JsonKey(name: 'routing')
-  Map<String, String> routes;
+  Map<String, String>? routes;
   @JsonKey(defaultValue: {})
-  Map<String, dynamic> style;
+  Map<String, dynamic>? style;
   @JsonKey(defaultValue: NssShowOnlyFields.none)
-  NssShowOnlyFields showOnlyFields;
+  NssShowOnlyFields? showOnlyFields;
 
 
   Screen(this.id, this.action, this.stack, this.alignment, this.children, {this.appBar, this.routes, this.showOnlyFields});

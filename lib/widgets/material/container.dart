@@ -11,11 +11,11 @@ import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
 import 'package:provider/provider.dart';
 
 class ContainerWidget extends StatefulWidget {
-  final NssWidgetData data;
-  final Widget child;
+  final NssWidgetData? data;
+  final Widget? child;
 
   ContainerWidget({
-    Key key,
+    Key? key,
     this.data,
     this.child,
   }) : super(key: key);
@@ -38,11 +38,11 @@ class _ContainerWidgetState extends State<ContainerWidget> with StyleMixin, Deco
   }
   @override
   Widget build(BuildContext context) {
-    bool isNested = widget.data.isNestedContainer ?? false;
+    bool isNested = widget.data!.isNestedContainer ?? false;
     return Consumer2<ScreenViewModel, BindingModel>(
       builder: (context, viewModel, binding, inner) {
         return SemanticsWrapperWidget(
-          accessibility: widget.data.accessibility,
+          accessibility: widget.data!.accessibility,
           child: Visibility(
             visible: isVisible(viewModel, widget.data),
             child: isNested
@@ -57,11 +57,11 @@ class _ContainerWidgetState extends State<ContainerWidget> with StyleMixin, Deco
   }
 
   Widget containerContent() {
-    var background = getStyle(Styles.background, styles: widget.data.style);
+    var background = getStyle(Styles.background, styles: widget.data!.style);
     return Padding(
-      padding: getStyle(Styles.margin, styles: widget.data.style),
+      padding: getStyle(Styles.margin, styles: widget.data!.style),
       child: Opacity(
-        opacity: getStyle(Styles.opacity, styles: widget.data.style),
+        opacity: getStyle(Styles.opacity, styles: widget.data!.style),
         child: Stack(
           children: <Widget>[
             (background is ImageWidget) ? Positioned.fill(child: background) : Container(),
@@ -79,8 +79,8 @@ class _ContainerWidgetState extends State<ContainerWidget> with StyleMixin, Deco
     );
   }
 
-  double containerWidth() {
-    var size = widget.data.style['size'];
+  double? containerWidth() {
+    var size = widget.data!.style!['size'];
     return size != null
         ? size[0] == 0
             ? null
@@ -88,8 +88,8 @@ class _ContainerWidgetState extends State<ContainerWidget> with StyleMixin, Deco
         : null;
   }
 
-  double containerHeight() {
-    var size = widget.data.style['size'];
+  double? containerHeight() {
+    var size = widget.data!.style!['size'];
     return size != null
         ? size[0] == 0
             ? null

@@ -11,16 +11,16 @@ import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 /// General widget decoration mixin.
 /// Includes useful UI builders that correspond with the applied markup.
 mixin DecorationMixin {
-  final NssConfig config = NssIoc().use(NssConfig);
+  final NssConfig? config = NssIoc().use(NssConfig);
 
   /// Check widget visible state [showIf] by evaluating the JS expression provided.
   /// The expression will be evaluated via a native call using each platform JS expression
   /// task.
-  bool isVisible(ScreenViewModel viewModel, NssWidgetData data) {
+  bool isVisible(ScreenViewModel viewModel, NssWidgetData? data) {
     if (data == null) return true;
     if (data.showIf != null) {
-      engineLogger.d('isVisible check for bind: ${data.bind} & showIf: ${data.showIf}');
-      String result = viewModel.expressions[data.showIf] ?? 'false';
+      engineLogger!.d('isVisible check for bind: ${data.bind} & showIf: ${data.showIf}');
+      String result = viewModel.expressions![data.showIf] ?? 'false';
       return result.toLowerCase() == 'true';
     }
     return true;
@@ -30,35 +30,35 @@ mixin DecorationMixin {
 /// Apply a specific size to the selected element.
 /// Will check the [data] for any "size" property and apply it accordingly.
 class NssCustomSizeWidget extends StatelessWidget {
-  final NssWidgetData data;
-  final Widget child;
+  final NssWidgetData? data;
+  final Widget? child;
 
-  const NssCustomSizeWidget({Key key, this.data, this.child}) : super(key: key);
+  const NssCustomSizeWidget({Key? key, this.data, this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final NssConfig config = NssIoc().use(NssConfig);
+    final NssConfig? config = NssIoc().use(NssConfig);
 
     var size;
     // Check for size parameter in available custom theme. Override current if exists.
-    final String customTheme = data.theme ?? '';
+    final String customTheme = data!.theme ?? '';
     // Check if this widget has a size attached in attached custom theme.
     if (customTheme != null &&
-        config.markup.customThemes != null &&
-        config.markup.customThemes.containsKey(customTheme)) {
-      if (config.markup.customThemes[customTheme].containsKey('size')) {
-        size = config.markup.customThemes[customTheme]['size'];
+        config!.markup!.customThemes != null &&
+        config.markup!.customThemes!.containsKey(customTheme)) {
+      if (config.markup!.customThemes![customTheme].containsKey('size')) {
+        size = config.markup!.customThemes![customTheme]['size'];
       }
     }
 
     // Explicit size declaration will always get priority over custom theme declaration.
-    if (data.style == null) data.style = {};
-    if (data.style.containsKey('size')) {
-      size = data.style['size'];
+    if (data!.style == null) data!.style = {};
+    if (data!.style!.containsKey('size')) {
+      size = data!.style!['size'];
     }
 
     if (size == null) {
-      return applySizeRestriction();
+      return applySizeRestriction()!;
     }
 
     return SizedBox(
@@ -70,8 +70,8 @@ class NssCustomSizeWidget extends StatelessWidget {
 
   /// Specific widgets such as image widget must have a size restriction.
   /// If the user did not specify any, 100/100 will be applied.
-  Widget applySizeRestriction() {
-    switch (data.type) {
+  Widget? applySizeRestriction() {
+    switch (data!.type) {
       case NssWidgetType.profilePhoto:
       case NssWidgetType.image:
         return SizedBox(
@@ -87,5 +87,5 @@ class NssCustomSizeWidget extends StatelessWidget {
   /// Make sure this value will be treated as a double.
   /// Useful for JSON parsed elements
   /// which should be treated as double but are parsed as integer.
-  double ensureDouble(num) => (num is int) ? num.toDouble() : num;
+  double? ensureDouble(num) => (num is int) ? num.toDouble() : num;
 }

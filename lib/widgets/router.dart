@@ -11,8 +11,8 @@ import 'package:gigya_native_screensets_engine/widgets/material/errors.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 abstract class Router {
-  final NssConfig config;
-  final NssChannels channels;
+  final NssConfig? config;
+  final NssChannels? channels;
 
   Router(this.config, this.channels);
 
@@ -26,7 +26,7 @@ abstract class Router {
 
   /// Determine next possible route according to provided [name] parameter.
   /// Parsed route name will then be matched with the correct markup routing value.
-  String getNextRoute(String name) {
+  String? getNextRoute(String? name) {
     if (name == null) {
       return null;
     }
@@ -39,17 +39,17 @@ abstract class Router {
       }
       // Look for routing in the routing map of the screen.
       // If value does not exist use default routing.
-      Screen screen = config.markup.screens[urlSplit[0]];
+      Screen? screen = config!.markup!.screens![urlSplit[0]];
       if (screen == null) {
         // In this case we must display and error to the client.
         return null;
       }
-      Map screenRouting = screen.routes;
+      Map? screenRouting = screen.routes;
       if (screenRouting == null) {
         // Search for route in default routing map.
         return getNextRouteFromDefaultRouting(next);
       }
-      String route = screenRouting[next];
+      String? route = screenRouting[next];
       if (route == null) {
         // Search for route in default routing map.
         return getNextRouteFromDefaultRouting(next);
@@ -61,8 +61,8 @@ abstract class Router {
 
   /// Get the next route according to the markup default routing value.
   /// This will be used if a specific screen does not contain the required route value.
-  String getNextRouteFromDefaultRouting(String name) {
-    return config.markup.routing.defaultRouting[name];
+  String? getNextRouteFromDefaultRouting(String name) {
+    return config!.markup!.routing!.defaultRouting![name];
   }
 
   /// Evaluate dismissal route indication.
@@ -72,13 +72,13 @@ abstract class Router {
 
   /// Route and Notify the native controller that the engine need to be dismissed.
   Route dismissEngine(settings, method) {
-    if (config.isMock) {
+    if (config!.isMock!) {
       return emptyRoute(settings);
     }
     try {
-      channels.screenChannel.invokeMethod(method);
+      channels!.screenChannel.invokeMethod(method);
     } on MissingPluginException catch (ex) {
-      engineLogger.e('Missing channel connection: check mock state?');
+      engineLogger!.e('Missing channel connection: check mock state?');
     }
     return emptyRoute(settings);
   }
@@ -89,8 +89,8 @@ abstract class Router {
   }
 
   /// Match the correct [Screen] instance to the [nextRoute] property.
-  Screen nextScreen(String nextRoute) {
-    var screen = config.markup.screens[nextRoute];
+  Screen? nextScreen(String? nextRoute) {
+    var screen = config!.markup!.screens![nextRoute!];
     if (screen != null) {
       screen.id = nextRoute;
     }
@@ -106,7 +106,7 @@ abstract class Router {
     var nextRoute = getNextRoute(settings.name);
 
     if (nextRoute == null) {
-      engineLogger.e('Failed to parse routing for name: ${settings.name}');
+      engineLogger!.e('Failed to parse routing for name: ${settings.name}');
       return getErrorRoute(settings, 'Failed to parse desired route: ${settings.name}.'
           '\nPlease verify markup and make sure your route exists and is written correctly.');
     }
@@ -117,7 +117,7 @@ abstract class Router {
       return dismissEngine(settings, '_dismiss');
     }
 
-    Screen nextScreenObj = nextScreen(nextRoute);
+    Screen? nextScreenObj = nextScreen(nextRoute);
     if (nextScreenObj == null) {
       return getErrorRoute(settings, 'Screen not found.\nPlease verify markup.');
     }
@@ -141,7 +141,7 @@ enum RoutingAllowed { none, onPendingRegistration, onPendingEmailVerification, o
 /// These flows are generally intended for recoverable errors.
 class RouteEvaluator {
   /// Check for allowed routing given an error [code]
-  static RoutingAllowed allowedBy(int code) {
+  static RoutingAllowed allowedBy(int? code) {
     switch (code) {
       case 206001:
         return RoutingAllowed.onPendingRegistration;
@@ -157,9 +157,9 @@ class RouteEvaluator {
 
   /// Validate requested route. Only saved engine routes and provided screen names are valid.
   static bool validatedRoute(String route) {
-    Markup markup = NssIoc().use(NssConfig).markup;
+    Markup? markup = NssIoc().use(NssConfig).markup;
     if (engineRoutes.contains(route)) return true;
-    for (var screenName in markup.screens.keys) {
+    for (var screenName in markup!.screens!.keys) {
       if (screenName == route) return true;
     }
     return false;
@@ -167,9 +167,9 @@ class RouteEvaluator {
 }
 
 class MaterialRouter extends Router {
-  final NssConfig config;
-  final NssChannels channels;
-  final MaterialWidgetFactory widgetFactory;
+  final NssConfig? config;
+  final NssChannels? channels;
+  final MaterialWidgetFactory? widgetFactory;
 
   MaterialRouter(this.config, this.channels, this.widgetFactory) : super(config, channels);
 
@@ -195,15 +195,15 @@ class MaterialRouter extends Router {
   Route screenRoute(RouteSettings settings, Screen screen) {
     return MaterialPageRoute(
       settings: settings,
-      builder: (_) => widgetFactory.buildScreen(screen, settings.arguments),
+      builder: (_) => widgetFactory!.buildScreen(screen, settings.arguments as Map<String, dynamic>?),
     );
   }
 }
 
 class CupertinoRouter extends Router {
-  final NssConfig config;
-  final NssChannels channels;
-  final CupertinoWidgetFactory widgetFactory;
+  final NssConfig? config;
+  final NssChannels? channels;
+  final CupertinoWidgetFactory? widgetFactory;
 
   CupertinoRouter(this.config, this.channels, this.widgetFactory) : super(config, channels);
 

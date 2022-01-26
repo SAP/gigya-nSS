@@ -18,9 +18,9 @@ import 'package:provider/provider.dart';
 /// Widget support multiple sub implementations such as 'emailInput'/'passowrdInput' and handles each special
 /// states accordingly.
 class TextInputWidget extends StatefulWidget {
-  final NssWidgetData data;
+  final NssWidgetData? data;
 
-  const TextInputWidget({Key key, this.data}) : super(key: key);
+  const TextInputWidget({Key? key, this.data}) : super(key: key);
 
   @override
   _TextInputWidgetState createState() => _TextInputWidgetState();
@@ -47,17 +47,17 @@ class _TextInputWidgetState extends State<TextInputWidget>
   String inputTracker = '';
 
   // Client is able to inject validation error using the "onFieldChange" event.
-  String eventInjectedError;
+  String? eventInjectedError;
 
   @override
   void initState() {
     super.initState();
 
     // Initialize validators.
-    initValidators(widget.data);
+    initValidators(widget.data!);
 
     // Text obfuscation is true by default for password input type widget.
-    _obscuredText = widget.data.type == NssWidgetType.passwordInput;
+    _obscuredText = widget.data!.type == NssWidgetType.passwordInput;
 
     registerVisibilityNotifier(context, widget.data, () {
       if (mounted) {
@@ -81,28 +81,28 @@ class _TextInputWidgetState extends State<TextInputWidget>
   }
 
   /// Define the widget keyboard type according to its main type or schema field.
-  TextInputType getKeyboardType(String key) {
-    if (widget.data.type == NssWidgetType.emailInput)
+  TextInputType getKeyboardType(String? key) {
+    if (widget.data!.type == NssWidgetType.emailInput)
       return TextInputType.emailAddress;
     return getBoundKeyboardType(key);
   }
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('Input widget with bind: ${widget.data.bind} build initiated');
+    debugPrint('Input widget with bind: ${widget.data!.bind} build initiated');
     return Consumer2<ScreenViewModel, BindingModel>(
       builder: (context, viewModel, bindings, child) {
-        BindingValue bindingValue = getBindingText(widget.data, bindings, asArray: widget.data.storeAsArray);
+        BindingValue bindingValue = getBindingText(widget.data!, bindings, asArray: widget.data!.storeAsArray);
 
         if (bindingValue.error && !kReleaseMode) {
-          return showBindingDoesNotMatchError(widget.data.bind,
+          return showBindingDoesNotMatchError(widget.data!.bind,
               errorText: bindingValue.errorText);
         }
 
-        String placeHolder = bindingValue.value;
+        String? placeHolder = bindingValue.value;
         if (_textEditingController.text.isEmpty ||
             _textEditingController.text != placeHolder) {
-          _textEditingController.text = placeHolder;
+          _textEditingController.text = placeHolder!;
         } else {
           _textEditingController.value = _textEditingController.value.copyWith(
             text: _textEditingController.text,
@@ -114,14 +114,14 @@ class _TextInputWidgetState extends State<TextInputWidget>
         final borderSize = getStyle(Styles.borderSize, data: widget.data);
         final borderRadius = getStyle(Styles.cornerRadius, data: widget.data);
 
-        final Color color = getStyle(Styles.fontColor,
+        final Color? color = getStyle(Styles.fontColor,
             data: widget.data, themeProperty: 'textColor');
 
         return Visibility(
           visible: isVisible(viewModel, widget.data),
           child: Flexible(
             child: SemanticsWrapperWidget(
-              accessibility: widget.data.accessibility,
+              accessibility: widget.data!.accessibility,
               child: Padding(
                 padding: getStyle(Styles.margin, data: widget.data),
                 child: NssCustomSizeWidget(
@@ -131,19 +131,19 @@ class _TextInputWidgetState extends State<TextInputWidget>
                     child: TextFormField(
                       maxLines: _obscuredText
                           ? 1
-                          : widget.data.style.containsKey("size")
+                          : widget.data!.style!.containsKey("size")
                           ? 1000
                           : 1,
-                      enabled: !widget.data.disabled,
-                      keyboardType: getKeyboardType(widget.data.bind),
+                      enabled: !widget.data!.disabled!,
+                      keyboardType: getKeyboardType(widget.data!.bind),
                       obscureText: _obscuredText,
                       controller: _textEditingController,
                       textAlign:
                       getStyle(Styles.textAlign, data: widget.data) ??
                           TextAlign.start,
                       style: TextStyle(
-                          color: widget.data.disabled
-                              ? color.withOpacity(0.3)
+                          color: widget.data!.disabled!
+                              ? color!.withOpacity(0.3)
                               : color,
                           fontSize:
                           getStyle(Styles.fontSize, data: widget.data),
@@ -154,12 +154,12 @@ class _TextInputWidgetState extends State<TextInputWidget>
                         errorMaxLines: _errorMaxLines,
                         filled: true,
                         suffixIcon:
-                        widget.data.type == NssWidgetType.passwordInput
+                        widget.data!.type == NssWidgetType.passwordInput
                             ? IconButton(
                           onPressed: () {
-                            bindings.save(widget.data.bind,
+                            bindings.save(widget.data!.bind,
                                 _textEditingController.text.trim(),
-                                saveAs: widget.data.sendAs);
+                                saveAs: widget.data!.sendAs);
                             _toggleTextObfuscationState();
                           },
                           icon: Icon(
@@ -172,9 +172,9 @@ class _TextInputWidgetState extends State<TextInputWidget>
                             : null,
                         fillColor:
                         getStyle(Styles.background, data: widget.data),
-                        hintText: localizedStringFor(widget.data.textKey),
+                        hintText: localizedStringFor(widget.data!.textKey),
                         hintStyle: TextStyle(
-                          color: widget.data.disabled
+                          color: widget.data!.disabled!
                               ? getStyle(Styles.placeholderColor,
                               data: widget.data,
                               themeProperty: 'disabledColor')
@@ -274,13 +274,13 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       validator: (input) {
                         // Event injected error has priority in field validation.
                         if (eventInjectedError != null) {
-                          if (eventInjectedError.isEmpty) {
+                          if (eventInjectedError!.isEmpty) {
                             eventInjectedError = null;
                             return null;
                           }
                         }
                         // Field validation triggered.
-                        return validateField(input, widget.data.bind);
+                        return validateField(input, widget.data!.bind);
                       },
                       onChanged: (s) {
                         onChanged(viewModel, bindings, s);
@@ -308,35 +308,35 @@ class _TextInputWidgetState extends State<TextInputWidget>
       return;
     }
     // Value needs to be parsed before form can be submitted.
-    if (widget.data.parseAs != null) {
+    if (widget.data!.parseAs != null) {
       // Markup parsing applies.
       var parsed =
-      parseAs(value.trim(), widget.data.parseAs);
+      parseAs(value.trim(), widget.data!.parseAs);
       if (parsed == null) {
-        engineLogger.e(
+        engineLogger!.e(
             'parseAs field is not compatible with provided input');
       }
-      bindings.save<String>(widget.data.bind, parsed,
-          saveAs: widget.data.sendAs);
+      bindings.save<String>(widget.data!.bind, parsed,
+          saveAs: widget.data!.sendAs);
       return;
     }
 
     // If parseAs field is not available try to parse according to schema.
     var parsed =
-    parseUsingSchema(value.trim(), widget.data.bind);
+    parseUsingSchema(value.trim(), widget.data!.bind);
     if (parsed == null) {
-      engineLogger.e(
+      engineLogger!.e(
           'parseAs field is not compatible with provided input');
     }
-    bindings.save<String>(widget.data.bind, parsed,
-        saveAs: widget.data.sendAs);
+    bindings.save<String>(widget.data!.bind, parsed,
+        saveAs: widget.data!.sendAs);
   }
 
   /// Send field changed event to be optionally handled in native events handler.
   void onChanged(ScreenViewModel viewModel, bindings, to) async {
     Map<String, dynamic> eventData = await fieldDidChange(
       viewModel.id,
-      widget.data.bind,
+      widget.data!.bind,
       inputTracker,
       to,
     );
@@ -361,6 +361,6 @@ class _TextInputWidgetState extends State<TextInputWidget>
     // Track runtime data change.
     Provider.of<RuntimeStateEvaluator>(context,
         listen: false)
-        .notifyChanged(widget.data.bind, to);
+        .notifyChanged(widget.data!.bind, to);
   }
 }

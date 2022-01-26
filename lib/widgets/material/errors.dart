@@ -3,9 +3,9 @@ import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:provider/provider.dart';
 
 class MaterialScreenRenderErrorWidget extends StatelessWidget {
-  final String errorMessage;
+  final String? errorMessage;
 
-  const MaterialScreenRenderErrorWidget({Key key, this.errorMessage}) : super(key: key);
+  const MaterialScreenRenderErrorWidget({Key? key, this.errorMessage}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +35,12 @@ class MaterialScreenRenderErrorWidget extends StatelessWidget {
                       color: Colors.red[100],
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: Colors.red[900],
+                        color: Colors.red[900]!,
                       )),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
-                      errorMessage,
+                      errorMessage!,
                       style: TextStyle(
                           fontSize: 16, fontWeight: FontWeight.w500, color: Colors.red[900]),
                     ),
@@ -56,9 +56,9 @@ class MaterialScreenRenderErrorWidget extends StatelessWidget {
 }
 
 class MaterialComponentRenderErrorWidget extends StatelessWidget {
-  final String errorMessage;
+  final String? errorMessage;
 
-  const MaterialComponentRenderErrorWidget({Key key, this.errorMessage}) : super(key: key);
+  const MaterialComponentRenderErrorWidget({Key? key, this.errorMessage}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,7 @@ class MaterialComponentRenderErrorWidget extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(4.0),
           child: Text(
-            errorMessage,
+            errorMessage!,
             style: TextStyle(
               color: Colors.white,
               fontSize: 12.0,
@@ -99,7 +99,7 @@ class MaterialScreenInfoErrorWidget extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
               color: Colors.red,
-              border: Border.all(color: Colors.red[900], width: 3.0),
+              border: Border.all(color: Colors.red[900]!, width: 3.0),
               borderRadius: BorderRadius.all(Radius.circular(10.0))),
           width: double.infinity,
           height: 38.0,

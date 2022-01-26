@@ -33,14 +33,14 @@ extension ScreenActionExt on ScreenAction {
 /// action triggering.
 class ScreenViewModel
     with ChangeNotifier, DebugUtils, LocalizationMixin, EngineEvents {
-  final ApiService apiService;
-  final ScreenService screenService;
+  final ApiService? apiService;
+  final ScreenService? screenService;
 
-  final bool _isMock = NssIoc().use(NssConfig).isMock;
+  final bool? _isMock = NssIoc().use(NssConfig).isMock;
 
-  final Map<String, String> screenShowIfMapping = {};
+  final Map<String, String?> screenShowIfMapping = {};
 
-  Map<dynamic, dynamic> expressions = {};
+  Map<dynamic, dynamic>? expressions = {};
 
   ScreenViewModel(
     this.apiService,
@@ -51,7 +51,7 @@ class ScreenViewModel
   String pid = '';
 
   /// Screen unique identifier.
-  String id;
+  String? id;
 
   /// Create new globalKey which is important to trigger all form specific actions.
   /// Only one form can exist in one screen.
@@ -74,37 +74,37 @@ class ScreenViewModel
   /// Method will use the [ScreenService] to send the correct action to the native to initialize the correct
   /// native logic object.
   Future<Map<String, dynamic>> attachScreenAction(
-      String action, String screenId, Map<String, String> expressions) async {
-    if (isMock) {
+      String? action, String? screenId, Map<String, String?> expressions) async {
+    if (isMock!) {
       return {};
     }
     try {
       var map =
-          await screenService.initiateAction(action, screenId, expressions);
-      engineLogger.d('Screen $screenId flow initialized with data map');
+          await screenService!.initiateAction(action, screenId, expressions);
+      engineLogger!.d('Screen $screenId flow initialized with data map');
       return map;
     } on MissingPluginException {
-      engineLogger.e('Missing channel connection: check mock state?');
+      engineLogger!.e('Missing channel connection: check mock state?');
       return {};
     }
   }
 
   /// Runtime evaluation request of specific expression & relevant data.
   Future<void> evaluateExpressionByDemand(
-      NssWidgetData widgetData, Map<String, dynamic> data) async {
-    if (_isMock) {
+      NssWidgetData? widgetData, Map<String, dynamic> data) async {
+    if (_isMock!) {
       return;
     }
 
-    String expression = screenShowIfMapping[widgetData.showIf];
+    String? expression = screenShowIfMapping[widgetData!.showIf!];
 
     // evaluate expression with adjacent data.
     String evaluated =
-        await screenService.evaluateExpression(expression, data);
+        await screenService!.evaluateExpression(expression, data);
 
     if (expressions != null) {
       // Merge expression result with current expression map.
-      expressions[widgetData.showIf] = evaluated;
+      expressions![widgetData.showIf] = evaluated;
     }
   }
 
@@ -112,9 +112,9 @@ class ScreenViewModel
   /// Available states: idle, progress, error.
   NssScreenState _state = NssScreenState.idle;
 
-  String _errorText;
+  String? _errorText;
 
-  String get error => _errorText;
+  String? get error => _errorText;
 
   isIdle() => _state == NssScreenState.idle;
 
@@ -124,7 +124,7 @@ class ScreenViewModel
 
   /// Screen idle state.
   void setIdle() {
-    engineLogger.d('Screen with id: $id setIdle');
+    engineLogger!.d('Screen with id: $id setIdle');
     _state = NssScreenState.idle;
     _errorText = null;
     notifyListeners();
@@ -132,7 +132,7 @@ class ScreenViewModel
 
   /// Screen in progress state. Will show common progress indicator ontop a semi transparent background.
   void setProgress() {
-    engineLogger.d('Screen with id: $id setProgress');
+    engineLogger!.d('Screen with id: $id setProgress');
     _state = NssScreenState.progress;
     _errorText = null;
     notifyListeners();
@@ -140,8 +140,8 @@ class ScreenViewModel
 
   /// Screen in error mode. Will display a specific error under submission button.
   /// Other error display options will be added.
-  void setError(String error) {
-    engineLogger.d('Screen with id: $id setError with $error');
+  void setError(String? error) {
+    engineLogger!.d('Screen with id: $id setError with $error');
     _state = NssScreenState.error;
 
     // Check if error string exists in localization keys. If so use it.
@@ -152,12 +152,12 @@ class ScreenViewModel
   /// Request form submission. Form will try to validate first. If validation succeeds than the submission action
   /// will be sent to the native container.
   void submitScreenForm(Map<String, dynamic> submission) async {
-    var validated = formKey.currentState.validate();
+    var validated = formKey.currentState!.validate();
     if (validated) {
-      engineLogger.d('Form validations success - submission requested.');
+      engineLogger!.d('Form validations success - submission requested.');
 
       // Request form save state. This will update the binding map with the required data for submission.
-      formKey.currentState.save();
+      formKey.currentState!.save();
 
       // Handle engine submit event.
       Map<String, dynamic> eventData = await beforeSubmit(id, submission);
@@ -166,7 +166,7 @@ class ScreenViewModel
           String error = eventData['error'];
 
           if (error.isEmpty) {
-            engineLogger.d(
+            engineLogger!.d(
                 'Provided empty error message from event submission override');
           }
           setError(error);
@@ -186,12 +186,12 @@ class ScreenViewModel
 
   /// Force form validation request.
   void requestScreenFormValidation() {
-    formKey.currentState.validate();
+    formKey.currentState!.validate();
   }
 
   /// Trigger native social login flow with selected [provider].
-  void socialLogin(NssSocialProvider provider) {
-    if (isMock) {
+  void socialLogin(NssSocialProvider? provider) {
+    if (isMock!) {
       debugPrint('Requested social login with ${provider.name}');
       return;
     }
@@ -201,26 +201,26 @@ class ScreenViewModel
   /// Label widget initiated link action.
   /// Validate option available are URL/route.
   void linkifyTap(String link) async {
-    engineLogger.d('link tap: $link');
+    engineLogger!.d('link tap: $link');
 
     // Linkify browser link.
     if (Linkify.isValidUrl(link)) {
-      if (isMock) return;
-      engineLogger.d('URL link validated : $link');
-      screenService.linkToBrowser(link);
+      if (isMock!) return;
+      engineLogger!.d('URL link validated : $link');
+      screenService!.linkToBrowser(link);
       return;
     }
 
     // Linkify internal route.
     if (RouteEvaluator.validatedRoute(link)) {
-      engineLogger.d('Route link validated : $link');
+      engineLogger!.d('Route link validated : $link');
 
       // Initiate next action.
       final Map<String, dynamic> actionData =
           await initiateNextLinkAction(link);
       // Get routing data.
-      Map<String, dynamic> screenData = {};
-      Map<String, dynamic> expressionData = {};
+      Map<String, dynamic>? screenData = {};
+      Map<String, dynamic>? expressionData = {};
       if (actionData != null && actionData.isNotEmpty) {
         screenData = actionData['data'].cast<String, dynamic>();
         expressionData = actionData['expressions'].cast<String, dynamic>();
@@ -235,19 +235,19 @@ class ScreenViewModel
   /// Send requested API request given a String [method] and base [parameters] map.
   /// [parameter] map is not signed.
   void sendApi(String method, Map<String, dynamic> parameters) {
-    if (isMock) return;
+    if (isMock!) return;
     setProgress();
 
-    apiService.send(method, parameters).then(
+    apiService!.send(method, parameters).then(
       (result) async {
-        engineLogger.d('Api request success: ${result.data.toString()}');
+        engineLogger!.d('Api request success: ${result.data.toString()}');
 
         // Initiate next action.
         final Map<String, dynamic> actionData =
             await initiateNextAction('onSuccess');
         // Get routing data.
-        Map<String, dynamic> screenData = {};
-        Map<String, dynamic> expressionData = {};
+        Map<String, dynamic>? screenData = {};
+        Map<String, dynamic>? expressionData = {};
         if (actionData != null && actionData.isNotEmpty) {
           screenData = actionData['data'].cast<String, dynamic>();
           expressionData = actionData['expressions'].cast<String, dynamic>();
@@ -269,8 +269,8 @@ class ScreenViewModel
           final Map<String, dynamic> actionData =
               await initiateNextAction(routeNamed);
           // Get routing data.
-          Map<String, dynamic> screenData = {};
-          Map<String, dynamic> expressionData = {};
+          Map<String, dynamic>? screenData = {};
+          Map<String, dynamic>? expressionData = {};
           if (actionData != null && actionData.isNotEmpty) {
             screenData = actionData['data'].cast<String, dynamic>();
             expressionData = actionData['expressions'].cast<String, dynamic>();
@@ -286,7 +286,7 @@ class ScreenViewModel
         }
 
         // Log the error.
-        engineLogger.d('Api request error: ${error.errorMessage}');
+        engineLogger!.d('Api request error: ${error.errorMessage}');
       },
     );
   }
@@ -296,13 +296,13 @@ class ScreenViewModel
       return {};
     }
     final Markup markup = NssIoc().use(NssConfig).markup;
-    final String linkAction =
-        markup.screens[link] != null ? markup.screens[link].action : null;
+    final String? linkAction =
+        markup.screens![link] != null ? markup.screens![link]!.action : null;
     if (linkAction == null || linkAction.isEmpty) {
       return {};
     }
 
-    engineLogger.d(
+    engineLogger!.d(
         'initiateNextAction: for next screen id = $link and action = $linkAction');
 
     // Action initialization data fetch.
@@ -320,7 +320,7 @@ class ScreenViewModel
   Future<Map<String, dynamic>> initiateNextAction(String nextRoute) async {
     final Markup markup = NssIoc().use(NssConfig).markup;
 
-    final String nextScreenId = markup.screens[id].routes[nextRoute];
+    final String? nextScreenId = markup.screens![id!]!.routes![nextRoute];
 
     // Check for available route.
     if (nextScreenId == null || nextScreenId.isEmpty) {
@@ -328,41 +328,41 @@ class ScreenViewModel
     }
 
     // Check if the next route is a screen definition (can be _dismiss).
-    if (markup.screens[nextScreenId] == null) {
+    if (markup.screens![nextScreenId] == null) {
       return {};
     }
 
-    final String nextScreenAction = markup.screens[nextScreenId].action;
+    final String? nextScreenAction = markup.screens![nextScreenId]!.action;
     if (nextScreenAction == null || nextScreenAction.isEmpty) {
       return {};
     }
 
     // Map next screen expressions.
-    final Screen nextScreen = markup.screens[nextScreenId];
+    final Screen nextScreen = markup.screens![nextScreenId]!;
     var nextScreenExpressions = mapScreenExpressions(nextScreen);
 
-    engineLogger.d(
+    engineLogger!.d(
         'initiateNextAction: for next screen id = $nextScreenId and action = $nextScreenAction');
 
     // Action initialization data fetch.
     var dataMap = await attachScreenAction(
       nextScreenAction,
       nextScreenId,
-      nextScreenExpressions ?? {},
+      nextScreenExpressions,
     );
     return dataMap;
   }
 
   /// Map all screen expressions before sending it when attaching the next screen.
-  Map<String, String> mapScreenExpressions(Screen screen) {
-    Map<String, String> expressionMap = {};
-    screen.children.asMap().forEach((index, widget) {
+  Map<String, String?> mapScreenExpressions(Screen screen) {
+    Map<String, String?> expressionMap = {};
+    screen.children!.asMap().forEach((index, widget) {
       // Adding showIf expression.
       if (widget.showIf != null) {
         // Check if `showOnlyFields` is `true` then override the expression to showing by empty.
         if (screen.showOnlyFields == NssShowOnlyFields.empty &&
             widget.bind != null) {
-          widget.showIf += " && ${widget.bind} == null";
+          widget.showIf = "${widget.showIf} && ${widget.bind} == null";
         }
         // Add expression with hierarchy index as unique key.
         expressionMap[index.toString()] = widget.showIf;
@@ -389,8 +389,8 @@ class ScreenViewModel
 
 class NavigationEvent {
   final String route;
-  final Map<String, dynamic> routingData;
-  final Map<String, dynamic> expressions;
+  final Map<String, dynamic>? routingData;
+  final Map<String, dynamic>? expressions;
 
   NavigationEvent(this.route, this.routingData, this.expressions);
 }
