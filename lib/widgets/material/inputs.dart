@@ -100,8 +100,8 @@ class _TextInputWidgetState extends State<TextInputWidget>
         }
 
         String? placeHolder = bindingValue.value;
-        if (_textEditingController.text.isEmpty ||
-            _textEditingController.text != placeHolder) {
+        if ((_textEditingController.text.isEmpty ||
+            _textEditingController.text != placeHolder) && placeHolder != null) {
           _textEditingController.text = placeHolder!;
         } else {
           _textEditingController.value = _textEditingController.value.copyWith(

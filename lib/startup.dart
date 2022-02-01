@@ -57,7 +57,7 @@ class _StartupWidgetState extends State<StartupWidget> {
   /// Markup is required in order to correctly run the engine.
   /// Schema is optional and is markup dependant.
   Future<bool> fetchMarkupAndSchema() async {
-    var fetchData = widget.config!.isMock! ? await (_markupFromMock() as FutureOr<Map<dynamic, dynamic>>) : await _markupFromChannel();
+    var fetchData = widget.config!.isMock! ? await _markupFromMock() : await _markupFromChannel();
     final Markup markup = Markup.fromJson(fetchData.cast<String, dynamic>());
     widget.config!.markup = markup;
     widget.config!.isPlatformAware = markup.platformAware ?? false;
@@ -82,7 +82,7 @@ class _StartupWidgetState extends State<StartupWidget> {
 
   /// Fetch markup from example JSON asset.
   /// This is used for development & testing.
-  Future<Map<dynamic, dynamic>?> _markupFromMock() async {
+  Future<Map<dynamic, dynamic>> _markupFromMock() async {
     final String json = await AssetUtils.jsonFromAssets('assets/example.json');
     return jsonDecode(json);
   }
