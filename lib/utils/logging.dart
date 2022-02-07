@@ -9,6 +9,9 @@ class Logger {
   final NssConfig? config;
   final NssChannels? channels;
 
+  // General tag for debug logging.
+  static String dTag = "NSS_DEBUG";
+
   Logger(this.config, this.channels);
 
   /// Trigger a native debug log.
@@ -17,7 +20,8 @@ class Logger {
       return;
     }
     try {
-      channels!.logChannel.invokeMethod<void>('debug',  {'tag': tag, 'message': message});
+      channels!.logChannel
+          .invokeMethod<void>('debug', {'tag': tag, 'message': message});
     } on MissingPluginException catch (ex) {
       // No need to print the exception here.
     }
@@ -30,7 +34,8 @@ class Logger {
       return;
     }
     try {
-      channels!.logChannel.invokeMethod<void>('error', {'tag': tag, 'message': message});
+      channels!.logChannel
+          .invokeMethod<void>('error', {'tag': tag, 'message': message});
     } on MissingPluginException catch (ex) {
       // No need to print the exception here.
     }

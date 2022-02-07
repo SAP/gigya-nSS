@@ -275,9 +275,9 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
               child: paging
                   ? NotificationListener<OverscrollIndicatorNotification>(
                       onNotification: (overscroll) {
-                        overscroll.disallowGlow();
-                        return;
-                      } as bool Function(OverscrollIndicatorNotification)?,
+                        overscroll.disallowIndicator();
+                        return true;
+                      },
                       child: ListView(
                         physics: const NeverScrollableScrollPhysics(),
                         primary: false,
