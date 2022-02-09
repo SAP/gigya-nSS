@@ -477,7 +477,7 @@ class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> {
                 const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
             child: TextField(
               decoration: InputDecoration(
-                prefixIcon: widget.showIcons! ? Icon(Icons.search) : null,
+                prefixIcon: Icon(Icons.search),
               ),
               onChanged: (input) {
                 if (input.isEmpty) {
