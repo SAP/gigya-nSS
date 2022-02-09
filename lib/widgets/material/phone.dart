@@ -123,22 +123,20 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
     final borderSize = styleBorderSize(widget.data);
     final borderRadius = styleBorderRadius(widget.data);
 
-    return Padding(
-      // Style padding.
-      padding: stylePadding(widget.data),
-      // Style sizing.
-      child: NssCustomSizeWidget(
-        data: widget.data,
-        // Style opacity.
-        child: Opacity(
-          opacity: styleOpacity(widget.data),
-          child: Container(
-            // Style background.
-            child: Row(
-              children: [
-                Flexible(
-                  child: SemanticsWrapperWidget(
-                    accessibility: widget.data!.accessibility,
+    return NssCustomSizeWidget(
+      data: widget.data,
+      // Style opacity.
+      child: Opacity(
+        opacity: styleOpacity(widget.data),
+        child: Container(
+          // Style background.
+          child: Row(
+            children: [
+              Flexible(
+                child: SemanticsWrapperWidget(
+                  accessibility: widget.data!.accessibility,
+                  child: Padding(
+                    padding: getStyle(Styles.margin, data: widget.data),
                     child: TextFormField(
                       controller: _textEditingController,
                       // Style enabled/disabled.
@@ -301,8 +299,8 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
