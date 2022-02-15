@@ -86,7 +86,7 @@ class _StartupWidgetState extends State<StartupWidget> {
     }
 
     // Add default localization values that are needed (can be overridden by client).
-    ErrorUtils().addDefultStringValues(widget.config!.markup!.localization!);
+    ErrorUtils().addDefaultStringValues(widget.config!.markup!.localization!);
   }
 
   /// Fetch markup from example JSON asset.

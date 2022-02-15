@@ -8,6 +8,7 @@ import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
+import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
@@ -25,7 +26,14 @@ class RadioGroupWidget extends StatefulWidget {
 }
 
 class _RadioGroupWidgetState extends State<RadioGroupWidget>
-    with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin, VisibilityStateMixin {
+    with
+        DecorationMixin,
+        BindingMixin,
+        StyleMixin,
+        LocalizationMixin,
+        ValidationMixin,
+        VisibilityStateMixin,
+        ErrorMixin {
   String? _groupValue;
   String? _defaultValue;
 
@@ -42,11 +50,15 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ScreenViewModel, BindingModel>(builder: (context, viewModel, bindings, child) {
-      BindingValue bindingValue = getBindingText(widget.data!, bindings, asArray: widget.data!.storeAsArray);
+    return Consumer2<ScreenViewModel, BindingModel>(
+        builder: (context, viewModel, bindings, child) {
+      BindingValue bindingValue = getBindingText(widget.data!, bindings,
+          asArray: widget.data!.storeAsArray);
 
-      if (bindingValue.error && !kReleaseMode) {
-        return showBindingDoesNotMatchError(widget.data!.bind, errorText: bindingValue.errorText);
+      // Check for binding error. Display on screen.
+      if (bindingValueError(bindingValue)) {
+        return bindingValueErrorDisplay(widget.data!.bind,
+            errorText: bindingValue.errorText);
       }
 
       _groupValue = bindingValue.value;
@@ -60,7 +72,8 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
 
       if (_groupValue != null && bindingValue.value == null) {
         setOption(_groupValue, bindings);
-        debugPrint('No binding value for radio -> default value will be displayed');
+        debugPrint(
+            'No binding value for radio -> default value will be displayed');
       }
 
       return SemanticsWrapperWidget(
@@ -69,8 +82,8 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
           visible: isVisible(viewModel, widget.data),
           child: Theme(
             data: Theme.of(context).copyWith(
-              unselectedWidgetColor:
-                  getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
+              unselectedWidgetColor: getStyle(Styles.fontColor,
+                  data: widget.data, themeProperty: 'textColor'),
               disabledColor: getThemeColor('disabledColor'),
             ),
             child: Opacity(
@@ -94,22 +107,25 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                                   : getThemeColor('enabledColor'),
                               disabledColor: widget.data!.disabled!
                                   ? getThemeColor('disabledColor')
-                                  : getThemeColor('enabledColor')
-                          ),
+                                  : getThemeColor('enabledColor')),
                           child: RadioListTile<String?>(
                             controlAffinity: ListTileControlAffinity.leading,
                             value: option.value,
                             title: Text(
                               localizedStringFor(option.textKey)!,
-                              textAlign:
-                                  getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
+                              textAlign: getStyle(Styles.textAlign,
+                                      data: widget.data) ??
+                                  TextAlign.start,
                               style: TextStyle(
                                 color: widget.data!.disabled!
                                     ? getThemeColor('disabledColor')
                                     : getStyle(Styles.fontColor,
-                                        data: widget.data, themeProperty: 'textColor'),
-                                fontSize: getStyle(Styles.fontSize, data: widget.data),
-                                fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                                        data: widget.data,
+                                        themeProperty: 'textColor'),
+                                fontSize: getStyle(Styles.fontSize,
+                                    data: widget.data),
+                                fontWeight: getStyle(Styles.fontWeight,
+                                    data: widget.data),
                               ),
                             ),
                             groupValue: _groupValue,
@@ -123,7 +139,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
 
                                 // Track runtime data change.
                                 Provider.of<RuntimeStateEvaluator>(context,
-                                    listen: false)
+                                        listen: false)
                                     .notifyChanged(widget.data!.bind, value);
                               });
                             },
@@ -152,7 +168,8 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
       if (parsed == null) {
         engineLogger!.e('parseAs field is not compatible with provided input');
       }
-      bindings.save<String?>(widget.data!.bind, parsed, saveAs: widget.data!.sendAs);
+      bindings.save<String?>(widget.data!.bind, parsed,
+          saveAs: widget.data!.sendAs);
       return;
     }
     // If parseAs field is not available try to parse according to schema.
@@ -160,6 +177,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
     if (parsed == null) {
       engineLogger!.e('Schema type is not compatible with provided input');
     }
-    bindings.save<String?>(widget.data!.bind, parsed, saveAs: widget.data!.sendAs);
+    bindings.save<String?>(widget.data!.bind, parsed,
+        saveAs: widget.data!.sendAs);
   }
 }

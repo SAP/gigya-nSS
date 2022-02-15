@@ -7,6 +7,7 @@ import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
+import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
@@ -29,7 +30,8 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
         StyleMixin,
         LocalizationMixin,
         ValidationMixin,
-        VisibilityStateMixin {
+        VisibilityStateMixin,
+        ErrorMixin {
   bool? _currentValue;
 
   @override
@@ -62,10 +64,12 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
           BindingValue bindingValue = getBindingBool(widget.data!, bindings,
               asArray: widget.data!.storeAsArray);
 
-          if (bindingValue.error && !kReleaseMode) {
-            return showBindingDoesNotMatchError(widget.data!.bind,
+          // Check for binding error. Display on screen.
+          if (bindingValueError(bindingValue)) {
+            return bindingValueErrorDisplay(widget.data!.bind,
                 errorText: bindingValue.errorText);
           }
+
           _currentValue = bindingValue.value;
 
           return Visibility(
@@ -143,8 +147,8 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                                   widget.data!.bind,
                                                   !_currentValue!,
                                                   saveAs: widget.data!.sendAs,
-                                                  asArray:
-                                                      widget.data!.storeAsArray);
+                                                  asArray: widget
+                                                      .data!.storeAsArray);
                                             });
                                           },
                                     child: Container(
@@ -153,7 +157,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                               (link) {
                                               viewModel.linkifyTap(link!);
                                             },
-                                          // link color
+                                              // link color
                                               getStyle(Styles.linkColor,
                                                       data: widget.data,
                                                       themeProperty:

@@ -7,6 +7,7 @@ import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
+import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +27,8 @@ class _LabelWidgetState extends State<LabelWidget>
         StyleMixin,
         LocalizationMixin,
         BindingMixin,
-        VisibilityStateMixin {
+        VisibilityStateMixin,
+        ErrorMixin {
   @override
   void initState() {
     super.initState();
@@ -44,9 +46,15 @@ class _LabelWidgetState extends State<LabelWidget>
       builder: (context, viewModel, bindings, child) {
         BindingValue bindingValue = getBindingText(widget.data!, bindings);
 
-        // Check for binding error.
-        if (bindingValue.error && !kReleaseMode) {
-          return showBindingDoesNotMatchError(widget.data!.bind,
+        // Check for binding error. Display on screen.
+        if (bindingValueError(bindingValue)) {
+          return bindingValueErrorDisplay(widget.data!.bind,
+              errorText: bindingValue.errorText);
+        }
+
+        // Check for binding error. Display on screen.
+        if (bindingValueError(bindingValue)) {
+          return bindingValueErrorDisplay(widget.data!.bind,
               errorText: bindingValue.errorText);
         }
 
@@ -78,7 +86,7 @@ class _LabelWidgetState extends State<LabelWidget>
                         ? linkify.linkify(widget.data, (link) {
                             viewModel.linkifyTap(link!);
                           },
-                        // link color
+                            // link color
                             getStyle(Styles.linkColor,
                                     data: widget.data,
                                     themeProperty: 'linkColor') ??

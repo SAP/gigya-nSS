@@ -328,23 +328,6 @@ mixin BindingMixin {
     return TextInputType.text;
   }
 
-  /// Display a non matching error for the provided binding markupl [key].
-  Widget showBindingDoesNotMatchError(String? key, {String? errorText}) {
-    return Container(
-      color: Colors.amber.withOpacity(0.4),
-      child: Padding(
-        padding: const EdgeInsets.all(6),
-        child: Text(
-          errorText ?? 'Dev error: Binding key: $key does not exist in schema',
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.lightBlue,
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 /// Helper class for fetching the bound data of a component.
