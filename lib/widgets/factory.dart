@@ -9,6 +9,7 @@ import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
+import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/app.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/buttons.dart';
@@ -57,12 +58,14 @@ enum NssStack { vertical, horizontal }
 /// Multi widget container alignment options for "alignment" markup property.
 enum NssAlignment { start, end, center, equal_spacing, spread }
 
-abstract class WidgetFactory {
+abstract class WidgetFactory with DecorationMixin{
   Widget? buildApp();
 
   Widget? buildScreen(Screen screen, Map<String, dynamic> routingData);
 
   Widget buildComponent(NssWidgetType? type, NssWidgetData data);
+
+  NssAlignment? screenAlignment;
 
   Widget buildContainer(List<Widget> children, NssWidgetData data) {
     if (data.stack == null) {
@@ -77,7 +80,7 @@ abstract class WidgetFactory {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: getCrossAxisAlignment(data.alignment),
+            crossAxisAlignment: getCrossAxisAlignment(data.alignment ?? screenAlignment),
             children: children,
           ),
         );
@@ -86,7 +89,7 @@ abstract class WidgetFactory {
           data: data,
           child: Row(
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: getMainAxisAlignment(data.alignment),
+            mainAxisAlignment: getMainAxisAlignment(data.alignment ?? screenAlignment),
             crossAxisAlignment: CrossAxisAlignment.center,
             children: children,
           ),
@@ -120,40 +123,6 @@ abstract class WidgetFactory {
     });
     return widgets;
   }
-
-  /// [Flex] Widgets such as [Column] and [Row] require alignment property in order
-  /// to better understand where their child widgets are will layout.
-  MainAxisAlignment getMainAxisAlignment(NssAlignment? alignment) {
-    if (alignment == null) return MainAxisAlignment.start;
-    switch (alignment) {
-      case NssAlignment.start:
-        return MainAxisAlignment.start;
-      case NssAlignment.end:
-        return MainAxisAlignment.end;
-      case NssAlignment.center:
-        return MainAxisAlignment.center;
-      case NssAlignment.equal_spacing:
-        return MainAxisAlignment.spaceEvenly;
-      case NssAlignment.spread:
-        return MainAxisAlignment.spaceBetween;
-      default:
-        return MainAxisAlignment.start;
-    }
-  }
-
-  CrossAxisAlignment getCrossAxisAlignment(NssAlignment? alignment) {
-    if (alignment == null) return CrossAxisAlignment.start;
-    switch (alignment) {
-      case NssAlignment.start:
-        return CrossAxisAlignment.start;
-      case NssAlignment.end:
-        return CrossAxisAlignment.end;
-      case NssAlignment.center:
-        return CrossAxisAlignment.center;
-      default:
-        return CrossAxisAlignment.start;
-    }
-  }
 }
 
 class MaterialWidgetFactory extends WidgetFactory {
@@ -167,7 +136,12 @@ class MaterialWidgetFactory extends WidgetFactory {
 
   @override
   Widget buildScreen(Screen screen, Map<String, dynamic>? arguments) {
+
+    // Save main screen alignment in instance.
+    screenAlignment = screen.alignment;
+
     ScreenViewModel? viewModel = NssIoc().use(ScreenViewModel);
+    viewModel?.screenAlignment = screenAlignment;
 
     BindingModel? binding = NssIoc().use(BindingModel);
 

@@ -25,6 +25,40 @@ mixin DecorationMixin {
     }
     return true;
   }
+
+  /// [Flex] Widgets such as [Column] and [Row] require alignment property in order
+  /// to better understand where their child widgets are will layout.
+  MainAxisAlignment getMainAxisAlignment(NssAlignment? alignment) {
+    if (alignment == null) return MainAxisAlignment.start;
+    switch (alignment) {
+      case NssAlignment.start:
+        return MainAxisAlignment.start;
+      case NssAlignment.end:
+        return MainAxisAlignment.end;
+      case NssAlignment.center:
+        return MainAxisAlignment.center;
+      case NssAlignment.equal_spacing:
+        return MainAxisAlignment.spaceEvenly;
+      case NssAlignment.spread:
+        return MainAxisAlignment.spaceBetween;
+      default:
+        return MainAxisAlignment.start;
+    }
+  }
+
+  CrossAxisAlignment getCrossAxisAlignment(NssAlignment? alignment) {
+    if (alignment == null) return CrossAxisAlignment.start;
+    switch (alignment) {
+      case NssAlignment.start:
+        return CrossAxisAlignment.start;
+      case NssAlignment.end:
+        return CrossAxisAlignment.end;
+      case NssAlignment.center:
+        return CrossAxisAlignment.center;
+      default:
+        return CrossAxisAlignment.start;
+    }
+  }
 }
 
 /// Apply a specific size to the selected element.

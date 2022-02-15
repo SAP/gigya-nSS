@@ -9,6 +9,7 @@ import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:provider/provider.dart';
 
 mixin NssActionsMixin {
@@ -60,7 +61,7 @@ class _SubmitWidgetState extends State<SubmitWidget>
         child: Consumer2<ScreenViewModel, BindingModel>(
           builder: (context, viewModel, bindings, child) {
             return Column(
-              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: getCrossAxisAlignment(widget.data?.alignment ?? viewModel.screenAlignment),
               children: <Widget>[
                 NssCustomSizeWidget(
                   data: widget.data,

@@ -12,6 +12,7 @@ import 'package:gigya_native_screensets_engine/utils/debug.dart';
 import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/widgets/events.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:gigya_native_screensets_engine/services/api_service.dart';
@@ -107,6 +108,8 @@ class ScreenViewModel
       expressions![widgetData.showIf] = evaluated;
     }
   }
+
+  NssAlignment? screenAlignment;
 
   /// Current screen [NssScreenState] state.
   /// Available states: idle, progress, error.
@@ -221,7 +224,7 @@ class ScreenViewModel
       // Get routing data.
       Map<String, dynamic>? screenData = {};
       Map<String, dynamic>? expressionData = {};
-      if (actionData != null && actionData.isNotEmpty) {
+      if (actionData.isNotEmpty) {
         screenData = actionData['data'].cast<String, dynamic>();
         expressionData = actionData['expressions'].cast<String, dynamic>();
       }
@@ -248,7 +251,7 @@ class ScreenViewModel
         // Get routing data.
         Map<String, dynamic>? screenData = {};
         Map<String, dynamic>? expressionData = {};
-        if (actionData != null && actionData.isNotEmpty) {
+        if (actionData.isNotEmpty) {
           screenData = actionData['data'].cast<String, dynamic>();
           expressionData = actionData['expressions'].cast<String, dynamic>();
         }
@@ -271,7 +274,7 @@ class ScreenViewModel
           // Get routing data.
           Map<String, dynamic>? screenData = {};
           Map<String, dynamic>? expressionData = {};
-          if (actionData != null && actionData.isNotEmpty) {
+          if (actionData.isNotEmpty) {
             screenData = actionData['data'].cast<String, dynamic>();
             expressionData = actionData['expressions'].cast<String, dynamic>();
           }
