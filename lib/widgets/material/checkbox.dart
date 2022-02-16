@@ -56,7 +56,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
     if (!linkified) linkify.dispose();
     return FormField(
       validator: (dynamic val) {
-        return validateField(_currentValue.toString(), widget.data!.bind);
+        return validateBool(_currentValue ?? false, widget.data!.bind);
       },
       builder: (state) {
         return Consumer2<ScreenViewModel, BindingModel>(

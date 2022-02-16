@@ -126,6 +126,18 @@ mixin ValidationMixin {
     return _validate(input, _validators);
   }
 
+  /// Required validation for boolean before submission is called.
+  String? validateBool(bool input, String? bind) {
+    // Validate required field.
+    if (input == false && _validators.containsKey(Validator.required.name)) {
+      final NssInputValidator requiredValidator = _validators[Validator.required.name]!;
+      if (requiredValidator.enabled!) {
+        return requiredValidator.getError();
+      }
+    }
+    return null;
+  }
+
   /// Execute field validation according to relevant [validators].
   /// Validation will pass when null is returned.
   String? _validate(String? input, Map<String, NssInputValidator> validators) {
