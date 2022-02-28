@@ -81,14 +81,14 @@ class BindingModel with ChangeNotifier {
   }
 
   /// Get the relevant bound data using the String [key] reference.
-  dynamic getValue<T>(String key, [Map<String, dynamic> dataObject, dynamic asArray]) {
+  dynamic getValue<T>(String? key, [Map<String, dynamic>? dataObject, dynamic asArray]) {
 
     if (asArray != null) {
-      return asArrayHelper.getValue(getValue(key), asArray, key);
+      return asArrayHelper.getValue(getValue(key), asArray, key!);
     }
 
     // Remove `#` mark before submit.
-    key = key.removeHashtagPrefix();
+    key = key!.removeHashtagPrefix();
 
     var bindingData = dataObject ?? _routingBindingData;
 
@@ -143,7 +143,7 @@ class BindingModel with ChangeNotifier {
   }
 
   /// Save a new [key] / [value] pair for form submission.
-  save<T>(String key, T value, {String saveAs , dynamic asArray}) {
+  save<T>(String key, T value, {String? saveAs , dynamic asArray}) {
       if (key.isNullOrEmpty()) return;
       // Change the bind to real param before sending the request.
       if (saveAs != null && saveAs.isNotEmpty) key = saveAs;
@@ -217,13 +217,13 @@ class BindingModel with ChangeNotifier {
 /// that supports it.
 mixin BindingMixin {
   /// Parse schema object according to provided [key].
-  Map<dynamic, dynamic> getSchemaObject(String key) {
+  Map<dynamic, dynamic>? getSchemaObject(String? key) {
     final NssConfig config = NssIoc().use(NssConfig);
-    if (!config.markup.useSchemaValidations) {
+    if (!config.markup!.useSchemaValidations!) {
       return null;
     }
-    if (config.schema.containsKey(key.split('.').first)) {
-      var schemaObject = config.schema[key.split('.').first]
+    if (config.schema!.containsKey(key!.split('.').first)) {
+      var schemaObject = config.schema![key.split('.').first]
               [key.replaceFirst(key.split('.').first + '.', '')] ??
           {};
       return schemaObject;
@@ -238,7 +238,7 @@ mixin BindingMixin {
       return BindingValue(null);
     }
     // Check binding matches.
-    final String bindingMatches = bindMatches(data.bind, 'string');
+    final String? bindingMatches = bindMatches(data.bind, 'string');
     if (bindingMatches != null) {
       return BindingValue.bindingError(data.bind, errorText: bindingMatches);
     }
@@ -254,7 +254,7 @@ mixin BindingMixin {
       return BindingValue(false);
     }
     // Check binding matches.
-    final String bindingMatches = bindMatches(data.bind, 'boolean');
+    final String? bindingMatches = bindMatches(data.bind, 'boolean');
     if (bindingMatches != null && asArray != null) {
       return BindingValue.bindingError(data.bind, errorText: bindingMatches);
     }
@@ -270,10 +270,10 @@ mixin BindingMixin {
   /// Verify that bound value is exact.
   /// When useSchemaValidations is applied it is crucial to verifiy that the component "bind" markup field
   /// equals the correct schema field.
-  String bindMatches(String key, String format) {
+  String? bindMatches(String? key, String format) {
     final NssConfig config = NssIoc().use(NssConfig);
     // Validation only relevant when using schema valiation.
-    if (!config.markup.useSchemaValidations) return null;
+    if (!config.markup!.useSchemaValidations!) return null;
 
     // Schema may be null. If so move on.
     final schema = config.schema;
@@ -281,23 +281,23 @@ mixin BindingMixin {
       return null;
     }
 
-    if (schema.containsKey(key.split('.').first)) {
-      final Map<dynamic, dynamic> schemaObject = getSchemaObject(key);
+    if (schema.containsKey(key!.split('.').first)) {
+      final Map<dynamic, dynamic> schemaObject = getSchemaObject(key)!;
 
       // Verify binding field exists
       if (schemaObject.isEmpty) {
-        engineLogger.e('Dev error: Binding key: $key does not exist in schema');
+        engineLogger!.e('Dev error: Binding key: $key does not exist in schema');
         return 'Dev error: Binding key: $key does not exist in schema';
       }
 
       // Verify binding field matches.
       if (schemaObject['type'] == 'string' && format != 'string') {
-        engineLogger.e(
+        engineLogger!.e(
             'Dev error: binding key:$key is marked as String but provided with a non string UI component');
         return 'Dev error: binding key:$key is marked as String but provided with a non string UI component';
       }
       if (schemaObject['type'] == 'boolean' && format != 'boolean') {
-        engineLogger.e(
+        engineLogger!.e(
             'Dev error: binding key:$key is marked as boolean but provided with a non boolean UI component');
         return 'Dev error: binding key:$key is marked as boolean but provided with a non boolean UI component';
       }
@@ -306,12 +306,12 @@ mixin BindingMixin {
   }
 
   /// Get the correct keyboard display type [TextInputType] according to schema field type.
-  TextInputType getBoundKeyboardType(String key) {
+  TextInputType getBoundKeyboardType(String? key) {
     final NssConfig config = NssIoc().use(NssConfig);
     // Validation only relevant when using schema valiation.
-    if (!config.markup.useSchemaValidations) return TextInputType.text;
+    if (!config.markup!.useSchemaValidations!) return TextInputType.text;
 
-    final Map<dynamic, dynamic> schemaObject = getSchemaObject(key);
+    final Map<dynamic, dynamic>? schemaObject = getSchemaObject(key);
     if (schemaObject == null) return TextInputType.text;
     if (schemaObject.isEmpty) return TextInputType.text;
 
@@ -328,30 +328,13 @@ mixin BindingMixin {
     return TextInputType.text;
   }
 
-  /// Display a non matching error for the provided binding markupl [key].
-  Widget showBindingDoesNotMatchError(String key, {String errorText}) {
-    return Container(
-      color: Colors.amber.withOpacity(0.4),
-      child: Padding(
-        padding: const EdgeInsets.all(6),
-        child: Text(
-          errorText ?? 'Dev error: Binding key: $key does not exist in schema',
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.lightBlue,
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 /// Helper class for fetching the bound data of a component.
 class BindingValue {
   dynamic value;
   bool error = false;
-  String errorText;
+  String? errorText;
 
   BindingValue(value)
       : value = value,

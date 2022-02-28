@@ -32,7 +32,7 @@ void main() {
         Linkify linkify = Linkify(str);
         final bool isLinkified = linkify.containLinks(str);
         expect(isLinkified, false);
-        expect(linkify.matches.length, 0);
+        expect(linkify.matches!.length, 0);
       },
     );
 
@@ -45,11 +45,11 @@ void main() {
         Linkify linkify = Linkify(str);
         final bool isLinkified = linkify.containLinks(str);
         expect(isLinkified, true);
-        expect(linkify.matches.length, 1);
-        expect(linkify.matches.elementAt(0).group(1), 'there\'s a link');
-        expect(linkify.matches.elementAt(0).group(2), 'https://myBrand.com/terms.html');
-        expect(linkify.wrappers[0], 'this is a cool text then suddenly... ');
-        expect(linkify.wrappers[1], '... this bla bla');
+        expect(linkify.matches!.length, 1);
+        expect(linkify.matches!.elementAt(0).group(1), 'there\'s a link');
+        expect(linkify.matches!.elementAt(0).group(2), 'https://myBrand.com/terms.html');
+        expect(linkify.wrappers![0], 'this is a cool text then suddenly... ');
+        expect(linkify.wrappers![1], '... this bla bla');
       },
     );
 
@@ -61,14 +61,14 @@ void main() {
         Linkify linkify = Linkify(str);
         final bool isLinkified = linkify.containLinks(str);
         expect(isLinkified, true);
-        expect(linkify.matches.length, 2);
-        expect(linkify.matches.elementAt(0).group(1), 'there');
-        expect(linkify.matches.elementAt(0).group(2), 'https://www.google.co.il/maps');
-        expect(linkify.matches.elementAt(1).group(1), 'searched');
-        expect(linkify.matches.elementAt(1).group(2), 'http://www.google.com');
-        expect(linkify.wrappers[0], 'And ');
-        expect(linkify.wrappers[1], ' we stood and ');
-        expect(linkify.wrappers[2], ' for the meaning of life');
+        expect(linkify.matches!.length, 2);
+        expect(linkify.matches!.elementAt(0).group(1), 'there');
+        expect(linkify.matches!.elementAt(0).group(2), 'https://www.google.co.il/maps');
+        expect(linkify.matches!.elementAt(1).group(1), 'searched');
+        expect(linkify.matches!.elementAt(1).group(2), 'http://www.google.com');
+        expect(linkify.wrappers![0], 'And ');
+        expect(linkify.wrappers![1], ' we stood and ');
+        expect(linkify.wrappers![2], ' for the meaning of life');
       },
     );
   });

@@ -1,3 +1,4 @@
+import 'package:gigya_native_screensets_engine/models/accessibility.dart';
 import 'package:gigya_native_screensets_engine/models/option.dart';
 import 'package:gigya_native_screensets_engine/models/styles.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
@@ -11,78 +12,78 @@ part 'widget.g.dart';
 @JsonSerializable(anyMap: true)
 class NssWidgetData {
   // Widget type identifier.
-  NssWidgetType type;
+  NssWidgetType? type;
 
   // Two way binding field. Can be String or String[].
   dynamic bind;
 
   // Localized text key.
-  String textKey;
+  String? textKey;
 
   // Stack alignment - vertical | horizontal.
   @JsonKey(defaultValue: NssStack.vertical)
-  NssStack stack;
+  NssStack? stack;
 
   // Inner widget alignment.
-  NssAlignment alignment;
+  NssAlignment? alignment;
 
   // Available children for container type widgets.
-  List<NssWidgetData> children;
+  List<NssWidgetData>? children;
 
-  String api;
+  String? api;
 
   // Available default value for widget.
   dynamic defaultValue;
 
   // List of available options for option supported widgets.
-  List<NssOption> options;
+  List<NssOption>? options;
 
   // Widget styles map.
   @JsonKey(defaultValue: {})
-  Map<String, dynamic> style;
+  Map<String, dynamic>? style;
 
   // Widget specific theme.
-  String theme;
+  String? theme;
 
   // Widget validation map.
   @JsonKey(defaultValue: {})
-  Map<String, dynamic> validations;
+  Map<String, dynamic>? validations;
 
   // Optional values: 'number'|'boolean'|'string'
-  String parseAs;
-  String sendAs;
+  String? parseAs;
+  String? sendAs;
 
   // Social login provider for social login button.
-  NssSocialProvider provider;
+  NssSocialProvider? provider;
 
   // Icon URL for social login button.
-  String iconURL;
+  String? iconURL;
 
   // Icon visually enabled for social login button.
   @JsonKey(defaultValue: true)
-  bool iconEnabled;
+  bool? iconEnabled;
 
   // Social login providers for social login grid.
   @JsonKey(defaultValue: [])
-  List<NssSocialProvider> providers;
+  List<NssSocialProvider?>? providers;
 
   // Social login grid column count.
   @JsonKey(defaultValue: 4)
-  int columns;
+  int? columns;
 
   // Social login grid rows count.
   @JsonKey(defaultValue: 1)
-  int rows;
+  int? rows;
 
   // Hide titles optional for social login grid.
   @JsonKey(defaultValue: false)
-  bool hideTitles;
+  bool? hideTitles;
 
   // Image widget URL.
-  String url;
+  String? url;
 
   // Image widget fallback URL.
-  String fallback;
+  String? fallback;
 
   // Default placeholder for profile image.
   @JsonKey(name: 'default')
@@ -90,43 +91,42 @@ class NssWidgetData {
 
   // Allow upload option for profile image (will enable selection click).
   @JsonKey(defaultValue: true)
-  bool allowUpload;
+  bool? allowUpload;
 
   // Disable widget option.
   @JsonKey(defaultValue: false)
-  bool disabled;
+  bool? disabled;
 
   // Visible when option
-  String showIf;
+  String? showIf;
 
   // Countries object for phone selection widget.
-  Countries countries;
+  Countries? countries;
 
   // Nested container identifier.
   @JsonKey(defaultValue: false)
-  bool isNestedContainer;
+  bool? isNestedContainer;
 
   // Widget accessibility extension.
-  @JsonKey(defaultValue: {'label': '', 'hint': ''})
-  Accessibility accessibility;
+  //@JsonKey(defaultValue: {'label': '', 'hint': ''})
+  Accessibility? accessibility;
 
   // Widget placeholder string option.
-  String placeholder;
+  String? placeholder;
 
   dynamic storeAsArray;
 
   // Date widget year range start.
   @JsonKey(defaultValue: 1920)
-  int startYear;
+  int? startYear;
   // Date widget year range end.
   @JsonKey(defaultValue: 2025)
-  int endYear;
+  int? endYear;
 
-  @JsonKey(defaultValue: { })
-  DatePickerStyle datePickerStyle;
+  DatePickerStyle? datePickerStyle;
 
   @JsonKey(defaultValue: '')
-  String initialDisplay;
+  String? initialDisplay;
 
   NssWidgetData({
     this.textKey,
@@ -172,20 +172,20 @@ class NssWidgetData {
 
   Map<String, dynamic> toJson() => _$NssWidgetDataToJson(this);
 
-  bool boolDefaultValue() => defaultValue as bool;
+  bool? boolDefaultValue() => defaultValue as bool?;
 }
 
 /// Phone input countries helper object.
 @JsonSerializable(anyMap: true)
 class Countries {
   @JsonKey(defaultValue: 'auto')
-  String defaultSelected;
+  String? defaultSelected;
   @JsonKey(defaultValue: [])
-  List<String> include;
+  List<String>? include;
   @JsonKey(defaultValue: [])
-  List<String> exclude;
+  List<String>? exclude;
   @JsonKey(defaultValue: true)
-  bool showIcons;
+  bool? showIcons;
 
   Countries({this.defaultSelected, this.include, this.exclude, this.showIcons});
 
@@ -195,22 +195,3 @@ class Countries {
   Map<String, dynamic> toJson() => _$CountriesToJson(this);
 }
 
-/// Accessibility extension object.
-/// Adds/overrides basic semantics tree for label/hint.
-@JsonSerializable(anyMap: true)
-class Accessibility {
-  @JsonKey(defaultValue: '')
-  String label;
-  @JsonKey(defaultValue: '')
-  String hint;
-
-  Accessibility({
-    this.label,
-    this.hint,
-  });
-
-  factory Accessibility.fromJson(Map<String, dynamic> json) =>
-      _$AccessibilityFromJson(json);
-
-  Map<String, dynamic> toJson() => _$AccessibilityToJson(this);
-}

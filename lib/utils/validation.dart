@@ -15,9 +15,9 @@ extension ValidatorEx on Validator {
 
 /// Base class for all custom input validators.
 class NssInputValidator with LocalizationMixin {
-  bool enabled;
-  String errorKey;
-  String format;
+  bool? enabled;
+  String? errorKey;
+  String? format;
 
   static const propertyPrefix = '#';
 
@@ -48,7 +48,7 @@ class NssInputValidator with LocalizationMixin {
     }
   }
 
-  String getError() {
+  String? getError() {
     return localizedStringFor(errorKey);
   }
 }
@@ -58,19 +58,19 @@ class NssInputValidator with LocalizationMixin {
 mixin ValidationMixin {
   final Map<String, NssInputValidator> _validators = {};
 
-  final NssConfig config = NssIoc().use(NssConfig);
+  final NssConfig? config = NssIoc().use(NssConfig);
 
   final consentKeyValidation = '.isConsentGranted';
 
   /// Parse schema object according to provided [key].
-  Map<dynamic, dynamic> getSchemaObject(String key) {
-    if (!config.markup.useSchemaValidations) {
+  Map<dynamic, dynamic>? getSchemaObject(String? key) {
+    if (!config!.markup!.useSchemaValidations!) {
       return null;
     }
-    if (config.schema.containsKey(key.split('.').first)) {
+    if (config!.schema!.containsKey(key!.split('.').first)) {
       var fixKey = key.replaceFirst(key.split('.').first + '.', '').replaceFirst(consentKeyValidation, '');
       var schemaObject =
-          config.schema[key.split('.').first][fixKey] ?? {};
+          config!.schema![key.split('.').first][fixKey] ?? {};
       return schemaObject;
     }
     return null;
@@ -83,21 +83,21 @@ mixin ValidationMixin {
     }
     // Casting is required because the data is dynamic forced due to native channeling.
     validations.cast<String, dynamic>().forEach((k, v) {
-      Map<String, dynamic> validator = v.cast<String, dynamic>();
+      Map<String, dynamic>? validator = v.cast<String, dynamic>();
       if (_validators.containsKey(k)) {
         // Override existing fields.
-        _validators[k].overrideFrom(validator);
+        _validators[k]!.overrideFrom(validator!);
       } else {
-        _validators[k] = NssInputValidator.from(validator);
+        _validators[k] = NssInputValidator.from(validator!);
       }
     });
   }
 
   /// Parse schema validators according to provided [key].
-  initSchemaValidators(String key) async {
-    if (!config.markup.useSchemaValidations) return;
+  initSchemaValidators(String? key) async {
+    if (!config!.markup!.useSchemaValidations!) return;
     // Skip validation if bind is marked with `#`.
-    if (key.containsHashtagPrefix()) return;
+    if (key!.containsHashtagPrefix()) return;
 
     var schemaObject = getSchemaObject(key);
     if (schemaObject == null) return;
@@ -108,7 +108,7 @@ mixin ValidationMixin {
       String dirty = schemaObject['format'].toString().trim();
       dirty = dirty.replaceAll('regex(\'', '');
       final regex = dirty.substring(0, dirty.length - 2);
-      engineLogger.d('regex = $regex');
+      engineLogger!.d('regex = $regex');
       _validators[Validator.regex.name] = NssInputValidator.regExFromSchema(regex);
     }
   }
@@ -116,31 +116,43 @@ mixin ValidationMixin {
   /// Initialize input validators.
   initValidators(NssWidgetData data) {
     initSchemaValidators(data.bind);
-    initMarkupValidators(data.validations);
+    initMarkupValidators(data.validations!);
   }
 
   /// Validate the input filed before submission is called.
   /// TODO: Inspect issuing the validation process adjacent to onFieldChanged property.
-  String validateField(String input, String bind) {
+  String? validateField(String? input, String? bind) {
     if (_validators.isEmpty) return null;
     return _validate(input, _validators);
   }
 
+  /// Required validation for boolean before submission is called.
+  String? validateBool(bool input, String? bind) {
+    // Validate required field.
+    if (input == false && _validators.containsKey(Validator.required.name)) {
+      final NssInputValidator requiredValidator = _validators[Validator.required.name]!;
+      if (requiredValidator.enabled!) {
+        return requiredValidator.getError();
+      }
+    }
+    return null;
+  }
+
   /// Execute field validation according to relevant [validators].
   /// Validation will pass when null is returned.
-  String _validate(String input, Map<String, NssInputValidator> validators) {
+  String? _validate(String? input, Map<String, NssInputValidator> validators) {
     if (input == null) { input = ''; }
 
     // Validate required field.
     if (input.isEmpty && validators.containsKey(Validator.required.name)) {
-      final NssInputValidator requiredValidator = validators[Validator.required.name];
-      if (requiredValidator.enabled) {
+      final NssInputValidator requiredValidator = validators[Validator.required.name]!;
+      if (requiredValidator.enabled!) {
         return requiredValidator.getError();
       }
     }
     // Validated regex field.
     if (input.isNotEmpty && validators.containsKey(Validator.regex.name)) {
-      final NssInputValidator regexValidator = validators[Validator.regex.name];
+      final NssInputValidator regexValidator = validators[Validator.regex.name]!;
 
       // Handling schema checkbox field that uses the same format field as well as regex.
       if (regexValidator.format == 'tr' && input != 'true') {
@@ -149,9 +161,9 @@ mixin ValidationMixin {
       }
 
       // RegEx format validation.
-      final RegExp regExp = RegExp(regexValidator.format);
+      final RegExp regExp = RegExp(regexValidator.format!);
       final bool match = regExp.hasMatch(input);
-      if (regexValidator.enabled && !match) {
+      if (regexValidator.enabled! && !match) {
         return regexValidator.getError();
       }
     }
@@ -160,7 +172,7 @@ mixin ValidationMixin {
 
   /// Try to parse the provided [value] according to a specific [type].
   /// Will return 'null' if parsing will fail.
-  dynamic parseAs(String value, String type) {
+  dynamic parseAs(String value, String? type) {
     String source = value.trim();
     switch (type) {
       case 'number':
@@ -181,9 +193,9 @@ mixin ValidationMixin {
 
   /// Try to parse the provided [value] according to a schema field [key].
   /// Will return 'null' if parsing will fail.
-  dynamic parseUsingSchema(String value, String key) {
+  dynamic parseUsingSchema(String value, String? key) {
     final String source = value.trim();
-    if (!config.markup.useSchemaValidations) {
+    if (!config!.markup!.useSchemaValidations!) {
       return source;
     }
     // Try to get the schema object. If fails return the source as a fallback value.

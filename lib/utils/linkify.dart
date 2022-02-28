@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 
-typedef OnLinkTap(String link);
+typedef OnLinkTap(String? link);
 
 /// Adding a "linkification" action.
 /// According to specifc regular expression format a spannable text widget will be
@@ -11,9 +11,9 @@ typedef OnLinkTap(String link);
 class Linkify with StyleMixin {
   final String original;
   final RegExp _regExp = RegExp(r'\[([^\]]*)\]\(([^)]*)\)');
-  Iterable<RegExpMatch> matches;
+  Iterable<RegExpMatch>? matches;
 
-  List<String> wrappers;
+  List<String>? wrappers;
 
   Linkify(this.original) {
     // If true will already prepare the data to linkify it.
@@ -27,24 +27,24 @@ class Linkify with StyleMixin {
   }
 
   bool containLinks(string) {
-    return matches.length > 0;
+    return matches!.length > 0;
   }
 
   linkify(
-    NssWidgetData data,
+    NssWidgetData? data,
     OnLinkTap tap,
     Color linkColor,
   ) {
-    List<TextSpan> span = List<TextSpan>();
-    for (var i = 0; i < wrappers.length; i++) {
-      if (i == wrappers.length - 1) {
+    List<TextSpan> span = [];
+    for (var i = 0; i < wrappers!.length; i++) {
+      if (i == wrappers!.length - 1) {
         // Add only the last element.
-        span.add(TextSpan(text: wrappers[i], style: TextStyle()));
+        span.add(TextSpan(text: wrappers![i], style: TextStyle()));
         break;
       }
-      final RegExpMatch match = matches.elementAt(i);
-      _linkSingle(wrappers[i], match.group(1), match.group(2), tap, data, span,
-          linkColor);
+      final RegExpMatch match = matches!.elementAt(i);
+      _linkSingle(wrappers![i], match.group(1), match.group(2), tap, data!,
+          span, linkColor);
     }
     return Text.rich(
       TextSpan(children: span),
@@ -55,8 +55,8 @@ class Linkify with StyleMixin {
 
   _linkSingle(
     String leading,
-    String actual,
-    String link,
+    String? actual,
+    String? link,
     OnLinkTap tap,
     NssWidgetData data,
     List<TextSpan> list,
@@ -68,10 +68,10 @@ class Linkify with StyleMixin {
           text: leading,
           style: TextStyle(
             fontSize: getStyle(Styles.fontSize, data: data),
-            color: data.disabled ? getThemeColor(
-                'disabledColor')
-                .withOpacity(0.3) : getStyle(Styles.fontColor,
-                data: data, themeProperty: 'textColor'),
+            color: data.disabled!
+                ? getThemeColor('disabledColor').withOpacity(0.3)
+                : getStyle(Styles.fontColor,
+                    data: data, themeProperty: 'textColor'),
             fontWeight: getStyle(Styles.fontWeight, data: data),
           ),
         ),
@@ -81,9 +81,9 @@ class Linkify with StyleMixin {
           text: actual,
           style: TextStyle(
             fontSize: getStyle(Styles.fontSize, data: data),
-            color: data.disabled ?  getThemeColor(
-                'disabledColor')
-                .withOpacity(0.3): linkColor,
+            color: data.disabled!
+                ? getThemeColor('disabledColor').withOpacity(0.3)
+                : linkColor,
             fontWeight: getStyle(Styles.fontWeight, data: data),
           ),
           recognizer: TapGestureRecognizer()

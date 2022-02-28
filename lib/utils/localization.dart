@@ -23,8 +23,8 @@ mixin LocalizationMixin {
   /// If the specific key is not available within the selected language map, it will
   /// fallback to the "_default" mapping.
   /// Original "textKey" value will only be displayed if no "_default" language mapping is available.
-  String localizedStringFor(String textKey) {
-    String text = textKey;
+  String? localizedStringFor(String? textKey) {
+    String? text = textKey;
     String usedLang = lang;
     // If localization map does not contain the specified lang will route back to default.
     if (!_localizationMap.containsKey(usedLang)) {

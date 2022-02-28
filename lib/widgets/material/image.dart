@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -63,7 +64,7 @@ abstract class ImageWidgetState<T extends StatefulWidget> extends State<T> with 
   void resolveStaticPlaceholder() {
     if (mounted) {
       setState(() {
-        engineLogger.d('Failed to obtain image for widget');
+        engineLogger!.d('Failed to obtain image for widget');
         imageProvider = MemoryImage(kTransparentImage);
       });
     }
@@ -98,7 +99,7 @@ abstract class ImageWidgetState<T extends StatefulWidget> extends State<T> with 
     var data = await channel.invokeMethod<Uint8List>('image_resource', {'url': url}).timeout(Duration(seconds: 4), onTimeout: () {
       // Timeout
       return null;
-    }).catchError((error) {
+    } as FutureOr<Uint8List> Function()?).catchError((error) {
       // Error
       return null;
     });
@@ -117,9 +118,9 @@ abstract class ImageWidgetState<T extends StatefulWidget> extends State<T> with 
 }
 
 class ImageWidget extends StatefulWidget {
-  final NssWidgetData data;
+  final NssWidgetData? data;
 
-  const ImageWidget({Key key, this.data}) : super(key: key);
+  const ImageWidget({Key? key, this.data}) : super(key: key);
 
   @override
   _ImageWidgetState createState() => _ImageWidgetState();
@@ -129,7 +130,7 @@ class _ImageWidgetState extends ImageWidgetState<ImageWidget> with VisibilitySta
   @override
   void initState() {
     super.initState();
-    getImage(widget.data.bind ?? widget.data.url, widget.data.fallback);
+    getImage(widget.data!.bind ?? widget.data!.url, widget.data!.fallback);
 
     registerVisibilityNotifier(context, widget.data, () {
       if (mounted) {
@@ -145,7 +146,7 @@ class _ImageWidgetState extends ImageWidgetState<ImageWidget> with VisibilitySta
     final cornerRadius = getStyle(Styles.cornerRadius, data: widget.data);
 
     return SemanticsWrapperWidget(
-      accessibility: widget.data.accessibility,
+      accessibility: widget.data!.accessibility,
       child: Padding(
         padding: getStyle(Styles.margin, data: widget.data),
         child: NssCustomSizeWidget(
@@ -172,8 +173,7 @@ class _ImageWidgetState extends ImageWidgetState<ImageWidget> with VisibilitySta
                             color: getStyle(Styles.background, data: widget.data),
                             image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
                           ),
-                        ) ??
-                        Container(),
+                        ) ,
                   ),
                 ),
               );

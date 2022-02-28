@@ -7,11 +7,11 @@ part 'styles.g.dart';
 class DatePickerStyle {
 
   @JsonKey(defaultValue: '')
-  String primaryColor;
+  String? primaryColor;
   @JsonKey(defaultValue: '')
-  String labelColor;
+  String? labelColor;
   @JsonKey(defaultValue: 'Enter Date')
-  String labelText;
+  String? labelText;
 
   DatePickerStyle({
     this.primaryColor,

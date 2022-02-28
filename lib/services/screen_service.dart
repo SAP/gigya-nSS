@@ -5,7 +5,7 @@ import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
 
 class ScreenService {
-  final NssChannels channels;
+  final NssChannels? channels;
 
   final _defaultTimeout = 30;
 
@@ -14,8 +14,8 @@ class ScreenService {
   /// Trigger the native SDK to instantiate the adjacent screen action.
   /// The screen action native component is responsible for performing all native SDK logic.
   Future<Map<String, dynamic>> initiateAction(
-      String actionId, String screenId, Map<String, String> expressions) async {
-    var map = await channels.screenChannel.invokeMethod<Map<dynamic, dynamic>>(
+      String? actionId, String? screenId, Map<String, String?> expressions) async {
+    var map = await channels!.screenChannel.invokeMethod<Map<dynamic, dynamic>>(
       'action',
       {
         'actionId': actionId,
@@ -32,7 +32,7 @@ class ScreenService {
 
   /// Trigger the native SDK to display an external link providing a formatted [link] URL.
   Future<void> linkToBrowser(String link) async {
-    await channels.screenChannel.invokeMethod<Map<dynamic, dynamic>>(
+    await channels!.screenChannel.invokeMethod<Map<dynamic, dynamic>>(
       'link',
       {
         'url': link,
@@ -44,8 +44,8 @@ class ScreenService {
 
   /// Trigger the native SDK to evaluate a single expression with adjacent data.
   Future<String> evaluateExpression(
-      String expression, Map<String, dynamic> data) async {
-    String eval = await channels.screenChannel.invokeMethod<String>(
+      String? expression, Map<String, dynamic> data) async {
+    String eval = await channels!.screenChannel.invokeMethod<String>(
       'eval',
       {
         'expression': expression,

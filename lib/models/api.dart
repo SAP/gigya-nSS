@@ -7,13 +7,13 @@ part 'api.g.dart';
 
 @JsonSerializable(anyMap: true)
 class ApiBaseResult {
-  int statusCode;
-  int errorCode;
-  String callId;
-  String errorMessage;
+  int? statusCode;
+  int? errorCode;
+  String? callId;
+  String? errorMessage;
 
   @JsonKey(ignore: true)
-  Map<String, dynamic> data;
+  Map<String, dynamic>? data;
 
   ApiBaseResult({this.statusCode, this.callId, this.errorMessage, this.data, this.errorCode});
 

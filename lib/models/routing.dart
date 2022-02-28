@@ -4,9 +4,9 @@ part 'routing.g.dart';
 
 @JsonSerializable(anyMap: true)
 class Routing {
-  String initial;
+  String? initial;
   @JsonKey(name: 'default')
-  Map<String, String> defaultRouting;
+  Map<String, String>? defaultRouting;
 
   Routing({this.initial, this.defaultRouting});
 

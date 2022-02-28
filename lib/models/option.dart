@@ -5,9 +5,9 @@ part 'option.g.dart';
 @JsonSerializable(anyMap: true)
 class NssOption {
   @JsonKey(name: 'default')
-  bool defaultValue;
-  String value;
-  String textKey;
+  bool? defaultValue;
+  String? value;
+  String? textKey;
 
   NssOption({
     this.defaultValue,

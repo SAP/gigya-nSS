@@ -15,7 +15,7 @@ void main() {
         };
 
         NssInputValidator regexValidator = NssInputValidator.from(validatorMap);
-        final RegExp regExp = RegExp(regexValidator.format);
+        final RegExp regExp = RegExp(regexValidator.format!);
 
         // Valid formats.
         expect(regExp.hasMatch("abc1"), true);
@@ -42,7 +42,7 @@ void main() {
         };
 
         NssInputValidator regexValidator = NssInputValidator.from(validatorMap);
-        final RegExp regExp = RegExp(regexValidator.format);
+        final RegExp regExp = RegExp(regexValidator.format!);
 
         // Valid formats.
         expect(regExp.hasMatch("Aa123#dgdg"), true);
@@ -64,7 +64,7 @@ void main() {
         };
 
         NssInputValidator regexValidator = NssInputValidator.from(validatorMap);
-        final RegExp regExp = RegExp(regexValidator.format);
+        final RegExp regExp = RegExp(regexValidator.format!);
 
         // Valid formats.
         expect(regExp.hasMatch("abx@cc.com"), true);
