@@ -154,6 +154,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                       ),
                       keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 14),
                           isDense: true,
                           filled: true,
                           fillColor: styleBackground(widget.data),
@@ -475,7 +476,7 @@ class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> {
           Padding(
             padding:
                 const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
-            child: TextField(
+            child: TextFormField(
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.search),
               ),

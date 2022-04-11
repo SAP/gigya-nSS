@@ -47,7 +47,7 @@ mixin DecorationMixin {
   }
 
   CrossAxisAlignment getCrossAxisAlignment(NssAlignment? alignment) {
-    if (alignment == null) return CrossAxisAlignment.start;
+    if (alignment == null) return CrossAxisAlignment.center;
     switch (alignment) {
       case NssAlignment.start:
         return CrossAxisAlignment.start;
@@ -56,7 +56,7 @@ mixin DecorationMixin {
       case NssAlignment.center:
         return CrossAxisAlignment.center;
       default:
-        return CrossAxisAlignment.start;
+        return CrossAxisAlignment.center;
     }
   }
 }

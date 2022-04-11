@@ -135,6 +135,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                   child: Opacity(
                     opacity: getStyle(Styles.opacity, data: widget.data),
                     child: TextFormField(
+                      textAlignVertical: TextAlignVertical.center,
                       maxLines: _obscuredText
                           ? 1
                           : widget.data!.style!.containsKey("size")
@@ -156,25 +157,30 @@ class _TextInputWidgetState extends State<TextInputWidget>
                           fontWeight:
                               getStyle(Styles.fontWeight, data: widget.data)),
                       decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 14),
                         isDense: true,
                         errorMaxLines: _errorMaxLines,
                         filled: true,
                         suffixIcon:
                             widget.data!.type == NssWidgetType.passwordInput
-                                ? IconButton(
-                                    onPressed: () {
-                                      bindings.save(widget.data!.bind,
-                                          _textEditingController.text.trim(),
-                                          saveAs: widget.data!.sendAs);
-                                      _toggleTextObfuscationState();
-                                    },
-                                    icon: Icon(
-                                      Icons.remove_red_eye,
-                                      color: _obscuredText
-                                          ? Colors.black12
-                                          : Colors.black54,
+                                ? Container(
+                              color: Colors.blue,
+                                  child: IconButton(
+                              alignment: Alignment.center,
+                                      onPressed: () {
+                                        bindings.save(widget.data!.bind,
+                                            _textEditingController.text.trim(),
+                                            saveAs: widget.data!.sendAs);
+                                        _toggleTextObfuscationState();
+                                      },
+                                      icon: Icon(
+                                        Icons.remove_red_eye,
+                                        color: _obscuredText
+                                            ? Colors.black12
+                                            : Colors.black54,
+                                      ),
                                     ),
-                                  )
+                                )
                                 : null,
                         fillColor:
                             getStyle(Styles.background, data: widget.data),
