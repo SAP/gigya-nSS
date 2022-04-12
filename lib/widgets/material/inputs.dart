@@ -163,24 +163,21 @@ class _TextInputWidgetState extends State<TextInputWidget>
                         filled: true,
                         suffixIcon:
                             widget.data!.type == NssWidgetType.passwordInput
-                                ? Container(
-                              color: Colors.blue,
-                                  child: IconButton(
+                                ? IconButton(
                               alignment: Alignment.center,
-                                      onPressed: () {
-                                        bindings.save(widget.data!.bind,
-                                            _textEditingController.text.trim(),
-                                            saveAs: widget.data!.sendAs);
-                                        _toggleTextObfuscationState();
-                                      },
-                                      icon: Icon(
-                                        Icons.remove_red_eye,
-                                        color: _obscuredText
-                                            ? Colors.black12
-                                            : Colors.black54,
-                                      ),
+                                    onPressed: () {
+                                      bindings.save(widget.data!.bind,
+                                          _textEditingController.text.trim(),
+                                          saveAs: widget.data!.sendAs);
+                                      _toggleTextObfuscationState();
+                                    },
+                                    icon: Icon(
+                                      Icons.remove_red_eye,
+                                      color: _obscuredText
+                                          ? Colors.black12
+                                          : Colors.black54,
                                     ),
-                                )
+                                  )
                                 : null,
                         fillColor:
                             getStyle(Styles.background, data: widget.data),
