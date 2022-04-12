@@ -61,7 +61,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
             errorText: bindingValue.errorText);
       }
 
-      _groupValue = bindingValue.value;
+      _groupValue = bindingValue.value ?? "";
       if (_groupValue!.isNullOrEmpty()) {
         widget.data!.options!.forEach((option) {
           if (option.defaultValue != null && option.defaultValue!) {
@@ -161,6 +161,9 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
     if (widget.data!.disabled!) {
       return null;
     }
+    if (widget.data!.bind == null) {
+      return null;
+    }
     // Value needs to be parsed before form can be submitted.
     if (widget.data!.parseAs != null) {
       // Markup parsing applies.
@@ -168,8 +171,8 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
       if (parsed == null) {
         engineLogger!.e('parseAs field is not compatible with provided input');
       }
-      bindings.save<String?>(widget.data!.bind, parsed,
-          saveAs: widget.data!.sendAs);
+       bindings.save<String?>(widget.data!.bind, parsed,
+            saveAs: widget.data!.sendAs);
       return;
     }
     // If parseAs field is not available try to parse according to schema.
