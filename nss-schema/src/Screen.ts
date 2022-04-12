@@ -2,10 +2,10 @@ import {mergeDeep} from "./common/utils";
 import {WithComment, WithText} from "./common";
 import {Routing} from "./RoutingSchema";
 import SchemaEntity from "./common/SchemaEntity";
-import WithChildren from "./common/WithChildren";
+import WithScreenChildren from "./common/WithScreenChildren";
 
 export default new SchemaEntity('Screen', mergeDeep({},
-    WithChildren,
+    WithScreenChildren,
     WithComment, {
     description: 'A screen in the set',
     type: 'object',
