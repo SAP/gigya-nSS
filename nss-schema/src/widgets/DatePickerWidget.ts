@@ -3,7 +3,7 @@ import BoundWidget from "./BoundWidget";
 import {WithText} from "../common";
 import {background, border, cornerRadius, font, margin, opacity, placeholderColor, size, withStyle} from "../styles";
 import WidgetEntity from "./WidgetEntity";
-import Global from "./Global";
+import Global from "./BasicWidget";
 import AccountField from "../dynEnums/AccountField";
 import SpecialField from "../SpecialField";
 import DatePickerBind from "../dynEnums/DatePickerBind";

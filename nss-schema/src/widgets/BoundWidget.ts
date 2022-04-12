@@ -3,7 +3,7 @@ import BaseWidget from "./BaseWidget";
 import AccountField from "../dynEnums/AccountField";
 import SpecialField from "../SpecialField";
 import Validations from "./Validations";
-import Global from "./Global";
+import Global from "./BasicWidget";
 
 export default mergeDeep({}, Global, {
     required: [
