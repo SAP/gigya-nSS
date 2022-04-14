@@ -4,7 +4,7 @@ import AccountField from "./AccountField";
 
 export default new SchemaEntity('dynamic/DatePickerBind', {
     type: 'object',
-    required: ['month'],
+    required: ['day','month', 'year'],
     additionalProperties: false,
     properties: {
         type: {
