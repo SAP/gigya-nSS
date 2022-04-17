@@ -127,7 +127,7 @@ void main() {
         arguments: null,
         name: null,
       );
-      MaterialPageRoute route = router.generateRoute(settings);
+      MaterialPageRoute route = router.generateRoute(settings) as MaterialPageRoute<dynamic>;
       expect(route is MaterialPageRoute, true);
       expect(route.settings.name, null);
     });
@@ -149,7 +149,7 @@ void main() {
         name: '_dismiss',
       );
       when(config.isMock).thenReturn(true);
-      MaterialPageRoute route = router.generateRoute(settings);
+      MaterialPageRoute route = router.generateRoute(settings) as MaterialPageRoute<dynamic>;
       expect(route.settings.name, '_dismiss');
     });
 

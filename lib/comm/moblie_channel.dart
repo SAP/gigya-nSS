@@ -19,18 +19,18 @@ class MobileChannels extends NssChannels {
 abstract class NssChannel {
   Future<T> invokeMethod<T>(String method, [ dynamic arguments ]);
 
-  Future<Map<K, V>> invokeMapMethod<K, V>(String method, [dynamic arguments]);
+  Future<Map<K, V>?> invokeMapMethod<K, V>(String method, [dynamic arguments]);
 }
 
 class NssMobileMethodChannel extends NssChannel {
-  MethodChannel channel;
+  late MethodChannel channel;
 
   NssMobileMethodChannel(String name) {
     channel = MethodChannel(name);
   }
 
   @override
-  Future<Map<K, V>> invokeMapMethod<K, V>(String method, [arguments]) async {
+  Future<Map<K, V>?> invokeMapMethod<K, V>(String method, [arguments]) async {
     return await channel.invokeMapMethod(method, arguments);
   }
 

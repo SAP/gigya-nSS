@@ -33,7 +33,7 @@ extension StylesExt on Styles {
 enum NssTextAlign { start, end, center, none }
 
 extension NssTextAlignExt on NssTextAlign {
-  TextAlign get getValue {
+  TextAlign? get getValue {
     switch (this) {
       case NssTextAlign.start:
         return TextAlign.start;
@@ -62,9 +62,8 @@ extension NssMainAlign on TextAlign {
   }
 }
 
-
 mixin StyleMixin {
-  final NssConfig config = NssIoc().use(NssConfig);
+  final NssConfig? config = NssIoc().use(NssConfig);
 
   /// Default style mapping.
   final Map<String, dynamic> defaultStyle = {
@@ -95,9 +94,9 @@ mixin StyleMixin {
   /// Get the relevant style value.
   dynamic getStyle(
     Styles style, {
-    NssWidgetData data,
-    Map<String, dynamic> styles,
-    String themeProperty,
+    NssWidgetData? data,
+    Map<String, dynamic>? styles,
+    String? themeProperty,
   }) {
     var value;
     var dataStyles = data != null ? data.style : styles;
@@ -105,11 +104,15 @@ mixin StyleMixin {
       // Check for custom theme first.
       String customTheme = data.theme ?? '';
       if (customTheme.isAvailable() &&
-          config.markup.theme != null &&
-          config.markup.customThemes != null &&
-          config.markup.customThemes.containsKey(customTheme)) {
-        if (config.markup.customThemes[customTheme].containsKey(style.name)) {
-          value = getStyleValue(style, config.markup.customThemes[customTheme].cast<String, dynamic>());
+          config!.markup!.theme != null &&
+          config!.markup!.customThemes != null &&
+          config!.markup!.customThemes!.containsKey(customTheme)) {
+        if (config!.markup!.customThemes![customTheme]
+            .containsKey(style.name)) {
+          value = getStyleValue(
+              style,
+              config!.markup!.customThemes![customTheme]
+                  .cast<String, dynamic>());
         }
       }
     }
@@ -135,12 +138,12 @@ mixin StyleMixin {
       case Styles.indicatorColor:
       case Styles.linkColor:
       case Styles.placeholderColor:
-        var platformAware = config.isPlatformAware ?? false;
+        var platformAware = config!.isPlatformAware ?? false;
         return getColor(value, platformAware: platformAware);
       case Styles.fontWeight:
         return getFontWeight(value);
       case Styles.background:
-        var platformAware = config.isPlatformAware ?? false;
+        var platformAware = config!.isPlatformAware ?? false;
         return getBackground(value, platformAware: platformAware);
       case Styles.textAlign:
         return getTextAlign(value);
@@ -150,16 +153,16 @@ mixin StyleMixin {
   }
 
   /// Get the relevant style value from provided [styles] markup parsed map.
-  getStyleValue(Styles style, Map<String, dynamic> styles) {
+  getStyleValue(Styles style, Map<String, dynamic>? styles) {
     if (styles == null) styles = defaultStyle;
     return styles[style.name] ?? defaultStyle[style.name];
   }
 
   /// Check if to apply a specific theme.
-  themeIsNeeded(Styles style, Map<String, dynamic> styles, String key) {
+  themeIsNeeded(Styles style, Map<String, dynamic>? styles, String key) {
     if (styles == null) styles = {};
-    if (styles[style.name] == null && config.markup.theme != null) {
-      final theme = config.markup.theme[key] ?? defaultTheme[key];
+    if (styles[style.name] == null && config!.markup!.theme != null) {
+      final theme = config!.markup!.theme![key] ?? defaultTheme[key];
       return theme;
     } else {
       return null;
@@ -168,15 +171,17 @@ mixin StyleMixin {
 
   /// Get the theme color according to provided theme specific [key].
   Color getThemeColor(String key) {
-    return (config.markup.theme == null || config.markup.theme[key] == null)
-        ? getColor(defaultTheme[key])
-        : getColor(config.markup.theme[key]);
+    if (config!.markup!.theme == null || config!.markup!.theme![key] == null)
+      return getColor(defaultTheme[key]) ?? Colors.black;
+    else {
+      return getColor(config!.markup!.theme![key]) ?? Colors.black;
+    }
   }
 
   /// Make sure this value will be treated as a double.
   /// Useful for JSON parsed elements
   /// which should be treated as double but are parsed as integer.
-  double ensureDouble(num) => (num is int) ? num.toDouble() : num;
+  double? ensureDouble(num) => (num is int) ? num.toDouble() : num;
 
   /// parse padding value.
   /// Optional input can be a double, integer or a number array (left, right, top, bottom).
@@ -184,19 +189,19 @@ mixin StyleMixin {
     if (padding is double) {
       return EdgeInsets.all(padding);
     } else if (padding is int) {
-      return EdgeInsets.all(ensureDouble(padding));
+      return EdgeInsets.all(ensureDouble(padding)!);
     } else if (padding is List<dynamic>) {
       return EdgeInsets.only(
-          left: ensureDouble(padding[0]),
-          top: ensureDouble(padding[1]),
-          right: ensureDouble(padding[2]),
-          bottom: ensureDouble(padding[3]));
+          left: ensureDouble(padding[0])!,
+          top: ensureDouble(padding[1])!,
+          right: ensureDouble(padding[2])!,
+          bottom: ensureDouble(padding[3])!);
     }
     return EdgeInsets.zero;
   }
 
   /// Request a [Color] instance given an multi optional identifier (named, hex).
-  Color getColor(String color, {bool platformAware}) {
+  Color? getColor(String color, {bool? platformAware}) {
     if (color.contains("#"))
       return _getHexColor(color);
     else {
@@ -206,7 +211,7 @@ mixin StyleMixin {
 
   /// Get a [Color] instance after parsing the a color hex string.
   /// and [opacity] optional value is available using common opacity two letter pattern.
-  Color _getHexColor(String hexColorString, {String opacity}) {
+  Color? _getHexColor(String? hexColorString, {String? opacity}) {
     if (hexColorString == null) {
       return null;
     }
@@ -220,28 +225,28 @@ mixin StyleMixin {
 
   /// Get a [Color] instance given color name.
   /// Method is platform aware.
-  Color _getColorWithName(name, {bool platformAware}) {
+  Color _getColorWithName(name, {bool? platformAware}) {
     switch (name) {
       case 'blue':
-        return platformAware ? CupertinoColors.systemBlue : Colors.blue;
+        return platformAware! ? CupertinoColors.systemBlue : Colors.blue;
       case 'red':
-        return platformAware ? CupertinoColors.systemRed : Colors.red;
+        return platformAware! ? CupertinoColors.systemRed : Colors.red;
       case 'green':
-        return platformAware ? CupertinoColors.systemGreen : Colors.green;
+        return platformAware! ? CupertinoColors.systemGreen : Colors.green;
       case 'grey':
-        return platformAware ? CupertinoColors.inactiveGray : Colors.grey;
+        return platformAware! ? CupertinoColors.inactiveGray : Colors.grey;
       case 'yellow':
-        return platformAware ? CupertinoColors.systemYellow : Colors.yellow;
+        return platformAware! ? CupertinoColors.systemYellow : Colors.yellow;
       case 'orange':
-        return platformAware ? CupertinoColors.systemOrange : Colors.orange;
+        return platformAware! ? CupertinoColors.systemOrange : Colors.orange;
       case 'white':
-        return platformAware ? CupertinoColors.white : Colors.white;
+        return platformAware! ? CupertinoColors.white : Colors.white;
       case 'transparent':
-        return platformAware ? Colors.transparent : Colors.transparent;
+        return platformAware! ? Colors.transparent : Colors.transparent;
       case 'black':
-        return platformAware ? CupertinoColors.black : Colors.black;
+        return platformAware! ? CupertinoColors.black : Colors.black;
       default:
-        return platformAware ? CupertinoColors.black : Colors.black;
+        return platformAware! ? CupertinoColors.black : Colors.black;
     }
   }
 
@@ -266,22 +271,26 @@ mixin StyleMixin {
   /// Available options:
   ///  - Remote image given URL.
   ///  - Color (Hex or name by default).
-  getBackground(background, {bool platformAware}) {
+  getBackground(background, {bool? platformAware}) {
     if (background.contains("#"))
       return _getHexColor(background);
-    else if (background.contains("http://") || background.contains("https://")) {
+    else if (background.contains("http://") ||
+        background.contains("https://")) {
       return NetworkImage(background);
     } else if (background.substring(0, 1) == "/") {
       var data = NssWidgetData.fromJson({"url": background.substring(2)});
       return ImageWidget(key: UniqueKey(), data: data);
     } else {
-      return _getColorWithName(background, platformAware: platformAware ?? false);
+      return _getColorWithName(background,
+          platformAware: platformAware ?? false);
     }
   }
 
   getTextAlign(align) {
     align = "NssTextAlign.$align";
-    NssTextAlign a = NssTextAlign.values.firstWhere((f) => f.toString() == align, orElse: () => NssTextAlign.none);
+    NssTextAlign a = NssTextAlign.values.firstWhere(
+        (f) => f.toString() == align,
+        orElse: () => NssTextAlign.none);
     return a.getValue;
   }
 
@@ -289,8 +298,9 @@ mixin StyleMixin {
 
   dynamic styleBackground(data) => getStyle(Styles.background, data: data);
 
-  Color styleFontColor(data, disabled) => disabled
-      ? getStyle(Styles.fontColor, data: data, themeProperty: 'disabledColor').withOpacity(0.3)
+  Color? styleFontColor(data, disabled) => disabled
+      ? getStyle(Styles.fontColor, data: data, themeProperty: 'disabledColor')
+          .withOpacity(0.3)
       : getStyle(Styles.fontColor, data: data, themeProperty: 'textColor');
 
   dynamic styleFontSize(data) => getStyle(Styles.fontSize, data: data);
@@ -301,17 +311,23 @@ mixin StyleMixin {
 
   dynamic styleBorderRadius(data) => getStyle(Styles.cornerRadius, data: data);
 
-  dynamic styleBorderColor(data) => getStyle(Styles.borderColor, data: data, themeProperty: "disabledColor");
+  dynamic styleBorderColor(data) =>
+      getStyle(Styles.borderColor, data: data, themeProperty: "disabledColor");
 
-  TextAlign styleTextAlign(data) => getStyle(Styles.textAlign, data: data) ?? TextAlign.start;
+  TextAlign styleTextAlign(data) =>
+      getStyle(Styles.textAlign, data: data) ?? TextAlign.start;
 
   dynamic styleOpacity(data) => getStyle(Styles.opacity, data: data);
 
   dynamic stylePadding(data) => getStyle(Styles.margin, data: data);
 
   dynamic stylePlaceholder(data, bool disabled) => disabled
-      ? getStyle(Styles.placeholderColor, data: data, themeProperty: 'disabledColor').withOpacity(0.3)
-      : getStyle(Styles.placeholderColor, data: data, themeProperty: 'textColor').withOpacity(0.5);
+      ? getStyle(Styles.placeholderColor,
+              data: data, themeProperty: 'disabledColor')
+          .withOpacity(0.3)
+      : getStyle(Styles.placeholderColor,
+              data: data, themeProperty: 'textColor')
+          .withOpacity(0.5);
 
 //endregion
 }

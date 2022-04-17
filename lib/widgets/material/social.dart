@@ -31,14 +31,14 @@ enum NssSocialProvider {
   yahooJapan,
 }
 
-extension NssSocialProviderEx on NssSocialProvider {
+extension NssSocialProviderEx on NssSocialProvider? {
   String get name {
     switch (this) {
       case NssSocialProvider.googleplus:
       case NssSocialProvider.google:
         return "google";
       default:
-        return describeEnum(this);
+        return describeEnum(this!);
     }
   }
 
@@ -75,9 +75,9 @@ extension NssSocialProviderEx on NssSocialProvider {
 
 /// Social login button widget.
 class SocialButtonWidget extends StatefulWidget {
-  final NssWidgetData data;
+  final NssWidgetData? data;
 
-  const SocialButtonWidget({Key key, this.data}) : super(key: key);
+  const SocialButtonWidget({Key? key, this.data}) : super(key: key);
 
   @override
   _SocialButtonWidgetState createState() => _SocialButtonWidgetState();
@@ -104,17 +104,17 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
         data: widget.data,
         child: Consumer<ScreenViewModel>(
           builder: (context, viewModel, child) {
-            final text = widget.data.textKey == null
-                ? 'Sign in with ${widget.data.provider.name.inCaps}'
-                : localizedStringFor(widget.data.textKey);
+            final text = widget.data!.textKey == null
+                ? 'Sign in with ${widget.data!.provider.name.inCaps}'
+                : localizedStringFor(widget.data!.textKey)!;
 
             var background = getStyle(Styles.background, data: widget.data);
 
-            if (widget.data.style[Styles.background.name] == null) {
-              background = widget.data.provider.getColor();
+            if (widget.data!.style![Styles.background.name] == null) {
+              background = widget.data!.provider.getColor();
             }
 
-            TextAlign textAlign = getStyle(Styles.textAlign, data: widget.data);
+            TextAlign? textAlign = getStyle(Styles.textAlign, data: widget.data);
 
             return Visibility(
               visible: isVisible(viewModel, widget.data),
@@ -133,22 +133,22 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
                     padding: EdgeInsets.all(0),
                     elevation: getStyle(Styles.elevation, data: widget.data),
                     child: SemanticsWrapperWidget(
-                      accessibility: widget.data.accessibility,
+                      accessibility: widget.data!.accessibility,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          widget.data.iconEnabled
+                          widget.data!.iconEnabled!
                               ? SizedBox(
                                   width: 40,
                                   height: 34,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Image(
-                                      image: widget.data.iconURL != null
-                                          ? NetworkImage(widget.data.iconURL)
+                                      image: (widget.data!.iconURL != null
+                                          ? NetworkImage(widget.data!.iconURL!)
                                           : AssetImage(
-                                              'assets/social_images/${widget.data.provider.name}.png'),
+                                              'assets/social_images/${widget.data!.provider.name}.png')) as ImageProvider<Object>,
                                       width: 24,
                                       height: 24,
                                     ),
@@ -173,7 +173,7 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
                       ),
                     ),
                     onPressed: () {
-                      viewModel.socialLogin(widget.data.provider);
+                      viewModel.socialLogin(widget.data!.provider);
                     },
                   ),
                 ),
@@ -188,9 +188,9 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
 
 /// Social grid layout (with available paging) widget.
 class SocialLoginGrid extends StatefulWidget {
-  final NssWidgetData data;
+  final NssWidgetData? data;
 
-  const SocialLoginGrid({Key key, this.data}) : super(key: key);
+  const SocialLoginGrid({Key? key, this.data}) : super(key: key);
 
   @override
   _SocialLoginGridState createState() => _SocialLoginGridState();
@@ -202,7 +202,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
   final int maxRows = 2;
 
   final PageController _pageController = PageController();
-  double currentPage = 0;
+  double? currentPage = 0;
 
   @override
   void initState() {
@@ -213,9 +213,9 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
     });
     super.initState();
 
-    if (widget.data.rows > 2) {
-      widget.data.rows = 2;
-      engineLogger
+    if (widget.data!.rows! > 2) {
+      widget.data!.rows = 2;
+      engineLogger!
           .e('You have specified a row count that exceeds allowed value.\n'
               'Currently max rows is set to 2');
     }
@@ -236,18 +236,18 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
   @override
   Widget build(BuildContext context) {
     return SemanticsWrapperWidget(
-      accessibility: widget.data.accessibility,
+      accessibility: widget.data!.accessibility,
       child: Padding(
         padding: getStyle(Styles.margin, data: widget.data),
         child: Consumer2<ScreenViewModel, BindingModel>(
           builder: (context, viewModel, bindings, child) {
-            final List<NssSocialProvider> providers = SocialEvaluator()
-                .determineProviders(widget.data.providers, bindings);
+            final List<NssSocialProvider?> providers = SocialEvaluator()
+                .determineProviders(widget.data!.providers, bindings);
 
             final int providerCount = providers.length;
-            final int maxInPage = widget.data.columns * widget.data.rows;
+            final int maxInPage = widget.data!.columns! * widget.data!.rows!;
             bool paging =
-                (providerCount > (widget.data.columns * widget.data.rows));
+                (providerCount > (widget.data!.columns! * widget.data!.rows!));
             final int numOfPages = (providerCount / maxInPage).abs().toInt() +
                 (providerCount % maxInPage != 0 ? 1 : 0);
 
@@ -275,8 +275,8 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
               child: paging
                   ? NotificationListener<OverscrollIndicatorNotification>(
                       onNotification: (overscroll) {
-                        overscroll.disallowGlow();
-                        return;
+                        overscroll.disallowIndicator();
+                        return true;
                       },
                       child: ListView(
                         physics: const NeverScrollableScrollPhysics(),
@@ -284,7 +284,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
                         shrinkWrap: true,
                         children: <Widget>[
                           Container(
-                            height: (maxCellHeight * widget.data.rows),
+                            height: (maxCellHeight * widget.data!.rows!),
                             child: PageView.builder(
                               itemCount: numOfPages,
                               controller: _pageController,
@@ -329,10 +329,10 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
 
   /// Create a grid layout of the given provider indexes.
   Widget createGrid(ScreenViewModel viewModel,
-      List<NssSocialProvider> providers, int start, int end) {
+      List<NssSocialProvider?> providers, int start, int end) {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      int crossAxisCount = widget.data.columns;
+      int crossAxisCount = widget.data!.columns!;
       double axisSpacing = 4;
       var width = (MediaQuery.of(context).size.width -
               ((crossAxisCount - 1) * axisSpacing)) /
@@ -359,7 +359,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
   }
 
   /// Create grid social button widget.
-  Widget createGridItem(ScreenViewModel viewModel, NssSocialProvider provider) {
+  Widget createGridItem(ScreenViewModel viewModel, NssSocialProvider? provider) {
     return Semantics(
       label: provider.name,
       child: Container(
@@ -410,7 +410,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
             SizedBox(
               height: 8,
             ),
-            widget.data.hideTitles
+            widget.data!.hideTitles!
                 ? Container()
                 : Text(
                     provider.name.inCaps,
@@ -430,10 +430,10 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
 
 /// Helper class for evaluating social providers injected to the [SocialLoginGrid] widget.
 class SocialEvaluator {
-  List<NssSocialProvider> determineProviders(
-      List<NssSocialProvider> markupProviders, BindingModel bindings) {
+  List<NssSocialProvider?> determineProviders(
+      List<NssSocialProvider?>? markupProviders, BindingModel bindings) {
     // Default provider list is taken from markup.
-    List<NssSocialProvider> providers = markupProviders ?? [];
+    List<NssSocialProvider?> providers = markupProviders ?? [];
     if (bindings.getMapByKey('conflictingAccount') != null) {
       Map<String, dynamic> conflictingAccount =
           bindings.getMapByKey('conflictingAccount').cast<String, dynamic>();

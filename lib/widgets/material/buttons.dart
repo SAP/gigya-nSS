@@ -9,6 +9,7 @@ import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:provider/provider.dart';
 
 mixin NssActionsMixin {
@@ -22,9 +23,9 @@ mixin NssActionsMixin {
 }
 
 class SubmitWidget extends StatefulWidget {
-  final NssWidgetData data;
+  final NssWidgetData? data;
 
-  const SubmitWidget({Key key, this.data}) : super(key: key);
+  const SubmitWidget({Key? key, this.data}) : super(key: key);
 
   @override
   _SubmitWidgetState createState() => _SubmitWidgetState();
@@ -54,13 +55,13 @@ class _SubmitWidgetState extends State<SubmitWidget>
         getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.center;
 
     return SemanticsWrapperWidget(
-      accessibility: widget.data.accessibility,
+      accessibility: widget.data!.accessibility,
       child: Padding(
         padding: getStyle(Styles.margin, data: widget.data),
         child: Consumer2<ScreenViewModel, BindingModel>(
           builder: (context, viewModel, bindings, child) {
             return Column(
-              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: getCrossAxisAlignment(widget.data?.alignment ?? viewModel.screenAlignment),
               children: <Widget>[
                 NssCustomSizeWidget(
                   data: widget.data,
@@ -68,13 +69,13 @@ class _SubmitWidgetState extends State<SubmitWidget>
                     opacity: getStyle(Styles.opacity, data: widget.data),
                     child: ButtonTheme(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      buttonColor: widget.data.disabled
+                      buttonColor: widget.data!.disabled!
                           ? getThemeColor('disabledColor').withOpacity(0.3)
                           : getStyle(Styles.background,
                               data: widget.data, themeProperty: 'primaryColor'),
                       shape: RoundedRectangleBorder(
                         side: BorderSide(
-                          color: widget.data.disabled
+                          color: widget.data!.disabled!
                               ? getThemeColor('disabledColor').withOpacity(0.3)
                               : getStyle(Styles.borderColor, data: widget.data),
                           width:
@@ -94,10 +95,10 @@ class _SubmitWidgetState extends State<SubmitWidget>
                         highlightElevation: isFlat() ? 0 : null,
                         child: Align(
                           widthFactor: 1,
-                          alignment: textAlign.toAlignment(widget.data.type),
+                          alignment: textAlign.toAlignment(widget.data!.type),
                           child: Text(
                             // Get localized submit text.
-                            localizedStringFor(widget.data.textKey),
+                            localizedStringFor(widget.data!.textKey)!,
                             style: TextStyle(
                               fontSize:
                                   getStyle(Styles.fontSize, data: widget.data),
@@ -110,7 +111,7 @@ class _SubmitWidgetState extends State<SubmitWidget>
                           ),
                         ),
                         onPressed: () {
-                          if (widget.data.disabled) {
+                          if (widget.data!.disabled!) {
                             return null;
                           }
                           viewModel.submitScreenForm(bindings.savedBindingData);
@@ -129,7 +130,7 @@ class _SubmitWidgetState extends State<SubmitWidget>
                           child: Container(
                             width: MediaQuery.of(context).size.width,
                             child: Text(
-                              viewModel.error,
+                              viewModel.error!,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 14.0,
@@ -150,7 +151,7 @@ class _SubmitWidgetState extends State<SubmitWidget>
   /// Set the elevation property of the button.
   /// Default will be set to 0.
   dynamic getElevationStyleProperty() {
-    if (widget.data.disabled) return 0;
+    if (widget.data!.disabled!) return 0;
     return getStyle(Styles.elevation, data: widget.data) ?? 0;
   }
 

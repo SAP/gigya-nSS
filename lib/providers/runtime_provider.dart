@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 class RuntimeStateEvaluator with ChangeNotifier {
   /// Notify value changed in widget state.
   /// This will trigger visibility checks for all widgets that are registered.
-  void notifyChanged(String bindField, dynamic value) {
+  void notifyChanged(String? bindField, dynamic value) {
     // Notify all listeners that register to get runtime change notifications.
     notifyListeners();
   }
@@ -16,13 +16,13 @@ class RuntimeStateEvaluator with ChangeNotifier {
 mixin VisibilityStateMixin {
   /// Register widget to receive updates only when they contain a "showIf" property.
   void registerVisibilityNotifier(
-      BuildContext context, NssWidgetData data, VoidCallback callback) {
+      BuildContext context, NssWidgetData? data, VoidCallback callback) {
     // WidgetsBinding.instance.addPostFrameCallback((_) {
       final RuntimeStateEvaluator runtimeProvider =
           Provider.of<RuntimeStateEvaluator>(context, listen: false);
       if (runtimeProvider == null) return;
 
-      if (data.showIf != null) {
+      if (data!.showIf != null) {
         runtimeProvider.addListener(
           () async {
             debugPrint(

@@ -6,19 +6,19 @@ part 'markup.g.dart';
 
 @JsonSerializable(anyMap: true)
 class Markup {
-  Platform platform;
+  Platform? platform;
   @JsonKey(defaultValue: false)
-  bool platformAware;
-  Map<String, Screen> screens;
-  Routing routing;
-  Map<String, dynamic> theme;
-  Map<String, dynamic> customThemes;
+  bool? platformAware;
+  Map<String, Screen>? screens;
+  Routing? routing;
+  Map<String, dynamic>? theme;
+  Map<String, dynamic>? customThemes;
   @JsonKey(defaultValue: '_default')
-  String lang;
+  String? lang;
   @JsonKey(name: 'i18n', defaultValue: {'_default': {}})
-  Map<String, dynamic> localization;
+  Map<String, dynamic>? localization;
   @JsonKey(defaultValue: false)
-  bool useSchemaValidations;
+  bool? useSchemaValidations;
 
   Markup(
       {this.platformAware,
@@ -35,7 +35,7 @@ class Markup {
 
 @JsonSerializable(anyMap: true)
 class Platform {
-  String iso3166;
+  String? iso3166;
 
   Platform({
     this.iso3166,

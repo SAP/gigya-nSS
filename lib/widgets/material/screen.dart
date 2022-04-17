@@ -14,18 +14,18 @@ import 'package:gigya_native_screensets_engine/widgets/screen.dart';
 import 'package:provider/provider.dart';
 
 class MaterialScreenWidget extends StatefulWidget {
-  final ScreenViewModel viewModel;
-  final BindingModel bindingModel;
-  final RuntimeStateEvaluator expressionProvider;
-  final Screen screen;
-  final Widget content;
+  final ScreenViewModel? viewModel;
+  final BindingModel? bindingModel;
+  final RuntimeStateEvaluator? expressionProvider;
+  final Screen? screen;
+  final Widget? content;
 
   /// Routing data is the dynamic data that is injected or changed in realtime when you edit
   /// your screen form.
-  final Map<String, dynamic> routingData;
+  final Map<String, dynamic>? routingData;
 
   const MaterialScreenWidget({
-    Key key,
+    Key? key,
     this.viewModel,
     this.bindingModel,
     this.expressionProvider,
@@ -41,14 +41,14 @@ class MaterialScreenWidget extends StatefulWidget {
 
 class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     with StyleMixin, LocalizationMixin {
-  _MaterialScreenWidgetState(ScreenViewModel viewModel, BindingModel bindings,
-      RuntimeStateEvaluator expressionProvider)
+  _MaterialScreenWidgetState(ScreenViewModel? viewModel, BindingModel? bindings,
+      RuntimeStateEvaluator? expressionProvider)
       : super(viewModel, bindings, expressionProvider);
 
   @override
   void initState() {
     // Update dynamic view model screen id because view model is instantiated view IOC.
-    viewModel.id = widget.screen.id;
+    viewModel!.id = widget.screen!.id;
 
     super.initState();
 
@@ -59,11 +59,11 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     // On first render issue "screenDidLoad" event.
     // If this is the first screen being rendered, a "ready_for_display" event will be triggered to allow
     // smooth transition when the engine loads.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       // Issuing ready for display native trigger only when the initial screen has been rendered.
       // This will occur only once per load.
-      if (viewModel.pid == '' &&
-          viewModel.id == NssIoc().use(NssConfig).markup.routing.initial) {
+      if (viewModel!.pid == '' &&
+          viewModel!.id == NssIoc().use(NssConfig).markup.routing.initial) {
         if (!NssIoc().use(NssConfig).isMock) {
           NssIoc()
               .use(NssChannels)
@@ -76,7 +76,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         }
       }
 
-      screenDidLoad(widget.screen.id);
+      screenDidLoad(widget.screen!.id);
     });
   }
 
@@ -84,10 +84,10 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   Widget buildScaffold() {
     var appBarBackground = getStyle(Styles.background,
         styles:
-            widget.screen.appBar == null ? null : widget.screen.appBar.style,
+            widget.screen!.appBar == null ? null : widget.screen!.appBar!.style,
         themeProperty: 'primaryColor');
     var scaffoldBackground =
-        getStyle(Styles.background, styles: widget.screen.style) ??
+        getStyle(Styles.background, styles: widget.screen!.style) ??
             Colors.white;
 
     return Directionality(
@@ -95,20 +95,20 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       child: Scaffold(
         backgroundColor: scaffoldBackground,
         extendBodyBehindAppBar: true,
-        appBar: widget.screen.appBar == null
+        appBar: widget.screen!.appBar == null
             ? null
             : AppBar(
                 elevation: getStyle(Styles.elevation,
-                    styles: widget.screen.appBar.style),
+                    styles: widget.screen!.appBar!.style),
                 backgroundColor: appBarBackground,
                 title: Text(
-                  localizedStringFor(widget.screen.appBar.textKey) ?? '',
+                  localizedStringFor(widget.screen!.appBar!.textKey) ?? '',
                   style: TextStyle(
                     color: getStyle(Styles.fontColor,
-                        styles: widget.screen.appBar.style,
+                        styles: widget.screen!.appBar!.style,
                         themeProperty: 'secondaryColor'),
                     fontWeight: getStyle(Styles.fontWeight,
-                        styles: widget.screen.appBar.style),
+                        styles: widget.screen!.appBar!.style),
                   ),
                 ),
                 leading: kIsWeb
@@ -119,7 +119,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
                               icon: Icon(
                                 Icons.close,
                                 color: getStyle(Styles.fontColor,
-                                    styles: widget.screen.appBar.style,
+                                    styles: widget.screen!.appBar!.style,
                                     themeProperty: 'secondaryColor'),
                               ),
                               onPressed: () =>
@@ -134,7 +134,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
               children: <Widget>[
                 SingleChildScrollView(
                   child: Form(
-                    key: widget.viewModel.formKey,
+                    key: widget.viewModel!.formKey,
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       child: widget.content,
@@ -162,8 +162,8 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   /// Only the current context contains the main Navigator instance. Therefore we must communicate back to the
   /// screen widget in order to perform navigation actions.
   _registerNavigationStream() {
-    viewModel.navigationStream.stream.listen((NavigationEvent event) async {
-      if (ModalRoute.of(context).settings.name == event.route.toString()) {
+    viewModel!.navigationStream.stream.listen((NavigationEvent event) async {
+      if (ModalRoute.of(context)!.settings.name == event.route.toString()) {
         return;
       }
 
@@ -171,7 +171,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       String routingOverride = await willRouteTo(event.route);
 
       // Merge bindings & routing data to avoid data loss between screens.
-      widget.routingData.addAll(bindings.savedBindingData);
+      widget.routingData!.addAll(bindings!.savedBindingData);
 
       // Apply navigation.
       final String route =
@@ -183,7 +183,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   /// Remove all sensitive data from the widget routing data before screen transitions.
   _removeUnsecureRoutingData() {
     // Remove password field from widget routing.
-    widget.routingData.remove('password');
+    widget.routingData!.remove('password');
   }
 
   /// Route to next screen.
@@ -193,7 +193,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       context,
       route,
       arguments: {
-        'pid': viewModel.id,
+        'pid': viewModel!.id,
         'routingData': widget.routingData,
         'initialData': event.routingData,
         'expressions': event.expressions
@@ -205,30 +205,30 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   /// This will result in the instantiation of the native controller action model which will handle all
   /// the native SDK logic.
   _attachInitialScreenAction() async {
-    var dataMap = await viewModel.attachScreenAction(
-      widget.screen.action,
-      widget.screen.id,
-      viewModel.mapScreenExpressions(widget.screen),
+    var dataMap = await viewModel!.attachScreenAction(
+      widget.screen!.action,
+      widget.screen!.id,
+      viewModel!.mapScreenExpressions(widget.screen!),
     );
     // Merge routing data into injected screen data and update bindings.
-    viewModel.expressions = dataMap['expressions'];
+    viewModel!.expressions = dataMap['expressions'];
     if (dataMap['expressions'] != null) {
-      dataMap.addAll(widget.routingData);
-      bindings.updateWith(dataMap['data'].cast<String, dynamic>());
+      dataMap.addAll(widget.routingData!);
+      bindings!.updateWith(dataMap['data'].cast<String, dynamic>());
     }
   }
 
   /// Handle "didRouteFrom" native event injection.
   void didRouteFrom() async {
     Map<String, dynamic> eventData =
-        await routeFrom(viewModel.id, viewModel.pid, widget.routingData);
+        await routeFrom(viewModel!.id, viewModel!.pid, widget.routingData);
     if (eventData != null) {
       // Override current routing data if exists.
       if (eventData['data'] != null) {
-        widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
+        widget.routingData!.addAll(eventData['data'].cast<String, dynamic>());
       }
       // Merge routing data into available binding data.
-      bindings.updateRoutingWith(widget.routingData);
+      bindings!.updateRoutingWith(widget.routingData!);
 
       debugPrint('didRouteFrom: data = ${widget.routingData.toString()}');
 
@@ -241,12 +241,12 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   /// Handle "willRouteTo" native event injection.
   Future<String> willRouteTo(nid) async {
     Map<String, dynamic> eventData =
-        await routeTo(viewModel.id, nid, bindings.savedBindingData);
+        await routeTo(viewModel!.id, nid, bindings!.savedBindingData);
     if (eventData != null && eventData.isNotEmpty) {
       // Override current routing data if exists.
-      widget.routingData.addAll(eventData['data'].cast<String, dynamic>());
+      widget.routingData!.addAll(eventData['data'].cast<String, dynamic>());
       // Merge routing data into available binding data.
-      bindings.updateRoutingWith(widget.routingData);
+      bindings!.updateRoutingWith(widget.routingData!);
 
       // Fetch sid override if exists.
       String sid = eventData['sid'] ?? '';

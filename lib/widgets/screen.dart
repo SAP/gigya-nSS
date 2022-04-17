@@ -16,9 +16,9 @@ extension ScreenChannelActionExt on ScreenChannelAction {
 
 abstract class ScreenWidgetState<T extends StatefulWidget> extends State<T>
     with EngineEvents {
-  final ScreenViewModel viewModel;
-  final BindingModel bindings;
-  final RuntimeStateEvaluator expressionProvider;
+  final ScreenViewModel? viewModel;
+  final BindingModel? bindings;
+  final RuntimeStateEvaluator? expressionProvider;
 
   ScreenWidgetState(this.viewModel, this.bindings, this.expressionProvider);
 
@@ -26,13 +26,13 @@ abstract class ScreenWidgetState<T extends StatefulWidget> extends State<T>
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<ScreenViewModel>(
+        ChangeNotifierProvider<ScreenViewModel?>(
           create: (_) => viewModel,
         ),
-        ChangeNotifierProvider<BindingModel>(
+        ChangeNotifierProvider<BindingModel?>(
           create: (_) => bindings,
         ),
-        ChangeNotifierProvider<RuntimeStateEvaluator>(
+        ChangeNotifierProvider<RuntimeStateEvaluator?>(
           create: (_) => expressionProvider,
         )
       ],
