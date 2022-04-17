@@ -144,6 +144,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                         return validateField(_value, widget.data!.bind);
                       },
                       decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 14),
                         isDense: true,
                         filled: true,
                         fillColor:
