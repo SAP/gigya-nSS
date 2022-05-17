@@ -3,9 +3,9 @@ import BaseWidget from "./BaseWidget";
 import AccountField from "../dynEnums/AccountField";
 import SpecialField from "../SpecialField";
 import Validations from "./Validations";
-import Global from "./BasicWidget";
+import BasicWidget from "./BasicWidget";
 
-export default mergeDeep({}, Global, {
+export default mergeDeep({}, BasicWidget, {
     required: [
         // 'bind'
     ],
