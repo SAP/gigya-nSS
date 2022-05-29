@@ -60,9 +60,11 @@ class _SubmitWidgetState extends State<SubmitWidget>
         padding: getStyle(Styles.margin, data: widget.data),
         child: Consumer2<ScreenViewModel, BindingModel>(
           builder: (context, viewModel, bindings, child) {
+
             return Column(
               crossAxisAlignment: getCrossAxisAlignment(widget.data?.alignment ?? viewModel.screenAlignment),
               children: <Widget>[
+
                 NssCustomSizeWidget(
                   data: widget.data,
                   child: Opacity(
@@ -86,13 +88,17 @@ class _SubmitWidgetState extends State<SubmitWidget>
                           getStyle(Styles.cornerRadius, data: widget.data),
                         ),
                       ),
-                      child: RaisedButton(
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        elevation: getElevationStyleProperty(),
-                        hoverElevation: isFlat() ? 0 : null,
-                        disabledElevation: isFlat() ? 0 : null,
-                        focusElevation: isFlat() ? 0 : null,
-                        highlightElevation: isFlat() ? 0 : null,
+
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          elevation: getElevationStyleProperty(),
+                        ),
+                        // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        // elevation: getElevationStyleProperty(),
+                        // hoverElevation: isFlat() ? 0 : null,
+                        // disabledElevation: isFlat() ? 0 : null,
+                        // focusElevation: isFlat() ? 0 : null,
+                        // highlightElevation: isFlat() ? 0 : null,
                         child: Align(
                           widthFactor: 1,
                           alignment: textAlign.toAlignment(widget.data!.type),
@@ -123,22 +129,20 @@ class _SubmitWidgetState extends State<SubmitWidget>
                   ),
                 ),
                 viewModel.isError()
-                    ? Flexible(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 16, right: 16, top: 8, bottom: 16),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: Text(
-                              viewModel.error!,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 14.0,
-                                  color: getThemeColor('errorColor')),
-                            ),
-                          ),
+                    ? Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16, right: 16, top: 8, bottom: 16),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Text(
+                          viewModel.error!,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 14.0,
+                              color: getThemeColor('errorColor')),
                         ),
-                      )
+                      ),
+                    )
                     : Container()
               ],
             );

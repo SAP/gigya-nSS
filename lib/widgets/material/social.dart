@@ -128,10 +128,11 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
                       getStyle(Styles.cornerRadius, data: widget.data),
                     ),
                   ),
-                  child: RaisedButton(
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    padding: EdgeInsets.all(0),
-                    elevation: getStyle(Styles.elevation, data: widget.data),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: getStyle(Styles.elevation, data: widget.data),
+                      padding: const EdgeInsets.all(0)
+                    ),
                     child: SemanticsWrapperWidget(
                       accessibility: widget.data!.accessibility,
                       child: Row(
