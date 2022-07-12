@@ -59,7 +59,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     // On first render issue "screenDidLoad" event.
     // If this is the first screen being rendered, a "ready_for_display" event will be triggered to allow
     // smooth transition when the engine loads.
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       // Issuing ready for display native trigger only when the initial screen has been rendered.
       // This will occur only once per load.
       if (viewModel!.pid == '' &&
