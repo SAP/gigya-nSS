@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/comm/moblie_channel.dart';
@@ -125,8 +127,13 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
       engineLogger!.d('Error fetching native image data');
     }
     engineLogger!.d('data: ${data}');
+
     setState(() {
-      imageProvider = MemoryImage(data);
+      if (kIsWeb) {
+        imageProvider = MemoryImage(base64Decode(data));
+      } else {
+        imageProvider = MemoryImage(data);
+      }
     });
   }
 
