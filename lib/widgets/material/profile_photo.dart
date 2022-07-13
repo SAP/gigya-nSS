@@ -130,7 +130,10 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
 
     setState(() {
       if (kIsWeb) {
-        imageProvider = MemoryImage(base64Decode(data));
+        var dataFromJson = json.decode(data);
+        List<int> intList = dataFromJson.values.toList().cast<int>();
+        
+        imageProvider = MemoryImage(Uint8List.fromList(intList));
       } else {
         imageProvider = MemoryImage(data);
       }
