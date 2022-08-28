@@ -46,6 +46,7 @@ enum NssWidgetType {
   image,
   profilePhoto,
   datePicker,
+  button
 }
 
 extension NssWidgetTypeExt on NssWidgetType {
@@ -188,6 +189,8 @@ class MaterialWidgetFactory extends WidgetFactory {
         return TextInputWidget(key: UniqueKey(), data: data);
       case NssWidgetType.submit:
         return SubmitWidget(key: UniqueKey(), data: data);
+      case NssWidgetType.button:
+        return ButtonWidget(key: UniqueKey(), data: data);
       case NssWidgetType.checkbox:
         return CheckboxWidget(key: UniqueKey(), data: data);
       case NssWidgetType.radio:
