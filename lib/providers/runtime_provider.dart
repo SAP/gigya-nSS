@@ -35,7 +35,7 @@ mixin VisibilityStateMixin {
             BindingModel binding =
                 Provider.of<BindingModel>(context, listen: false);
 
-            if (viewModel == null || binding == null) return;
+            if (viewModel == null ) return;
 
             await viewModel.evaluateExpressionByDemand(
                 data, binding.savedBindingData);

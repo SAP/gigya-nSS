@@ -255,12 +255,15 @@ class ScreenViewModel
           screenData = actionData['data'].cast<String, dynamic>();
           expressionData = actionData['expressions'].cast<String, dynamic>();
         }
+        screenData = result.data?['data']?.cast<String, dynamic>();
+        expressionData = result.data?['expressions']?.cast<String, dynamic>();
 
         setIdle();
 
         // Trigger navigation.
         navigationStream.sink
-            .add(NavigationEvent('$id/onSuccess', screenData, expressionData));
+            .add(
+            NavigationEvent('$id/onSuccess', screenData, expressionData));
       },
     ).catchError(
       (error) async {
@@ -292,6 +295,28 @@ class ScreenViewModel
         engineLogger!.d('Api request error: ${error.errorMessage}');
       },
     );
+  }
+
+  Future<Map<String, dynamic>> anonSendApi(String method, Map<String, dynamic> parameters ) async {
+    // if (isMock!) return {};
+    setProgress();
+
+    return await apiService!.send(method, parameters).then(
+          (result) async {
+        engineLogger!.d('Api request success: ${result.data.toString()}');
+
+        // Initiate next action.
+        // Get routing data.
+
+        setIdle();
+
+        engineLogger!.d('response data: $result.data');
+        return result.data ?? {} as Map<String, dynamic>;
+      },
+    ).catchError(
+        (error) async {
+          throw error;
+        });
   }
 
   Future<Map<String, dynamic>> initiateNextLinkAction(String link) async {

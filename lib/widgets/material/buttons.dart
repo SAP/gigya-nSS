@@ -12,6 +12,8 @@ import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:provider/provider.dart';
 
+import '../../utils/logging.dart';
+
 mixin NssActionsMixin {
   /// Force dismiss open keyboard from current focused widget.
   dismissKeyboardWith(context) {
@@ -202,6 +204,9 @@ class _ButtonWidgetState extends State<ButtonWidget>
         padding: getStyle(Styles.margin, data: widget.data),
         child: Consumer2<ScreenViewModel, BindingModel>(
           builder: (context, viewModel, bindings, child) {
+            if (widget.data?.iconURL == null) {
+              widget.data?.iconEnabled = false;
+            }
 
             return Column(
               crossAxisAlignment: getCrossAxisAlignment(widget.data?.alignment ?? viewModel.screenAlignment),
@@ -242,26 +247,58 @@ class _ButtonWidgetState extends State<ButtonWidget>
                         child: Align(
                           widthFactor: 1,
                           alignment: textAlign.toAlignment(widget.data!.type),
-                          child: Text(
-                            // Get localized submit text.
-                            localizedStringFor(widget.data!.textKey)!,
-                            style: TextStyle(
-                              fontSize:
-                              getStyle(Styles.fontSize, data: widget.data),
-                              color: getStyle(Styles.fontColor,
-                                  data: widget.data,
-                                  themeProperty: 'secondaryColor'),
-                              fontWeight: getStyle(Styles.fontWeight,
-                                  data: widget.data),
-                            ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              widget.data!.iconEnabled!
+                                  ? SizedBox(
+                                width: 40,
+                                height: 34,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Image(
+                                    image: NetworkImage(widget.data!.iconURL!),
+                                    width: 24,
+                                    height: 24,
+                                  ),
+                                ),
+                              )
+                                  : SizedBox(width: 8),
+                              Text(
+                                // Get localized submit text.
+                                localizedStringFor(widget.data!.textKey)!,
+                                style: TextStyle(
+                                  fontSize:
+                                  getStyle(Styles.fontSize, data: widget.data),
+                                  color: getStyle(Styles.fontColor,
+                                      data: widget.data,
+                                      themeProperty: 'secondaryColor'),
+                                  fontWeight: getStyle(Styles.fontWeight,
+                                      data: widget.data),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           if (widget.data!.disabled!) {
                             return null;
                           }
+                          engineLogger!.d('start button api');
 
-                          viewModel.sendApi(widget.data?.api ?? "", {});
+                          var res = await viewModel.anonSendApi(widget.data?.api ?? "", {});
+                          engineLogger!.d('after response button api');
+
+                          bindings.updateWith(res, alsoSaved: true);
+                          engineLogger!.d('api result: ${res.toString()}');
+
+                          Provider.of<RuntimeStateEvaluator>(
+                              context,
+                              listen: false)
+                              .notifyChanged(
+                              widget.data!.bind, "");
+
                           // Dismiss the keyboard. Important.
                           dismissKeyboardWith(context);
                         },
