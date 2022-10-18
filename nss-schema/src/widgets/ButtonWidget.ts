@@ -1,7 +1,7 @@
 import BaseWidget from "./BaseWidget";
 import {mergeDeep} from "../common/utils";
 import {WithText} from "../common";
-import {background, border, cornerRadius, elevation, font, margin, opacity, size, withStyle,} from "../styles";
+import {background, border, cornerRadius, elevation, font, withStyle,} from "../styles";
 import WidgetEntity from "./WidgetEntity";
 import {ContainerStyles} from "./ContainerWidget";
 
@@ -12,6 +12,16 @@ export default new WidgetEntity('Button', mergeDeep({},
     WithText,
     withStyle(...ButtonStyles), {
     properties: {
-        type: {enum: ['submit']}
+        type: {enum: ['submit','Button']},
+        api: {
+            type: 'string'
+        },
+        showIf: {
+            type: 'string'
+        },
+        iconEnabled: {
+            type: 'boolean'
+        },
+
     }
 }));
