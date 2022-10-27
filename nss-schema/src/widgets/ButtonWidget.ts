@@ -4,6 +4,7 @@ import {WithText} from "../common";
 import {background, border, cornerRadius, elevation, font, withStyle,} from "../styles";
 import WidgetEntity from "./WidgetEntity";
 import {ContainerStyles} from "./ContainerWidget";
+import Asset from "../common/Asset";
 
 export const ButtonStyles = [...ContainerStyles, elevation, cornerRadius, background, ...font, ...border];
 
@@ -12,7 +13,7 @@ export default new WidgetEntity('Button', mergeDeep({},
     WithText,
     withStyle(...ButtonStyles), {
     properties: {
-        type: {enum: ['submit','Button']},
+        type: {enum: ['submit','button']},
         api: {
             type: 'string'
         },
@@ -22,6 +23,6 @@ export default new WidgetEntity('Button', mergeDeep({},
         iconEnabled: {
             type: 'boolean'
         },
-
+        iconURL: Asset.getRef()
     }
 }));
