@@ -297,7 +297,8 @@ class _ButtonWidgetState extends State<ButtonWidget>
                             engineLogger!.d('start button api');
 
                             var res = await viewModel
-                                .anonSendApi(widget.data?.api ?? "", {});
+                                .anonSendApi(widget.data!.api ?? "", {});
+
                             engineLogger!.d('after response button api');
 
                             bindings.updateWith(res, alsoSaved: true);
@@ -309,6 +310,11 @@ class _ButtonWidgetState extends State<ButtonWidget>
 
                             // Dismiss the keyboard. Important.
                             dismissKeyboardWith(context);
+
+                            bool useRouting = widget.data!.useRouting ?? false;
+                            if (useRouting) {
+                              viewModel.navigateTo();
+                            }
                           },
                         ),
                       ),
