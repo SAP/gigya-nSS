@@ -40,6 +40,9 @@ export default new WidgetEntity('DatePicker', mergeDeep({},
                 type: 'number',
                 default: 2025
             },
+            placeholder: {
+                type: 'string'
+            },
             datePickerStyle : {
                 properties: {
                     primaryColor: {

@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/comm/moblie_channel.dart';
@@ -109,12 +111,12 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
   void _onProfileImageTap() async {
     debugPrint('_onProfileImageTap');
     final NssChannel channel = NssIoc().use(NssChannels).dataChannel;
-    var data = await channel.invokeMethod<Uint8List>('pick_image', {
+    var data = await channel.invokeMethod<dynamic>('pick_image', {
       'text': widget.data.textKey
-    }).timeout(Duration(minutes: 5), onTimeout: () {
+    }).timeout(Duration(minutes: 2), onTimeout: () {
       // Timeout
-      return null;
-    } as FutureOr<Uint8List> Function()?).catchError((error) {
+      engineLogger!.d('timeout');
+    }).catchError((error) {
       engineLogger!.d('Data error with: ${error.toString()}');
       // Error
       handleDataErrors(error.code);
@@ -124,8 +126,16 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
       // Error fetching image data.
       engineLogger!.d('Error fetching native image data');
     }
+    engineLogger!.d('data: ${data}');
+
     setState(() {
-      imageProvider = MemoryImage(data);
+      if (kIsWeb) {
+        List<int> intList = data.values.toList().cast<int>();
+
+        imageProvider = MemoryImage(Uint8List.fromList(intList));
+      } else {
+        imageProvider = MemoryImage(data);
+      }
     });
   }
 
