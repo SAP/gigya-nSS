@@ -119,6 +119,7 @@ class NssWidgetData {
   // Date widget year range start.
   @JsonKey(defaultValue: 1920)
   int? startYear;
+
   // Date widget year range end.
   @JsonKey(defaultValue: 2025)
   int? endYear;
@@ -127,6 +128,10 @@ class NssWidgetData {
 
   @JsonKey(defaultValue: '')
   String? initialDisplay;
+
+  // Routing trigger available for button widget
+  @JsonKey(defaultValue: false)
+  bool? useRouting;
 
   NssWidgetData({
     this.textKey,
@@ -165,6 +170,7 @@ class NssWidgetData {
     this.datePickerStyle,
     this.initialDisplay,
     this.storeAsArray,
+    this.useRouting,
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) =>
@@ -194,4 +200,3 @@ class Countries {
 
   Map<String, dynamic> toJson() => _$CountriesToJson(this);
 }
-
