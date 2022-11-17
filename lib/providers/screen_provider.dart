@@ -255,8 +255,13 @@ class ScreenViewModel
           screenData = actionData['data'].cast<String, dynamic>();
           expressionData = actionData['expressions'].cast<String, dynamic>();
         }
-        screenData = result.data?['data']?.cast<String, dynamic>();
-        expressionData = result.data?['expressions']?.cast<String, dynamic>();
+
+        if (result.data?['data']?.cast<String, dynamic>() != null) {
+          screenData?.addAll(result.data?['data']?.cast<String, dynamic>());
+        }
+        if (result.data?['expressions']?.cast<String, dynamic>() != null) {
+          expressionData?.addAll(result.data?['expressions']?.cast<String, dynamic>());
+        }
 
         setIdle();
 

@@ -18,7 +18,7 @@ mixin DecorationMixin {
   /// task.
   bool isVisible(ScreenViewModel viewModel, NssWidgetData? data) {
     if (data == null) return true;
-    if (data.showIf != null) {
+    if (data.showIf != null && viewModel.expressions != null) {
       engineLogger!.d('isVisible check for bind: ${data.bind} & showIf: ${data.showIf}');
       String result = viewModel.expressions![data.showIf] ?? 'false';
       return result.toLowerCase() == 'true';
