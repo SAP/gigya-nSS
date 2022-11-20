@@ -74,8 +74,8 @@ class ScreenViewModel
   /// Attach screen action.
   /// Method will use the [ScreenService] to send the correct action to the native to initialize the correct
   /// native logic object.
-  Future<Map<String, dynamic>> attachScreenAction(
-      String? action, String? screenId, Map<String, String?> expressions) async {
+  Future<Map<String, dynamic>> attachScreenAction(String? action,
+      String? screenId, Map<String, String?> expressions) async {
     if (isMock!) {
       return {};
     }
@@ -256,6 +256,13 @@ class ScreenViewModel
           expressionData = actionData['expressions'].cast<String, dynamic>();
         }
 
+        if (result.data?['data']?.cast<String, dynamic>() != null) {
+          screenData?.addAll(result.data?['data']?.cast<String, dynamic>());
+        }
+        if (result.data?['expressions']?.cast<String, dynamic>() != null) {
+          expressionData?.addAll(result.data?['expressions']?.cast<String, dynamic>());
+        }
+
         setIdle();
 
         // Trigger navigation.
@@ -294,10 +301,47 @@ class ScreenViewModel
     );
   }
 
-  Future<Map<String, dynamic>> initiateNextLinkAction(String link) async {
-    if (link == null) {
-      return {};
+  void navigateTo() async {
+    // Initiate next action.
+    final Map<String, dynamic> actionData =
+        await initiateNextAction('onSuccess');
+    // Get routing data.
+    Map<String, dynamic>? screenData = {};
+    Map<String, dynamic>? expressionData = {};
+    if (actionData.isNotEmpty) {
+      screenData = actionData['data'].cast<String, dynamic>();
+      expressionData = actionData['expressions'].cast<String, dynamic>();
     }
+
+    // Trigger navigation.
+    navigationStream.sink
+        .add(NavigationEvent('$id/onSuccess', screenData, expressionData));
+  }
+
+  Future<Map<String, dynamic>> anonSendApi(
+      String method, Map<String, dynamic> parameters) async {
+    // if (isMock!) return {};
+    setProgress();
+
+    return await apiService!.send(method, parameters).then(
+      (result) async {
+        engineLogger!.d('Api request success: ${result.data.toString()}');
+
+        // Initiate next action.
+        // Get routing data.
+
+        setIdle();
+
+        engineLogger!.d('response data: $result.data');
+        return result.data ?? {} as Map<String, dynamic>;
+      },
+    ).catchError((error) async {
+      setIdle();
+      throw error;
+    });
+  }
+
+  Future<Map<String, dynamic>> initiateNextLinkAction(String link) async {
     final Markup markup = NssIoc().use(NssConfig).markup;
     final String? linkAction =
         markup.screens![link] != null ? markup.screens![link]!.action : null;
