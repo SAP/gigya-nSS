@@ -23,6 +23,9 @@ export default new WidgetEntity('Button', mergeDeep({},
         iconEnabled: {
             type: 'boolean'
         },
+        useRouting: {
+            type: 'boolean'
+        },
         iconURL: Asset.getRef()
     }
 }));
