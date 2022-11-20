@@ -238,7 +238,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
   _showPickerSelection(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      fieldLabelText: _datePickerStyle!.labelText ?? 'Enter Date',
+      fieldLabelText: localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
       initialDate: _initialDate!,
       // Refer step 1
       firstDate: DateTime(widget.data!.startYear!),
