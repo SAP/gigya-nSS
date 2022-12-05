@@ -23,6 +23,7 @@ mixin DatePickerUtilsMixin {
     if (value.isEmpty) {
       engineLogger!
           .e('DatePicker (_fromIso8601Value) - Value empty. fallback to now');
+      return DateTime.now();
     }
     return DateTime.parse(value);
   }
