@@ -257,6 +257,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
       context: context,
       fieldLabelText:
           localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
+      helpText: localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
       initialDate: _selectedDate != null ? _selectedDate! : _initialDate!,
       // Refer step 1
       firstDate: getFirstDateFrom(widget.data!.startYear),
