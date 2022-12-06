@@ -102,37 +102,61 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                         isDense: true,
                         fillColor:
                             getStyle(Styles.background, data: widget.data),
-                        disabledBorder: borderRadius == 0
-                            ? UnderlineInputBorder(
-                                borderRadius: BorderRadius.zero,
-                                borderSide: BorderSide(
-                                  color: getThemeColor('disabledColor')
-                                      .withOpacity(0.3),
-                                  width: borderSize + 2,
-                                ),
-                              )
-                            : OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(borderRadius)),
-                                borderSide: BorderSide(
-                                  color: getThemeColor('disabledColor')
-                                      .withOpacity(0.3),
-                                  width: borderSize,
-                                ),
-                              ),
+                        disabledBorder: !widget.data!.disabled!
+                            ? borderRadius == 0
+                                ? UnderlineInputBorder(
+                                    borderRadius: BorderRadius.zero,
+                                    borderSide: BorderSide(
+                                      color: getStyle(Styles.borderColor,
+                                          data: widget.data,
+                                          themeProperty: "disabledColor"),
+                                      width: borderSize,
+                                    ),
+                                  )
+                                : OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(borderRadius)),
+                                    borderSide: BorderSide(
+                                      color: getStyle(Styles.borderColor,
+                                          data: widget.data,
+                                          themeProperty: "disabledColor"),
+                                      width: borderSize,
+                                    ),
+                                  )
+                            : borderRadius == 0
+                                ? UnderlineInputBorder(
+                                    borderRadius: BorderRadius.zero,
+                                    borderSide: BorderSide(
+                                      color: getThemeColor('disabledColor')
+                                          .withOpacity(0.3),
+                                      width: borderSize + 2,
+                                    ),
+                                  )
+                                : OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(borderRadius)),
+                                    borderSide: BorderSide(
+                                      color: getThemeColor('disabledColor')
+                                          .withOpacity(0.3),
+                                      width: borderSize,
+                                    ),
+                                  ),
                         labelText: localizedStringFor(widget.data!.textKey),
                         labelStyle: TextStyle(
                             fontSize:
                                 getStyle(Styles.fontSize, data: widget.data),
-                            color: widget.data!.disabled! ? getThemeColor('disabledColor')
-                                .withOpacity(0.3): getStyle(Styles.fontColor,
-                                data: widget.data, themeProperty: 'textColor'),
+                            color: widget.data!.disabled!
+                                ? getThemeColor('disabledColor')
+                                    .withOpacity(0.3)
+                                : getStyle(Styles.fontColor,
+                                    data: widget.data,
+                                    themeProperty: 'textColor'),
                             fontWeight:
                                 getStyle(Styles.fontWeight, data: widget.data)),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                       maxLines: 1,
-                      enabled: !widget.data!.disabled!,
+                      enabled: false,
                       textAlign:
                           getStyle(Styles.textAlign, data: widget.data) ??
                               TextAlign.start,
@@ -162,6 +186,51 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
         ),
       ),
     );
+  }
+
+  /// Initiate the date picker when date text is tapped.
+  _showPickerSelection(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      fieldLabelText:
+          localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
+      helpText: localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
+      initialDate: _selectedDate != null ? _selectedDate! : _initialDate!,
+      // Refer step 1
+      firstDate: getFirstDateFrom(widget.data!.startYear),
+      lastDate: getLastDateFrom(widget.data!.endYear!),
+      initialEntryMode: _pickerEntryMode(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            inputDecorationTheme: InputDecorationTheme(
+                labelStyle: TextStyle(
+                  fontSize: getStyle(Styles.fontSize, data: widget.data),
+                  color: getPickerLabelColor(_datePickerStyle, 'textColor'),
+                  fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderRadius: BorderRadius.zero,
+                  borderSide: BorderSide(
+                    color: getStyle(Styles.fontColor,
+                        data: widget.data, themeProperty: 'textColor'),
+                    width: 1.0,
+                  ),
+                )),
+            colorScheme: ColorScheme.light(
+              primary: getPickerBackground(_datePickerStyle, 'primaryColor'),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _selectedDate)
+      setState(() {
+        // Update selected value.
+        _selectedDate = picked;
+        _controller.text = parseDateValue(_selectedDate);
+      });
   }
 
   /// Set the date picker selection mode: calendar or input are available.
@@ -248,51 +317,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
 
     // Bind the initial date. If the user will not do any date selection. Make the form submit the initial date values.
     _bindDateSelection(bindings);
-  }
-
-  /// Initiate the date picker when date text is tapped.
-  _showPickerSelection(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      fieldLabelText:
-          localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
-      helpText: localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
-      initialDate: _selectedDate != null ? _selectedDate! : _initialDate!,
-      // Refer step 1
-      firstDate: getFirstDateFrom(widget.data!.startYear),
-      lastDate: getLastDateFrom(widget.data!.endYear!),
-      initialEntryMode: _pickerEntryMode(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            inputDecorationTheme: InputDecorationTheme(
-                labelStyle: TextStyle(
-                  fontSize: getStyle(Styles.fontSize, data: widget.data),
-                  color: getPickerLabelColor(_datePickerStyle, 'textColor'),
-                  fontWeight: getStyle(Styles.fontWeight, data: widget.data),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderRadius: BorderRadius.zero,
-                  borderSide: BorderSide(
-                    color: getStyle(Styles.fontColor,
-                        data: widget.data, themeProperty: 'textColor'),
-                    width: 1.0,
-                  ),
-                )),
-            colorScheme: ColorScheme.light(
-              primary: getPickerBackground(_datePickerStyle, 'primaryColor'),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null && picked != _selectedDate)
-      setState(() {
-        // Update selected value.
-        _selectedDate = picked;
-        _controller.text = parseDateValue(_selectedDate);
-      });
   }
 
   /// Binds the date picker selection value.
