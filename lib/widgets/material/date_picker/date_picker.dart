@@ -106,19 +106,17 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                             ? UnderlineInputBorder(
                                 borderRadius: BorderRadius.zero,
                                 borderSide: BorderSide(
-                                  color: getStyle(Styles.borderColor,
-                                      data: widget.data,
-                                      themeProperty: "disabledColor"),
-                                  width: borderSize,
+                                  color: getThemeColor('disabledColor')
+                                      .withOpacity(0.3),
+                                  width: borderSize + 2,
                                 ),
                               )
                             : OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                     Radius.circular(borderRadius)),
                                 borderSide: BorderSide(
-                                  color: getStyle(Styles.borderColor,
-                                      data: widget.data,
-                                      themeProperty: "disabledColor"),
+                                  color: getThemeColor('disabledColor')
+                                      .withOpacity(0.3),
                                   width: borderSize,
                                 ),
                               ),
@@ -126,14 +124,15 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                         labelStyle: TextStyle(
                             fontSize:
                                 getStyle(Styles.fontSize, data: widget.data),
-                            color: getStyle(Styles.fontColor,
+                            color: widget.data!.disabled! ? getThemeColor('disabledColor')
+                                .withOpacity(0.3): getStyle(Styles.fontColor,
                                 data: widget.data, themeProperty: 'textColor'),
                             fontWeight:
                                 getStyle(Styles.fontWeight, data: widget.data)),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                       maxLines: 1,
-                      enabled: false,
+                      enabled: !widget.data!.disabled!,
                       textAlign:
                           getStyle(Styles.textAlign, data: widget.data) ??
                               TextAlign.start,
