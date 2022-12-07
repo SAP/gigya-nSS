@@ -251,6 +251,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
     if (_selectedDate != null) {
       debugPrint('DatePicker (_setInitialBindingValue) - Selection available');
       _controller.text = parseDateValue(_selectedDate);
+      _bindDateSelection(bindings);
       return;
     }
 
@@ -259,6 +260,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
       debugPrint(
           'DatePicker (_setInitialBindingValue) - Binding data is not available yet');
       _controller.text = parseDateValue(_initialDate);
+      _bindDateSelection(bindings);
       return;
     }
 
