@@ -241,6 +241,8 @@ class ScreenViewModel
     if (isMock!) return;
     setProgress();
 
+    engineLogger!.d('sendApi (api channel) - method: $method, params: ${parameters.toString()}');
+
     apiService!.send(method, parameters).then(
       (result) async {
         engineLogger!.d('Api request success: ${result.data.toString()}');
