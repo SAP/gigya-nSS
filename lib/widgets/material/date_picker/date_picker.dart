@@ -326,6 +326,9 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
     if (_selectedDate == null) {
       _selectedDate = _initialDate;
     }
+
+    engineLogger!.d('DatePickerWidget: _bindDateSelection with ${_selectedDate?.toIso8601String()}');
+
     if (bindings.isObjectTypeBinding(widget.data!.bind)) {
       // Parse binding object.
       DatePickerBinding objectBinding =
