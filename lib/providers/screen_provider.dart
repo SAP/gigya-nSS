@@ -160,6 +160,7 @@ class ScreenViewModel
     var validated = formKey.currentState!.validate();
     if (validated) {
       engineLogger!.d('Form validations success - submission requested.');
+      engineLogger!.d('submitScreenForm - submission: ${submission.toString()}');
 
       // Request form save state. This will update the binding map with the required data for submission.
       formKey.currentState!.save();
@@ -167,6 +168,9 @@ class ScreenViewModel
       // Handle engine submit event.
       Map<String, dynamic> eventData = await beforeSubmit(id, submission);
       if (eventData.isNotEmpty) {
+
+        engineLogger!.d('submitScreenForm - eventData (not empty): ${eventData.toString()}');
+
         if (eventData.containsKey('error')) {
           String error = eventData['error'];
 
@@ -181,6 +185,7 @@ class ScreenViewModel
         // Overwrite submission data if exists.
         Map<String, dynamic> submissionData =
             eventData['data'].cast<String, dynamic>();
+        engineLogger!.d('submitScreenForm - overwrite submission data from event (not empty): ${submissionData.toString()}');
         if (submissionData.isNotEmpty) submission = submissionData;
       }
 
@@ -242,6 +247,8 @@ class ScreenViewModel
   void sendApi(String method, Map<String, dynamic> parameters) {
     if (isMock!) return;
     setProgress();
+
+    engineLogger!.d('sendApi (api channel) - method: $method, params: ${parameters.toString()}');
 
     apiService!.send(method, parameters).then(
       (result) async {
