@@ -1,4 +1,3 @@
-
 import 'package:flutter/painting.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
@@ -43,9 +42,8 @@ extension MapExt<T, V> on Map<T, V> {
 }
 
 extension TextAlignExt on TextAlign {
-
   Alignment toAlignment(NssWidgetType? type) {
-    switch(this) {
+    switch (this) {
       case TextAlign.center:
         return Alignment.center;
       case TextAlign.start:
@@ -53,7 +51,7 @@ extension TextAlignExt on TextAlign {
       case TextAlign.end:
         return Alignment.centerRight;
       default:
-        switch(type) {
+        switch (type) {
           case NssWidgetType.submit:
             return Alignment.center;
           case NssWidgetType.dropdown:
@@ -61,6 +59,19 @@ extension TextAlignExt on TextAlign {
           default:
             return Alignment.centerLeft;
         }
+    }
+  }
+
+  NssAlignment toNssAlignment(NssWidgetType? type) {
+    switch (this) {
+      case TextAlign.center:
+        return NssAlignment.center;
+      case TextAlign.start:
+        return NssAlignment.start;
+      case TextAlign.end:
+        return NssAlignment.end;
+      default:
+        return NssAlignment.start;
     }
   }
 }
