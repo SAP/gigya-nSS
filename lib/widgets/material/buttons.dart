@@ -257,7 +257,7 @@ class _ButtonWidgetState extends State<ButtonWidget>
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment:
-                                  getMainAxisAlignment(widget.data!.alignment),
+                                  getMainAxisAlignment(textAlign.toNssAlignment(widget.data!.type)),
                               children: [
                                 widget.data!.iconEnabled!
                                     ? SizedBox(
