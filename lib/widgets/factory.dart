@@ -160,7 +160,7 @@ class MaterialWidgetFactory extends WidgetFactory {
       if (arguments.containsKey('initialData')) {
         binding!.updateWith(arguments['initialData']);
       }
-      if (arguments.containsKey('screenShowIfMapping')) {
+      if (arguments.containsKey('screenShowIfMapping') && arguments['screenShowIfMapping'] != null) {
         viewModel!.screenShowIfMapping = arguments['screenShowIfMapping'].cast<String, String>();
       }
     }
