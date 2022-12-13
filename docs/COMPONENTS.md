@@ -263,49 +263,6 @@ The countries object - Allows additional customization.
  "type": "phoneInput", "bind": "#phoneNumber", "textKey": "enter your phone number", "countries": { "defaultSelected": "us", "showIcons": true, "include": ["us", "es", "it"] }}  
 ```  
 
-
-### Component Type: Date Picker
-**<u>Usage</u>: Use this widget for any date related field input**
-
-| Markup Type         | Special Parameters                     | Supported Styles                                             | Default theme property                       | Special Characteristics |  
-| ------------------- | -------------------------------------- | :----------------------------------------------------------- | -------------------------------------------- | ----------------------- |  
-| "type":"datePicker" | initialDisplay<br/>startYear<br/>endYear<br/>showIf<br/>datePickerStyle<br>disabled<br/> | size<br/>margin<br/>background<br/>opacity<br/>fontSize<br/>fontColor<br/>fontWeight,<br/>borderColor<br/>borderSize<br/>cornerRadius<br/> | <br/><br/><br/><br/><br/>textColor<br/><br/> | - The date picker can be displayed in "input" or "calendar" mode.<br>Use "intialDisplay" property to vary modes.                     | 
-
-```json
- {      
-  "type": "datePicker",      
-  "initialDisplay": "input",      
-  "textKey": "Birth date:",      
-  "bind": {      
-    "type": "date",      
-   "day": "profile.birthDay",      
-   "month": "profile.birthMonth",      
-   "year": "profile.birthYear"      
-  },      
-  "startYear": 2000,      
-  "endYear": 2025,      
-  "datePickerStyle" : {      
-     "primaryColor": "blue"      
-  },      
-  "style": {      
-    "fontSize": 16,      
-   "cornerRadius": 15,      
-   "borderSize": 2,      
-   "fontColor": "black",      
-"margin": [ 16, 10, 16, 8 ] } }
- ```   
-
-**Date picker binding:** The widgets allows binding to be set in two ways:
-1. As an object (see example) aligning each date property to a different schema binding field.
-2. As a single schema bind field using a **Iso8601** standard.
-
-
-**The datePickerStyle object** - Allows customizing the picker dialog.    
-Available customization options:
-- primaryColor
-- labelColor
-- labelText
-
 #### Disabling
 
 All widgets can be disabled using the **"disabled" property. Disabling a component will grey out its display and and add an opacity effect to it.
