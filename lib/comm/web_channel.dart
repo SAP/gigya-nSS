@@ -33,7 +33,8 @@ class NssWebMethodChannel extends NssChannel {
       'method': method,
       'data': arguments ?? {},
     };
-    window.parent!.postMessage(jsonEncode(data), '*');
+    var encoded = jsonEncode(data);
+    window.parent!.postMessage(encoded, '*');
     MessageEvent msg = await window.onMessage.firstWhere((element) {
       var json = jsonDecode(element.data).cast<String, dynamic>();
       debugPrint(json['method']);
@@ -57,7 +58,8 @@ class NssWebMethodChannel extends NssChannel {
       'method': method,
       'data': arguments ?? {},
     };
-    window.parent!.postMessage(jsonEncode(data), '*');
+    var encoded = jsonEncode(data);
+    window.parent!.postMessage(encoded, '*');
     MessageEvent msg = await window.onMessage.firstWhere((element) {
       var json = jsonDecode(element.data).cast<String, dynamic>();
       debugPrint(json['method']);

@@ -17,7 +17,13 @@ class BindingModel with ChangeNotifier {
   final regExp = new RegExp(r'^(.*)[[0-9]]$');
 
   // map of supported types with default return value.
-  final typeSupported = {"String": '', "bool": false, "List<dynamic>": [], "dynamic": "", "int": 0};
+  final typeSupported = {
+    "String": '',
+    "bool": false,
+    "List<dynamic>": [],
+    "dynamic": "",
+    "int": 0
+  };
 
   // default return when type not supported
   final defaultReturn = '';
@@ -84,8 +90,8 @@ class BindingModel with ChangeNotifier {
   }
 
   /// Get the relevant bound data using the String [key] reference.
-  dynamic getValue<T>(String? key, [Map<String, dynamic>? dataObject, dynamic asArray]) {
-
+  dynamic getValue<T>(String? key,
+      [Map<String, dynamic>? dataObject, dynamic asArray]) {
     if (asArray != null) {
       return asArrayHelper.getValue(getValue(key), asArray, key!);
     }
@@ -146,28 +152,29 @@ class BindingModel with ChangeNotifier {
   }
 
   /// Save a new [key] / [value] pair for form submission.
-  save<T>(String key, T value, {String? saveAs , dynamic asArray}) {
-      if (key.isNullOrEmpty()) return;
-      // Change the bind to real param before sending the request.
-      if (saveAs != null && saveAs.isNotEmpty) key = saveAs;
+  save<T>(String key, T value, {String? saveAs, dynamic asArray}) {
+    if (key.isNullOrEmpty()) return;
+    // Change the bind to real param before sending the request.
+    if (saveAs != null && saveAs.isNotEmpty) key = saveAs;
 
-      // Remove `#` mark before submit.
-      final String checkedKey = key.removeHashtagPrefix();
+    // Remove `#` mark before submit.
+    final String checkedKey = key.removeHashtagPrefix();
 
-      if (asArray != null) {
-        List<dynamic> asArrayValue = asArrayHelper.getValueForSave(getValue(key), asArray, key, value);
-        var keys = checkedKey.split('.');
-        keys.removeLast();
-        var k = keys.join('.');
-        saveTo(k, asArrayValue, savedBindingData);
-        saveTo(k, asArrayValue, _bindingData);
+    if (asArray != null) {
+      List<dynamic> asArrayValue =
+          asArrayHelper.getValueForSave(getValue(key), asArray, key, value);
+      var keys = checkedKey.split('.');
+      keys.removeLast();
+      var k = keys.join('.');
+      saveTo(k, asArrayValue, savedBindingData);
+      saveTo(k, asArrayValue, _bindingData);
 
-        saveTo(checkedKey, asArrayValue, savedBindingData);
-        saveTo(checkedKey, asArrayValue, _bindingData);
-      } else {
-        saveTo(checkedKey, value, savedBindingData);
-        saveTo(checkedKey, value, _bindingData);
-      }
+      saveTo(checkedKey, asArrayValue, savedBindingData);
+      saveTo(checkedKey, asArrayValue, _bindingData);
+    } else {
+      saveTo(checkedKey, value, savedBindingData);
+      saveTo(checkedKey, value, _bindingData);
+    }
   }
 
   /// Update the binding data map with required [key] and [value].
@@ -236,7 +243,8 @@ mixin BindingMixin {
 
   /// Fetch the text [String] bound value of the provided text display component [data] & validate it according the site schema.
   /// Schema validation is only available when "useSchemaValidations" is applied.
-  BindingValue getBindingText(NssWidgetData data, BindingModel bindings, {dynamic asArray}) {
+  BindingValue getBindingText(NssWidgetData data, BindingModel bindings,
+      {dynamic asArray}) {
     if (data.bind == null) {
       return BindingValue(null);
     }
@@ -246,13 +254,19 @@ mixin BindingMixin {
       return BindingValue.bindingError(data.bind, errorText: bindingMatches);
     }
     // Fetch value.
-    final String value = bindings.getValue<String>(data.bind, asArray);
-    return BindingValue(value.isEmpty ? null : value);
+    var value = bindings.getValue(data.bind, asArray);
+    // Binding value may return non string. Convert if not.
+    if (value is String) {
+      return BindingValue(value.isEmpty ? null : value);
+    } else {
+      return BindingValue(value.toString());
+    }
   }
 
   /// Fetch the boolean [bool] bound value of the provided selection component [data] & validate it according the site schema.
   /// Schema validation is only available when "useSchemaValidations" is applied.
-  BindingValue getBindingBool(NssWidgetData data, BindingModel bindings, {dynamic asArray}) {
+  BindingValue getBindingBool(NssWidgetData data, BindingModel bindings,
+      {dynamic asArray}) {
     if (data.bind == null) {
       return BindingValue(false);
     }
@@ -289,7 +303,8 @@ mixin BindingMixin {
 
       // Verify binding field exists
       if (schemaObject.isEmpty) {
-        engineLogger!.e('Dev error: Binding key: $key does not exist in schema');
+        engineLogger!
+            .e('Dev error: Binding key: $key does not exist in schema');
         return 'Dev error: Binding key: $key does not exist in schema';
       }
 
@@ -330,7 +345,6 @@ mixin BindingMixin {
     }
     return TextInputType.text;
   }
-
 }
 
 /// Helper class for fetching the bound data of a component.
@@ -351,11 +365,11 @@ class BindingValue {
 
 class AsArrayHelper {
   dynamic getValue<T>(List<dynamic> data, dynamic asArray, String bindKey) {
-
     var keys = bindKey.split('.');
     var arrayDetails = asArray.cast<String, String>();
     for (dynamic obj in data) {
-      if (obj[arrayDetails['key']] != null && obj[arrayDetails['key']] == arrayDetails['value']) {
+      if (obj[arrayDetails['key']] != null &&
+          obj[arrayDetails['key']] == arrayDetails['value']) {
         // return to "real" value.
         return obj[keys.last];
       }
@@ -364,7 +378,8 @@ class AsArrayHelper {
     return false;
   }
 
-  dynamic getValueForSave<T>(List<dynamic> data, dynamic asArray, String bindKey, dynamic value) {
+  dynamic getValueForSave<T>(
+      List<dynamic> data, dynamic asArray, String bindKey, dynamic value) {
     var keys = bindKey.split('.');
 
     var arrayDetails = asArray.cast<String, String>();
@@ -372,12 +387,12 @@ class AsArrayHelper {
     List<dynamic> tempData = [...data];
 
     for (dynamic obj in data) {
-      if (obj[arrayDetails['key']] != null && obj[arrayDetails['key']] == arrayDetails['value']) {
+      if (obj[arrayDetails['key']] != null &&
+          obj[arrayDetails['key']] == arrayDetails['value']) {
         isExists = true;
         if (value == null || value == false) {
           tempData.remove(obj);
-        } else
-        if (value != obj[keys.last]) {
+        } else if (value != obj[keys.last]) {
           tempData.remove(obj);
           isExists = false;
         }
@@ -385,7 +400,8 @@ class AsArrayHelper {
     }
 
     if (isExists == false) {
-      tempData.add({arrayDetails['key']: arrayDetails['value'], keys.last: value});
+      tempData
+          .add({arrayDetails['key']: arrayDetails['value'], keys.last: value});
     }
 
     return tempData;

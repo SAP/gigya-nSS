@@ -197,18 +197,17 @@ class _ButtonWidgetState extends State<ButtonWidget>
     TextAlign textAlign =
         getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.center;
 
-    return SemanticsWrapperWidget(
-      accessibility: widget.data!.accessibility,
-      child: Padding(
-        padding: getStyle(Styles.margin, data: widget.data),
-        child: Consumer2<ScreenViewModel, BindingModel>(
-          builder: (context, viewModel, bindings, child) {
-            if (widget.data?.iconURL == null) {
-              widget.data?.iconEnabled = false;
-            }
-
-            return Visibility(
-              visible: isVisible(viewModel, widget.data),
+    return Consumer2<ScreenViewModel, BindingModel>(
+        builder: (context, viewModel, bindings, child) {
+      if (widget.data?.iconURL == null) {
+        widget.data?.iconEnabled = false;
+      }
+      return Visibility(
+        visible: isVisible(viewModel, widget.data),
+        child: SemanticsWrapperWidget(
+          accessibility: widget.data!.accessibility,
+          child: Padding(
+              padding: getStyle(Styles.margin, data: widget.data),
               child: Column(
                 crossAxisAlignment: getCrossAxisAlignment(
                     widget.data?.alignment ?? viewModel.screenAlignment),
@@ -257,7 +256,7 @@ class _ButtonWidgetState extends State<ButtonWidget>
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment:
-                                  getMainAxisAlignment(widget.data!.alignment),
+                                  getMainAxisAlignment(textAlign.toNssAlignment(widget.data!.type)),
                               children: [
                                 widget.data!.iconEnabled!
                                     ? SizedBox(
@@ -337,12 +336,10 @@ class _ButtonWidgetState extends State<ButtonWidget>
                         )
                       : Container()
                 ],
-              ),
-            );
-          },
+              )),
         ),
-      ),
-    );
+      );
+    });
   }
 
   /// Set the elevation property of the button.

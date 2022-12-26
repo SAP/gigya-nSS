@@ -15,7 +15,7 @@ import 'package:gigya_native_screensets_engine/widgets/material/app.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/buttons.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/checkbox.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/container.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/date_picker.dart';
+import 'package:gigya_native_screensets_engine/widgets/material/date_picker/date_picker.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/dropdown.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/inputs.dart';
@@ -159,6 +159,9 @@ class MaterialWidgetFactory extends WidgetFactory {
       }
       if (arguments.containsKey('initialData')) {
         binding!.updateWith(arguments['initialData']);
+      }
+      if (arguments.containsKey('screenShowIfMapping') && arguments['screenShowIfMapping'] != null) {
+        viewModel!.screenShowIfMapping = arguments['screenShowIfMapping'].cast<String, String>();
       }
     }
 

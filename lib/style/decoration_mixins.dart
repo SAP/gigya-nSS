@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
@@ -17,9 +18,10 @@ mixin DecorationMixin {
   /// The expression will be evaluated via a native call using each platform JS expression
   /// task.
   bool isVisible(ScreenViewModel viewModel, NssWidgetData? data) {
+    if (kIsWeb) return true;
     if (data == null) return true;
-    if (data.showIf != null) {
-      engineLogger!.d('isVisible check for bind: ${data.bind} & showIf: ${data.showIf}');
+    if (data.showIf != null && viewModel.expressions != null) {
+      engineLogger!.d('isVisible check for bind: ${data.bind} & showIf: ${data.showIf} & is ${viewModel.expressions![data.showIf]}');
       String result = viewModel.expressions![data.showIf] ?? 'false';
       return result.toLowerCase() == 'true';
     }

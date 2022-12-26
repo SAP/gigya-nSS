@@ -612,6 +612,11 @@ The following widgets supports "Store As Array":
 * Dropdown.
 * Phone input.
 
+## FIDO Authentication
+Native Screen-Sets support FIDO authentication using the FIDO button component.
+Please follow the relevant setup guidelines for your platform.
+[Android](https://sap.github.io/gigya-android-sdk/sdk-core/#fidowebauthn-authentication)
+[iOS](https://sap.github.io/gigya-swift-sdk/GigyaSwift/#fidowebauthn-authentication)
 
 ## Known Issues
 

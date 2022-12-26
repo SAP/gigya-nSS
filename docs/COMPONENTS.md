@@ -263,6 +263,88 @@ The countries object - Allows additional customization.
  "type": "phoneInput", "bind": "#phoneNumber", "textKey": "enter your phone number", "countries": { "defaultSelected": "us", "showIcons": true, "include": ["us", "es", "it"] }}  
 ```  
 
+
+### Component Type: Date Picker
+**<u>Usage</u>: Use this widget for any date related field input**
+
+| Markup Type         | Special Parameters                     | Supported Styles                                             | Default theme property                       | Special Characteristics |  
+| ------------------- | -------------------------------------- | :----------------------------------------------------------- | -------------------------------------------- | ----------------------- |  
+| "type":"datePicker" | initialDisplay<br/>startYear<br/>endYear<br/>showIf<br/>datePickerStyle<br>disabled<br/> | size<br/>margin<br/>background<br/>opacity<br/>fontSize<br/>fontColor<br/>fontWeight,<br/>borderColor<br/>borderSize<br/>cornerRadius<br/> | <br/><br/><br/><br/><br/>textColor<br/><br/> | - The date picker can be displayed in "input" or "calendar" mode.<br>Use "intialDisplay" property to vary modes.                     | 
+
+```json
+ {      
+  "type": "datePicker",      
+  "initialDisplay": "input",      
+  "textKey": "Birth date:",      
+  "bind": {      
+    "type": "date",      
+   "day": "profile.birthDay",      
+   "month": "profile.birthMonth",      
+   "year": "profile.birthYear"      
+  },      
+  "startYear": 2000,      
+  "endYear": 2025,      
+  "datePickerStyle" : {      
+     "primaryColor": "blue"      
+  },      
+  "style": {      
+    "fontSize": 16,      
+   "cornerRadius": 15,      
+   "borderSize": 2,      
+   "fontColor": "black",      
+"margin": [ 16, 10, 16, 8 ] } }
+ ```   
+
+**Date picker binding:** The widgets allows binding to be set in two ways:
+1. As an object (see example) aligning each date property to a different schema binding field.
+2. As a single schema bind field using a **Iso8601** standard.
+
+
+**The datePickerStyle object** - Allows customizing the picker dialog.    
+Available customization options:
+- primaryColor
+- labelColor
+- labelText
+
+### Component Type: FIDO authentication button
+**<u>Usage</u>: Displays a FIDO authentication button in selected screens**
+
+| Markup Type         | Special Parameters                     | Supported Styles                                             | Default Theme Property                       | Special Characteristics |  
+| ------------------- | -------------------------------------- | :----------------------------------------------------------- | -------------------------------------------- | ----------------------- |  
+| "type":"button" | api<br/>showIf<br/>useRouting<br/> | Same as submit button |  | API property varies according to button state              | 
+
+To begin implementing FIDO authentication, please follow the relevant platform setup:
+[Android](https://sap.github.io/gigya-android-sdk/sdk-core/#fidowebauthn-authentication)
+[iOS](https://sap.github.io/gigya-swift-sdk/GigyaSwift/#fidowebauthn-authentication)
+
+The **FIDO authentication button** supports 3 different states using the "api" property:
+* **webAuthnRegister** - Used for registering a new FIDO passKey.
+* **webAuthnRevoke** - Used for revoking a valid FIDO passkey.
+* **webAuthnLogin** - Used to start the login flow using a valid FIDO passkey.
+
+In addition, the markup supports a specific setup for the "showIf" property that handles the widget visibility according to the application's FIDO state.
+Implementation example:
+When adding a FIDO revoke state button, the "showIf" property will automatically be set to:
+```json
+"showIf": "Gigya.webAuthn.isExists == true && Gigya.isLoggedIn == true && Gigya.webAuthn.isSupported == true",
+```
+This setting indicates that the button is visible only if:
+1. Gigya.webAuthn.isExists == true -> The device has a valid FIDO passkey registered.
+2. Gigya.isLoggedIn == true -> A valid session is available. The user is logged in.
+3. Gigya.webAuthn.isSupported == true -> [The Android device supports FIDO authentication](https://sap.github.io/gigya-android-sdk/sdk-core/#sdk-prerequisites)
+
+The **useRouting** property is set when you require the engine to use the specified screen routing once the FIDO action is complete.
+If it's not included or set to "false", screen navigation will not apply.
+
+**UI builder options:**
+The FIDO button is available only on specific screen actions:
+**login**
+**setAccount**
+Therefore, it will only be available when using login, register, and account update default screens.
+
+Note: The UI Builder preview does not yet support "showIf" fields. A preview of visibility changes of the FIDO buttons is supported on mobile only.
+
+
 #### Disabling
 
 All widgets can be disabled using the **"disabled" property. Disabling a component will grey out its display and and add an opacity effect to it.

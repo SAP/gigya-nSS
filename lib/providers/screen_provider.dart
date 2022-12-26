@@ -39,13 +39,13 @@ class ScreenViewModel
 
   final bool? _isMock = NssIoc().use(NssConfig).isMock;
 
-  final Map<String, String?> screenShowIfMapping = {};
+  Map<String, String?> screenShowIfMapping = {};
 
   Map<dynamic, dynamic>? expressions = {};
 
   ScreenViewModel(
-    this.apiService,
-    this.screenService,
+      this.apiService,
+      this.screenService
   );
 
   /// Previous screen unique identifier.
@@ -96,6 +96,8 @@ class ScreenViewModel
     if (_isMock!) {
       return;
     }
+
+    engineLogger!.d('[evaluateExpressionByDemand]: ${screenShowIfMapping}');
 
     String? expression = screenShowIfMapping[widgetData!.showIf!];
 
@@ -158,6 +160,7 @@ class ScreenViewModel
     var validated = formKey.currentState!.validate();
     if (validated) {
       engineLogger!.d('Form validations success - submission requested.');
+      engineLogger!.d('submitScreenForm - submission: ${submission.toString()}');
 
       // Request form save state. This will update the binding map with the required data for submission.
       formKey.currentState!.save();
@@ -165,6 +168,9 @@ class ScreenViewModel
       // Handle engine submit event.
       Map<String, dynamic> eventData = await beforeSubmit(id, submission);
       if (eventData.isNotEmpty) {
+
+        engineLogger!.d('submitScreenForm - eventData (not empty): ${eventData.toString()}');
+
         if (eventData.containsKey('error')) {
           String error = eventData['error'];
 
@@ -179,6 +185,7 @@ class ScreenViewModel
         // Overwrite submission data if exists.
         Map<String, dynamic> submissionData =
             eventData['data'].cast<String, dynamic>();
+        engineLogger!.d('submitScreenForm - overwrite submission data from event (not empty): ${submissionData.toString()}');
         if (submissionData.isNotEmpty) submission = submissionData;
       }
 
@@ -241,6 +248,8 @@ class ScreenViewModel
     if (isMock!) return;
     setProgress();
 
+    engineLogger!.d('sendApi (api channel) - method: $method, params: ${parameters.toString()}');
+
     apiService!.send(method, parameters).then(
       (result) async {
         engineLogger!.d('Api request success: ${result.data.toString()}');
@@ -255,14 +264,23 @@ class ScreenViewModel
           screenData = actionData['data'].cast<String, dynamic>();
           expressionData = actionData['expressions'].cast<String, dynamic>();
         }
-        screenData = result.data?['data']?.cast<String, dynamic>();
-        expressionData = result.data?['expressions']?.cast<String, dynamic>();
+
+        if (result.data?['data']?.cast<String, dynamic>() != null) {
+          screenData?.addAll(result.data?['data']?.cast<String, dynamic>());
+        }
+        if (result.data?['expressions']?.cast<String, dynamic>() != null) {
+          expressionData?.addAll(result.data?['expressions']?.cast<String, dynamic>());
+        }
 
         setIdle();
 
+        engineLogger!.d('screenData : $screenData');
         // Trigger navigation.
+        var event =  NavigationEvent('$id/onSuccess', screenData, expressionData);
+        event.screenShowIfMapping = actionData['screenShowIfMapping'].cast<String, dynamic>();
+
         navigationStream.sink
-            .add(NavigationEvent('$id/onSuccess', screenData, expressionData));
+            .add(event);
       },
     ).catchError(
       (error) async {
@@ -308,9 +326,12 @@ class ScreenViewModel
       expressionData = actionData['expressions'].cast<String, dynamic>();
     }
 
+    var event = NavigationEvent('$id/onSuccess', screenData, expressionData);
+    event.screenShowIfMapping = actionData['screenShowIfMapping'].cast<String, dynamic>();
+
     // Trigger navigation.
     navigationStream.sink
-        .add(NavigationEvent('$id/onSuccess', screenData, expressionData));
+        .add(event);
   }
 
   Future<Map<String, dynamic>> anonSendApi(
@@ -392,6 +413,7 @@ class ScreenViewModel
       nextScreenId,
       nextScreenExpressions,
     );
+    dataMap['screenShowIfMapping'] = nextScreenExpressions;
     return dataMap;
   }
 
@@ -425,6 +447,8 @@ class ScreenViewModel
     // Keeping track of showIf mapping.
     screenShowIfMapping.addAll(expressionMap);
 
+    engineLogger!.d("showifMapping: ${screenShowIfMapping}");
+
     return expressionMap;
   }
 }
@@ -433,6 +457,7 @@ class NavigationEvent {
   final String route;
   final Map<String, dynamic>? routingData;
   final Map<String, dynamic>? expressions;
+  Map<String, dynamic>? screenShowIfMapping;
 
   NavigationEvent(this.route, this.routingData, this.expressions);
 }
