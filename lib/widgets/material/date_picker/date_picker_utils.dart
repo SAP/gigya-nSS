@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 mixin DatePickerUtilsMixin {
@@ -29,8 +30,11 @@ mixin DatePickerUtilsMixin {
   }
 
   /// Parse the display value of the picker.
-  String parseDateValue(DateTime? time) {
+  String parseDateValue(DateTime? time, BuildContext? context) {
     if (time == null) return '';
+    if (context != null) {
+      return MaterialLocalizations.of(context).formatCompactDate(time);
+    }
     return "${time.toLocal()}".split(' ')[0];
   }
 }

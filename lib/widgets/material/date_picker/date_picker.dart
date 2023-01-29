@@ -229,7 +229,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
       setState(() {
         // Update selected value.
         _selectedDate = picked;
-        _controller.text = parseDateValue(_selectedDate);
+        _controller.text = parseDateValue(_selectedDate, context);
       });
   }
 
@@ -250,7 +250,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
     // Selection has been made. No need to rest the initial value on setState().
     if (_selectedDate != null) {
       debugPrint('DatePicker (_setInitialBindingValue) - Selection available');
-      _controller.text = parseDateValue(_selectedDate);
+      _controller.text = parseDateValue(_selectedDate, context);
       _bindDateSelection(bindings);
       return;
     }
@@ -259,7 +259,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
     if (!bindings.bindingDataAvailable()) {
       debugPrint(
           'DatePicker (_setInitialBindingValue) - Binding data is not available yet');
-      _controller.text = parseDateValue(_initialDate);
+      _controller.text = parseDateValue(_initialDate, context);
       _bindDateSelection(bindings);
       return;
     }
@@ -315,7 +315,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
             'DatePicker (_setInitialBindingValue) - Wrong object binding for widget. Please follow the correct object binding guideline for DatePicker component.');
       }
     }
-    _controller.text = parseDateValue(_initialDate);
+    _controller.text = parseDateValue(_initialDate, context);
 
     // Bind the initial date. If the user will not do any date selection. Make the form submit the initial date values.
     _bindDateSelection(bindings);

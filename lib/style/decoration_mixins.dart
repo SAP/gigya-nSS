@@ -21,7 +21,7 @@ mixin DecorationMixin {
     if (kIsWeb) return true;
     if (data == null) return true;
     if (data.showIf != null && viewModel.expressions != null) {
-      engineLogger!.d('isVisible check for bind: ${data.bind} & showIf: ${data.showIf}');
+      engineLogger!.d('isVisible check for bind: ${data.bind} & showIf: ${data.showIf} & is ${viewModel.expressions![data.showIf]}');
       String result = viewModel.expressions![data.showIf] ?? 'false';
       return result.toLowerCase() == 'true';
     }

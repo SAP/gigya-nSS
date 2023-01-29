@@ -189,6 +189,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   /// Route to next screen.
   _navigateToScreen(route, event) {
     _removeUnsecureRoutingData();
+
     Navigator.pushReplacementNamed(
       context,
       route,
@@ -196,7 +197,8 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         'pid': viewModel!.id,
         'routingData': widget.routingData,
         'initialData': event.routingData,
-        'expressions': event.expressions
+        'expressions': event.expressions,
+        'screenShowIfMapping': event.screenShowIfMapping
       },
     );
   }
@@ -212,6 +214,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     );
     // Merge routing data into injected screen data and update bindings.
     viewModel!.expressions = dataMap['expressions'];
+
     if (dataMap['expressions'] != null) {
       dataMap.addAll(widget.routingData!);
       bindings!.updateWith(dataMap['data'].cast<String, dynamic>());
