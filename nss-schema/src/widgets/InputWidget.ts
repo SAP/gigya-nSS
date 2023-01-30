@@ -24,10 +24,10 @@ export default new WidgetEntity('Input', mergeDeep({},
         confirmPasswordPlaceholder: {
             type: 'string',
         },
-        axisAlignment: {
+        stack: {
             enum: [
-                "vertical",
-                "horizontal"
+                'vertical',
+                'horizontal'
             ],
             default: 'vertical'
         },
