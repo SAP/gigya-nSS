@@ -133,6 +133,12 @@ class NssWidgetData {
   @JsonKey(defaultValue: false)
   bool? useRouting;
 
+  bool? confirmPassword;
+
+  String? confirmPasswordPlaceholder;
+
+  String? axisAlignment;
+
   NssWidgetData({
     this.textKey,
     this.type,
@@ -171,6 +177,9 @@ class NssWidgetData {
     this.initialDisplay,
     this.storeAsArray,
     this.useRouting,
+    this.confirmPassword,
+    this.confirmPasswordPlaceholder,
+    this.axisAlignment
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) =>
