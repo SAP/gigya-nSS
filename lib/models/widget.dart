@@ -1,7 +1,6 @@
 import 'package:gigya_native_screensets_engine/models/accessibility.dart';
 import 'package:gigya_native_screensets_engine/models/option.dart';
 import 'package:gigya_native_screensets_engine/models/styles.dart';
-import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -137,7 +136,6 @@ class NssWidgetData {
 
   String? confirmPasswordPlaceholder;
 
-  String? axisAlignment;
 
   NssWidgetData({
     this.textKey,
@@ -179,7 +177,6 @@ class NssWidgetData {
     this.useRouting,
     this.confirmPassword,
     this.confirmPasswordPlaceholder,
-    this.axisAlignment
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) =>
