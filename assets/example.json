@@ -80,7 +80,8 @@
       "error-invalid-format": "Invalid format",
       "error-schema-required-validation": "Validation failed. Field is required",
       "error-schema-regex-validation": "Validation failed on regular expression",
-      "error-schema-checkbox-validation": "Validation failed. boolean field"
+      "error-schema-checkbox-validation": "Validation failed. boolean field",
+      "confirm-password": "Confirm password"
     },
     "es": {
       "login": "Iniciar sesión",
@@ -117,7 +118,7 @@
     }
   },
   "routing": {
-    "initial": "account-update",
+    "initial": "login",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -247,6 +248,9 @@
           "type": "passwordInput",
           "textKey": "common-password",
           "theme": "input",
+          "confirmPassword": true,
+          "confirmPasswordPlaceholder": "confirm-password",
+          "stack": "horizontal",
           "style": {
             "margin": [
               16,
