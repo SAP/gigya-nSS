@@ -21,6 +21,8 @@ export default new SchemaEntity('Screen', mergeDeep({},
                     'account update',
                     'forgot password',
                     'change password',
+                    'link account',
+                    'otp',
                     'empty'
                 ],
                 default: 'login'
