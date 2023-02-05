@@ -250,7 +250,7 @@
           "theme": "input",
           "confirmPassword": true,
           "confirmPasswordPlaceholder": "confirm-password",
-          "stack": "horizontal",
+          "stack": "vertical",
           "style": {
             "margin": [
               16,
