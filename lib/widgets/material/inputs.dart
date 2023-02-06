@@ -410,6 +410,10 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
                     ),
             ),
             validator: (input) {
+              if (_match == true)
+                return null;
+              else
+                return  ErrorUtils.confirmPasswordMismatch;
               // Event injected error has priority in field validation.
             },
             onChanged: (s) {
