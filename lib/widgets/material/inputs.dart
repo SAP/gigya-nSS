@@ -34,6 +34,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
 
   Map<String, NssInputValidator> _validators = {};
   bool _obscuredText = false;
+  bool _ObscuredConfirmText = true;
   bool? _match;
 
   //TODO: errorMaxLines currently hard coded to 3 - add style property.
@@ -74,6 +75,12 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
   _toggleTextObfuscationState() {
     setState(() {
       _obscuredText = !_obscuredText;
+    });
+  }
+
+  _toggleConfirmObfuscationState() {
+    setState(() {
+      _ObscuredConfirmText = !_ObscuredConfirmText;
     });
   }
 
@@ -133,9 +140,9 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
       return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [Flexible(child: buildTextFormField(color, bindings, borderRadius, borderSize, viewModel, widget.data!.textKey)), Flexible(child: buildPasswordFormField(color, bindings, borderRadius, borderSize, viewModel, widget.data!.confirmPasswordPlaceholder))]);
+          children: [Flexible(child: buildTextFormField(color, bindings, borderRadius, borderSize, viewModel, widget.data!.textKey)), Flexible(child: buildConfirmationFormField(color, bindings, borderRadius, borderSize, viewModel, widget.data!.confirmPasswordPlaceholder))]);
     } else {
-      return Column(children: [buildTextFormField(color, bindings, borderRadius, borderSize, viewModel, widget.data!.textKey), buildPasswordFormField(color, bindings, borderRadius, borderSize, viewModel, widget.data!.confirmPasswordPlaceholder)]);
+      return Column(children: [buildTextFormField(color, bindings, borderRadius, borderSize, viewModel, widget.data!.textKey), buildConfirmationFormField(color, bindings, borderRadius, borderSize, viewModel, widget.data!.confirmPasswordPlaceholder)]);
     }
   }
 
@@ -253,7 +260,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
                   : OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
                       borderSide: BorderSide(
-                        color: getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
+                        color: notifyError() ? getThemeColor('errorColor') : getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
                         width: borderSize,
                       ),
                     ),
@@ -270,7 +277,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
               return validateField(input, widget.data!.bind);
             },
             onChanged: (s) {
-              setConfrim(s);
+              setConfirm(s);
               onChanged(viewModel, bindings, s);
             },
             onSaved: (value) {
@@ -284,7 +291,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
     );
   }
 
-  Widget buildPasswordFormField(Color? color, BindingModel bindings, borderRadius, borderSize, ScreenViewModel viewModel, hintText) {
+  Widget buildConfirmationFormField(Color? color, BindingModel bindings, borderRadius, borderSize, ScreenViewModel viewModel, hintText) {
     return Padding(
       padding: getStyle(Styles.margin, data: widget.data),
       child: NssCustomSizeWidget(
@@ -293,14 +300,14 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
           opacity: getStyle(Styles.opacity, data: widget.data),
           child: TextFormField(
             textAlignVertical: TextAlignVertical.center,
-            maxLines: _obscuredText
+            maxLines: _ObscuredConfirmText
                 ? 1
                 : widget.data!.style!.containsKey("size")
                     ? 1000
                     : 1,
             enabled: !widget.data!.disabled!,
             keyboardType: getKeyboardType(widget.data!.bind),
-            obscureText: _obscuredText,
+            obscureText: _ObscuredConfirmText,
             controller: _confirmEditingController,
             textAlign: getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
             style: TextStyle(color: widget.data!.disabled! ? color!.withOpacity(0.3) : color, fontSize: getStyle(Styles.fontSize, data: widget.data), fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
@@ -309,25 +316,17 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
               isDense: true,
               errorMaxLines: _errorMaxLines,
               filled: true,
-              suffixIcon: _match == null
-                  ? null
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween, // added line
-                      mainAxisSize: MainAxisSize.min, // added line
-                      children: <Widget>[
-                        _match == true
-                            ? IconButton(
-                                icon: Icon(Icons.check, color: Colors.green
-                                    //color: _obscuredText ? Colors.black12 : Colors.black54,
-                                    ),
-                                onPressed: null)
-                            : IconButton(
-                                icon: Icon(Icons.close, color: Colors.red
-                                    //color: _obscuredText ? Colors.black12 : Colors.black54,
-                                    ),
-                                onPressed: null),
-                      ],
-                    ),
+              suffixIcon: IconButton(
+                alignment: Alignment.center,
+                onPressed: () {
+                  bindings.save(widget.data!.bind, _textEditingController.text.trim(), saveAs: widget.data!.sendAs);
+                  _toggleConfirmObfuscationState();
+                },
+                icon: Icon(
+                  Icons.remove_red_eye,
+                  color: _ObscuredConfirmText ? Colors.black12 : Colors.black54,
+                ),
+              ),
               fillColor: getStyle(Styles.background, data: widget.data),
               hintText: localizedStringFor(hintText),
               hintStyle: TextStyle(
@@ -382,14 +381,14 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
                   ? UnderlineInputBorder(
                       borderRadius: BorderRadius.zero,
                       borderSide: BorderSide(
-                        color: getThemeColor('enabledColor'),
+                        color: notifyError() ? getThemeColor('errorColor') : getStyle(Styles.borderColor, data: widget.data, themeProperty: "enabledColor"),
                         width: borderSize + 2,
                       ),
                     )
                   : OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
                       borderSide: BorderSide(
-                        color: getThemeColor('enabledColor'),
+                        color: notifyError() ? getThemeColor('errorColor') : getStyle(Styles.borderColor, data: widget.data, themeProperty: "enabledColor"),
                         width: borderSize,
                       ),
                     ),
@@ -397,14 +396,14 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
                   ? UnderlineInputBorder(
                       borderRadius: BorderRadius.zero,
                       borderSide: BorderSide(
-                        color: getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
+                        color: notifyError() ? getThemeColor('errorColor') : getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
                         width: borderSize,
                       ),
                     )
                   : OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
                       borderSide: BorderSide(
-                        color: getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
+                        color: notifyError() ? getThemeColor('errorColor') : getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
                         width: borderSize,
                       ),
                     ),
@@ -484,11 +483,15 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
     Provider.of<RuntimeStateEvaluator>(context, listen: false).notifyChanged(widget.data!.bind, to);
   }
 
-  void setConfrim(String s) {
+  void setConfirm(String s) {
     _confirmEditingController.text = '';
     if(_match != null){
       _match = null;
       _setConfirmState(null);
     }
+  }
+
+  bool notifyError(){
+    return widget.data!.type == NssWidgetType.passwordInput && _match == false;
   }
 }
