@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
@@ -27,14 +26,25 @@ class TextInputWidget extends StatefulWidget {
   _TextInputWidgetState createState() => _TextInputWidgetState();
 }
 
-class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin, VisibilityStateMixin, ErrorMixin, EngineEvents {
-  final TextEditingController _textEditingController = TextEditingController(text: '');
+class _TextInputWidgetState extends State<TextInputWidget>
+    with
+        DecorationMixin,
+        BindingMixin,
+        StyleMixin,
+        LocalizationMixin,
+        ValidationMixin,
+        VisibilityStateMixin,
+        ErrorMixin,
+        EngineEvents {
+  final TextEditingController _textEditingController =
+      TextEditingController(text: '');
 
-  final TextEditingController _confirmEditingController = TextEditingController(text: '');
+  final TextEditingController _confirmEditingController =
+      TextEditingController(text: '');
 
   Map<String, NssInputValidator> _validators = {};
   bool _obscuredText = false;
-  bool _ObscuredConfirmText = true;
+  bool _obscuredConfirmText = true;
   bool? _match;
 
   //TODO: errorMaxLines currently hard coded to 3 - add style property.
@@ -71,19 +81,23 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
     super.dispose();
   }
 
-  /// Toggle text obfuscation state. Currently relevant only for password type component.
+  /// Toggle text obfuscation state.
+  /// Currently relevant only for password type component.
   _toggleTextObfuscationState() {
     setState(() {
       _obscuredText = !_obscuredText;
     });
   }
 
+  /// Toggle confirm text obfuscation state.
+  /// Currently relevant only for password type component.
   _toggleConfirmObfuscationState() {
     setState(() {
-      _ObscuredConfirmText = !_ObscuredConfirmText;
+      _obscuredConfirmText = !_obscuredConfirmText;
     });
   }
 
+  /// Update confirm state.
   _setConfirmState(match) {
     setState(() {
       _match = match;
@@ -92,7 +106,8 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
 
   /// Define the widget keyboard type according to its main type or schema field.
   TextInputType getKeyboardType(String? key) {
-    if (widget.data!.type == NssWidgetType.emailInput) return TextInputType.emailAddress;
+    if (widget.data!.type == NssWidgetType.emailInput)
+      return TextInputType.emailAddress;
     return getBoundKeyboardType(key);
   }
 
@@ -101,15 +116,19 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
     debugPrint('Input widget with bind: ${widget.data!.bind} build initiated');
     return Consumer2<ScreenViewModel, BindingModel>(
       builder: (context, viewModel, bindings, child) {
-        BindingValue bindingValue = getBindingText(widget.data!, bindings, asArray: widget.data!.storeAsArray);
+        BindingValue bindingValue = getBindingText(widget.data!, bindings,
+            asArray: widget.data!.storeAsArray);
 
         // Check for binding error. Display on screen.
         if (bindingValueError(bindingValue)) {
-          return bindingValueErrorDisplay(widget.data!.bind, errorText: bindingValue.errorText);
+          return bindingValueErrorDisplay(widget.data!.bind,
+              errorText: bindingValue.errorText);
         }
 
         String? placeHolder = bindingValue.value;
-        if ((_textEditingController.text.isEmpty || _textEditingController.text != placeHolder) && placeHolder != null) {
+        if ((_textEditingController.text.isEmpty ||
+                _textEditingController.text != placeHolder) &&
+            placeHolder != null) {
           _textEditingController.text = placeHolder;
         } else {
           _textEditingController.value = _textEditingController.value.copyWith(
@@ -122,28 +141,59 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
         final borderSize = getStyle(Styles.borderSize, data: widget.data);
         final borderRadius = getStyle(Styles.cornerRadius, data: widget.data);
 
-        final Color? color = getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor');
+        final Color? color = getStyle(Styles.fontColor,
+            data: widget.data, themeProperty: 'textColor');
 
         return Visibility(
           visible: isVisible(viewModel, widget.data),
-          child: widget.data?.confirmPassword == true ? buildPasswordWidget(color, bindings, borderRadius, borderSize, viewModel) : buildTextFormField(color, bindings, borderRadius, borderSize, viewModel, widget.data!.textKey),
+          child: widget.data?.confirmPassword == true
+              ? _buildPasswordWidget(
+                  color, bindings, borderRadius, borderSize, viewModel)
+              : _buildTextFormField(color, bindings, borderRadius, borderSize,
+                  viewModel, widget.data!.textKey),
         );
       },
     );
   }
 
-  Widget buildPasswordWidget(Color? color, BindingModel bindings, borderRadius, borderSize, ScreenViewModel viewModel) {
+  /// Build password dynamic widget.
+  /// Password input is a different build due to its confirmation adjacent input widget.
+  /// It will be built according to the need of the confirmation flag which will be set to true
+  /// by default.
+  Widget _buildPasswordWidget(Color? color, BindingModel bindings, borderRadius,
+      borderSize, ScreenViewModel viewModel) {
     if (widget.data?.stack == NssStack.horizontal) {
       return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [Flexible(child: buildTextFormField(color, bindings, borderRadius, borderSize, viewModel, widget.data!.textKey)), Flexible(child: buildConfirmationFormField(color, bindings, borderRadius, borderSize, viewModel, widget.data!.confirmPasswordPlaceholder))]);
+          children: [
+            Flexible(
+                child: _buildTextFormField(color, bindings, borderRadius,
+                    borderSize, viewModel, widget.data!.textKey)),
+            Flexible(
+                child: _buildConfirmationFormField(
+                    color,
+                    bindings,
+                    borderRadius,
+                    borderSize,
+                    viewModel,
+                    widget.data!.confirmPasswordPlaceholder))
+          ]);
     } else {
-      return Column(children: [buildTextFormField(color, bindings, borderRadius, borderSize, viewModel, widget.data!.textKey), buildConfirmationFormField(color, bindings, borderRadius, borderSize, viewModel, widget.data!.confirmPasswordPlaceholder)]);
+      return Column(
+        children: [
+          _buildTextFormField(color, bindings, borderRadius, borderSize,
+              viewModel, widget.data!.textKey),
+          _buildConfirmationFormField(color, bindings, borderRadius, borderSize,
+              viewModel, widget.data!.confirmPasswordPlaceholder),
+        ],
+      );
     }
   }
 
-  Widget buildTextFormField(Color? color, BindingModel bindings, borderRadius, borderSize, ScreenViewModel viewModel, hintText) {
+  /// Build generic text form field dynamic widget.
+  Widget _buildTextFormField(Color? color, BindingModel bindings, borderRadius,
+      borderSize, ScreenViewModel viewModel, hintText) {
     return SemanticsWrapperWidget(
       accessibility: widget.data!.accessibility,
       child: Padding(
@@ -163,10 +213,16 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
               keyboardType: getKeyboardType(widget.data!.bind),
               obscureText: _obscuredText,
               controller: _textEditingController,
-              textAlign: getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
-              style: TextStyle(color: widget.data!.disabled! ? color!.withOpacity(0.3) : color, fontSize: getStyle(Styles.fontSize, data: widget.data), fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
+              textAlign: getStyle(Styles.textAlign, data: widget.data) ??
+                  TextAlign.start,
+              style: TextStyle(
+                  color:
+                      widget.data!.disabled! ? color!.withOpacity(0.3) : color,
+                  fontSize: getStyle(Styles.fontSize, data: widget.data),
+                  fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 16, horizontal: 14),
                 isDense: true,
                 errorMaxLines: _errorMaxLines,
                 filled: true,
@@ -174,32 +230,44 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
                     ? IconButton(
                         alignment: Alignment.center,
                         onPressed: () {
-                          bindings.save(widget.data!.bind, _textEditingController.text.trim(), saveAs: widget.data!.sendAs);
+                          bindings.save(widget.data!.bind,
+                              _textEditingController.text.trim(),
+                              saveAs: widget.data!.sendAs);
                           _toggleTextObfuscationState();
                         },
                         icon: Icon(
                           Icons.remove_red_eye,
-                          color: _obscuredText ? Colors.black12 : Colors.black54,
+                          color:
+                              _obscuredText ? Colors.black12 : Colors.black54,
                         ),
                       )
                     : null,
                 fillColor: getStyle(Styles.background, data: widget.data),
                 hintText: localizedStringFor(hintText),
                 hintStyle: TextStyle(
-                  color: widget.data!.disabled! ? getStyle(Styles.placeholderColor, data: widget.data, themeProperty: 'disabledColor').withOpacity(0.3) : getStyle(Styles.placeholderColor, data: widget.data, themeProperty: 'textColor').withOpacity(0.5),
+                  color: widget.data!.disabled!
+                      ? getStyle(Styles.placeholderColor,
+                              data: widget.data, themeProperty: 'disabledColor')
+                          .withOpacity(0.3)
+                      : getStyle(Styles.placeholderColor,
+                              data: widget.data, themeProperty: 'textColor')
+                          .withOpacity(0.5),
                 ),
                 disabledBorder: borderRadius == 0
                     ? UnderlineInputBorder(
                         borderRadius: BorderRadius.zero,
                         borderSide: BorderSide(
-                          color: getThemeColor('disabledColor').withOpacity(0.3),
+                          color:
+                              getThemeColor('disabledColor').withOpacity(0.3),
                           width: borderSize + 2,
                         ),
                       )
                     : OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(borderRadius)),
                         borderSide: BorderSide(
-                          color: getThemeColor('disabledColor').withOpacity(0.3),
+                          color:
+                              getThemeColor('disabledColor').withOpacity(0.3),
                           width: borderSize,
                         ),
                       ),
@@ -212,7 +280,8 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
                         ),
                       )
                     : OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(borderRadius)),
                         borderSide: BorderSide(
                           color: getThemeColor('errorColor'),
                           width: borderSize,
@@ -227,7 +296,8 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
                         ),
                       )
                     : OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(borderRadius)),
                         borderSide: BorderSide(
                           color: getThemeColor('errorColor'),
                           width: borderSize,
@@ -242,7 +312,8 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
                         ),
                       )
                     : OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(borderRadius)),
                         borderSide: BorderSide(
                           color: getThemeColor('enabledColor'),
                           width: borderSize,
@@ -252,14 +323,21 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
                     ? UnderlineInputBorder(
                         borderRadius: BorderRadius.zero,
                         borderSide: BorderSide(
-                          color: getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
+                          color: getStyle(Styles.borderColor,
+                              data: widget.data,
+                              themeProperty: "disabledColor"),
                           width: borderSize,
                         ),
                       )
                     : OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(borderRadius)),
                         borderSide: BorderSide(
-                          color: notifyError() ? getThemeColor('errorColor') : getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
+                          color: notifyError()
+                              ? getThemeColor('errorColor')
+                              : getStyle(Styles.borderColor,
+                                  data: widget.data,
+                                  themeProperty: "disabledColor"),
                           width: borderSize,
                         ),
                       ),
@@ -276,12 +354,12 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
                 return validateField(input, widget.data!.bind);
               },
               onChanged: (s) {
-                setConfirm(s);
-                onChanged(viewModel, bindings, s);
+                _onConfirmationChange(s);
+                _onChanged(viewModel, bindings, s);
               },
               onSaved: (value) {
                 // Form field saved event triggered.
-                onSavedValue(value, bindings);
+                _onSavedValue(value, bindings);
                 return;
               },
             ),
@@ -291,7 +369,9 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
     );
   }
 
-  Widget buildConfirmationFormField(Color? color, BindingModel bindings, borderRadius, borderSize, ScreenViewModel viewModel, hintText) {
+  /// Generate confirmation field for password widget.
+  Widget _buildConfirmationFormField(Color? color, BindingModel bindings,
+      borderRadius, borderSize, ScreenViewModel viewModel, hintText) {
     return SemanticsWrapperWidget(
       accessibility: widget.data!.accessibility,
       child: Padding(
@@ -302,50 +382,68 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
             opacity: getStyle(Styles.opacity, data: widget.data),
             child: TextFormField(
               textAlignVertical: TextAlignVertical.center,
-              maxLines: _ObscuredConfirmText
+              maxLines: _obscuredConfirmText
                   ? 1
                   : widget.data!.style!.containsKey("size")
                       ? 1000
                       : 1,
               enabled: !widget.data!.disabled!,
               keyboardType: getKeyboardType(widget.data!.bind),
-              obscureText: _ObscuredConfirmText,
+              obscureText: _obscuredConfirmText,
               controller: _confirmEditingController,
-              textAlign: getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
-              style: TextStyle(color: widget.data!.disabled! ? color!.withOpacity(0.3) : color, fontSize: getStyle(Styles.fontSize, data: widget.data), fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
+              textAlign: getStyle(Styles.textAlign, data: widget.data) ??
+                  TextAlign.start,
+              style: TextStyle(
+                  color:
+                      widget.data!.disabled! ? color!.withOpacity(0.3) : color,
+                  fontSize: getStyle(Styles.fontSize, data: widget.data),
+                  fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 16, horizontal: 14),
                 isDense: true,
                 errorMaxLines: _errorMaxLines,
                 filled: true,
                 suffixIcon: IconButton(
                   alignment: Alignment.center,
                   onPressed: () {
-                    bindings.save(widget.data!.bind, _textEditingController.text.trim(), saveAs: widget.data!.sendAs);
+                    bindings.save(
+                        widget.data!.bind, _textEditingController.text.trim(),
+                        saveAs: widget.data!.sendAs);
                     _toggleConfirmObfuscationState();
                   },
                   icon: Icon(
                     Icons.remove_red_eye,
-                    color: _ObscuredConfirmText ? Colors.black12 : Colors.black54,
+                    color:
+                        _obscuredConfirmText ? Colors.black12 : Colors.black54,
                   ),
                 ),
                 fillColor: getStyle(Styles.background, data: widget.data),
                 hintText: localizedStringFor(hintText),
                 hintStyle: TextStyle(
-                  color: widget.data!.disabled! ? getStyle(Styles.placeholderColor, data: widget.data, themeProperty: 'disabledColor').withOpacity(0.3) : getStyle(Styles.placeholderColor, data: widget.data, themeProperty: 'textColor').withOpacity(0.5),
+                  color: widget.data!.disabled!
+                      ? getStyle(Styles.placeholderColor,
+                              data: widget.data, themeProperty: 'disabledColor')
+                          .withOpacity(0.3)
+                      : getStyle(Styles.placeholderColor,
+                              data: widget.data, themeProperty: 'textColor')
+                          .withOpacity(0.5),
                 ),
                 disabledBorder: borderRadius == 0
                     ? UnderlineInputBorder(
                         borderRadius: BorderRadius.zero,
                         borderSide: BorderSide(
-                          color: getThemeColor('disabledColor').withOpacity(0.3),
+                          color:
+                              getThemeColor('disabledColor').withOpacity(0.3),
                           width: borderSize + 2,
                         ),
                       )
                     : OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(borderRadius)),
                         borderSide: BorderSide(
-                          color: getThemeColor('disabledColor').withOpacity(0.3),
+                          color:
+                              getThemeColor('disabledColor').withOpacity(0.3),
                           width: borderSize,
                         ),
                       ),
@@ -358,7 +456,8 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
                         ),
                       )
                     : OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(borderRadius)),
                         borderSide: BorderSide(
                           color: getThemeColor('errorColor'),
                           width: borderSize,
@@ -373,7 +472,8 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
                         ),
                       )
                     : OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(borderRadius)),
                         borderSide: BorderSide(
                           color: getThemeColor('errorColor'),
                           width: borderSize,
@@ -383,14 +483,23 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
                     ? UnderlineInputBorder(
                         borderRadius: BorderRadius.zero,
                         borderSide: BorderSide(
-                          color: notifyError() ? getThemeColor('errorColor') : getStyle(Styles.borderColor, data: widget.data, themeProperty: "enabledColor"),
+                          color: notifyError()
+                              ? getThemeColor('errorColor')
+                              : getStyle(Styles.borderColor,
+                                  data: widget.data,
+                                  themeProperty: "enabledColor"),
                           width: borderSize + 2,
                         ),
                       )
                     : OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(borderRadius)),
                         borderSide: BorderSide(
-                          color: notifyError() ? getThemeColor('errorColor') : getStyle(Styles.borderColor, data: widget.data, themeProperty: "enabledColor"),
+                          color: notifyError()
+                              ? getThemeColor('errorColor')
+                              : getStyle(Styles.borderColor,
+                                  data: widget.data,
+                                  themeProperty: "enabledColor"),
                           width: borderSize,
                         ),
                       ),
@@ -398,14 +507,23 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
                     ? UnderlineInputBorder(
                         borderRadius: BorderRadius.zero,
                         borderSide: BorderSide(
-                          color: notifyError() ? getThemeColor('errorColor') : getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
+                          color: notifyError()
+                              ? getThemeColor('errorColor')
+                              : getStyle(Styles.borderColor,
+                                  data: widget.data,
+                                  themeProperty: "disabledColor"),
                           width: borderSize,
                         ),
                       )
                     : OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(borderRadius)),
                         borderSide: BorderSide(
-                          color: notifyError() ? getThemeColor('errorColor') : getStyle(Styles.borderColor, data: widget.data, themeProperty: "disabledColor"),
+                          color: notifyError()
+                              ? getThemeColor('errorColor')
+                              : getStyle(Styles.borderColor,
+                                  data: widget.data,
+                                  themeProperty: "disabledColor"),
                           width: borderSize,
                         ),
                       ),
@@ -413,9 +531,16 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
               validator: (input) {
                 if (_match == true)
                   return null;
-                else
-                  return  ErrorUtils.confirmPasswordMismatch;
-                // Event injected error has priority in field validation.
+                else {
+                  String? error =
+                      localizedStringFor("confirm-password-mismatch");
+                  if (error == null) {
+                    // Show static error if not localized.
+                    error = ErrorUtils.confirmPasswordMismatch;
+                  }
+                  return error;
+                  // Event injected error has priority in field validation.
+                }
               },
               onChanged: (s) {
                 _match = _textEditingController.text == s;
@@ -423,7 +548,7 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
               },
               onSaved: (value) {
                 // Form field saved event triggered.
-                onSavedValue(value, bindings);
+                _onSavedValue(value, bindings);
                 return;
               },
             ),
@@ -433,7 +558,8 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
     );
   }
 
-  void onSavedValue(value, bindings) {
+  /// Do on form submission.
+  void _onSavedValue(value, bindings) {
     if (value.trim().isEmpty) {
       return;
     }
@@ -444,7 +570,8 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
       if (parsed == null) {
         engineLogger!.e('parseAs field is not compatible with provided input');
       }
-      bindings.save<String>(widget.data!.bind, parsed, saveAs: widget.data!.sendAs);
+      bindings.save<String>(widget.data!.bind, parsed,
+          saveAs: widget.data!.sendAs);
       return;
     }
 
@@ -453,11 +580,12 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
     if (parsed == null) {
       engineLogger!.e('parseAs field is not compatible with provided input');
     }
-    bindings.save<String>(widget.data!.bind, parsed, saveAs: widget.data!.sendAs);
+    bindings.save<String>(widget.data!.bind, parsed,
+        saveAs: widget.data!.sendAs);
   }
 
   /// Send field changed event to be optionally handled in native events handler.
-  void onChanged(ScreenViewModel viewModel, bindings, to) async {
+  void _onChanged(ScreenViewModel viewModel, bindings, to) async {
     Map<String, dynamic> eventData = await fieldDidChange(
       viewModel.id,
       widget.data!.bind,
@@ -480,21 +608,24 @@ class _TextInputWidgetState extends State<TextInputWidget> with DecorationMixin,
     }
     inputTracker = to;
 
-    onSavedValue(to, bindings);
+    _onSavedValue(to, bindings);
 
     // Track runtime data change.
-    Provider.of<RuntimeStateEvaluator>(context, listen: false).notifyChanged(widget.data!.bind, to);
+    Provider.of<RuntimeStateEvaluator>(context, listen: false)
+        .notifyChanged(widget.data!.bind, to);
   }
 
-  void setConfirm(String s) {
+  /// Update confirmation state onChanged.
+  void _onConfirmationChange(String s) {
     _confirmEditingController.text = '';
-    if(_match != null){
+    if (_match != null) {
       _match = null;
       _setConfirmState(null);
     }
   }
 
-  bool notifyError(){
+  /// Error notification.
+  bool notifyError() {
     return widget.data!.type == NssWidgetType.passwordInput && _match == false;
   }
 }
