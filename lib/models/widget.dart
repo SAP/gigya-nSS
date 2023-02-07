@@ -1,7 +1,6 @@
 import 'package:gigya_native_screensets_engine/models/accessibility.dart';
 import 'package:gigya_native_screensets_engine/models/option.dart';
 import 'package:gigya_native_screensets_engine/models/styles.dart';
-import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -133,6 +132,11 @@ class NssWidgetData {
   @JsonKey(defaultValue: false)
   bool? useRouting;
 
+  bool? confirmPassword;
+
+  String? confirmPasswordPlaceholder;
+
+
   NssWidgetData({
     this.textKey,
     this.type,
@@ -171,6 +175,8 @@ class NssWidgetData {
     this.initialDisplay,
     this.storeAsArray,
     this.useRouting,
+    this.confirmPassword,
+    this.confirmPasswordPlaceholder,
   });
 
   factory NssWidgetData.fromJson(Map<String, dynamic> json) =>
