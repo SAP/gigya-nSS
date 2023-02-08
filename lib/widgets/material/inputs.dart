@@ -194,10 +194,11 @@ class _TextInputWidgetState extends State<TextInputWidget>
   /// Build generic text form field dynamic widget.
   Widget _buildTextFormField(Color? color, BindingModel bindings, borderRadius,
       borderSize, ScreenViewModel viewModel, hintText) {
-    return SemanticsWrapperWidget(
+    return  Flexible(
+    fit: FlexFit.loose,
+      child:SemanticsWrapperWidget(
       accessibility: widget.data!.accessibility,
-      child: Flexible(
-        fit: FlexFit.loose,
+
         child: Padding(
           padding: getStyle(Styles.margin, data: widget.data),
           child: NssCustomSizeWidget(
@@ -375,10 +376,10 @@ class _TextInputWidgetState extends State<TextInputWidget>
   /// Generate confirmation field for password widget.
   Widget _buildConfirmationFormField(Color? color, BindingModel bindings,
       borderRadius, borderSize, ScreenViewModel viewModel, hintText) {
-    return SemanticsWrapperWidget(
-      accessibility: widget.data!.accessibility,
-      child: Flexible(
-        fit: FlexFit.loose,
+    return  Flexible(
+      fit: FlexFit.loose,
+      child:SemanticsWrapperWidget(
+        accessibility: widget.data!.accessibility,
         child: Padding(
           padding: getStyle(Styles.margin, data: widget.data),
           child: NssCustomSizeWidget(

@@ -118,7 +118,7 @@
     }
   },
   "routing": {
-    "initial": "login",
+    "initial": "register",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -324,21 +324,11 @@
       "alignment": "start",
       "children": [
         {
-          "type": "container",
-          "stack": "horizontal",
-          "alignment": "start",
+          "type": "label",
+          "textKey": "register-title",
           "style": {
-            "margin": 0
-          },
-          "children": [
-            {
-              "type": "label",
-              "textKey": "register-title",
-              "style": {
-                "margin": 16
-              }
-            }
-          ]
+            "margin": 16
+          }
         },
         {
           "bind": "#email",
@@ -348,7 +338,7 @@
         },
         {
           "type": "container",
-          "stack": "horizontal",
+         "stack": "horizontal",
           "alignment": "start",
           "style": {
             "margin": 0
@@ -372,7 +362,10 @@
           "bind": "#password",
           "type": "passwordInput",
           "textKey": "common-password",
-          "theme": "input"
+          "theme": "input",
+          "confirmPassword": true,
+          "confirmPasswordPlaceholder": "confirm-password",
+          "stack": "vertical"
         },
         {
           "type": "label",
