@@ -162,31 +162,31 @@ class _TextInputWidgetState extends State<TextInputWidget>
   /// by default.
   Widget _buildPasswordWidget(Color? color, BindingModel bindings, borderRadius,
       borderSize, ScreenViewModel viewModel) {
-    if (widget.data?.stack == NssStack.horizontal) {
-      return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildTextFormField(color, bindings, borderRadius,
-                borderSize, viewModel, widget.data!.textKey),
-            _buildConfirmationFormField(
-                color,
-                bindings,
-                borderRadius,
-                borderSize,
-                viewModel,
-                widget.data!.confirmPasswordPlaceholder)
-          ]);
+    var stack = widget.data?.stack;
+    if (stack == NssStack.horizontal) {
+      return Flexible(
+        child: Row(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildTextFormField(color, bindings, borderRadius, borderSize,
+                  viewModel, widget.data!.textKey),
+              _buildConfirmationFormField(color, bindings, borderRadius,
+                  borderSize, viewModel, widget.data!.confirmPasswordPlaceholder)
+            ]),
+      );
     } else {
-      return
-        Column(
+      return Flexible(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-        _buildTextFormField(color, bindings, borderRadius, borderSize,
-            viewModel, widget.data!.textKey),
-        _buildConfirmationFormField(color, bindings, borderRadius, borderSize,
-            viewModel, widget.data!.confirmPasswordPlaceholder),
-        ],
+            _buildTextFormField(color, bindings, borderRadius, borderSize,
+                viewModel, widget.data!.textKey),
+            _buildConfirmationFormField(color, bindings, borderRadius, borderSize,
+                viewModel, widget.data!.confirmPasswordPlaceholder),
+          ],
+        ),
       );
     }
   }
@@ -194,11 +194,10 @@ class _TextInputWidgetState extends State<TextInputWidget>
   /// Build generic text form field dynamic widget.
   Widget _buildTextFormField(Color? color, BindingModel bindings, borderRadius,
       borderSize, ScreenViewModel viewModel, hintText) {
-    return  Flexible(
-    fit: FlexFit.loose,
-      child:SemanticsWrapperWidget(
-      accessibility: widget.data!.accessibility,
-
+    return Flexible(
+      fit: FlexFit.loose,
+      child: SemanticsWrapperWidget(
+        accessibility: widget.data!.accessibility,
         child: Padding(
           padding: getStyle(Styles.margin, data: widget.data),
           child: NssCustomSizeWidget(
@@ -219,8 +218,9 @@ class _TextInputWidgetState extends State<TextInputWidget>
                 textAlign: getStyle(Styles.textAlign, data: widget.data) ??
                     TextAlign.start,
                 style: TextStyle(
-                    color:
-                        widget.data!.disabled! ? color!.withOpacity(0.3) : color,
+                    color: widget.data!.disabled!
+                        ? color!.withOpacity(0.3)
+                        : color,
                     fontSize: getStyle(Styles.fontSize, data: widget.data),
                     fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
                 decoration: InputDecoration(
@@ -250,7 +250,8 @@ class _TextInputWidgetState extends State<TextInputWidget>
                   hintStyle: TextStyle(
                     color: widget.data!.disabled!
                         ? getStyle(Styles.placeholderColor,
-                                data: widget.data, themeProperty: 'disabledColor')
+                                data: widget.data,
+                                themeProperty: 'disabledColor')
                             .withOpacity(0.3)
                         : getStyle(Styles.placeholderColor,
                                 data: widget.data, themeProperty: 'textColor')
@@ -376,9 +377,9 @@ class _TextInputWidgetState extends State<TextInputWidget>
   /// Generate confirmation field for password widget.
   Widget _buildConfirmationFormField(Color? color, BindingModel bindings,
       borderRadius, borderSize, ScreenViewModel viewModel, hintText) {
-    return  Flexible(
+    return Flexible(
       fit: FlexFit.loose,
-      child:SemanticsWrapperWidget(
+      child: SemanticsWrapperWidget(
         accessibility: widget.data!.accessibility,
         child: Padding(
           padding: getStyle(Styles.margin, data: widget.data),
@@ -400,8 +401,9 @@ class _TextInputWidgetState extends State<TextInputWidget>
                 textAlign: getStyle(Styles.textAlign, data: widget.data) ??
                     TextAlign.start,
                 style: TextStyle(
-                    color:
-                        widget.data!.disabled! ? color!.withOpacity(0.3) : color,
+                    color: widget.data!.disabled!
+                        ? color!.withOpacity(0.3)
+                        : color,
                     fontSize: getStyle(Styles.fontSize, data: widget.data),
                     fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
                 decoration: InputDecoration(
@@ -420,8 +422,9 @@ class _TextInputWidgetState extends State<TextInputWidget>
                     },
                     icon: Icon(
                       Icons.remove_red_eye,
-                      color:
-                          _obscuredConfirmText ? Colors.black12 : Colors.black54,
+                      color: _obscuredConfirmText
+                          ? Colors.black12
+                          : Colors.black54,
                     ),
                   ),
                   fillColor: getStyle(Styles.background, data: widget.data),
@@ -429,7 +432,8 @@ class _TextInputWidgetState extends State<TextInputWidget>
                   hintStyle: TextStyle(
                     color: widget.data!.disabled!
                         ? getStyle(Styles.placeholderColor,
-                                data: widget.data, themeProperty: 'disabledColor')
+                                data: widget.data,
+                                themeProperty: 'disabledColor')
                             .withOpacity(0.3)
                         : getStyle(Styles.placeholderColor,
                                 data: widget.data, themeProperty: 'textColor')
