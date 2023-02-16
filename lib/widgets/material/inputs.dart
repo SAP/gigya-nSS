@@ -535,6 +535,10 @@ class _TextInputWidgetState extends State<TextInputWidget>
                         ),
                 ),
                 validator: (input) {
+                  var userValidation = validateField(input, widget.data!.bind);
+                  if(userValidation != null)
+                    return userValidation;
+
                   if (_match == true)
                     return null;
                   else {
