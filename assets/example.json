@@ -334,7 +334,12 @@
           "bind": "#email",
           "type": "emailInput",
           "textKey": "common-email",
-          "theme": "input"
+          "theme": "input",
+          "validations": {
+            "required": {
+              "enabled": true,
+              "errorKey": "error-required-field"
+            }}
         },
         {
           "type": "container",
@@ -365,7 +370,12 @@
           "theme": "input",
           "confirmPassword": true,
           "confirmPasswordPlaceholder": "confirm-password",
-          "stack": "vertical"
+          "stack": "vertical",
+          "validations": {
+            "required": {
+              "enabled": true,
+              "errorKey": "error-required-field"
+            }}
         },
         {
           "type": "label",
