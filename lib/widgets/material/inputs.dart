@@ -239,9 +239,8 @@ class _TextInputWidgetState extends State<TextInputWidget>
                             _toggleTextObfuscationState();
                           },
                           icon: Icon(
-                            Icons.remove_red_eye,
-                            color:
-                                _obscuredText ? Colors.black12 : Colors.black54,
+                              _obscuredText ? Icons.visibility_off : Icons.visibility,
+                              color: Colors.black54
                           ),
                         )
                       : null,
@@ -421,10 +420,8 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       _toggleConfirmObfuscationState();
                     },
                     icon: Icon(
-                      Icons.remove_red_eye,
-                      color: _obscuredConfirmText
-                          ? Colors.black12
-                          : Colors.black54,
+                        _obscuredText ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.black54
                     ),
                   ),
                   fillColor: getStyle(Styles.background, data: widget.data),
