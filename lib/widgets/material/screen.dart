@@ -184,6 +184,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   _removeUnsecureRoutingData() {
     // Remove password field from widget routing.
     widget.routingData!.remove('password');
+    widget.routingData!.remove('newPassword');
   }
 
   /// Route to next screen.
