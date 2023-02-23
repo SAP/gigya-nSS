@@ -239,7 +239,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                             _toggleTextObfuscationState();
                           },
                           icon: Icon(
-                              _obscuredText ? Icons.visibility_off : Icons.visibility,
+                              _obscuredText ?  Icons.visibility : Icons.visibility_off,
                               color: Colors.black54
                           ),
                         )
@@ -420,7 +420,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       _toggleConfirmObfuscationState();
                     },
                     icon: Icon(
-                        _obscuredConfirmText ? Icons.visibility_off : Icons.visibility,
+                        _obscuredConfirmText ? Icons.visibility: Icons.visibility_off,
                         color: Colors.black54
                     ),
                   ),
