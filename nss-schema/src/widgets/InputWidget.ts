@@ -16,6 +16,20 @@ export default new WidgetEntity('Input', mergeDeep({},
                 'emailInput',
                 'passwordInput',
             ]
-        }
+        },
+        confirmPassword: {
+            type: 'boolean',
+            default: false
+        },
+        confirmPasswordPlaceholder: {
+            type: 'string',
+        },
+        stack: {
+            enum: [
+                'vertical',
+                'horizontal'
+            ],
+            default: 'vertical'
+        },
     }
 }));

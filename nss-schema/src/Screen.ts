@@ -14,6 +14,19 @@ export default new SchemaEntity('Screen', mergeDeep({},
         'children'
     ],
     properties: {
+            screens: {
+                enum: [
+                    'login',
+                    'register',
+                    'account update',
+                    'forgot password',
+                    'change password',
+                    'link account',
+                    'otp',
+                    'empty'
+                ],
+                default: 'login'
+            },
         action: {
             enum: [
                 'login',

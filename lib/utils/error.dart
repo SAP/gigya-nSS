@@ -9,6 +9,7 @@ class ErrorUtils {
   static const profileErrorImageUpload = 'error-photo-failed-upload';
   static const profileErrorImageSize = 'error-photo-image-size';
   static const canceledError = 'error-operation-canceled';
+  static const confirmPasswordMismatch = 'The passwords do not match';
 
   void addDefaultError(
       Map<String, dynamic> localization, String key, String defaultString) {
@@ -31,6 +32,8 @@ class ErrorUtils {
         localization, profileErrorImageSize, 'Image exceeded file-size limits');
     addDefaultError(
         localization, profileErrorImageSize, 'Image exceeded file-size limits');
+    addDefaultError(
+        localization, confirmPasswordMismatch, 'Image exceeded file-size limits');
   }
 }
 
