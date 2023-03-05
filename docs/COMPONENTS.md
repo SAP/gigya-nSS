@@ -137,8 +137,14 @@ Text input can be cusomized for specific input types: **emailInput, passwordInpu
 {  
  "type": "textInput"|"email"|"password", "bind": "profile.firstName", "textKey": "First name", "style":{ "placeholderColor":"#add8e6" "textAlign":"center" }}  
 ```  
-
 If using a "passwordInput" the text will be obfuscated by default and a "showText" icon will be presented at the end of the input box.
+
+#### Password confirmation
+TextInput allows additional parameters to be added when using "passwordInput" to apply password confirmation:
+
+* confirmPassword - set to "true" to enable the option.
+* confirmPasswordPlaceholder - to set custom placeholder for the password confirmation input field.
+*  stack - vertical/horizontal to set the placement of the adjacent input fields.
 
 ### Component Type: Social Login Button
 
