@@ -118,13 +118,77 @@
     }
   },
   "routing": {
-    "initial": "register",
+    "initial": "xxx",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
     }
   },
   "screens": {
+    "xxx": {
+      "routing": {
+        "onPendingRegistration": "account-update",
+        "onLoginIdentifierExists": "link-account",
+        "onSuccess": "account-update"
+      },
+      "action": "login",
+      "alignment": "center",
+      "appBar": {
+        "textKey": "login"
+      },
+      "children": [
+        {
+          "type": "container",
+          "stack": "horizontal",
+          "alignment": "start",
+          "style": {
+            "margin": 0
+          },
+          "children": [
+            {
+              "type": "label",
+              "textKey": "login-social-title",
+              "theme": "title",
+              "style": {
+                "margin": [
+                  16,
+                  0,
+                  16,
+                  0
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "bind": "#loginID",
+          "type": "emailInput",
+          "textKey": "common-email",
+          "theme": "input",
+          "style": {
+            "margin": [
+              33,
+              0,
+              16,
+              0
+            ],
+            "cornerRadius": 22,
+            "borderSize": 1
+          },
+          "validations": {
+            "required": {
+              "enabled": true,
+              "errorKey": "error-required-field"
+            },
+            "regex": {
+              "enabled": true,
+              "format": "^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\\.[a-zA-Z]+",
+              "errorKey": "error-invalid-email"
+            }
+          }
+        }
+      ]
+    },
     "login": {
       "routing": {
         "onPendingRegistration": "account-update",
@@ -248,7 +312,7 @@
           "type": "passwordInput",
           "textKey": "common-password",
           "theme": "input",
-          "confirmPassword": true,
+          "confirmPassword": false,
           "confirmPasswordPlaceholder": "confirm-password",
           "stack": "horizontal",
           "style": {
@@ -258,6 +322,7 @@
               16,
               4
             ],
+
             "borderSize": 1
           },
           "validations": {

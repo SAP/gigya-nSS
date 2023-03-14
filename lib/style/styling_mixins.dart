@@ -74,9 +74,9 @@ mixin StyleMixin {
     'background': 'white',
     'elevation': 0,
     'opacity': 1.0,
-    'borderColor': 'transparent',
-    'borderSize': 0,
-    'cornerRadius': 0,
+    'borderColor': '0x8A000000',
+    'borderSize': 1,
+    'cornerRadius': 8,
     'linkColor': 'blue',
     'placeholderColor': 'black'
   };
@@ -191,11 +191,17 @@ mixin StyleMixin {
     } else if (padding is int) {
       return EdgeInsets.all(ensureDouble(padding)!);
     } else if (padding is List<dynamic>) {
-      return EdgeInsets.only(
-          left: ensureDouble(padding[0])!,
-          top: ensureDouble(padding[1])!,
-          right: ensureDouble(padding[2])!,
-          bottom: ensureDouble(padding[3])!);
+      return EdgeInsets.fromLTRB(
+          ensureDouble(padding[0])!,
+          ensureDouble(padding[1])!,
+          ensureDouble(padding[2])!,
+          ensureDouble(padding[3])!);
+
+      // return EdgeInsets.only(
+      //     left: ensureDouble(padding[0])!,
+      //     top: ensureDouble(padding[1])!,
+      //     right: ensureDouble(padding[2])!,
+      //     bottom: ensureDouble(padding[3])!);
     }
     return EdgeInsets.zero;
   }
