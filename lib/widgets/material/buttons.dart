@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
@@ -56,6 +57,30 @@ class _SubmitWidgetState extends State<SubmitWidget>
     TextAlign textAlign =
         getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.center;
 
+    ButtonStyle btnStyle = ElevatedButton.styleFrom(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: widget.data!.disabled!
+              ? getThemeColor('disabledColor')
+              .withOpacity(0.3)
+              : getStyle(Styles.borderColor,
+              data: widget.data),
+          width: getStyle(Styles.borderSize,
+              data: widget.data) ??
+              0,
+        ),
+        borderRadius: BorderRadius.circular(
+          getStyle(Styles.cornerRadius, data: widget.data),
+        ),
+      ),
+      primary: widget.data!.disabled!
+          ? getThemeColor('disabledColor').withOpacity(0.3)
+          : getStyle(Styles.background,
+          data: widget.data,
+          themeProperty: 'primaryColor'),
+      elevation: getElevationStyleProperty(),
+    );
+
     return SemanticsWrapperWidget(
       accessibility: widget.data!.accessibility,
       child: Padding(
@@ -72,30 +97,9 @@ class _SubmitWidgetState extends State<SubmitWidget>
                     opacity: getStyle(Styles.opacity, data: widget.data),
                     child: ButtonTheme(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              color: widget.data!.disabled!
-                                  ? getThemeColor('disabledColor')
-                                      .withOpacity(0.3)
-                                  : getStyle(Styles.borderColor,
-                                      data: widget.data),
-                              width: getStyle(Styles.borderSize,
-                                      data: widget.data) ??
-                                  0,
-                            ),
-                            borderRadius: BorderRadius.circular(
-                              getStyle(Styles.cornerRadius, data: widget.data),
-                            ),
-                          ),
-                          primary: widget.data!.disabled!
-                              ? getThemeColor('disabledColor').withOpacity(0.3)
-                              : getStyle(Styles.background,
-                                  data: widget.data,
-                                  themeProperty: 'primaryColor'),
-                          elevation: getElevationStyleProperty(),
-                        ),
+                      child: PlatformElevatedButton(
+                        cupertino: (_, __) => CupertinoElevatedButtonData(),
+                        material: (_, __) => MaterialElevatedButtonData(style: btnStyle),
                         // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         // elevation: getElevationStyleProperty(),
                         // hoverElevation: isFlat() ? 0 : null,

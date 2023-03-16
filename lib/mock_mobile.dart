@@ -26,7 +26,7 @@ class _MyAppState extends State<MyApp> {
 
     return PlatformProvider(
       settings: PlatformSettingsData
-        (platformStyle: PlatformStyleData(android: PlatformStyle.Material)),
+        (platformStyle: PlatformStyleData(android: PlatformStyle.Cupertino)),
       builder: (context) => PlatformApp(
         localizationsDelegates: <LocalizationsDelegate<dynamic>>[
           DefaultMaterialLocalizations.delegate,

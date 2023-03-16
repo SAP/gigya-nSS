@@ -202,13 +202,13 @@ class _TextInputWidgetState extends State<TextInputWidget>
       child: SemanticsWrapperWidget(
         accessibility: widget.data!.accessibility,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(0, 16, 0, 16), //getStyle(Styles.margin, data: widget.data),
+          padding:  getStyle(Styles.margin, data: widget.data),
           child: NssCustomSizeWidget(
             data: widget.data,
             child: Opacity(
               opacity: getStyle(Styles.opacity, data: widget.data),
               child: PlatformTextFormField(
-                hintText:localizedStringFor(hintText),
+                  hintText:localizedStringFor(hintText),
                 material: (_,__) => MaterialTextFormFieldData(
                     decoration: InputDecoration(
                   contentPadding:
@@ -344,11 +344,12 @@ class _TextInputWidgetState extends State<TextInputWidget>
                         data: widget.data, themeProperty: 'textColor')
                         .withOpacity(0.5),
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+                  padding: EdgeInsets.all(8), //EdgeInsets.symmetric(vertical: 4, horizontal: 4),
                   decoration: BoxDecoration(
                     color: getStyle(Styles.background, data: widget.data),
                     borderRadius: BorderRadius.circular(getStyle(Styles.cornerRadius, data: widget.data)),
-                    border: Border.all(color:getStyle(Styles.borderColor, data: widget.data) ?? Colors.black54, width: getStyle(Styles.borderSize, data: widget.data)),
+                    border: Border.all(color:getStyle(Styles.borderColor, data: widget.data)),
+                    //shape: BoxShape.rectangle
                   ),
                 ),
                 textAlignVertical: TextAlignVertical.center,

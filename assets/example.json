@@ -17,10 +17,11 @@
       "fontSize": 16
     },
     "input": {
+      "cornerRadius": 4,
       "margin": [
         16,
         8,
-        15,
+        16,
         8
       ]
     },
@@ -142,7 +143,7 @@
           "stack": "horizontal",
           "alignment": "start",
           "style": {
-            "margin": 0
+            "margin": 33
           },
           "children": [
             {
@@ -150,11 +151,12 @@
               "textKey": "login-social-title",
               "theme": "title",
               "style": {
+                "textAlign": "center",
                 "margin": [
                   16,
                   0,
                   16,
-                  0
+                  8
                 ]
               }
             }
@@ -167,10 +169,10 @@
           "theme": "input",
           "style": {
             "margin": [
-              33,
-              0,
-              16,
-              0
+              8,
+              22,
+              8,
+              22
             ],
             "cornerRadius": 22,
             "borderSize": 1
