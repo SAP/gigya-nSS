@@ -76,8 +76,7 @@ class _SubmitWidgetState extends State<SubmitWidget>
       primary: widget.data!.disabled!
           ? getThemeColor('disabledColor').withOpacity(0.3)
           : getStyle(Styles.background,
-          data: widget.data,
-          themeProperty: 'primaryColor'),
+          data: widget.data),
       elevation: getElevationStyleProperty(),
     );
 
@@ -98,7 +97,19 @@ class _SubmitWidgetState extends State<SubmitWidget>
                     child: ButtonTheme(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       child: PlatformElevatedButton(
-                        cupertino: (_, __) => CupertinoElevatedButtonData(),
+                        color: widget.data!.disabled!
+                            ? getThemeColor('disabledColor').withOpacity(0.7)
+                            : getStyle(Styles.background,
+                            data: widget.data),
+                        //color: Colors.black54,
+                        padding: EdgeInsets.all(2),
+                        cupertino: (_, __) => CupertinoElevatedButtonData(
+                            borderRadius: BorderRadius.circular(
+                              getStyle(Styles.cornerRadius, data: widget.data),
+                            ),
+                          disabledColor: getThemeColor('disabledColor').withOpacity(0.7),
+                            pressedOpacity: 0.8
+                        ),
                         material: (_, __) => MaterialElevatedButtonData(style: btnStyle),
                         // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         // elevation: getElevationStyleProperty(),
@@ -162,8 +173,8 @@ class _SubmitWidgetState extends State<SubmitWidget>
   /// Set the elevation property of the button.
   /// Default will be set to 0.
   dynamic getElevationStyleProperty() {
-    if (widget.data!.disabled!) return 0;
-    return getStyle(Styles.elevation, data: widget.data) ?? 0;
+    if (widget.data!.disabled!) return null;
+    return getStyle(Styles.elevation, data: widget.data) ?? null;
   }
 
   dynamic isFlat() => getElevationStyleProperty() == 0;

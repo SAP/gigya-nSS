@@ -140,7 +140,7 @@
       "children": [
         {
           "type": "container",
-          "stack": "horizontal",
+          "stack": "vertical",
           "alignment": "start",
           "style": {
             "margin": 33
@@ -159,36 +159,89 @@
                   8
                 ]
               }
+            },
+            {
+              "bind": "#loginID",
+              "type": "emailInput",
+              "textKey": "common-email",
+              "theme": "input",
+              "style": {
+                "margin": [
+                  16,
+                  0,
+                  16,
+                  0
+                ],
+                "cornerRadius": 22,
+                "borderSize": 1
+              },
+              "validations": {
+                "required": {
+                  "enabled": true,
+                  "errorKey": "error-required-field"
+                },
+                "regex": {
+                  "enabled": true,
+                  "format": "^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\\.[a-zA-Z]+",
+                  "errorKey": "error-invalid-email"
+                }
+              }
+            },
+            {
+              "bind": "#password",
+              "type": "passwordInput",
+              "textKey": "common-password",
+              "theme": "input",
+              "confirmPassword": true,
+              "confirmPasswordPlaceholder": "confirm-password",
+              "stack": "vertical",
+              "style": {
+                "margin": [
+                  16,
+                  4,
+                  16,
+                  4
+                ],
+
+                "borderSize": 1
+              },
+              "validations": {
+                "required": {
+                  "enabled": true,
+                  "errorKey": "error-required-field"
+                },
+                "regex": {
+                  "enabled": true,
+                  "format": "(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@%#$&*~]).{8,}",
+                  "errorKey": "error-invalid-format"
+                }
+              }
             }
           ]
         },
         {
-          "bind": "#loginID",
-          "type": "emailInput",
-          "textKey": "common-email",
-          "theme": "input",
+          "type": "container",
+          "stack": "vertical",
+          "alignment": "start",
           "style": {
-            "margin": [
-              8,
-              22,
-              8,
-              22
-            ],
-            "cornerRadius": 22,
-            "borderSize": 1
+            "margin": 33
           },
-          "validations": {
-            "required": {
-              "enabled": true,
-              "errorKey": "error-required-field"
-            },
-            "regex": {
-              "enabled": true,
-              "format": "^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\\.[a-zA-Z]+",
-              "errorKey": "error-invalid-email"
-            }
+          "children": [
+        {
+          "type": "submit",
+          "textKey": "common-submit",
+          "theme": "raisedButton",
+          "disabled": false,
+          "style": {
+            "cornerRadius": 0,
+            "borderColor": "black",
+            "borderSize": 2
           }
         }
+          ]
+        }
+
+
       ]
     },
     "login": {
@@ -314,7 +367,7 @@
           "type": "passwordInput",
           "textKey": "common-password",
           "theme": "input",
-          "confirmPassword": false,
+          "confirmPassword": true,
           "confirmPasswordPlaceholder": "confirm-password",
           "stack": "horizontal",
           "style": {

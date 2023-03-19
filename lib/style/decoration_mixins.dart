@@ -98,7 +98,7 @@ class NssCustomSizeWidget extends StatelessWidget {
     }
 
     return SizedBox(
-      width: ensureDouble(size[0]),
+      width: double.infinity,// ensureDouble(size[0]),
       height: ensureDouble(size[1]),
       child: child,
     );
