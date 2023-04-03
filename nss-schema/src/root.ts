@@ -21,13 +21,13 @@ export default mergeDeep({}, Themes,  {
             type: 'boolean',
             default: false
         },
-        platformAware: {
-            type: 'boolean',
-            default: false
-        },
         platformAwareMode: {
             type: 'string',
             default: 'material'
+        },
+        platformAware: {
+            type: 'boolean',
+            default: false
         },
         routing: {
             description: 'General routing definitions',
