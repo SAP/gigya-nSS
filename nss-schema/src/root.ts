@@ -21,6 +21,14 @@ export default mergeDeep({}, Themes,  {
             type: 'boolean',
             default: false
         },
+        platformAware: {
+            type: 'boolean',
+            default: false
+        },
+        platformAwareMode: {
+            type: 'string',
+            default: 'material'
+        },
         routing: {
             description: 'General routing definitions',
             additionalProperties: false,
