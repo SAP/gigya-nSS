@@ -9,6 +9,7 @@ class Markup {
   Platform? platform;
   @JsonKey(defaultValue: false)
   bool? platformAware;
+  String? platformAwareMode;
   Map<String, Screen>? screens;
   Routing? routing;
   Map<String, dynamic>? theme;
@@ -21,7 +22,9 @@ class Markup {
   bool? useSchemaValidations;
 
   Markup(
-      {this.platformAware,
+      {
+        this.platformAware,
+        this.platformAwareMode,
       this.screens,
       this.routing,
       this.theme,

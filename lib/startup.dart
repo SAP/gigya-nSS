@@ -68,6 +68,7 @@ class _StartupWidgetState extends State<StartupWidget> {
     final Markup markup = Markup.fromJson(fetchData.cast<String, dynamic>());
     widget.config!.markup = markup;
     widget.config!.isPlatformAware = markup.platformAware ?? false;
+    widget.config!.platformAwareMode = markup.platformAwareMode ?? 'cupertino';
 
     // Fetch and parse the schema if required in markup preference (and not in mock mode).
     if (markup.useSchemaValidations! && !widget.config!.isMock!) {

@@ -49,6 +49,7 @@
     }
   },
   "useSchemaValidations": false,
+  "platformAware": true,
   "i18n": {
     "_default": {
       "login": "Login",
