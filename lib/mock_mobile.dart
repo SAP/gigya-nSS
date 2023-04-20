@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
     var fetchData = await _markupFromMock();
     final Markup markup = Markup.fromJson(fetchData.cast<String, dynamic>());
     config.markup = markup;
-    config.isPlatformAware = false;
+
     // Add default localization values that are needed (can be overridden by client).
     ErrorUtils().addDefaultStringValues(config.markup!.localization!);
   }
