@@ -35,7 +35,6 @@ class _MyAppState extends State<MyApp> {
 
   Widget createApp() {
     return MaterialApp(
-      // showSemanticsDebugger: true,
       debugShowCheckedModeBanner: false,
       color: Colors.white,
       initialRoute: '/',
