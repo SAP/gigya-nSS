@@ -14,10 +14,6 @@ import 'models/markup.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
-  // late final NssConfig? config;
-  // late final NssChannels? channels;
-
-
   @override
   _MyAppState createState() => _MyAppState();
 }
