@@ -10,8 +10,6 @@ import 'package:gigya_native_screensets_engine/widgets/router.dart';
 /// the necessary initialization data/configuration and determine the actual theme of the main app along
 /// with obtaining & parsing the main JSON data.
 class StartupWidget extends StatefulWidget {
-  // const StartupWidget({Key? key, this.config, this.channels}) : super(key: key);
-
   @override
   _StartupWidgetState createState() => _StartupWidgetState();
 }
