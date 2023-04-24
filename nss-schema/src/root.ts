@@ -21,10 +21,6 @@ export default mergeDeep({}, Themes,  {
             type: 'boolean',
             default: false
         },
-        platformAwareMode: {
-            type: 'string',
-            default: 'material'
-        },
         platformAware: {
             type: 'boolean',
             default: false

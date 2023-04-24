@@ -53,3 +53,5 @@ coverage/
 nss-schema/deploy.ts
 
 scripts_local
+
+Flutter-Build.txt
