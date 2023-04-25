@@ -17,7 +17,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    WebContainer().startEngine(asWeb: true);
+    WebContainer().startEngine();
   }
 
   @override

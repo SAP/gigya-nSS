@@ -13,9 +13,10 @@ import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import '../config.dart';
 
 class WebContainer {
-  void startEngine({bool asMock = false, bool asWeb = false}) {
+  void startEngine({bool asMock = false}) {
     NssIoc()
         .register(NssConfig, (ioc) => NssConfig(isMock: asMock), singleton: true)
+        .register(NssChannels, (ioc) => WebChannels(), singleton: true)
         .register(BindingModel, (ioc) => BindingModel())
         .register(RuntimeStateEvaluator, (ioc) => RuntimeStateEvaluator())
         .register(Logger, (ioc) => Logger(ioc.use(NssConfig), ioc.use(NssChannels)))
@@ -32,9 +33,5 @@ class WebContainer {
         .register(ScreenViewModel, (ioc) => ScreenViewModel(ioc.use(ApiService), ioc.use(ScreenService)))
         .register(StartupWidget, (ioc) => StartupWidget(),
             singleton: true);
-
-    if(asWeb){
-      NssIoc().register(NssChannels, (ioc) => WebChannels(), singleton: true);
-    }
   }
 }
