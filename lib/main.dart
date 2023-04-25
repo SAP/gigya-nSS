@@ -3,8 +3,6 @@ import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
-
-import 'comm/web_channel.dart';
 import 'config.dart';
 import 'ioc/ioc_mobile.dart';
 import 'models/markup.dart';
@@ -48,7 +46,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> fetchMarkupAndSchema() async {
     final NssConfig config = NssIoc().use(NssConfig);
-    final NssWebMethodChannel ignitionChannel = NssIoc().use(NssChannels).ignitionChannel;
+    final NssChannels channels = NssIoc().use(NssChannels);
+
 
     var fetchData = await _markupFromChannel(config.version);
     final Markup markup = Markup.fromJson(fetchData.cast<String, dynamic>());
@@ -59,7 +58,7 @@ class _MyAppState extends State<MyApp> {
       engineLogger!.d(
           "startup widget: requesting schema (schemaValidations)",
           tag: Logger.dTag);
-      var rawSchema = await ignitionChannel.invokeMethod<Map<dynamic, dynamic>>('load_schema');
+      var rawSchema = await channels!.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>('load_schema');
       var newSchema = {
         'profile': rawSchema['profileSchema']['fields'],
         'data': rawSchema['dataSchema']['fields'],
@@ -75,9 +74,9 @@ class _MyAppState extends State<MyApp> {
 
   /// Fetch markup from the running platform.
   Future<Map<dynamic, dynamic>> _markupFromChannel(version) async {
-    final NssWebMethodChannel ignitionChannel = NssIoc().use(NssChannels).ignitionChannel;
+    final NssChannels channels = NssIoc().use(NssChannels);
 
-    return ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(
+    return channels!.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(
         'ignition', {'version': version});
   }
 

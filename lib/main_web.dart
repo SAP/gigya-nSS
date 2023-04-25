@@ -17,7 +17,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    WebContainer().startEngine();
+    WebContainer().startEngine(asWeb: true);
   }
 
   @override
@@ -51,9 +51,9 @@ class _MyAppState extends State<MyApp> {
 
   /// Fetch markup from the running platform.
   Future<Map<dynamic, dynamic>> _markupFromChannel(version) async {
-    final NssWebMethodChannel ignitionChannel = NssIoc().use(NssChannels).ignitionChannel;
+    final NssChannels channels = NssIoc().use(NssChannels);
 
-    return ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(
+    return channels!.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(
         'ignition', {'version': version});
   }
 
