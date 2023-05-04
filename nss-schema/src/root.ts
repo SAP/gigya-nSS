@@ -21,13 +21,9 @@ export default mergeDeep({}, Themes,  {
             type: 'boolean',
             default: false
         },
-        platformAware {
+        platformAware: {
             type: 'boolean',
             default: false
-        },
-        platformAwareMode {
-            type: 'string',
-            default: 'cupertino'
         },
         routing: {
             description: 'General routing definitions',
