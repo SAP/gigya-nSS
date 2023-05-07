@@ -120,7 +120,7 @@
     }
   },
   "routing": {
-    "initial": "xxx",
+    "initial": "login",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"

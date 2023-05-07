@@ -75,7 +75,7 @@ class _ContainerWidgetState extends State<ContainerWidget> with StyleMixin, Deco
               height: containerHeight(),
               decoration: BoxDecoration(
                 color: background is Color ? background : Colors.transparent,
-                border: Border.all(color:borderColor, width:borderSize),
+                border: borderSize > 0 ? Border.all(color:borderColor, width:borderSize) : null,
                 borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
               ),
               child: widget.child,

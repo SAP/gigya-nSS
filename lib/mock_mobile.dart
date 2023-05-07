@@ -42,12 +42,6 @@ class _MyAppState extends State<MyApp> {
 
 
   Widget createApp() {
-    // return MaterialApp(
-    //   debugShowCheckedModeBanner: false,
-    //   color: Colors.white,
-    //   initialRoute: '/',
-    //   onGenerateRoute: NssIoc().use(MaterialRouter).generateRoute,
-    // );
     return PlatformProvider(
       settings: PlatformSettingsData
         (platformStyle: PlatformStyleData(android: isCupertino() ? PlatformStyle.Cupertino : PlatformStyle.Material)),
@@ -81,6 +75,6 @@ class _MyAppState extends State<MyApp> {
 
   bool isCupertino(){
     final NssConfig config = NssIoc().use(NssConfig);
-    return  config.markup?.platformAware == true && config.markup?.platformAwareMode?.toLowerCase() == 'cupertino';
+    return config.markup?.platformAware == true && config.markup?.platformAwareMode?.toLowerCase() == 'cupertino';
   }
 }

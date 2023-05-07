@@ -544,7 +544,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                     ),
                   ),),
                   cupertino: (_,__) => CupertinoTextFormFieldData(
-                    prefix: Text(localizedStringFor(hintText) ?? "noting"),
+                    prefix: Text(localizedStringFor(hintText) ?? ""),
                     placeholder: localizedStringFor(hintText),
                     placeholderStyle: TextStyle(
                       color: widget.data!.disabled!

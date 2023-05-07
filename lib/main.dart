@@ -38,13 +38,9 @@ class _MyAppState extends State<MyApp> {
 
 
   Widget createApp() {
-    // return MaterialApp(
-    //   debugShowCheckedModeBanner: false,
-    //   color: Colors.white,
-    //   initialRoute: '/',
-    //   onGenerateRoute: NssIoc().use(MaterialRouter).generateRoute,
-    // );
     return PlatformProvider(
+      settings: PlatformSettingsData
+        (platformStyle: PlatformStyleData(android: isCupertino() ? PlatformStyle.Cupertino : PlatformStyle.Material)),
       builder: (context) => PlatformApp(
         localizationsDelegates: <LocalizationsDelegate<dynamic>>[
           DefaultMaterialLocalizations.delegate,
@@ -91,6 +87,11 @@ class _MyAppState extends State<MyApp> {
 
     return channels!.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(
         'ignition', {'version': version});
+  }
+
+  bool isCupertino(){
+    final NssConfig config = NssIoc().use(NssConfig);
+    return config.markup?.platformAware == true && config.markup?.platformAwareMode?.toLowerCase() == 'cupertino';
   }
 
 }

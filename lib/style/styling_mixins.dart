@@ -75,8 +75,8 @@ mixin StyleMixin {
     'elevation': 0,
     'opacity': 1.0,
     'borderColor': '0x8A000000',
-    'borderSize': 1,
-    'cornerRadius': 8,
+    'borderSize': 0,
+    'cornerRadius': 0,
     'linkColor': 'blue',
     'placeholderColor': 'black'
   };
@@ -206,7 +206,6 @@ mixin StyleMixin {
     }else {
       result = EdgeInsets.zero;
     }
-    print(result);
     return result;
   }
 
