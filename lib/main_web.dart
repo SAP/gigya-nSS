@@ -55,6 +55,7 @@ class _MyAppState extends State<MyApp> {
     var fetchData = await _markupFromChannel(config.version);
     final Markup markup = Markup.fromJson(fetchData.cast<String, dynamic>());
     config.markup = markup;
+    config.platformAwareMode = markup.platformAwareMode ?? 'material';
   }
 
   /// Fetch markup from the running platform.

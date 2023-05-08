@@ -61,6 +61,7 @@ class _MyAppState extends State<MyApp> {
     var fetchData = await _markupFromChannel(config.version);
     final Markup markup = Markup.fromJson(fetchData.cast<String, dynamic>());
     config.markup = markup;
+    config.platformAwareMode = markup.platformAwareMode ?? 'material';
 
     //Fetch and parse the schema if required in markup preference (and not in mock mode).
     if (markup.useSchemaValidations! && !config.isMock!) {
