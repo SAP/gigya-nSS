@@ -120,7 +120,7 @@
     }
   },
   "routing": {
-    "initial": "login",
+    "initial": "xxx",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -147,6 +147,19 @@
             "margin": 33
           },
           "children": [
+            {
+              "bind": "data.terms",
+              "type": "checkbox",
+              "textKey": "register-terms+link",
+              "style": {
+                "margin": [
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              }
+            },
             {
               "type": "label",
               "textKey": "login-social-title",

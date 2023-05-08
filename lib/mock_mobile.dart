@@ -76,6 +76,7 @@ class _MyAppState extends State<MyApp> {
 
   bool isCupertino(){
     final NssConfig config = NssIoc().use(NssConfig);
+    return true;
     return config.markup?.platformAware == true && config.markup?.platformAwareMode?.toLowerCase() == 'cupertino';
   }
 }
