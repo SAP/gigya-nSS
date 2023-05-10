@@ -44,7 +44,7 @@ class _MyAppState extends State<MyApp> {
   Widget createApp() {
     return PlatformProvider(
       settings: PlatformSettingsData
-        (platformStyle: PlatformStyleData(android: isCupertino() ? PlatformStyle.Cupertino : PlatformStyle.Material)),
+        (platformStyle: PlatformStyleData(android: showCupertino() ? PlatformStyle.Cupertino : PlatformStyle.Material)),
       builder: (context) => PlatformApp(
         localizationsDelegates: <LocalizationsDelegate<dynamic>>[
           DefaultMaterialLocalizations.delegate,
@@ -74,9 +74,8 @@ class _MyAppState extends State<MyApp> {
     return jsonDecode(json);
   }
 
-  bool isCupertino(){
+  bool showCupertino(){
     final NssConfig config = NssIoc().use(NssConfig);
-    return true;
     return config.markup?.platformAware == true && config.markup?.platformAwareMode?.toLowerCase() == 'cupertino';
   }
 }
