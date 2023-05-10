@@ -161,6 +161,36 @@
               }
             },
             {
+              "type": "dropdown",
+              "bind": "data.favGuitar",
+              "validations": {
+                "required": {
+                  "enabled": true,
+                  "errorKey": "error-required-field"
+                }
+              },
+              "style": {
+                "cornerRadius": 15,
+                "borderSize": 2,
+                "margin": 16
+              },
+              "options": [
+                {
+                  "value": "",
+                  "textKey": "Paul Reed Smith"
+                },
+                {
+                  "value": "Rubato",
+                  "textKey": "account-custom-rubato"
+                },
+                {
+                  "default": true,
+                  "value": "Parker",
+                  "textKey": "account-custom-parker"
+                }
+              ]
+            },
+            {
               "type": "label",
               "textKey": "login-social-title",
               "theme": "title",

@@ -108,37 +108,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                               ? getThemeColor('disabledColor')
                                                   .withOpacity(0.3)
                                               : getThemeColor('enabledColor')),
-                                  child: getPlatformStyle(context) == PlatformStyle.Material ? getMaterialCheckBox(bindings) : getCupertinoSwitch(bindings)
-                                  // child: Checkbox(
-                                  //   tristate: false,
-                                  //   activeColor: widget.data!.disabled!
-                                  //       ? getThemeColor('disabledColor')
-                                  //           .withOpacity(0.3)
-                                  //       : getThemeColor('enabledColor'),
-                                  //   checkColor: widget.data!.disabled!
-                                  //       ? getThemeColor('disabledColor')
-                                  //           .withOpacity(0.3)
-                                  //       : getThemeColor('secondaryColor'),
-                                  //   value: _currentValue,
-                                  //   onChanged: (bool? val) {
-                                  //     if (widget.data!.disabled!) {
-                                  //       return null;
-                                  //     }
-                                  //     setState(() {
-                                  //       bindings.save<bool?>(
-                                  //           widget.data!.bind, val,
-                                  //           saveAs: widget.data!.sendAs,
-                                  //           asArray: widget.data!.storeAsArray);
-                                  //
-                                  //       // Track runtime data change.
-                                  //       Provider.of<RuntimeStateEvaluator>(
-                                  //               context,
-                                  //               listen: false)
-                                  //           .notifyChanged(
-                                  //               widget.data!.bind, val);
-                                  //     });
-                                  //   },
-                                  // ),
+                                  child: getPlatformStyle(context) == PlatformStyle.Material ? buildMaterialCheckBox(bindings) : buildCupertinoSwitch(bindings)
                                 ),
                               ),
                               Flexible(
@@ -218,7 +188,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
     );
   }
 
-  Widget getMaterialCheckBox(bindings){
+  Widget buildMaterialCheckBox(bindings){
     return Checkbox(
       tristate: false,
       activeColor: widget.data!.disabled!
@@ -251,7 +221,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
     );
   }
 
-  Widget getCupertinoSwitch(bindings){
+  Widget buildCupertinoSwitch(bindings){
     return CupertinoSwitch(
       value: _currentValue ?? false,
       onChanged: (bool? val) {

@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
@@ -38,8 +40,10 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
   List<String?> _dropdownItems = [];
   String? _placeholder;
 
+
   @override
   void initState() {
+    controller = TextEditingController(text: _fruitNames[0]);
     _placeholder = widget.data!.placeholder ?? null;
     super.initState();
 
@@ -105,6 +109,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
         _value = defaultValue;
 
         setOption(_dropdownDisplayValue, bindings);
+        debugPrint(_value);
         debugPrint(
             'No binding value for dropdown -> default value will be displayed');
       } else {
@@ -138,193 +143,9 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                   data: widget.data,
                   child: IgnorePointer(
                     ignoring: widget.data!.disabled!,
-                    child: DropdownButtonFormField<String>(
-                      validator: (input) {
-                        // Field validation triggered.
-                        return validateField(_value, widget.data!.bind);
-                      },
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 14),
-                        isDense: true,
-                        filled: true,
-                        fillColor:
-                            getStyle(Styles.background, data: widget.data),
-                        hintText: localizedStringFor(widget.data!.textKey),
-                        hintStyle: TextStyle(
-                          color: widget.data!.disabled!
-                              ? getStyle(Styles.placeholderColor,
-                                      data: widget.data,
-                                      themeProperty: 'disabledColor')
-                                  .withOpacity(0.3)
-                              : getStyle(Styles.placeholderColor,
-                                      data: widget.data,
-                                      themeProperty: 'textColor')
-                                  .withOpacity(0.5),
-                        ),
-                        disabledBorder: borderRadius == 0
-                            ? UnderlineInputBorder(
-                                borderRadius: BorderRadius.zero,
-                                borderSide: BorderSide(
-                                  color: getThemeColor('disabledColor')
-                                      .withOpacity(0.3),
-                                  width: borderSize + 2,
-                                ),
-                              )
-                            : OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(borderRadius)),
-                                borderSide: BorderSide(
-                                  color: getThemeColor('disabledColor')
-                                      .withOpacity(0.3),
-                                  width: borderSize,
-                                ),
-                              ),
-                        errorBorder: borderRadius == 0
-                            ? UnderlineInputBorder(
-                                borderRadius: BorderRadius.zero,
-                                borderSide: BorderSide(
-                                  color: getThemeColor('errorColor'),
-                                  width: borderSize + 2,
-                                ),
-                              )
-                            : OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(borderRadius)),
-                                borderSide: BorderSide(
-                                  color: getThemeColor('errorColor'),
-                                  width: borderSize,
-                                ),
-                              ),
-                        focusedErrorBorder: borderRadius == 0
-                            ? UnderlineInputBorder(
-                                borderRadius: BorderRadius.zero,
-                                borderSide: BorderSide(
-                                  color: getThemeColor('errorColor'),
-                                  width: borderSize + 2,
-                                ),
-                              )
-                            : OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(borderRadius)),
-                                borderSide: BorderSide(
-                                  color: getThemeColor('errorColor'),
-                                  width: borderSize,
-                                ),
-                              ),
-                        focusedBorder: borderRadius == 0
-                            ? UnderlineInputBorder(
-                                borderRadius: BorderRadius.zero,
-                                borderSide: BorderSide(
-                                  color: getThemeColor('enabledColor'),
-                                  width: borderSize + 2,
-                                ),
-                              )
-                            : OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(borderRadius)),
-                                borderSide: BorderSide(
-                                  color: getThemeColor('enabledColor'),
-                                  width: borderSize,
-                                ),
-                              ),
-                        enabledBorder: borderRadius == 0
-                            ? UnderlineInputBorder(
-                                borderRadius: BorderRadius.zero,
-                                borderSide: BorderSide(
-                                  color: getStyle(Styles.borderColor,
-                                      data: widget.data,
-                                      themeProperty: "disabledColor"),
-                                  width: borderSize,
-                                ),
-                              )
-                            : OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(borderRadius)),
-                                borderSide: BorderSide(
-                                  color: getStyle(Styles.borderColor,
-                                      data: widget.data,
-                                      themeProperty: "disabledColor"),
-                                  width: borderSize,
-                                ),
-                              ),
-                      ),
-                      isExpanded: true,
-                      style: TextStyle(
-                          color: widget.data!.disabled!
-                              ? color!.withOpacity(0.3)
-                              : color,
-                          fontSize:
-                              getStyle(Styles.fontSize, data: widget.data),
-                          fontWeight:
-                              getStyle(Styles.fontWeight, data: widget.data)),
-                      hint: Text(
-                        localizedStringFor(_placeholder) ?? '',
-                        style: TextStyle(
-                          color: widget.data!.disabled!
-                              ? getStyle(Styles.placeholderColor,
-                                      data: widget.data,
-                                      themeProperty: 'disabledColor')
-                                  .withOpacity(0.3)
-                              : getStyle(Styles.placeholderColor,
-                                      data: widget.data,
-                                      themeProperty: 'textColor')
-                                  .withOpacity(0.5),
-                        ),
-                      ),
-                      dropdownColor:
-                          getStyle(Styles.background, data: widget.data),
-                      value: _dropdownDisplayValue,
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: widget.data!.disabled!
-                            ? getThemeColor('disabledColor').withOpacity(0.3)
-                            : getStyle(Styles.borderColor,
-                                data: widget.data,
-                                themeProperty: 'primaryColor'),
-                      ),
-                      elevation: 4,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          setOption(newValue, bindings);
-                          _dropdownDisplayValue = newValue;
-                          var index = indexFromDisplayValue(newValue);
-                          _value = index == -1
-                              ? null
-                              : widget.data!.options![index].value;
-
-                          debugPrint("onchange value:$_value");
-                          // Track runtime data change.
-                          Provider.of<RuntimeStateEvaluator>(context,
-                                  listen: false)
-                              .notifyChanged(widget.data!.bind, newValue);
-                        });
-                      },
-                      items: _dropdownItems
-                          .map<DropdownMenuItem<String>>((String? value) {
-                        TextAlign align =
-                            getStyle(Styles.textAlign, data: widget.data) ??
-                                TextAlign.start;
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Align(
-                            alignment: align.toAlignment(widget.data!.type),
-                            child: Text(value!,
-                                style: TextStyle(
-                                  color: widget.data!.disabled!
-                                      ? getThemeColor('disabledColor')
-                                          .withOpacity(0.3)
-                                      : getStyle(Styles.fontColor,
-                                          data: widget.data,
-                                          themeProperty: 'textColor'),
-                                  fontSize: getStyle(Styles.fontSize,
-                                      data: widget.data),
-                                  fontWeight: getStyle(Styles.fontWeight,
-                                      data: widget.data),
-                                )),
-                          ),
-                        );
-                      }).toList(),
-                    ),
+                    child: getPlatformStyle(context) == PlatformStyle.Material ?
+                    buildDropdownButtonFormField(borderRadius, borderSize, color, bindings, context) :
+                    buildCupertinoPicker(borderRadius, borderSize, color, bindings, context) ,
                   ),
                 ),
               ),
@@ -334,6 +155,303 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
       );
     });
   }
+
+  DropdownButtonFormField<String> buildDropdownButtonFormField(borderRadius, borderSize, Color? color, BindingModel bindings, BuildContext context) {
+    return DropdownButtonFormField<String>(
+                    validator: (input) {
+                      // Field validation triggered.
+                      return validateField(_value, widget.data!.bind);
+                    },
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+                      isDense: true,
+                      filled: true,
+                      fillColor:
+                          getStyle(Styles.background, data: widget.data),
+                      hintText: localizedStringFor(widget.data!.textKey),
+                      hintStyle: TextStyle(
+                        color: widget.data!.disabled!
+                            ? getStyle(Styles.placeholderColor,
+                                    data: widget.data,
+                                    themeProperty: 'disabledColor')
+                                .withOpacity(0.3)
+                            : getStyle(Styles.placeholderColor,
+                                    data: widget.data,
+                                    themeProperty: 'textColor')
+                                .withOpacity(0.5),
+                      ),
+                      disabledBorder: borderRadius == 0
+                          ? UnderlineInputBorder(
+                              borderRadius: BorderRadius.zero,
+                              borderSide: BorderSide(
+                                color: getThemeColor('disabledColor')
+                                    .withOpacity(0.3),
+                                width: borderSize + 2,
+                              ),
+                            )
+                          : OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(borderRadius)),
+                              borderSide: BorderSide(
+                                color: getThemeColor('disabledColor')
+                                    .withOpacity(0.3),
+                                width: borderSize,
+                              ),
+                            ),
+                      errorBorder: borderRadius == 0
+                          ? UnderlineInputBorder(
+                              borderRadius: BorderRadius.zero,
+                              borderSide: BorderSide(
+                                color: getThemeColor('errorColor'),
+                                width: borderSize + 2,
+                              ),
+                            )
+                          : OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(borderRadius)),
+                              borderSide: BorderSide(
+                                color: getThemeColor('errorColor'),
+                                width: borderSize,
+                              ),
+                            ),
+                      focusedErrorBorder: borderRadius == 0
+                          ? UnderlineInputBorder(
+                              borderRadius: BorderRadius.zero,
+                              borderSide: BorderSide(
+                                color: getThemeColor('errorColor'),
+                                width: borderSize + 2,
+                              ),
+                            )
+                          : OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(borderRadius)),
+                              borderSide: BorderSide(
+                                color: getThemeColor('errorColor'),
+                                width: borderSize,
+                              ),
+                            ),
+                      focusedBorder: borderRadius == 0
+                          ? UnderlineInputBorder(
+                              borderRadius: BorderRadius.zero,
+                              borderSide: BorderSide(
+                                color: getThemeColor('enabledColor'),
+                                width: borderSize + 2,
+                              ),
+                            )
+                          : OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(borderRadius)),
+                              borderSide: BorderSide(
+                                color: getThemeColor('enabledColor'),
+                                width: borderSize,
+                              ),
+                            ),
+                      enabledBorder: borderRadius == 0
+                          ? UnderlineInputBorder(
+                              borderRadius: BorderRadius.zero,
+                              borderSide: BorderSide(
+                                color: getStyle(Styles.borderColor,
+                                    data: widget.data,
+                                    themeProperty: "disabledColor"),
+                                width: borderSize,
+                              ),
+                            )
+                          : OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(borderRadius)),
+                              borderSide: BorderSide(
+                                color: getStyle(Styles.borderColor,
+                                    data: widget.data,
+                                    themeProperty: "disabledColor"),
+                                width: borderSize,
+                              ),
+                            ),
+                    ),
+                    isExpanded: true,
+                    style: TextStyle(
+                        color: widget.data!.disabled!
+                            ? color!.withOpacity(0.3)
+                            : color,
+                        fontSize:
+                            getStyle(Styles.fontSize, data: widget.data),
+                        fontWeight:
+                            getStyle(Styles.fontWeight, data: widget.data)),
+                    hint: Text(
+                      localizedStringFor(_placeholder) ?? '',
+                      style: TextStyle(
+                        color: widget.data!.disabled!
+                            ? getStyle(Styles.placeholderColor,
+                                    data: widget.data,
+                                    themeProperty: 'disabledColor')
+                                .withOpacity(0.3)
+                            : getStyle(Styles.placeholderColor,
+                                    data: widget.data,
+                                    themeProperty: 'textColor')
+                                .withOpacity(0.5),
+                      ),
+                    ),
+                    dropdownColor:
+                        getStyle(Styles.background, data: widget.data),
+                    value: _dropdownDisplayValue,
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: widget.data!.disabled!
+                          ? getThemeColor('disabledColor').withOpacity(0.3)
+                          : getStyle(Styles.borderColor,
+                              data: widget.data,
+                              themeProperty: 'primaryColor'),
+                    ),
+                    elevation: 4,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        setOption(newValue, bindings);
+                        _dropdownDisplayValue = newValue;
+                        var index = indexFromDisplayValue(newValue);
+                        _value = index == -1
+                            ? null
+                            : widget.data!.options![index].value;
+
+                        debugPrint("onchange value:$_value");
+                        // Track runtime data change.
+                        Provider.of<RuntimeStateEvaluator>(context,
+                                listen: false)
+                            .notifyChanged(widget.data!.bind, newValue);
+                      });
+                    },
+                    items: _dropdownItems
+                        .map<DropdownMenuItem<String>>((String? value) {
+                      TextAlign align =
+                          getStyle(Styles.textAlign, data: widget.data) ??
+                              TextAlign.start;
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Align(
+                          alignment: align.toAlignment(widget.data!.type),
+                          child: Text(value!,
+                              style: TextStyle(
+                                color: widget.data!.disabled!
+                                    ? getThemeColor('disabledColor')
+                                        .withOpacity(0.3)
+                                    : getStyle(Styles.fontColor,
+                                        data: widget.data,
+                                        themeProperty: 'textColor'),
+                                fontSize: getStyle(Styles.fontSize,
+                                    data: widget.data),
+                                fontWeight: getStyle(Styles.fontWeight,
+                                    data: widget.data),
+                              )),
+                        ),
+                      );
+                    }).toList(),
+                  );
+  }
+
+  static const double _kItemExtent = 32.0;
+  int _selectedFruit = 0;
+  static const List<String> _fruitNames = <String>[
+    'Apple',
+    'Mango',
+    'Banana',
+    'Orange',
+    'Pineapple',
+    'Strawberry',
+  ];
+  late TextEditingController controller;
+
+  CupertinoTextField buildCupertinoPicker(borderRadius, borderSize, Color? color, BindingModel bindings, BuildContext context) {
+   return
+       //const Text('Selected fruit: '),
+       // CupertinoButton(
+       //   padding: EdgeInsets.zero,
+       //   // Display a CupertinoPicker with list of fruits.
+       //   onPressed: () => _showDialog(
+       //     CupertinoPicker(
+       //       magnification: 1.22,
+       //       squeeze: 1.2,
+       //       useMagnifier: true,
+       //       itemExtent: _kItemExtent,
+       //       // This is called when selected item is changed.
+       //       onSelectedItemChanged: (int selectedItem) {
+       //         setState(() {
+       //           _selectedFruit = selectedItem;
+       //         });
+       //       },
+       //       children:
+       //       List<Widget>.generate(_fruitNames.length, (int index) {
+       //         return Center(
+       //           child: Text(
+       //             _fruitNames[index],
+       //           ),
+       //         );
+       //       }),
+       //     ),
+       //   ),
+       //   // This displays the selected fruit name.
+       //   child: Text(
+       //     _fruitNames[_selectedFruit],
+       //     style: const TextStyle(
+       //       fontSize: 22.0,
+       //     ),
+       //   ),
+       // );
+    CupertinoTextField(
+        controller: controller,
+        // textAlign: TextAlign.center,
+        readOnly: true,
+        enableInteractiveSelection: false,
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          border: Border.all(width: 1),
+          borderRadius: BorderRadius.circular(4),
+        ),
+      onTap: () => _showDialog(
+        CupertinoPicker(
+          magnification: 1.22,
+          squeeze: 1.2,
+          useMagnifier: true,
+          itemExtent: _kItemExtent,
+          // This is called when selected item is changed.
+          onSelectedItemChanged: (int selectedItem) {
+            setState(() {
+              _selectedFruit = selectedItem;
+              controller.text = _fruitNames[selectedItem];
+            });
+
+          },
+          children:
+          List<Widget>.generate(_fruitNames.length, (int index) {
+            return Center(
+              child: Text(
+                _fruitNames[index],
+              ),
+            );
+          }),
+        ),
+      ),
+      // This displays the selected fruit name.
+    );
+  }
+
+  void _showDialog(Widget child) {
+    showCupertinoModalPopup<void>(
+        context: context,
+        builder: (BuildContext context) => Container(
+          height: 216,
+          padding: const EdgeInsets.only(top: 6.0),
+          // The Bottom margin is provided to align the popup above the system navigation bar.
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          // Provide a background color for the popup.
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          // Use a SafeArea widget to avoid system overlaps.
+          child: SafeArea(
+            top: false,
+            child: child,
+          ),
+        ));
+  }
+
 
   setOption(String? newValue, BindingModel bindings) {
     if (widget.data!.disabled!) {
@@ -361,5 +479,25 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
     }
     bindings.save<String?>(widget.data!.bind, parsed,
         saveAs: widget.data!.sendAs);
+  }
+
+  PlatformStyle getPlatformStyle(context){
+    TargetPlatform? platform =  defaultTargetPlatform;
+    PlatformStyleData? styles = PlatformProvider.of(context)?.settings.platformStyle;
+
+    PlatformStyle? result;
+    switch(platform){
+      case TargetPlatform.android :
+        result = styles?.android;
+        break;
+      case TargetPlatform.iOS :
+        result = styles?.ios;
+        break;
+      default:
+        result = styles?.android;
+
+
+    }
+    return result ?? PlatformStyle.Material;
   }
 }
