@@ -43,7 +43,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
 
   @override
   void initState() {
-    controller = TextEditingController(text: _fruitNames[0]);
+    controller = TextEditingController(text: _dropdownDisplayValue);
     _placeholder = widget.data!.placeholder ?? null;
     super.initState();
 
@@ -411,18 +411,17 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
           useMagnifier: true,
           itemExtent: _kItemExtent,
           // This is called when selected item is changed.
-          onSelectedItemChanged: (int selectedItem) {
+          onSelectedItemChanged: (int index) {
             setState(() {
-              _selectedFruit = selectedItem;
-              controller.text = _fruitNames[selectedItem];
+              controller.text = _dropdownItems[index]!;
             });
 
           },
           children:
-          List<Widget>.generate(_fruitNames.length, (int index) {
+          List<Widget>.generate(_dropdownItems.length, (int index) {
             return Center(
               child: Text(
-                _fruitNames[index],
+                _dropdownItems[index]!,
               ),
             );
           }),
