@@ -112,6 +112,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
         debugPrint(_value);
         debugPrint(
             'No binding value for dropdown -> default value will be displayed');
+        controller.text = _dropdownDisplayValue!;
       } else {
         var index = indexFromValue(bindValue);
         _dropdownDisplayValue =
@@ -347,63 +348,20 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
   }
 
   static const double _kItemExtent = 32.0;
-  int _selectedFruit = 0;
-  static const List<String> _fruitNames = <String>[
-    'Apple',
-    'Mango',
-    'Banana',
-    'Orange',
-    'Pineapple',
-    'Strawberry',
-  ];
   late TextEditingController controller;
 
-  CupertinoTextField buildCupertinoPicker(borderRadius, borderSize, Color? color, BindingModel bindings, BuildContext context) {
-   return
-       //const Text('Selected fruit: '),
-       // CupertinoButton(
-       //   padding: EdgeInsets.zero,
-       //   // Display a CupertinoPicker with list of fruits.
-       //   onPressed: () => _showDialog(
-       //     CupertinoPicker(
-       //       magnification: 1.22,
-       //       squeeze: 1.2,
-       //       useMagnifier: true,
-       //       itemExtent: _kItemExtent,
-       //       // This is called when selected item is changed.
-       //       onSelectedItemChanged: (int selectedItem) {
-       //         setState(() {
-       //           _selectedFruit = selectedItem;
-       //         });
-       //       },
-       //       children:
-       //       List<Widget>.generate(_fruitNames.length, (int index) {
-       //         return Center(
-       //           child: Text(
-       //             _fruitNames[index],
-       //           ),
-       //         );
-       //       }),
-       //     ),
-       //   ),
-       //   // This displays the selected fruit name.
-       //   child: Text(
-       //     _fruitNames[_selectedFruit],
-       //     style: const TextStyle(
-       //       fontSize: 22.0,
-       //     ),
-       //   ),
-       // );
-    CupertinoTextField(
+  CupertinoTextFormFieldRow buildCupertinoPicker(borderRadius, borderSize, Color? color, BindingModel bindings, BuildContext context) {
+   return CupertinoTextFormFieldRow(
         controller: controller,
         // textAlign: TextAlign.center,
+        prefix: Text(localizedStringFor(widget.data!.placeholder) ?? ''),
         readOnly: true,
         enableInteractiveSelection: false,
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          border: Border.all(width: 1),
-          borderRadius: BorderRadius.circular(4),
-        ),
+        padding: EdgeInsets.all(0),
+        // decoration: BoxDecoration(
+        //   border: Border.all(width: 1),
+        //   borderRadius: BorderRadius.circular(4),
+        // ),
       onTap: () => _showDialog(
         CupertinoPicker(
           magnification: 1.22,
@@ -427,6 +385,9 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
           }),
         ),
       ),
+       validator: (String? value) {
+         return validateField(value, widget.data!.bind);
+       },
       // This displays the selected fruit name.
     );
   }

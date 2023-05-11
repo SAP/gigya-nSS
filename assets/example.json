@@ -83,7 +83,8 @@
       "error-schema-required-validation": "Validation failed. Field is required",
       "error-schema-regex-validation": "Validation failed on regular expression",
       "error-schema-checkbox-validation": "Validation failed. boolean field",
-      "confirm-password": "Confirm password"
+      "confirm-password": "Confirm password",
+      "choose-guitar": "Select"
     },
     "es": {
       "login": "Iniciar sesión",
@@ -162,6 +163,7 @@
             },
             {
               "type": "dropdown",
+              "placeholder": "choose-guitar",
               "bind": "data.favGuitar",
               "validations": {
                 "required": {
@@ -172,7 +174,12 @@
               "style": {
                 "cornerRadius": 15,
                 "borderSize": 2,
-                "margin": 16
+                "margin": [
+                  16,
+                  0,
+                  16,
+                  8
+                ]
               },
               "options": [
                 {
@@ -184,7 +191,7 @@
                   "textKey": "account-custom-rubato"
                 },
                 {
-                  "default": true,
+
                   "value": "Parker",
                   "textKey": "account-custom-parker"
                 }
@@ -214,7 +221,7 @@
                   16,
                   0,
                   16,
-                  0
+                  8
                 ],
                 "cornerRadius": 22,
                 "borderSize": 1
@@ -242,9 +249,9 @@
               "style": {
                 "margin": [
                   16,
-                  4,
+                  0,
                   16,
-                  4
+                  8
                 ],
 
                 "borderSize": 1

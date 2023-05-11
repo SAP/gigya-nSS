@@ -333,7 +333,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                   ),
                 )),
                 cupertino: (_,__) => CupertinoTextFormFieldData(
-                  prefix: Text(localizedStringFor(hintText) ?? "noting"),
+                  prefix: Text(localizedStringFor(hintText) ?? ''),
                   placeholder: localizedStringFor(hintText),
                   placeholderStyle: TextStyle(
                     color: widget.data!.disabled!
@@ -345,13 +345,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                         data: widget.data, themeProperty: 'textColor')
                         .withOpacity(0.5),
                   ),
-                  padding: EdgeInsets.all(4), //EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-              //     decoration: BoxDecoration(
-              //   color: getStyle(Styles.background, data: widget.data),
-              //   borderRadius: BorderRadius.circular(getStyle(Styles.cornerRadius, data: widget.data)),
-              //   border: Border.all(color:getStyle(Styles.borderColor, data: widget.data)),
-              //   //shape: BoxShape.rectangle
-              // ),
+                  padding: EdgeInsets.all(4) //EdgeInsets.symmetric(vertical: 4, horizontal: 4),
               ),
                 textAlignVertical: TextAlignVertical.center,
                 maxLines: _obscuredText
@@ -556,13 +550,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                           data: widget.data, themeProperty: 'textColor')
                           .withOpacity(0.5),
                     ),
-                    padding: EdgeInsets.all(4), //EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                    // decoration: BoxDecoration(
-                    //   color: getStyle(Styles.background, data: widget.data),
-                    //   borderRadius: BorderRadius.circular(getStyle(Styles.cornerRadius, data: widget.data)),
-                    //   border: Border.all(color:getStyle(Styles.borderColor, data: widget.data)),
-                    //   //shape: BoxShape.rectangle
-                    // ),
+                    padding: EdgeInsets.all(4)
                   ),
                   textAlignVertical: TextAlignVertical.center,
                   maxLines: _obscuredConfirmText
