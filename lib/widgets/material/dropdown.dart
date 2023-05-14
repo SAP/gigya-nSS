@@ -41,9 +41,14 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
   String? _placeholder;
 
 
+  static const double _kItemExtent = 32.0;
+  late TextEditingController cupertinoPickerController;
+  late FixedExtentScrollController cupertinoScrollController;
+
   @override
   void initState() {
-    controller = TextEditingController(text: _dropdownDisplayValue);
+    cupertinoPickerController = TextEditingController(text: _dropdownDisplayValue);
+    cupertinoScrollController = FixedExtentScrollController(initialItem: 0);
     _placeholder = widget.data!.placeholder ?? null;
     super.initState();
 
@@ -109,10 +114,10 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
         _value = defaultValue;
 
         setOption(_dropdownDisplayValue, bindings);
-        debugPrint(_value);
         debugPrint(
             'No binding value for dropdown -> default value will be displayed');
-        controller.text = _dropdownDisplayValue!;
+        cupertinoPickerController.text = _dropdownDisplayValue!;
+        cupertinoScrollController = FixedExtentScrollController(initialItem: indexFromValue(defaultValue));
       } else {
         var index = indexFromValue(bindValue);
         _dropdownDisplayValue =
@@ -347,23 +352,43 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                   );
   }
 
-  static const double _kItemExtent = 32.0;
-  late TextEditingController controller;
+@override
+  void dispose(){
+    cupertinoScrollController.dispose();
+    cupertinoPickerController.dispose();
+    super.dispose();
+
+  }
 
   CupertinoTextFormFieldRow buildCupertinoPicker(borderRadius, borderSize, Color? color, BindingModel bindings, BuildContext context) {
    return CupertinoTextFormFieldRow(
-        controller: controller,
+        controller: cupertinoPickerController,
         // textAlign: TextAlign.center,
-        prefix: Text(localizedStringFor(widget.data!.placeholder) ?? ''),
+        prefix: Text(localizedStringFor(widget.data!.placeholder) ?? '', style: TextStyle(
+            color: widget.data!.disabled!
+                ? color!.withOpacity(0.3)
+                : color,
+            fontSize: getStyle(Styles.fontSize, data: widget.data),
+            fontWeight: getStyle(Styles.fontWeight, data: widget.data)
+        )),
         readOnly: true,
         enableInteractiveSelection: false,
         padding: EdgeInsets.all(0),
+        style: TextStyle(
+         color: widget.data!.disabled!
+             ? color!.withOpacity(0.3)
+             : color,
+         fontSize:
+         getStyle(Styles.fontSize, data: widget.data),
+         fontWeight:
+         getStyle(Styles.fontWeight, data: widget.data)),
         // decoration: BoxDecoration(
         //   border: Border.all(width: 1),
         //   borderRadius: BorderRadius.circular(4),
         // ),
       onTap: () => _showDialog(
         CupertinoPicker(
+          scrollController: cupertinoScrollController,
           magnification: 1.22,
           squeeze: 1.2,
           useMagnifier: true,
@@ -371,7 +396,9 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
           // This is called when selected item is changed.
           onSelectedItemChanged: (int index) {
             setState(() {
-              controller.text = _dropdownItems[index]!;
+              cupertinoPickerController.text = _dropdownItems[index]!;
+              cupertinoScrollController.dispose();
+              cupertinoScrollController = FixedExtentScrollController(initialItem: index);
             });
 
           },
