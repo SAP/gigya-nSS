@@ -371,7 +371,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
         )),
         readOnly: true,
         enableInteractiveSelection: false,
-        padding: EdgeInsets.all(0),
+        padding: EdgeInsets.fromLTRB(6, 0, 6, 0),
         style: TextStyle(
          color: widget.data!.disabled!
              ? color!.withOpacity(0.3)

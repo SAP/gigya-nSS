@@ -115,6 +115,9 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                   child: getPlatformStyle(context) == PlatformStyle.Material ? buildMaterialCheckBox(bindings) : buildCupertinoSwitch(bindings)
                                 ),
                               ),
+                              SizedBox(
+                                width: 5,
+                              ),
                               Flexible(
                                 child: GestureDetector(
                                     onTap: widget.data!.disabled!
@@ -146,7 +149,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                               textAlign: getStyle(
                                                       Styles.textAlign,
                                                       data: widget.data) ??
-                                                  TextAlign.start,
+                                                  TextAlign.end,
                                               style: TextStyle(
                                                   color: widget.data!.disabled!
                                                       ? getThemeColor(
@@ -231,7 +234,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
 
   Widget buildCupertinoSwitch(bindings){
     return SizedBox(
-      width: 40,
+      width: 48,
       height: 24,
       child: Transform.scale(
         scale: 0.8,

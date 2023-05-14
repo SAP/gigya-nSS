@@ -93,8 +93,7 @@
       "register": "Register",
       "register-title": "Register with your email and password:",
       "register-already+link": "Already registered? [Login](login)",
-      "register-terms+link+old": "I have read and understood these [terms of use](https://www.google.com)",
-      "register-terms+link": "I have read and understood [terms of use](https://www.google.com)",
+      "register-terms+link": "I have read and understood these [terms of use](https://www.google.com)",
       "register-or": " - Or - ",
       "account-information": "Account Information",
       "account-custom-title": "Update account special fields",
@@ -199,67 +198,6 @@
               }
             },
             {
-              "type": "dropdown",
-              "placeholder": "choose-guitar",
-              "bind": "data.favGuitar",
-              "disabled": false,
-              "theme": "input",
-              "validations": {
-                "required": {
-                  "enabled": true,
-                  "errorKey": "error-required-field"
-                }
-              },
-              "style": {
-                "borderSize": 1,
-                "margin": [
-                  16,
-                  0,
-                  16,
-                  0
-                ]
-              },
-              "options": [
-                {
-                  "value": "",
-                  "textKey": "Paul Reed Smith"
-                },
-                {
-
-                  "value": "Rubato",
-                  "textKey": "account-custom-rubato"
-                },
-                {
-
-                  "value": "Parker",
-                  "textKey": "account-custom-parker"
-                }
-              ]
-            },
-            {
-              "bind": "data.terms",
-              "theme": "checkbox",
-              "type": "checkbox",
-              "textKey": "register-terms+link",
-              "disabled": false
-            }
-          ]
-        },
-        {
-          "type": "container",
-          "stack": "vertical",
-          "alignment": "start",
-          "style": {
-            "cornerRadius": 22,
-            "margin": [
-              16,
-              44,
-              16,
-              0
-            ]
-          },
-          "children": [
-            {
               "bind": "#loginID",
               "type": "emailInput",
               "textKey": "common-email",
@@ -295,6 +233,45 @@
                   "errorKey": "error-invalid-format"
                 }
               }
+            },
+            {
+              "type": "dropdown",
+              "placeholder": "choose-guitar",
+              "bind": "data.favGuitar",
+              "disabled": false,
+              "theme": "input",
+              "validations": {
+                "required": {
+                  "enabled": true,
+                  "errorKey": "error-required-field"
+                }
+              },
+              "style": {
+                "borderSize": 1
+              },
+              "options": [
+                {
+                  "value": "",
+                  "textKey": "Paul Reed Smith"
+                },
+                {
+
+                  "value": "Rubato",
+                  "textKey": "account-custom-rubato"
+                },
+                {
+
+                  "value": "Parker",
+                  "textKey": "account-custom-parker"
+                }
+              ]
+            },
+            {
+              "bind": "data.terms",
+              "theme": "checkbox",
+              "type": "checkbox",
+              "textKey": "register-terms+link",
+              "disabled": false
             }
           ]
         },
