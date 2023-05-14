@@ -368,8 +368,6 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
             color: widget.data!.disabled!
                 ? color!.withOpacity(0.3)
                 : color,
-            fontSize: getStyle(Styles.fontSize, data: widget.data),
-            fontWeight: getStyle(Styles.fontWeight, data: widget.data)
         )),
         readOnly: true,
         enableInteractiveSelection: false,
