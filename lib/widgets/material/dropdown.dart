@@ -466,23 +466,4 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
         saveAs: widget.data!.sendAs);
   }
 
-  PlatformStyle getPlatformStyle(context){
-    TargetPlatform? platform =  defaultTargetPlatform;
-    PlatformStyleData? styles = PlatformProvider.of(context)?.settings.platformStyle;
-
-    PlatformStyle? result;
-    switch(platform){
-      case TargetPlatform.android :
-        result = styles?.android;
-        break;
-      case TargetPlatform.iOS :
-        result = styles?.ios;
-        break;
-      default:
-        result = styles?.android;
-
-
-    }
-    return result ?? PlatformStyle.Material;
-  }
 }

@@ -11,18 +11,45 @@
   "customThemes": {
     "title": {
       "fontWeight": "bold",
-      "fontSize": 18
+      "background": "transparent",
+      "fontSize": 18,
+      "margin": [
+        16,
+        8,
+        16,
+        8
+      ]
     },
     "subtitle": {
       "fontSize": 16
     },
     "input": {
       "cornerRadius": 4,
+      "borderSize": 1,
       "margin": [
         16,
         8,
         16,
         8
+      ]
+    },
+    "checkbox": {
+      "background": "transparent",
+      "margin": [
+        16,
+        8,
+        16,
+        8
+      ]
+    },
+    "container": {
+      "background": "grey",
+      "cornerRadius": 22,
+      "margin": [
+        16,
+        44,
+        16,
+        0
       ]
     },
     "flatButton": {
@@ -37,7 +64,7 @@
       ]
     },
     "raisedButton": {
-      "fontSize": 14,
+      "fontSize": 18,
       "fontColor": "white",
       "fontWeight": 4,
       "elevation": 4,
@@ -45,7 +72,14 @@
       "size": [
         300,
         40
-      ]
+      ],
+      "margin": [
+        16,
+        8,
+        16,
+        8
+      ],
+      "cornerRadius": 2
     }
   },
   "useSchemaValidations": false,
@@ -59,7 +93,8 @@
       "register": "Register",
       "register-title": "Register with your email and password:",
       "register-already+link": "Already registered? [Login](login)",
-      "register-terms+link": "I have read and understood these [terms of use](https://www.google.com)",
+      "register-terms+link+old": "I have read and understood these [terms of use](https://www.google.com)",
+      "register-terms+link": "I have read and understood [terms of use](https://www.google.com)",
       "register-or": " - Or - ",
       "account-information": "Account Information",
       "account-custom-title": "Update account special fields",
@@ -142,29 +177,33 @@
       "children": [
         {
           "type": "container",
+          "theme": "container",
           "stack": "vertical",
           "alignment": "start",
           "style": {
-            "margin": 33
+            "cornerRadius": 22,
+            "margin": [
+              16,
+              44,
+              16,
+              0
+            ]
           },
           "children": [
             {
-              "bind": "data.terms",
-              "type": "checkbox",
-              "textKey": "register-terms+link",
+              "type": "label",
+              "textKey": "login-social-title",
+              "theme": "title",
               "style": {
-                "margin": [
-                  0,
-                  0,
-                  0,
-                  0
-                ]
+                "textAlign": "center"
               }
             },
             {
               "type": "dropdown",
               "placeholder": "choose-guitar",
               "bind": "data.favGuitar",
+              "disabled": false,
+              "theme": "input",
               "validations": {
                 "required": {
                   "enabled": true,
@@ -172,13 +211,12 @@
                 }
               },
               "style": {
-                "cornerRadius": 15,
-                "borderSize": 2,
+                "borderSize": 1,
                 "margin": [
                   16,
                   0,
                   16,
-                  8
+                  0
                 ]
               },
               "options": [
@@ -187,6 +225,7 @@
                   "textKey": "Paul Reed Smith"
                 },
                 {
+
                   "value": "Rubato",
                   "textKey": "account-custom-rubato"
                 },
@@ -198,34 +237,33 @@
               ]
             },
             {
-              "type": "label",
-              "textKey": "login-social-title",
-              "theme": "title",
-              "style": {
-                "textAlign": "center",
-                "margin": [
-                  16,
-                  0,
-                  16,
-                  8
-                ]
-              }
-            },
+              "bind": "data.terms",
+              "theme": "checkbox",
+              "type": "checkbox",
+              "textKey": "register-terms+link",
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "type": "container",
+          "stack": "vertical",
+          "alignment": "start",
+          "style": {
+            "cornerRadius": 22,
+            "margin": [
+              16,
+              44,
+              16,
+              0
+            ]
+          },
+          "children": [
             {
               "bind": "#loginID",
               "type": "emailInput",
               "textKey": "common-email",
               "theme": "input",
-              "style": {
-                "margin": [
-                  16,
-                  0,
-                  16,
-                  8
-                ],
-                "cornerRadius": 22,
-                "borderSize": 1
-              },
               "validations": {
                 "required": {
                   "enabled": true,
@@ -246,16 +284,6 @@
               "confirmPassword": true,
               "confirmPasswordPlaceholder": "confirm-password",
               "stack": "vertical",
-              "style": {
-                "margin": [
-                  16,
-                  0,
-                  16,
-                  8
-                ],
-
-                "borderSize": 1
-              },
               "validations": {
                 "required": {
                   "enabled": true,
@@ -275,24 +303,22 @@
           "stack": "vertical",
           "alignment": "start",
           "style": {
-            "margin": 33
+            "margin": [
+              16,
+              44,
+              16,
+              0
+            ]
           },
           "children": [
         {
           "type": "submit",
           "textKey": "common-submit",
           "theme": "raisedButton",
-          "disabled": false,
-          "style": {
-            "cornerRadius": 0,
-            "borderColor": "black",
-            "borderSize": 2
-          }
+          "disabled": false
         }
           ]
         }
-
-
       ]
     },
     "login": {

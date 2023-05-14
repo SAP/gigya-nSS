@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +55,8 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
   @override
   Widget build(BuildContext context) {
 
+    debugPrint(jsonEncode(widget.data));
+
     final String displayText = localizedStringFor(widget.data!.textKey)!;
     final Linkify linkify = Linkify(displayText);
     final bool linkified = linkify.containLinks(displayText);
@@ -85,17 +89,17 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
               ),
               child: Opacity(
                 opacity: getStyle(Styles.opacity, data: widget.data),
-                child: Container(
-                  color: getStyle(Styles.background, data: widget.data),
-                  child: Padding(
-                    padding: getStyle(Styles.margin, data: widget.data),
+                child: Padding(
+                  padding: getStyle(Styles.margin, data: widget.data),
+                  child: Container(
+                    color: getStyle(Styles.background, data: widget.data),
                     child: NssCustomSizeWidget(
                       data: widget.data,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Row(
+                          Row (
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
@@ -189,89 +193,79 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
   }
 
   Widget buildMaterialCheckBox(bindings){
-    return Checkbox(
-      tristate: false,
-      activeColor: widget.data!.disabled!
-          ? getThemeColor('disabledColor')
-          .withOpacity(0.3)
-          : getThemeColor('enabledColor'),
-      checkColor: widget.data!.disabled!
-          ? getThemeColor('disabledColor')
-          .withOpacity(0.3)
-          : getThemeColor('secondaryColor'),
-      value: _currentValue,
-      onChanged: (bool? val) {
-        if (widget.data!.disabled!) {
-          return null;
-        }
-        setState(() {
-          bindings.save<bool?>(
-              widget.data!.bind, val,
-              saveAs: widget.data!.sendAs,
-              asArray: widget.data!.storeAsArray);
+    return SizedBox(
+      height: 24.0,
+      width: 24.0,
+      child: Checkbox(
+        tristate: false,
+        activeColor: widget.data!.disabled!
+            ? getThemeColor('disabledColor')
+            .withOpacity(0.3)
+            : getThemeColor('enabledColor'),
+        checkColor: widget.data!.disabled!
+            ? getThemeColor('disabledColor')
+            .withOpacity(0.3)
+            : getThemeColor('secondaryColor'),
+        value: _currentValue,
+        onChanged: (bool? val) {
+          if (widget.data!.disabled!) {
+            return null;
+          }
+          setState(() {
+            bindings.save<bool?>(
+                widget.data!.bind, val,
+                saveAs: widget.data!.sendAs,
+                asArray: widget.data!.storeAsArray);
 
-          // Track runtime data change.
-          Provider.of<RuntimeStateEvaluator>(
-              context,
-              listen: false)
-              .notifyChanged(
-              widget.data!.bind, val);
-        });
-      },
+            // Track runtime data change.
+            Provider.of<RuntimeStateEvaluator>(
+                context,
+                listen: false)
+                .notifyChanged(
+                widget.data!.bind, val);
+          });
+        },
+      ),
     );
   }
 
   Widget buildCupertinoSwitch(bindings){
-    return CupertinoSwitch(
-      value: _currentValue ?? false,
-      onChanged: (bool? val) {
-        if (widget.data!.disabled!) {
-          return null;
-        }
-        setState(() {
-          bindings.save<bool?>(
-              widget.data!.bind, val,
-              saveAs: widget.data!.sendAs,
-              asArray: widget.data!.storeAsArray);
+    return SizedBox(
+      width: 40,
+      height: 24,
+      child: Transform.scale(
+        scale: 0.8,
+        child: CupertinoSwitch(
+          value: _currentValue ?? false,
+          onChanged: (bool? val) {
+            if (widget.data!.disabled!) {
+              return null;
+            }
+            setState(() {
+              bindings.save<bool?>(
+                  widget.data!.bind, val,
+                  saveAs: widget.data!.sendAs,
+                  asArray: widget.data!.storeAsArray);
 
-          // Track runtime data change.
-          Provider.of<RuntimeStateEvaluator>(
-              context,
-              listen: false)
-              .notifyChanged(
-              widget.data!.bind, val);
-        });
-      },
-      activeColor: widget.data!.disabled!
-          ? getThemeColor('disabledColor')
-          .withOpacity(0.3)
-          : getThemeColor('enabledColor'),
-      trackColor: widget.data!.disabled!
-          ? getThemeColor('disabledColor')
-          .withOpacity(0.3)
-          : Colors.grey,
-        //thumbColor: Colors.pink
+              // Track runtime data change.
+              Provider.of<RuntimeStateEvaluator>(
+                  context,
+                  listen: false)
+                  .notifyChanged(
+                  widget.data!.bind, val);
+            });
+          },
+          activeColor: widget.data!.disabled!
+              ? getThemeColor('disabledColor')
+              .withOpacity(0.3)
+              : getThemeColor('enabledColor'),
+          trackColor: widget.data!.disabled!
+              ? getThemeColor('disabledColor')
+              .withOpacity(0.3)
+              : Colors.grey,
+            //thumbColor: Colors.pink
+        ),
+      ),
     );
   }
-
-  PlatformStyle getPlatformStyle(context){
-    TargetPlatform? platform =  defaultTargetPlatform;
-    PlatformStyleData? styles = PlatformProvider.of(context)?.settings.platformStyle;
-
-    PlatformStyle? result;
-    switch(platform){
-      case TargetPlatform.android :
-        result = styles?.android;
-        break;
-      case TargetPlatform.iOS :
-        result = styles?.ios;
-        break;
-      default:
-        result = styles?.android;
-
-
-    }
-    return result ?? PlatformStyle.Material;
-  }
-
 }
