@@ -42,6 +42,15 @@
         8
       ]
     },
+    "radio": {
+      "background": "transparent",
+      "margin": [
+        16,
+        8,
+        16,
+        8
+      ]
+    },
     "container": {
       "background": "grey",
       "cornerRadius": 22,
@@ -272,6 +281,26 @@
               "type": "checkbox",
               "textKey": "register-terms+link",
               "disabled": false
+            },
+            {
+              "type": "radio",
+              "bind": "data.gender",
+              "theme": "radio",
+              "disabled": false,
+              "options": [
+                {
+                  "value": "option1",
+                  "textKey": "login-radio1"
+                },
+                {
+                  "value": "option2",
+                  "textKey": "login-radio2"
+                },
+                {
+                  "value": "option3",
+                  "textKey": "login-radio3"
+                }
+              ]
             }
           ]
         },
