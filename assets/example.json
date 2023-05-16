@@ -211,6 +211,7 @@
               "type": "emailInput",
               "textKey": "common-email",
               "theme": "input",
+              "disabled": true,
               "validations": {
                 "required": {
                   "enabled": true,
@@ -228,6 +229,7 @@
               "type": "passwordInput",
               "textKey": "common-password",
               "theme": "input",
+              "disabled": false,
               "confirmPassword": true,
               "confirmPasswordPlaceholder": "confirm-password",
               "stack": "vertical",
@@ -247,7 +249,7 @@
               "type": "dropdown",
               "placeholder": "choose-guitar",
               "bind": "data.favGuitar",
-              "disabled": false,
+              "disabled": true,
               "theme": "input",
               "validations": {
                 "required": {

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
@@ -333,7 +331,12 @@ class _TextInputWidgetState extends State<TextInputWidget>
                   ),
                 )),
                 cupertino: (_,__) => CupertinoTextFormFieldData(
-                  prefix: Text(localizedStringFor(hintText) ?? ''),
+                    decoration: BoxDecoration(color:  getStyle(Styles.background, data: widget.data), backgroundBlendMode: BlendMode.color ),
+                    prefix: Text(localizedStringFor(hintText) ?? "", style: TextStyle(
+                      color: widget.data!.disabled!
+                          ? color!.withOpacity(0.3)
+                          : color,
+                    )),
                   placeholder: localizedStringFor(hintText),
                   placeholderStyle: TextStyle(
                     color: widget.data!.disabled!
@@ -366,6 +369,8 @@ class _TextInputWidgetState extends State<TextInputWidget>
                     fontSize: getStyle(Styles.fontSize, data: widget.data),
                     fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
                 validator: (input) {
+                  if(widget.data!.disabled! == true)
+                    return null;
                   // Event injected error has priority in field validation.
                   if (eventInjectedError != null) {
                     if (eventInjectedError!.isEmpty) {
@@ -538,7 +543,12 @@ class _TextInputWidgetState extends State<TextInputWidget>
                     ),
                   ),),
                   cupertino: (_,__) => CupertinoTextFormFieldData(
-                    prefix: Text(localizedStringFor(hintText) ?? ""),
+                      decoration: BoxDecoration(color:  getStyle(Styles.background, data: widget.data), backgroundBlendMode: BlendMode.color ),
+                      prefix: Text(localizedStringFor(hintText) ?? "", style: TextStyle(
+                        color: widget.data!.disabled!
+                            ? color!.withOpacity(0.3)
+                            : color,
+                      )),
                     placeholder: localizedStringFor(hintText),
                     placeholderStyle: TextStyle(
                       color: widget.data!.disabled!
@@ -572,6 +582,9 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
 
                   validator: (input) {
+                    if(widget.data!.disabled! == true)
+                      return null;
+
                     var userValidation = validateField(input, widget.data!.bind);
                     if(userValidation != null)
                       return userValidation;
