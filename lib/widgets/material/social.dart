@@ -372,7 +372,6 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
               child: GestureDetector(
                 onTap: () {
                   viewModel.socialLogin(provider);
-                  debugPrint('yessss');
                 },
                 child: Material(
                   elevation: getStyle(Styles.elevation, data: widget.data),
