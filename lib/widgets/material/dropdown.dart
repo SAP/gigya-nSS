@@ -166,6 +166,8 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
     return DropdownButtonFormField<String>(
                     validator: (input) {
                       // Field validation triggered.
+                      if(widget.data!.disabled! == true)
+                        return null;
                       return validateField(_value, widget.data!.bind);
                     },
                     decoration: InputDecoration(
@@ -421,6 +423,8 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
         ),
       ),
        validator: (String? value) {
+         if(widget.data!.disabled! == true)
+           return null;
          return validateField(value, widget.data!.bind);
        },
       // This displays the selected fruit name.
