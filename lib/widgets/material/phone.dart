@@ -269,11 +269,6 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
                               : allowCCTap()
                                   ? () {
                                       _showCupertinoDialog(context);
-                                      // showDialog(
-                                      //     context: context,
-                                      //     builder: (BuildContext context) {
-                                      //       return _ccSelectionDialog();
-                                      //     });
                                     }
                                   : null,
                           child: Padding(
@@ -507,7 +502,9 @@ class CountryPickerDialogWidget extends StatefulWidget {
 /// Definition for country code picker child widget callback.
 typedef OnCountryCodePick(CountryCodePick pick);
 
-class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> {
+class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> with DecorationMixin {
+
+
   /// List of country code objects used for search purposes.
   List<CountryCodePick> _countryCodeSearchList = [];
 
@@ -527,7 +524,7 @@ class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
-            child: TextFormField(
+            child: getPlatformStyle(context) == PlatformStyle.Material ?  TextFormField(
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.search),
               ),
@@ -546,7 +543,35 @@ class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> {
                   _countryCodeSearchList.addAll(widget.mainList!.where((CountryCodePick element) => element.name!.toLowerCase().startsWith(input.toLowerCase())).toList());
                 });
               },
-            ),
+            ) : CupertinoSearchTextField(
+                decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide( //                    <--- top side
+                        color: Colors.grey,
+                        width: 1.0,
+                      ),
+                    ),
+                    color: Colors.white, backgroundBlendMode: BlendMode.color
+                ),
+                padding: const EdgeInsets.all(16.0),
+                placeholder: '',
+                onChanged: (input) {
+                if (input.isEmpty) {
+                  // Reset search list.
+                  setState(() {
+                    _countryCodeSearchList.clear();
+                    _countryCodeSearchList.addAll(List.of(widget.mainList!));
+                  });
+                  return;
+                }
+                // Filter list by search input.
+                setState(() {
+                  _countryCodeSearchList.clear();
+                  _countryCodeSearchList.addAll(widget.mainList!.where((CountryCodePick element) => element.name!.toLowerCase().startsWith(input.toLowerCase())).toList());
+                });
+              },
+             ),
+
           ),
           Flexible(
             child: ListView.builder(
