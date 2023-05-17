@@ -93,7 +93,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                     onTap: () {
                       // Trigger picker.
                       if (!widget.data!.disabled!) {
-                        _showPickerSelection(context);
+                        getPlatformStyle(context) == PlatformStyle.Material ?  _showMaterialPickerSelection(context) : _showCupertinoPickerSelection(context);
                       }
                     },
                     child: Container(
@@ -206,28 +206,63 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
   }
 
   /// Initiate the date picker when date text is tapped.
-  _showPickerSelection(BuildContext context) async {
-    final DateTime? picked = await showPlatformDatePicker(
+  _showMaterialPickerSelection(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
       context: context,
-
-
+      fieldLabelText:
+      localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
+      helpText: localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
       initialDate: _selectedDate != null ? _selectedDate! : _initialDate!,
       // Refer step 1
       firstDate: getFirstDateFrom(widget.data!.startYear),
       lastDate: getLastDateFrom(widget.data!.endYear!),
+      initialEntryMode: _pickerEntryMode(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            inputDecorationTheme: InputDecorationTheme(
+                labelStyle: TextStyle(
+                  fontSize: getStyle(Styles.fontSize, data: widget.data),
+                  color: getPickerLabelColor(_datePickerStyle, 'textColor'),
+                  fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderRadius: BorderRadius.zero,
+                  borderSide: BorderSide(
+                    color: getStyle(Styles.fontColor,
+                        data: widget.data, themeProperty: 'textColor'),
+                    width: 1.0,
+                  ),
+                )),
+            colorScheme: ColorScheme.light(
+              primary: getPickerBackground(_datePickerStyle, 'primaryColor'),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _selectedDate)
+      setState(() {
+        // Update selected value.
+        _selectedDate = picked;
+        _controller.text = parseDateValue(_selectedDate, context);
+      });
+  }
 
-        material: (_, __) => MaterialDatePickerData(
-          initialEntryMode: _pickerEntryMode(),
-          helpText: localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
-          fieldLabelText:
-          localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
-        ),
-        cupertino: (_, __) => CupertinoDatePickerData(
-          firstDate: getFirstDateFrom(widget.data!.startYear),
-          lastDate: getLastDateFrom(widget.data!.endYear!),
-          initialDate: _selectedDate != null ? _selectedDate! : _initialDate!,
-        ),
 
+  _showCupertinoPickerSelection(BuildContext context) async {
+    final DateTime? picked = await showPlatformDatePicker(
+      context: context,
+      initialDate: _selectedDate != null ? _selectedDate! : _initialDate!,
+      // Refer step 1
+      firstDate: getFirstDateFrom(widget.data!.startYear),
+      lastDate: getLastDateFrom(widget.data!.endYear!),
+      cupertino: (_, __) => CupertinoDatePickerData(
+        firstDate: getFirstDateFrom(widget.data!.startYear),
+        lastDate: getLastDateFrom(widget.data!.endYear!),
+        initialDate: _selectedDate != null ? _selectedDate! : _initialDate!,
+      ),
     );
     if (picked != null && picked != _selectedDate)
       setState(() {
