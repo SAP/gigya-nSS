@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
@@ -94,7 +95,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                 ),
               ),
               Expanded(
-                child: TextField(
+                child: PlatformTextField(
                   enabled: false,
                   textAlign: styleTextAlign(widget.data),
                   style: TextStyle(
@@ -137,7 +138,188 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                   accessibility: widget.data!.accessibility,
                   child: Padding(
                     padding: getStyle(Styles.margin, data: widget.data),
-                    child: TextFormField(
+                    child: PlatformTextFormField(
+                      material: (_,__) => MaterialTextFormFieldData(
+                        decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+                            isDense: true,
+                            filled: true,
+                            fillColor: styleBackground(widget.data),
+                            prefixIconConstraints: BoxConstraints(
+                                maxHeight: 26
+                            ),
+                            prefixIcon: InkWell(
+                              // Verify click.
+                              onTap: widget.data!.disabled!
+                                  ? null
+                                  : allowCCTap()
+                                  ? () {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return _ccSelectionDialog();
+                                    });
+                              }
+                                  : null,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 12.0, right: 8, top: 0, bottom: 0),
+                                child: Container(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      _showCountryIcons()!
+                                          ? Text(_countryCodePick.flag!)
+                                          : Container(),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        _countryCodePick.dialCode!,
+                                        style: TextStyle(
+                                          // Style font color
+                                            color: styleFontColor(widget.data,
+                                                widget.data!.disabled),
+                                            // Style font size.
+                                            fontSize: getStyle(Styles.fontSize,
+                                                data: widget.data),
+                                            // Style font weight.
+                                            fontWeight: getStyle(
+                                                Styles.fontWeight,
+                                                data: widget.data)),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            hintText: localizedStringFor(widget.data!.textKey),
+                            // Style placeholder/hint.
+                            hintStyle: TextStyle(
+                              color: stylePlaceholder(
+                                  widget.data, widget.data!.disabled!),
+                            ),
+                            disabledBorder: borderRadius == 0
+                                ? UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: getThemeColor('disabledColor')
+                                    .withOpacity(0.3),
+                                width: borderSize + 2,
+                              ),
+                            )
+                                : OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(borderRadius)),
+                              borderSide: BorderSide(
+                                color: getThemeColor('disabledColor')
+                                    .withOpacity(0.3),
+                                width: borderSize,
+                              ),
+                            ),
+                            errorBorder: borderRadius == 0
+                                ? UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: getThemeColor('errorColor'),
+                                width: borderSize + 2,
+                              ),
+                            )
+                                : OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(borderRadius)),
+                              borderSide: BorderSide(
+                                color: getThemeColor('errorColor'),
+                                width: borderSize,
+                              ),
+                            ),
+                            focusedErrorBorder: borderRadius == 0
+                                ? UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: getThemeColor('errorColor'),
+                                width: borderSize + 2,
+                              ),
+                            )
+                                : OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(borderRadius)),
+                              borderSide: BorderSide(
+                                color: getThemeColor('errorColor'),
+                                width: borderSize,
+                              ),
+                            ),
+                            // focusedBorder: borderRadius == 0
+                            //     ? UnderlineInputBorder(
+                            //   borderSide: BorderSide(
+                            //     color: getThemeColor('enabledColor'),
+                            //     width: borderSize + 2,
+                            //   ),
+                            // )
+                            //     : OutlineInputBorder(
+                            //   borderRadius: BorderRadius.all(
+                            //       Radius.circular(borderRadius)),
+                            //   borderSide: BorderSide(
+                            //     color: getThemeColor('enabledColor'),
+                            //     width: borderSize,
+                            //   ),
+                            // ),
+                            // enabledBorder: borderRadius == 0
+                            //     ? UnderlineInputBorder(
+                            //   borderSide: BorderSide(
+                            //     color: styleBorderColor(widget.data),
+                            //     width: borderSize,
+                            //   ),
+                            // )
+                            //     : OutlineInputBorder(
+                            //   borderRadius: BorderRadius.all(
+                            //       Radius.circular(borderRadius)),
+                            //   borderSide: BorderSide(
+                            //     color: styleBorderColor(widget.data),
+                            //     width: borderSize,
+                            //   ),
+                            // )
+                        ),
+                      ),
+                      cupertino: (_,__) => CupertinoTextFormFieldData(
+                        controller: _textEditingController,
+                        prefix: GestureDetector(
+                      // Verify click.
+                      onTap: widget.data!.disabled!
+                          ? null
+                          : allowCCTap()
+                          ? () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return _ccSelectionDialog();
+                            });
+                      }
+                          : null,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 12.0, right: 8, top: 0, bottom: 0),
+                        child: Container(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _showCountryIcons()!
+                                  ? Text(_countryCodePick.flag!)
+                                  : Container(),
+                              SizedBox(width: 8),
+                              Text(
+                                _countryCodePick.dialCode!,
+                                style: TextStyle(
+                                  // Style font color
+                                    color: styleFontColor(widget.data,
+                                        widget.data!.disabled),
+                                    // Style font size.
+                                    fontSize: getStyle(Styles.fontSize,
+                                        data: widget.data),
+                                    // Style font weight.
+                                    fontWeight: getStyle(
+                                        Styles.fontWeight,
+                                        data: widget.data)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                      ),
                       controller: _textEditingController,
                       // Style enabled/disabled.
                       enabled: !widget.data!.disabled!,
@@ -153,139 +335,6 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                         fontWeight: styleFontWeight(widget.data),
                       ),
                       keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 14),
-                          isDense: true,
-                          filled: true,
-                          fillColor: styleBackground(widget.data),
-                          prefixIconConstraints: BoxConstraints(
-                            maxHeight: 26
-                          ),
-                          prefixIcon: InkWell(
-                            // Verify click.
-                            onTap: widget.data!.disabled!
-                                ? null
-                                : allowCCTap()
-                                    ? () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return _ccSelectionDialog();
-                                            });
-                                      }
-                                    : null,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 12.0, right: 8, top: 0, bottom: 0),
-                              child: Container(
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    _showCountryIcons()!
-                                        ? Text(_countryCodePick.flag!)
-                                        : Container(),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      _countryCodePick.dialCode!,
-                                      style: TextStyle(
-                                          // Style font color
-                                          color: styleFontColor(widget.data,
-                                              widget.data!.disabled),
-                                          // Style font size.
-                                          fontSize: getStyle(Styles.fontSize,
-                                              data: widget.data),
-                                          // Style font weight.
-                                          fontWeight: getStyle(
-                                              Styles.fontWeight,
-                                              data: widget.data)),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          hintText: localizedStringFor(widget.data!.textKey),
-                          // Style placeholder/hint.
-                          hintStyle: TextStyle(
-                            color: stylePlaceholder(
-                                widget.data, widget.data!.disabled!),
-                          ),
-                          disabledBorder: borderRadius == 0
-                              ? UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: getThemeColor('disabledColor')
-                                        .withOpacity(0.3),
-                                    width: borderSize + 2,
-                                  ),
-                                )
-                              : OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(borderRadius)),
-                                  borderSide: BorderSide(
-                                    color: getThemeColor('disabledColor')
-                                        .withOpacity(0.3),
-                                    width: borderSize,
-                                  ),
-                                ),
-                          errorBorder: borderRadius == 0
-                              ? UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: getThemeColor('errorColor'),
-                                    width: borderSize + 2,
-                                  ),
-                                )
-                              : OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(borderRadius)),
-                                  borderSide: BorderSide(
-                                    color: getThemeColor('errorColor'),
-                                    width: borderSize,
-                                  ),
-                                ),
-                          focusedErrorBorder: borderRadius == 0
-                              ? UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: getThemeColor('errorColor'),
-                                    width: borderSize + 2,
-                                  ),
-                                )
-                              : OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(borderRadius)),
-                                  borderSide: BorderSide(
-                                    color: getThemeColor('errorColor'),
-                                    width: borderSize,
-                                  ),
-                                ),
-                          focusedBorder: borderRadius == 0
-                              ? UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: getThemeColor('enabledColor'),
-                                    width: borderSize + 2,
-                                  ),
-                                )
-                              : OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(borderRadius)),
-                                  borderSide: BorderSide(
-                                    color: getThemeColor('enabledColor'),
-                                    width: borderSize,
-                                  ),
-                                ),
-                          enabledBorder: borderRadius == 0
-                              ? UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: styleBorderColor(widget.data),
-                                    width: borderSize,
-                                  ),
-                                )
-                              : OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(borderRadius)),
-                                  borderSide: BorderSide(
-                                    color: styleBorderColor(widget.data),
-                                    width: borderSize,
-                                  ),
-                                )),
                       onChanged: (input) {
                         onValueSave(input, bindings);
 
@@ -506,20 +555,17 @@ class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> {
               shrinkWrap: true,
               itemCount: _countryCodeSearchList.length,
               itemBuilder: (BuildContext context, int index) {
-                return Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () {
-                      // Confirm selection.
-                      widget.onPick!(_countryCodeSearchList[index]);
-                      Navigator.pop(context);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 4),
-                      child: _ccPickerTile(
-                          _countryCodeSearchList[index], widget.showIcons!),
-                    ),
+                return InkWell(
+                  onTap: () {
+                    // Confirm selection.
+                    widget.onPick!(_countryCodeSearchList[index]);
+                    Navigator.pop(context);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 4),
+                    child: _ccPickerTile(
+                        _countryCodeSearchList[index], widget.showIcons!),
                   ),
                 );
               },
