@@ -164,7 +164,7 @@
     }
   },
   "routing": {
-    "initial": "xxx",
+    "initial": "phone-login",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"
@@ -211,7 +211,7 @@
               "type": "emailInput",
               "textKey": "common-email",
               "theme": "input",
-              "disabled": true,
+              "disabled": false,
               "validations": {
                 "required": {
                   "enabled": true,
@@ -249,7 +249,7 @@
               "type": "dropdown",
               "placeholder": "choose-guitar",
               "bind": "data.favGuitar",
-              "disabled": true,
+              "disabled": false,
               "theme": "input",
               "validations": {
                 "required": {
@@ -305,7 +305,7 @@
             },
             {
               "type": "datePicker",
-              "disabled": false,
+              "disabled": true,
               "initialDisplay": "input",
               "textKey": "Birth date:",
               "bind": {
@@ -1035,6 +1035,10 @@
           "type": "phoneInput",
           "bind": "#phoneNumber",
           "textKey": "enter your phone number",
+          "disabled": false,
+          "countries": {
+            "showIcons": false
+          },
           "style": {
             "margin": [
               16,
