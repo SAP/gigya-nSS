@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -54,9 +52,6 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
 
   @override
   Widget build(BuildContext context) {
-
-    debugPrint(jsonEncode(widget.data));
-
     final String displayText = localizedStringFor(widget.data!.textKey)!;
     final Linkify linkify = Linkify(displayText);
     final bool linkified = linkify.containLinks(displayText);
