@@ -262,6 +262,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
                       ),
                       cupertino: (_, __) => CupertinoTextFormFieldData(
                         controller: _textEditingController,
+                        decoration: BoxDecoration(color: styleBackground(widget.data), backgroundBlendMode: BlendMode.color),
                         prefix: GestureDetector(
                           // Verify click.
                           onTap: widget.data!.disabled!
