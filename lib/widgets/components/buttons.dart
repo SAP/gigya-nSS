@@ -10,7 +10,6 @@ import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
-import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:provider/provider.dart';
 
 import '../../utils/logging.dart';
@@ -73,7 +72,7 @@ class _SubmitWidgetState extends State<SubmitWidget>
           getStyle(Styles.cornerRadius, data: widget.data),
         ),
       ),
-      primary: widget.data!.disabled!
+      backgroundColor: widget.data!.disabled!
           ? getThemeColor('disabledColor').withOpacity(0.3)
           : getStyle(Styles.background,
           data: widget.data),
@@ -251,7 +250,7 @@ class _ButtonWidgetState extends State<ButtonWidget>
                                     data: widget.data),
                               ),
                             ),
-                            primary: widget.data!.disabled!
+                            backgroundColor: widget.data!.disabled!
                                 ? getThemeColor('disabledColor')
                                     .withOpacity(0.3)
                                 : getStyle(Styles.background,

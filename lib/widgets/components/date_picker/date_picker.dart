@@ -11,8 +11,8 @@ import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/date_picker/date_picker_style.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/date_picker/date_picker_utils.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/date_picker/date_picker_style.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/date_picker/date_picker_utils.dart';
 import 'package:provider/provider.dart';
 
 /// Date picker selection widget.

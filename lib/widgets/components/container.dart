@@ -7,7 +7,7 @@ import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/image.dart';
 import 'package:provider/provider.dart';
 
 class ContainerWidget extends StatefulWidget {

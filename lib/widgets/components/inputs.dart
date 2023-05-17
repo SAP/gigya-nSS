@@ -43,7 +43,6 @@ class _TextInputWidgetState extends State<TextInputWidget>
   final TextEditingController _confirmEditingController =
       TextEditingController(text: '');
 
-  Map<String, NssInputValidator> _validators = {};
   bool _obscuredText = false;
   bool _obscuredConfirmText = true;
   bool? _match;

@@ -1,5 +1,5 @@
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/social.dart';
 import 'package:test/test.dart';
 
 void main() {

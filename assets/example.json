@@ -164,7 +164,7 @@
     }
   },
   "routing": {
-    "initial": "phone-login",
+    "initial": "xxx",
     "default": {
       "onSuccess": "_dismiss",
       "onPendingEmailVerification": "_dismiss"

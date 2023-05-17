@@ -1,7 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,7 +15,7 @@ import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
 import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/image.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePhotoWidget extends StatefulWidget {

@@ -29,7 +29,6 @@ class RadioGroupWidget extends StatefulWidget {
 
 class _RadioGroupWidgetState extends State<RadioGroupWidget> with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin, VisibilityStateMixin, ErrorMixin {
   String? _groupValue;
-  String? _defaultValue;
 
   @override
   void initState() {

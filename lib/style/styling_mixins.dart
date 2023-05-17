@@ -5,7 +5,7 @@ import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/image.dart';
 
 /// Supported styles enum.
 enum Styles {
