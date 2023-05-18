@@ -186,27 +186,18 @@ mixin StyleMixin {
   /// parse padding value.
   /// Optional input can be a double, integer or a number array (left, right, top, bottom).
   EdgeInsetsGeometry getPadding(padding) {
-    var result;
     if (padding is double) {
-      result = EdgeInsets.all(padding);
+      return EdgeInsets.all(padding);
     } else if (padding is int) {
-      result =  EdgeInsets.all(ensureDouble(padding)!);
+      return EdgeInsets.all(ensureDouble(padding)!);
     } else if (padding is List<dynamic>) {
-      result =  EdgeInsets.fromLTRB(
-          ensureDouble(padding[0])!,
-          ensureDouble(padding[1])!,
-          ensureDouble(padding[2])!,
-          ensureDouble(padding[3])!);
-
-      // return EdgeInsets.only(
-      //     left: ensureDouble(padding[0])!,
-      //     top: ensureDouble(padding[1])!,
-      //     right: ensureDouble(padding[2])!,
-      //     bottom: ensureDouble(padding[3])!);
-    }else {
-      result = EdgeInsets.zero;
+      return EdgeInsets.only(
+          left: ensureDouble(padding[0])!,
+          top: ensureDouble(padding[1])!,
+          right: ensureDouble(padding[2])!,
+          bottom: ensureDouble(padding[3])!);
     }
-    return result;
+    return EdgeInsets.zero;
   }
 
   /// Request a [Color] instance given an multi optional identifier (named, hex).
