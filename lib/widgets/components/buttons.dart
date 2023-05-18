@@ -56,29 +56,6 @@ class _SubmitWidgetState extends State<SubmitWidget>
     TextAlign textAlign =
         getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.center;
 
-    ButtonStyle btnStyle = ElevatedButton.styleFrom(
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: widget.data!.disabled!
-              ? getThemeColor('disabledColor')
-              .withOpacity(0.3)
-              : getStyle(Styles.borderColor,
-              data: widget.data),
-          width: getStyle(Styles.borderSize,
-              data: widget.data) ??
-              0,
-        ),
-        borderRadius: BorderRadius.circular(
-          getStyle(Styles.cornerRadius, data: widget.data),
-        ),
-      ),
-      backgroundColor: widget.data!.disabled!
-          ? getThemeColor('disabledColor').withOpacity(0.3)
-          : getStyle(Styles.background,
-          data: widget.data),
-      elevation: getElevationStyleProperty(),
-    );
-
     return SemanticsWrapperWidget(
       accessibility: widget.data!.accessibility,
       child: Padding(
@@ -109,13 +86,7 @@ class _SubmitWidgetState extends State<SubmitWidget>
                           disabledColor: getThemeColor('disabledColor').withOpacity(0.7),
                             pressedOpacity: 0.8
                         ),
-                        material: (_, __) => MaterialElevatedButtonData(style: btnStyle),
-                        // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        // elevation: getElevationStyleProperty(),
-                        // hoverElevation: isFlat() ? 0 : null,
-                        // disabledElevation: isFlat() ? 0 : null,
-                        // focusElevation: isFlat() ? 0 : null,
-                        // highlightElevation: isFlat() ? 0 : null,
+                        material: (_, __) => MaterialElevatedButtonData(style: buildButtonStyle()),
                         child: Align(
                           widthFactor: 1,
                           alignment: textAlign.toAlignment(widget.data!.type),
@@ -167,6 +138,31 @@ class _SubmitWidgetState extends State<SubmitWidget>
         ),
       ),
     );
+  }
+
+  ButtonStyle buildButtonStyle() {
+    return ElevatedButton.styleFrom(
+    shape: RoundedRectangleBorder(
+      side: BorderSide(
+        color: widget.data!.disabled!
+            ? getThemeColor('disabledColor')
+            .withOpacity(0.3)
+            : getStyle(Styles.borderColor,
+            data: widget.data),
+        width: getStyle(Styles.borderSize,
+            data: widget.data) ??
+            0,
+      ),
+      borderRadius: BorderRadius.circular(
+        getStyle(Styles.cornerRadius, data: widget.data),
+      ),
+    ),
+    backgroundColor: widget.data!.disabled!
+        ? getThemeColor('disabledColor').withOpacity(0.3)
+        : getStyle(Styles.background,
+        data: widget.data),
+    elevation: getElevationStyleProperty(),
+  );
   }
 
   /// Set the elevation property of the button.
