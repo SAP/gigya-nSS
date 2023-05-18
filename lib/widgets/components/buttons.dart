@@ -76,10 +76,11 @@ class _SubmitWidgetState extends State<SubmitWidget>
                         color: widget.data!.disabled!
                             ? getThemeColor('disabledColor').withOpacity(0.7)
                             : getStyle(Styles.background,
-                            data: widget.data),
+                            data: widget.data, themeProperty: 'primaryColor'),
                         //color: Colors.black54,
                         padding: EdgeInsets.all(2),
                         cupertino: (_, __) => CupertinoElevatedButtonData(
+
                             borderRadius: BorderRadius.circular(
                               getStyle(Styles.cornerRadius, data: widget.data),
                             ),
@@ -160,7 +161,7 @@ class _SubmitWidgetState extends State<SubmitWidget>
     backgroundColor: widget.data!.disabled!
         ? getThemeColor('disabledColor').withOpacity(0.3)
         : getStyle(Styles.background,
-        data: widget.data),
+        data: widget.data,  themeProperty: 'primaryColor'),
     elevation: getElevationStyleProperty(),
   );
   }
@@ -254,12 +255,6 @@ class _ButtonWidgetState extends State<ButtonWidget>
                                     themeProperty: 'primaryColor'),
                             elevation: getElevationStyleProperty(),
                           ),
-                          // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          // elevation: getElevationStyleProperty(),
-                          // hoverElevation: isFlat() ? 0 : null,
-                          // disabledElevation: isFlat() ? 0 : null,
-                          // focusElevation: isFlat() ? 0 : null,
-                          // highlightElevation: isFlat() ? 0 : null,
                           child: Align(
                             widthFactor: 1,
                             alignment: textAlign.toAlignment(widget.data!.type),
