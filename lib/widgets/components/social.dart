@@ -369,7 +369,7 @@ class _SocialLoginGridState extends State<SocialLoginGrid>
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(top: 4.0),
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () {
                   viewModel.socialLogin(provider);
                 },

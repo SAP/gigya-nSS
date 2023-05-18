@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
@@ -91,7 +92,7 @@ class _LabelWidgetState extends State<LabelWidget>
                                     data: widget.data,
                                     themeProperty: 'linkColor') ??
                                 getColor('blue'))
-                        : Text(
+                        : PlatformText(
                             text!,
                             textAlign:
                                 getStyle(Styles.textAlign, data: widget.data) ??

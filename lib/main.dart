@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
@@ -36,11 +38,18 @@ class _MyAppState extends State<MyApp> {
 
 
   Widget createApp() {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      color: Colors.white,
-      initialRoute: '/',
-      onGenerateRoute: NssIoc().use(MaterialRouter).generateRoute,
+    return PlatformProvider(
+      settings: PlatformSettingsData
+        (platformStyle: PlatformStyleData(ios: isPlatformAware() ? PlatformStyle.Cupertino : PlatformStyle.Material)),
+      builder: (context) => PlatformApp(
+        localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+          DefaultMaterialLocalizations.delegate,
+          DefaultWidgetsLocalizations.delegate,
+          DefaultCupertinoLocalizations.delegate,
+        ],
+        initialRoute: '/',
+        onGenerateRoute: NssIoc().use(MaterialRouter).generateRoute,
+      ),
     );
   }
 
@@ -52,6 +61,7 @@ class _MyAppState extends State<MyApp> {
     var fetchData = await _markupFromChannel(config.version);
     final Markup markup = Markup.fromJson(fetchData.cast<String, dynamic>());
     config.markup = markup;
+    config.platformAwareMode = markup.platformAwareMode ?? 'material';
 
     //Fetch and parse the schema if required in markup preference (and not in mock mode).
     if (markup.useSchemaValidations! && !config.isMock!) {
@@ -78,6 +88,11 @@ class _MyAppState extends State<MyApp> {
 
     return channels!.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(
         'ignition', {'version': version});
+  }
+
+  bool isPlatformAware(){
+    final NssConfig config = NssIoc().use(NssConfig);
+    return config.markup?.platformAware == true;
   }
 
 }

@@ -5,6 +5,7 @@ class NssConfig {
   String version = '1.7.0';
   bool? isMock = false;
   bool? isPlatformAware = false;
+  String? platformAwareMode = 'material';
   Markup? markup;
   Map<dynamic, dynamic>? schema;
 

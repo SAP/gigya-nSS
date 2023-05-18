@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
-import 'package:gigya_native_screensets_engine/models/api.dart';
-import 'package:gigya_native_screensets_engine/utils/logging.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
+
 
 class ScreenService {
   final NssChannels? channels;

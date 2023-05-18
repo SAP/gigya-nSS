@@ -4,7 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/labels.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/labels.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';

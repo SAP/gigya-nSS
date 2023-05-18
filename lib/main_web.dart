@@ -1,8 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/ioc/ioc_web.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
-import 'comm/web_channel.dart';
 import 'config.dart';
 import 'models/markup.dart';
 
@@ -34,11 +35,18 @@ class _MyAppState extends State<MyApp> {
 
 
   Widget createApp() {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      color: Colors.white,
-      initialRoute: '/',
-      onGenerateRoute: NssIoc().use(MaterialRouter).generateRoute,
+    return PlatformProvider(
+      settings: PlatformSettingsData
+        (platformStyle: PlatformStyleData(web: showCupertino() ? PlatformStyle.Cupertino : PlatformStyle.Material)),
+      builder: (context) => PlatformApp(
+        localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+          DefaultMaterialLocalizations.delegate,
+          DefaultWidgetsLocalizations.delegate,
+          DefaultCupertinoLocalizations.delegate,
+        ],
+        initialRoute: '/',
+        onGenerateRoute: NssIoc().use(MaterialRouter).generateRoute,
+      ),
     );
   }
 
@@ -47,6 +55,7 @@ class _MyAppState extends State<MyApp> {
     var fetchData = await _markupFromChannel(config.version);
     final Markup markup = Markup.fromJson(fetchData.cast<String, dynamic>());
     config.markup = markup;
+    config.platformAwareMode = markup.platformAwareMode ?? 'material';
   }
 
   /// Fetch markup from the running platform.
@@ -55,6 +64,11 @@ class _MyAppState extends State<MyApp> {
 
     return channels!.ignitionChannel.invokeMethod<Map<dynamic, dynamic>>(
         'ignition', {'version': version});
+  }
+
+  bool showCupertino(){
+    final NssConfig config = NssIoc().use(NssConfig);
+    return config.markup?.platformAware == true && config.markup?.platformAwareMode?.toLowerCase() == 'cupertino';
   }
 
 

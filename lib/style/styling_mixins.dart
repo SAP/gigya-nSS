@@ -5,7 +5,7 @@ import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/image.dart';
 
 /// Supported styles enum.
 enum Styles {
@@ -74,7 +74,7 @@ mixin StyleMixin {
     'background': 'white',
     'elevation': 0,
     'opacity': 1.0,
-    'borderColor': 'transparent',
+    'borderColor': '0x8A000000',
     'borderSize': 0,
     'cornerRadius': 0,
     'linkColor': 'blue',
@@ -186,18 +186,27 @@ mixin StyleMixin {
   /// parse padding value.
   /// Optional input can be a double, integer or a number array (left, right, top, bottom).
   EdgeInsetsGeometry getPadding(padding) {
+    var result;
     if (padding is double) {
-      return EdgeInsets.all(padding);
+      result = EdgeInsets.all(padding);
     } else if (padding is int) {
-      return EdgeInsets.all(ensureDouble(padding)!);
+      result =  EdgeInsets.all(ensureDouble(padding)!);
     } else if (padding is List<dynamic>) {
-      return EdgeInsets.only(
-          left: ensureDouble(padding[0])!,
-          top: ensureDouble(padding[1])!,
-          right: ensureDouble(padding[2])!,
-          bottom: ensureDouble(padding[3])!);
+      result =  EdgeInsets.fromLTRB(
+          ensureDouble(padding[0])!,
+          ensureDouble(padding[1])!,
+          ensureDouble(padding[2])!,
+          ensureDouble(padding[3])!);
+
+      // return EdgeInsets.only(
+      //     left: ensureDouble(padding[0])!,
+      //     top: ensureDouble(padding[1])!,
+      //     right: ensureDouble(padding[2])!,
+      //     bottom: ensureDouble(padding[3])!);
+    }else {
+      result = EdgeInsets.zero;
     }
-    return EdgeInsets.zero;
+    return result;
   }
 
   /// Request a [Color] instance given an multi optional identifier (named, hex).
