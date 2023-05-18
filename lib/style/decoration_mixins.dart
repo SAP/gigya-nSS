@@ -67,6 +67,8 @@ mixin DecorationMixin {
     TargetPlatform? platform =  defaultTargetPlatform;
     PlatformStyleData? styles = PlatformProvider.of(context)?.settings.platformStyle;
 
+
+    debugPrint('****platform: $platform');
     PlatformStyle? result = PlatformStyle.Material;
     switch(platform){
       case TargetPlatform.android :
@@ -74,6 +76,9 @@ mixin DecorationMixin {
         break;
       case TargetPlatform.iOS :
         result = styles?.ios;
+        break;
+      case TargetPlatform.windows:
+        result = styles?.windows;
         break;
       default:
         result = styles?.android;

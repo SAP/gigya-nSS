@@ -37,7 +37,9 @@ class _MyAppState extends State<MyApp> {
   Widget createApp() {
     return PlatformProvider(
       settings: PlatformSettingsData
-        (platformStyle: PlatformStyleData(web: showCupertino() ? PlatformStyle.Cupertino : PlatformStyle.Material)),
+        (platformStyle: PlatformStyleData(
+          windows: showCupertino() ? PlatformStyle.Cupertino : PlatformStyle.Material,
+          web: showCupertino() ? PlatformStyle.Cupertino : PlatformStyle.Material)),
       builder: (context) => PlatformApp(
         localizationsDelegates: <LocalizationsDelegate<dynamic>>[
           DefaultMaterialLocalizations.delegate,
