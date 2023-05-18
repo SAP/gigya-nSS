@@ -22,7 +22,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
       
       - name: Using Node
         uses: actions/setup-node@v2
@@ -48,7 +48,7 @@ jobs:
         
      steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Download math result for job 1
         uses: actions/download-artifact@v2
@@ -59,7 +59,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: '3.0.4'
+          flutter-version: '3.10.0'
 
       - name: Configuration
         run: |
