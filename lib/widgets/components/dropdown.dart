@@ -364,8 +364,12 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
 
   CupertinoTextFormFieldRow buildCupertinoPicker(borderRadius, borderSize, Color? color, BindingModel bindings, BuildContext context) {
    return CupertinoTextFormFieldRow(
+     decoration: BoxDecoration(
+       color:  getStyle(Styles.background, data: widget.data),
+       backgroundBlendMode: BlendMode.color,
+     ),
         controller: cupertinoPickerController,
-        placeholder: localizedStringFor(widget.data!.placeholder),
+     placeholder: '',
      placeholderStyle: TextStyle(
        color: widget.data!.disabled!
            ? getStyle(Styles.placeholderColor,
@@ -376,7 +380,8 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
            data: widget.data, themeProperty: 'textColor')
            .withOpacity(0.5),
      ),
-        prefix: Text(localizedStringFor(widget.data!.placeholder) ?? '', style: TextStyle(
+        prefix: Text(
+            localizedStringFor(widget.data!.placeholder) ?? '', style: TextStyle(
             color: widget.data!.disabled!
                 ? color!.withOpacity(0.3)
                 : color,
@@ -392,10 +397,6 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
          getStyle(Styles.fontSize, data: widget.data),
          fontWeight:
          getStyle(Styles.fontWeight, data: widget.data)),
-        // decoration: BoxDecoration(
-        //   border: Border.all(width: 1),
-        //   borderRadius: BorderRadius.circular(4),
-        // ),
       onTap: () => _showDialog(
         CupertinoPicker(
           scrollController: cupertinoScrollController,
