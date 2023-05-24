@@ -200,199 +200,196 @@ class _TextInputWidgetState extends State<TextInputWidget>
         accessibility: widget.data!.accessibility,
         child: Padding(
           padding:  getStyle(Styles.margin, data: widget.data),
-          child: NssCustomSizeWidget(
-            data: widget.data,
-            child: Opacity(
-              opacity: getStyle(Styles.opacity, data: widget.data),
-              child: PlatformTextFormField(
-                hintText:localizedStringFor(hintText),
-                material: (_,__) => MaterialTextFormFieldData(
-                    decoration: InputDecoration(
-                  contentPadding:
-                  EdgeInsets.symmetric(vertical: 16, horizontal: 14),
-                  isDense: true,
-                  errorMaxLines: _errorMaxLines,
-                  filled: true,
-                  suffixIcon: widget.data!.type == NssWidgetType.passwordInput
-                      ? IconButton(
-                    alignment: Alignment.center,
-                    onPressed: () {
-                      bindings.save(widget.data!.bind,
-                          _textEditingController.text.trim(),
-                          saveAs: widget.data!.sendAs);
-                      _toggleTextObfuscationState();
-                    },
-                    icon: Icon(
-                        _obscuredText ?  Icons.visibility : Icons.visibility_off,
-                        color: Colors.black54
-                    ),
-                  )
-                      : null,
-                  fillColor: getStyle(Styles.background, data: widget.data),
-                  hintText: localizedStringFor(hintText),
-                  hintStyle: TextStyle(
-                    color: widget.data!.disabled!
-                        ? getStyle(Styles.placeholderColor,
+          child: Opacity(
+            opacity: getStyle(Styles.opacity, data: widget.data),
+            child: PlatformTextFormField(
+              hintText:localizedStringFor(hintText),
+              material: (_,__) => MaterialTextFormFieldData(
+                  decoration: InputDecoration(
+                contentPadding:
+                EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+                isDense: true,
+                errorMaxLines: _errorMaxLines,
+                filled: true,
+                suffixIcon: widget.data!.type == NssWidgetType.passwordInput
+                    ? IconButton(
+                  alignment: Alignment.center,
+                  onPressed: () {
+                    bindings.save(widget.data!.bind,
+                        _textEditingController.text.trim(),
+                        saveAs: widget.data!.sendAs);
+                    _toggleTextObfuscationState();
+                  },
+                  icon: Icon(
+                      _obscuredText ?  Icons.visibility : Icons.visibility_off,
+                      color: Colors.black54
+                  ),
+                )
+                    : null,
+                fillColor: getStyle(Styles.background, data: widget.data),
+                hintText: localizedStringFor(hintText),
+                hintStyle: TextStyle(
+                  color: widget.data!.disabled!
+                      ? getStyle(Styles.placeholderColor,
+                      data: widget.data,
+                      themeProperty: 'disabledColor')
+                      .withOpacity(0.3)
+                      : getStyle(Styles.placeholderColor,
+                      data: widget.data, themeProperty: 'textColor')
+                      .withOpacity(0.5),
+                ),
+                disabledBorder: borderRadius == 0
+                    ? UnderlineInputBorder(
+                  borderRadius: BorderRadius.zero,
+                  borderSide: BorderSide(
+                    color:
+                    getThemeColor('disabledColor').withOpacity(0.3),
+                    width: borderSize + 2,
+                  ),
+                )
+                    : OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.all(Radius.circular(borderRadius)),
+                  borderSide: BorderSide(
+                    color:
+                    getThemeColor('disabledColor').withOpacity(0.3),
+                    width: borderSize,
+                  ),
+                ),
+                errorBorder: borderRadius == 0
+                    ? UnderlineInputBorder(
+                  borderRadius: BorderRadius.zero,
+                  borderSide: BorderSide(
+                    color: getThemeColor('errorColor'),
+                    width: borderSize + 2,
+                  ),
+                )
+                    : OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.all(Radius.circular(borderRadius)),
+                  borderSide: BorderSide(
+                    color: getThemeColor('errorColor'),
+                    width: borderSize,
+                  ),
+                ),
+                focusedErrorBorder: borderRadius == 0
+                    ? UnderlineInputBorder(
+                  borderRadius: BorderRadius.zero,
+                  borderSide: BorderSide(
+                    color: getThemeColor('errorColor'),
+                    width: borderSize + 2,
+                  ),
+                )
+                    : OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.all(Radius.circular(borderRadius)),
+                  borderSide: BorderSide(
+                    color: getThemeColor('errorColor'),
+                    width: borderSize,
+                  ),
+                ),
+                focusedBorder: borderRadius == 0
+                    ? UnderlineInputBorder(
+                  borderRadius: BorderRadius.zero,
+                  borderSide: BorderSide(
+                    color: getThemeColor('enabledColor'),
+                    width: borderSize + 2,
+                  ),
+                )
+                    : OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.all(Radius.circular(borderRadius)),
+                  borderSide: BorderSide(
+                    color: getThemeColor('enabledColor'),
+                    width: borderSize,
+                  ),
+                ),
+                enabledBorder: borderRadius == 0
+                    ? UnderlineInputBorder(
+                  borderRadius: BorderRadius.zero,
+                  borderSide: BorderSide(
+                    color: getStyle(Styles.borderColor,
                         data: widget.data,
-                        themeProperty: 'disabledColor')
-                        .withOpacity(0.3)
-                        : getStyle(Styles.placeholderColor,
-                        data: widget.data, themeProperty: 'textColor')
-                        .withOpacity(0.5),
+                        themeProperty: "disabledColor"),
+                    width: borderSize,
                   ),
-                  disabledBorder: borderRadius == 0
-                      ? UnderlineInputBorder(
-                    borderRadius: BorderRadius.zero,
-                    borderSide: BorderSide(
-                      color:
-                      getThemeColor('disabledColor').withOpacity(0.3),
-                      width: borderSize + 2,
-                    ),
-                  )
-                      : OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.all(Radius.circular(borderRadius)),
-                    borderSide: BorderSide(
-                      color:
-                      getThemeColor('disabledColor').withOpacity(0.3),
-                      width: borderSize,
-                    ),
-                  ),
-                  errorBorder: borderRadius == 0
-                      ? UnderlineInputBorder(
-                    borderRadius: BorderRadius.zero,
-                    borderSide: BorderSide(
-                      color: getThemeColor('errorColor'),
-                      width: borderSize + 2,
-                    ),
-                  )
-                      : OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.all(Radius.circular(borderRadius)),
-                    borderSide: BorderSide(
-                      color: getThemeColor('errorColor'),
-                      width: borderSize,
-                    ),
-                  ),
-                  focusedErrorBorder: borderRadius == 0
-                      ? UnderlineInputBorder(
-                    borderRadius: BorderRadius.zero,
-                    borderSide: BorderSide(
-                      color: getThemeColor('errorColor'),
-                      width: borderSize + 2,
-                    ),
-                  )
-                      : OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.all(Radius.circular(borderRadius)),
-                    borderSide: BorderSide(
-                      color: getThemeColor('errorColor'),
-                      width: borderSize,
-                    ),
-                  ),
-                  focusedBorder: borderRadius == 0
-                      ? UnderlineInputBorder(
-                    borderRadius: BorderRadius.zero,
-                    borderSide: BorderSide(
-                      color: getThemeColor('enabledColor'),
-                      width: borderSize + 2,
-                    ),
-                  )
-                      : OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.all(Radius.circular(borderRadius)),
-                    borderSide: BorderSide(
-                      color: getThemeColor('enabledColor'),
-                      width: borderSize,
-                    ),
-                  ),
-                  enabledBorder: borderRadius == 0
-                      ? UnderlineInputBorder(
-                    borderRadius: BorderRadius.zero,
-                    borderSide: BorderSide(
-                      color: getStyle(Styles.borderColor,
-                          data: widget.data,
-                          themeProperty: "disabledColor"),
-                      width: borderSize,
-                    ),
-                  )
-                      : OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.all(Radius.circular(borderRadius)),
-                    borderSide: BorderSide(
-                      color: notifyError()
-                          ? getThemeColor('errorColor')
-                          : getStyle(Styles.borderColor,
-                          data: widget.data,
-                          themeProperty: "disabledColor"),
-                      width: borderSize,
-                    ),
-                  ),
-                )),
-                cupertino: (_,__) => CupertinoTextFormFieldData(
-                    decoration: BoxDecoration(
-                        color:  getStyle(Styles.background, data: widget.data), 
-                        backgroundBlendMode: BlendMode.color
-                    ),
-                    prefix: Text(localizedStringFor(hintText) ?? "", style: TextStyle(
-                      color: widget.data!.disabled!
-                          ? color!.withOpacity(0.3)
-                          : color,
-                    )),
-                  placeholder: '',
-                  placeholderStyle: TextStyle(
-                    color: widget.data!.disabled!
-                        ? getStyle(Styles.placeholderColor,
+                )
+                    : OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.all(Radius.circular(borderRadius)),
+                  borderSide: BorderSide(
+                    color: notifyError()
+                        ? getThemeColor('errorColor')
+                        : getStyle(Styles.borderColor,
                         data: widget.data,
-                        themeProperty: 'disabledColor')
-                        .withOpacity(0.3)
-                        : getStyle(Styles.placeholderColor,
-                        data: widget.data, themeProperty: 'textColor')
-                        .withOpacity(0.5),
+                        themeProperty: "disabledColor"),
+                    width: borderSize,
                   ),
-                  padding: EdgeInsets.all(4) //EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-              ),
-                textAlignVertical: TextAlignVertical.center,
-                maxLines: _obscuredText
-                    ? 1
-                    : widget.data!.style!.containsKey("size")
-                        ? 1000
-                        : 1,
-                enabled: !widget.data!.disabled!,
-                keyboardType: getKeyboardType(widget.data!.bind),
-                obscureText: _obscuredText,
-                controller: _textEditingController,
-                textAlign: getStyle(Styles.textAlign, data: widget.data) ??
-                    TextAlign.start,
-                style: TextStyle(
+                ),
+              )),
+              cupertino: (_,__) => CupertinoTextFormFieldData(
+                  decoration: BoxDecoration(
+                      color:  getStyle(Styles.background, data: widget.data),
+                      backgroundBlendMode: BlendMode.color
+                  ),
+                  prefix: Text(localizedStringFor(hintText) ?? "", style: TextStyle(
                     color: widget.data!.disabled!
                         ? color!.withOpacity(0.3)
                         : color,
-                    fontSize: getStyle(Styles.fontSize, data: widget.data),
-                    fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
-                validator: (input) {
-                  if(widget.data!.disabled! == true)
+                  )),
+                placeholder: '',
+                placeholderStyle: TextStyle(
+                  color: widget.data!.disabled!
+                      ? getStyle(Styles.placeholderColor,
+                      data: widget.data,
+                      themeProperty: 'disabledColor')
+                      .withOpacity(0.3)
+                      : getStyle(Styles.placeholderColor,
+                      data: widget.data, themeProperty: 'textColor')
+                      .withOpacity(0.5),
+                ),
+                //padding: EdgeInsets.all(4) //EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+            ),
+              textAlignVertical: TextAlignVertical.center,
+              maxLines: _obscuredText
+                  ? 1
+                  : widget.data!.style!.containsKey("size")
+                      ? 1000
+                      : 1,
+              enabled: !widget.data!.disabled!,
+              keyboardType: getKeyboardType(widget.data!.bind),
+              obscureText: _obscuredText,
+              controller: _textEditingController,
+              textAlign: getStyle(Styles.textAlign, data: widget.data) ??
+                  TextAlign.start,
+              style: TextStyle(
+                  color: widget.data!.disabled!
+                      ? color!.withOpacity(0.3)
+                      : color,
+                  fontSize: getStyle(Styles.fontSize, data: widget.data),
+                  fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
+              validator: (input) {
+                if(widget.data!.disabled! == true)
+                  return null;
+                // Event injected error has priority in field validation.
+                if (eventInjectedError != null) {
+                  if (eventInjectedError!.isEmpty) {
+                    eventInjectedError = null;
                     return null;
-                  // Event injected error has priority in field validation.
-                  if (eventInjectedError != null) {
-                    if (eventInjectedError!.isEmpty) {
-                      eventInjectedError = null;
-                      return null;
-                    }
                   }
-                  // Field validation triggered.
-                  return validateField(input, widget.data!.bind);
-                },
-                onChanged: (s) {
-                  _onConfirmationChange(s);
-                  _onChanged(viewModel, bindings, s);
-                },
-                onSaved: (value) {
-                  // Form field saved event triggered.
-                  _onSavedValue(value, bindings);
-                  return;
-                },
-              ),
+                }
+                // Field validation triggered.
+                return validateField(input, widget.data!.bind);
+              },
+              onChanged: (s) {
+                _onConfirmationChange(s);
+                _onChanged(viewModel, bindings, s);
+              },
+              onSaved: (value) {
+                // Form field saved event triggered.
+                _onSavedValue(value, bindings);
+                return;
+              },
             ),
           ),
         ),
@@ -562,7 +559,6 @@ class _TextInputWidgetState extends State<TextInputWidget>
                           data: widget.data, themeProperty: 'textColor')
                           .withOpacity(0.5),
                     ),
-                    padding: EdgeInsets.all(4)
                   ),
                   textAlignVertical: TextAlignVertical.center,
                   maxLines: _obscuredConfirmText
