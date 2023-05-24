@@ -364,11 +364,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
 
   CupertinoTextFormFieldRow buildCupertinoPicker(borderRadius, borderSize, Color? color, BindingModel bindings, BuildContext context) {
    return CupertinoTextFormFieldRow(
-     decoration: BoxDecoration(
-       color:  getStyle(Styles.background, data: widget.data),
-       backgroundBlendMode: BlendMode.color,
-     ),
-        controller: cupertinoPickerController,
+     controller: cupertinoPickerController,
      placeholder: '',
      placeholderStyle: TextStyle(
        color: widget.data!.disabled!
