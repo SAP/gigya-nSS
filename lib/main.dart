@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
     return config.markup?.platformAware == true;
   }
 
-  /// Create main application.
+  /// Create main application for mobile.
   Widget createApp() {
     return PlatformProvider(
       settings: PlatformSettingsData(
