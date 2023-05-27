@@ -126,12 +126,12 @@ abstract class WidgetFactory with DecorationMixin{
   }
 }
 
-class MaterialWidgetFactory extends WidgetFactory {
+class WidgetCreationFactory extends WidgetFactory {
   @override
   Widget buildApp() {
     return MaterialAppWidget(
       markup: NssIoc().use(NssConfig).markup,
-      router: NssIoc().use(MaterialRouter),
+      router: NssIoc().use(PlatformRouter),
     );
   }
 

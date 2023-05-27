@@ -4,9 +4,10 @@ import 'package:gigya_native_screensets_engine/widgets/router.dart';
 
 class MaterialAppWidget extends StatelessWidget {
   final Markup? markup;
-  final MaterialRouter? router;
+  final PlatformRouter? router;
 
-  const MaterialAppWidget({Key? key, this.markup, this.router}) : super(key: key);
+  const MaterialAppWidget({Key? key, this.markup, this.router})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

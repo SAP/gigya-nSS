@@ -30,7 +30,7 @@ void main() {
     var channel = MockMethodChannel();
 
     // Test instance.
-    var router = MaterialRouter(config, channels, factory);
+    var router = PlatformRouter(config, channels, factory);
 
     var nextRoute;
 

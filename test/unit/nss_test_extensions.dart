@@ -40,7 +40,7 @@ class MockConfig extends Mock implements NssConfig {}
 
 class MockChannels extends Mock implements NssChannels {}
 
-class MockMaterialWidgetFactory extends Mock implements MaterialWidgetFactory {}
+class MockMaterialWidgetFactory extends Mock implements WidgetCreationFactory {}
 
 class MockApiChannel extends Mock implements MethodChannel {}
 

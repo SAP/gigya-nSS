@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
           DefaultCupertinoLocalizations.delegate,
         ],
         initialRoute: '/',
-        onGenerateRoute: NssIoc().use(MaterialRouter).generateRoute,
+        onGenerateRoute: NssIoc().use(PlatformRouter).generateRoute,
       ),
     );
   }
