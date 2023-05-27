@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gigya_native_screensets_engine/comm/moblie_channel.dart';
+import 'package:gigya_native_screensets_engine/comm/mobile_channel.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
