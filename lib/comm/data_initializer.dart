@@ -1,15 +1,34 @@
+import 'dart:convert';
+
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
+import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
-enum DataInitializerLogs { markupFetch, schemaFetch }
+enum DataInitializerLogs { markupFetch, mockMarkup, schemaFetch }
 
 class DataInitializer {
-  Future<void> getRequiredDataForEngineInitialization() async {
-    final NssConfig config = NssIoc().use(NssConfig);
+  final NssConfig config = NssIoc().use(NssConfig);
 
+  Future<void> getRequiredMockDataForEngineInitialization() async {
+    // DEBUG LOG.
+    _log(DataInitializerLogs.mockMarkup);
+
+    // Fetch markup.
+    var markupData = await _getMockMarkup();
+    final Markup markup = Markup.fromJson(markupData.cast<String, dynamic>());
+
+    // Bind markup to config & set awareness mode.
+    config.markup = markup;
+    config.platformAwareMode = markup.platformAwareMode ?? 'material';
+
+    //Add default localization values that are needed (can be overridden by client).
+    ErrorUtils().addDefaultStringValues(config.markup!.localization!);
+  }
+
+  Future<void> getRequiredDataForEngineInitialization() async {
     // DEBUG LOG.
     _log(DataInitializerLogs.markupFetch);
 
@@ -52,6 +71,13 @@ class DataInitializer {
         .use(NssChannels)
         .ignitionChannel
         .invokeMethod<Map<dynamic, dynamic>>('ignition', {'version': version});
+  }
+
+  /// Fetch markup from example JSON asset.
+  /// This is used for development & testing.
+  Future<Map<dynamic, dynamic>> _getMockMarkup() async {
+    final String json = await AssetUtils.jsonFromAssets('assets/example.json');
+    return jsonDecode(json);
   }
 
   /// Fetch raw schema from native/web communication "ignition" channel.

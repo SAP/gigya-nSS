@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: DataInitializer().getRequiredDataForEngineInitialization(),
+        future: DataInitializer().getRequiredMockDataForEngineInitialization(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done)
             return createApp();

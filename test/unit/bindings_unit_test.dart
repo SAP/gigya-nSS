@@ -38,7 +38,7 @@ void main() {
 
   group('BindingMixin: ', () {
     final mixin = UseBindingMixin();
-    var config = NssConfig(isMock: true);
+    var config = NssConfig(isMock: true, isPlatformAware: false);
     var markup = MockMarkup();
     config.markup = markup;
     when(markup.useSchemaValidations).thenReturn(true);

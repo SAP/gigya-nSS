@@ -14,7 +14,7 @@ import '../config.dart';
 class MobileContainer {
   void startEngine({bool asMock = false}) {
     NssIoc()
-        .register(NssConfig, (ioc) => NssConfig(isMock: asMock),
+        .register(NssConfig, (ioc) => NssConfig(isMock: asMock, isPlatformAware: false),
             singleton: true)
         .register(NssChannels, (ioc) => MobileChannels(), singleton: true)
         .register(BindingModel, (ioc) => BindingModel())

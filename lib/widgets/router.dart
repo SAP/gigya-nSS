@@ -196,7 +196,7 @@ class PlatformRouter extends Router {
     if (config == null) return;
 
     // Default route style is set to Material.
-    if (!config!.isPlatformAware!) {
+    if (!config!.isPlatformAware) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => NssIoc().use(destination));
     }
