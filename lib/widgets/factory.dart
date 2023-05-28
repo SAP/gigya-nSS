@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
@@ -11,7 +10,6 @@ import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
-import 'package:gigya_native_screensets_engine/widgets/components/app.dart';
 import 'package:gigya_native_screensets_engine/widgets/components/buttons.dart';
 import 'package:gigya_native_screensets_engine/widgets/components/checkbox.dart';
 import 'package:gigya_native_screensets_engine/widgets/components/container.dart';
@@ -25,7 +23,6 @@ import 'package:gigya_native_screensets_engine/widgets/components/profile_photo.
 import 'package:gigya_native_screensets_engine/widgets/components/radio.dart';
 import 'package:gigya_native_screensets_engine/widgets/components/screen.dart';
 import 'package:gigya_native_screensets_engine/widgets/components/social.dart';
-import 'package:gigya_native_screensets_engine/widgets/router.dart';
 
 /// Available widget types supported by the Nss engine.
 enum NssWidgetType {
@@ -59,8 +56,7 @@ enum NssStack { vertical, horizontal }
 /// Multi widget container alignment options for "alignment" markup property.
 enum NssAlignment { start, end, center, equal_spacing, spread }
 
-abstract class WidgetFactory with DecorationMixin{
-  Widget? buildApp();
+abstract class WidgetFactory with DecorationMixin {
 
   Widget? buildScreen(Screen screen, Map<String, dynamic> routingData);
 
@@ -127,13 +123,6 @@ abstract class WidgetFactory with DecorationMixin{
 }
 
 class WidgetCreationFactory extends WidgetFactory {
-  @override
-  Widget buildApp() {
-    return MaterialAppWidget(
-      markup: NssIoc().use(NssConfig).markup,
-      router: NssIoc().use(PlatformRouter),
-    );
-  }
 
   @override
   Widget buildScreen(Screen screen, Map<String, dynamic>? arguments) {
@@ -218,53 +207,5 @@ class WidgetCreationFactory extends WidgetFactory {
       default:
         return Container();
     }
-  }
-}
-
-//TODO Not planned for v0.1.
-class CupertinoWidgetFactory extends WidgetFactory {
-  @override
-  Widget? buildApp() {
-    // TODO: implement buildApp
-    return null;
-  }
-
-  @override
-  Widget? buildScreen(Screen screen, Map<String, dynamic> routingData) {
-    // TODO: implement buildScreen
-    return null;
-  }
-
-  @override
-  Widget buildComponent(NssWidgetType? type, NssWidgetData data) {
-    switch (type) {
-      case NssWidgetType.label:
-        // TODO: Handle this case.
-        break;
-      case NssWidgetType.textInput:
-        // TODO: Handle this case.
-        break;
-      case NssWidgetType.emailInput:
-        // TODO: Handle this case.
-        break;
-      case NssWidgetType.passwordInput:
-        // TODO: Handle this case.
-        break;
-      case NssWidgetType.submit:
-        // TODO: Handle this case.
-        break;
-      case NssWidgetType.checkbox:
-        // TODO: Handle this case.
-        break;
-      case NssWidgetType.radio:
-        // TODO: Handle this case.
-        break;
-      case NssWidgetType.dropdown:
-        // TODO: Handle this case.
-        break;
-      default:
-        return Container();
-    }
-    return Container();
   }
 }

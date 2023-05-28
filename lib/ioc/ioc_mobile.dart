@@ -22,7 +22,6 @@ class MobileContainer {
         .register(
             Logger, (ioc) => Logger(ioc.use(NssConfig), ioc.use(NssChannels)))
         .register(WidgetCreationFactory, (ioc) => WidgetCreationFactory())
-        .register(CupertinoWidgetFactory, (ioc) => CupertinoWidgetFactory())
         .register(
             PlatformRouter,
             (ioc) => PlatformRouter(ioc.use(NssConfig), ioc.use(NssChannels),
