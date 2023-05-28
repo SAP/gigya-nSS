@@ -153,10 +153,9 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
 
   IconButton? _createAppBarLeadingIcon() {
     final bool firstRouteInStack = !Navigator.of(context).canPop();
-    if (firstRouteInStack && Platform.isAndroid) return null;
     return IconButton(
       icon: Icon(
-        _getAppBarLeadingIconData(),
+        Platform.isIOS || kIsWeb ? Icons.chevron_left : Icons.arrow_back,
         color: getStyle(Styles.fontColor,
             styles: widget.screen!.appBar!.style,
             themeProperty: 'secondaryColor'),
@@ -165,19 +164,10 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         if (firstRouteInStack) {
           Navigator.pushNamed(context, '_canceled');
         } else {
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          Navigator.of(context).pop();
         }
       },
     );
-  }
-
-  IconData _getAppBarLeadingIconData() {
-    final bool firstRouteInStack = !Navigator.of(context).canPop();
-    if (firstRouteInStack && Platform.isIOS) {
-      return Icons.close;
-    }
-    if (Platform.isIOS) return Icons.chevron_left;
-    return Icons.arrow_back;
   }
 
   /// Register view model instance to a navigation steam controller.
