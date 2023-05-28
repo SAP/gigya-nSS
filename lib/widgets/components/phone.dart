@@ -15,7 +15,6 @@ import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
-import 'package:gigya_native_screensets_engine/widgets/components/labels.dart';
 import 'package:provider/provider.dart';
 
 /// Phone input component.
@@ -382,6 +381,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
               _countryCodePick = picked;
             });
           },
+          countryCodePick: _countryCodePick,
         ),
       ),
     );
@@ -399,6 +399,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
             _countryCodePick = picked;
           });
         },
+        countryCodePick: _countryCodePick,
       ),
     );
   }
@@ -487,8 +488,9 @@ class CountryPickerDialogWidget extends StatefulWidget {
   final List<CountryCodePick>? mainList;
   final OnCountryCodePick? onPick;
   final bool? showIcons;
+  final CountryCodePick countryCodePick;
 
-  const CountryPickerDialogWidget({Key? key, this.mainList, this.onPick, this.showIcons}) : super(key: key);
+  const CountryPickerDialogWidget({Key? key, this.mainList, this.onPick, this.showIcons, required this.countryCodePick}) : super(key: key);
 
   @override
   _CountryPickerDialogWidgetState createState() => _CountryPickerDialogWidgetState();
@@ -502,12 +504,19 @@ class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> w
 
   /// List of country code objects used for search purposes.
   List<CountryCodePick> _countryCodeSearchList = [];
+  static const double _kItemExtent = 32.0;
+  late TextEditingController cupertinoPickerController;
+  late FixedExtentScrollController cupertinoScrollController;
 
   @override
   void initState() {
+    _countryCodeSearchList = List.of(widget.mainList!);
+    cupertinoPickerController = TextEditingController(text: widget.countryCodePick.name);
+    cupertinoScrollController = FixedExtentScrollController(initialItem: _countryCodeSearchList.indexOf(widget.countryCodePick));
+
     super.initState();
     // Reset search list.
-    _countryCodeSearchList = List.of(widget.mainList!);
+ 
   }
 
   @override
@@ -517,81 +526,131 @@ class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> w
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
-            child: getPlatformStyle(context) == PlatformStyle.Material ?  TextFormField(
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search),
-              ),
-              onChanged: (input) {
-                if (input.isEmpty) {
-                  // Reset search list.
-                  setState(() {
-                    _countryCodeSearchList.clear();
-                    _countryCodeSearchList.addAll(List.of(widget.mainList!));
-                  });
-                  return;
-                }
-                // Filter list by search input.
-                setState(() {
-                  _countryCodeSearchList.clear();
-                  _countryCodeSearchList.addAll(widget.mainList!.where((CountryCodePick element) => element.name!.toLowerCase().startsWith(input.toLowerCase())).toList());
-                });
-              },
-            ) : CupertinoSearchTextField(
-                decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Colors.grey,
-                        width: 1.0,
-                      ),
-                    ),
-                    color: Colors.white, backgroundBlendMode: BlendMode.color
-                ),
-                padding: const EdgeInsets.all(16.0),
-                placeholder: '',
-                onChanged: (input) {
-                if (input.isEmpty) {
-                  // Reset search list.
-                  setState(() {
-                    _countryCodeSearchList.clear();
-                    _countryCodeSearchList.addAll(List.of(widget.mainList!));
-                  });
-                  return;
-                }
-                // Filter list by search input.
-                setState(() {
-                  _countryCodeSearchList.clear();
-                  _countryCodeSearchList.addAll(widget.mainList!.where((CountryCodePick element) => element.name!.toLowerCase().startsWith(input.toLowerCase())).toList());
-                });
-              },
-             ),
-
-          ),
-          Flexible(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: _countryCodeSearchList.length,
-              itemBuilder: (BuildContext context, int index) {
-                return InkWell(
-                  onTap: () {
-                    // Confirm selection.
-                    widget.onPick!(_countryCodeSearchList[index]);
-                    Navigator.pop(context);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                    child: _ccPickerTile(_countryCodeSearchList[index], widget.showIcons!),
-                  ),
-                );
-              },
-            ),
-          ),
+          if(getPlatformStyle(context) == PlatformStyle.Material)
+            ...buildMaterialSearchBoxPicker(context)
+          else
+            ...buildCupertinoSearchBoxPicker(context)
         ],
       ),
     );
   }
 
+  List<Widget> buildMaterialSearchBoxPicker(BuildContext context) {
+    return [
+      Padding(
+          padding: const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
+          child: TextFormField(
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.search),
+            ),
+            onChanged: (input) {
+              if (input.isEmpty) {
+                // Reset search list.
+                setState(() {
+                  _countryCodeSearchList.clear();
+                  _countryCodeSearchList.addAll(List.of(widget.mainList!));
+                });
+                return;
+              }
+              // Filter list by search input.
+              setState(() {
+                _countryCodeSearchList.clear();
+                _countryCodeSearchList.addAll(widget.mainList!.where((CountryCodePick element) => element.name!.toLowerCase().startsWith(input.toLowerCase())).toList());
+              });
+            },
+          )
+
+        ),
+    Flexible(
+    child: ListView.builder(
+      shrinkWrap: true,
+      itemCount: _countryCodeSearchList.length,
+      itemBuilder: (BuildContext context, int index) {
+        return InkWell(
+          onTap: () {
+            // Confirm selection.
+            widget.onPick!(_countryCodeSearchList[index]);
+            Navigator.pop(context);
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+            child: _ccPickerTile(_countryCodeSearchList[index], widget.showIcons!),
+          ),
+        );
+      },
+    ),
+    )];
+  }
+
+  List<Widget> buildCupertinoSearchBoxPicker(BuildContext context) {
+    return [
+      Padding(
+        padding: const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
+        child: CupertinoSearchTextField(
+          decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.grey,
+                  width: 1.0,
+                ),
+              ),
+              color: Colors.white, backgroundBlendMode: BlendMode.color
+          ),
+          padding: const EdgeInsets.all(16.0),
+          placeholder: '',
+          onChanged: (input) {
+            if (input.isEmpty) {
+              // Reset search list.
+              setState(() {
+                _countryCodeSearchList.clear();
+                _countryCodeSearchList.addAll(List.of(widget.mainList!));
+              });
+              return;
+            }
+            // Filter list by search input.
+            setState(() {
+              _countryCodeSearchList.clear();
+              _countryCodeSearchList.addAll(widget.mainList!.where((CountryCodePick element) => element.name!.toLowerCase().startsWith(input.toLowerCase())).toList());
+            });
+          },
+        ),
+
+      ),
+      Flexible(
+        child:CupertinoPicker(
+          scrollController: cupertinoScrollController,
+          magnification: 1.22,
+          squeeze: 1.2,
+          useMagnifier: true,
+          itemExtent: _kItemExtent,
+          // This is called when selected item is changed.
+          onSelectedItemChanged: (int index) {
+            setState(() {
+              cupertinoPickerController.text = _countryCodeSearchList[index].name!;
+              //cupertinoScrollController.dispose();
+              cupertinoScrollController = FixedExtentScrollController(initialItem: index);
+              widget.onPick!(_countryCodeSearchList[index]);
+            });
+
+          },
+          children:
+          List<Widget>.generate(_countryCodeSearchList.length, (int index) {
+            return GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                widget.onPick!(_countryCodeSearchList[index]);
+                Navigator.of(context).pop(_countryCodeSearchList[index]);
+                },
+              child: Center(
+                child: Text(
+                  _countryCodeSearchList[index].name! + ' ' + _countryCodeSearchList[index].dialCode!,
+                ),
+              ),
+            );
+          }),
+        )
+      )];
+  }
   /// Picker selection tile.
   /// Constructed of flag image and country name.
   ///
@@ -636,6 +695,14 @@ class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> w
       ),
     );
   }
+
+  // @override
+  // void dispose(){
+  //   cupertinoScrollController.dispose();
+  //   cupertinoPickerController.dispose();
+  //   super.dispose();
+  //
+  // }
 
 
 }
