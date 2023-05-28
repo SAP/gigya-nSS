@@ -114,8 +114,6 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
         _value = defaultValue;
 
         setOption(_dropdownDisplayValue, bindings);
-        debugPrint(
-            'No binding value for dropdown -> default value will be displayed');
         cupertinoPickerController.text = _dropdownDisplayValue!;
         cupertinoScrollController = FixedExtentScrollController(initialItem: indexFromValue(defaultValue));
       } else {
@@ -411,9 +409,14 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
           },
           children:
           List<Widget>.generate(_dropdownItems.length, (int index) {
-            return Center(
-              child: Text(
-                _dropdownItems[index]!,
+            return GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Center(
+                child: Text(
+                  _dropdownItems[index]!,
+                ),
               ),
             );
           }),
