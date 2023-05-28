@@ -277,13 +277,18 @@ class ScreenViewModel
         engineLogger!.d('screenData : $screenData');
         // Trigger navigation.
         var event =  NavigationEvent('$id/onSuccess', screenData, expressionData);
-        event.screenShowIfMapping = actionData['screenShowIfMapping'].cast<String, dynamic>();
+        if (actionData['screenShowIfMapping'] != null) {
+          event.screenShowIfMapping =
+              actionData['screenShowIfMapping'].cast<String, dynamic>();
+        }
 
         navigationStream.sink
             .add(event);
       },
     ).catchError(
       (error) async {
+        engineLogger!.d('error : $error');
+
         final RoutingAllowed route = RouteEvaluator.allowedBy(error.errorCode);
         if (route != RoutingAllowed.none) {
           final routeNamed = describeEnum(route);
