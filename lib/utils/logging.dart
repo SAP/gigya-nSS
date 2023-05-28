@@ -16,6 +16,7 @@ class Logger {
 
   /// Trigger a native debug log.
   d(String message, {String tag = 'NssEngine DEBUG'}) {
+    debugPrint(message);
     if (config!.isMock!) {
       return;
     }
@@ -29,7 +30,7 @@ class Logger {
 
   /// Trigger a native error log.
   e(String message, {String tag = 'NssEngine ERROR'}) {
-    debugPrint('Engine error for logger: $message');
+    debugPrint("error: $message");
     if (config!.isMock!) {
       return;
     }

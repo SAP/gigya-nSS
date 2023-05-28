@@ -13,29 +13,39 @@ import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/widgets/components/progress_indicator.dart';
-import 'package:gigya_native_screensets_engine/widgets/screen.dart';
+import 'package:gigya_native_screensets_engine/widgets/events.dart';
 import 'package:provider/provider.dart';
 
+enum ScreenChannelAction { flow, submit }
+
+extension ScreenChannelActionExt on ScreenChannelAction {
+  String get action {
+    return describeEnum(this);
+  }
+}
+
 /// Logger enums.
-enum PlatformScreenWidgetLogs { screenDidLoad, navigateToScreen }
+enum ScreenWidgetLogs { screenDidLoad, navigateToScreen, buildScaffold }
 
 /// Debug logging.
-_log(PlatformScreenWidgetLogs log, [String? logData]) {
+_log(ScreenWidgetLogs log, [String? logData]) {
   switch (log) {
-    case PlatformScreenWidgetLogs.navigateToScreen:
-      engineLogger!.d(
-          "PlatformScreenWidget: navigate to screen $logData",
+    case ScreenWidgetLogs.navigateToScreen:
+      engineLogger!.d("PlatformScreenWidget: navigate to screen $logData",
           tag: Logger.dTag);
       break;
-    case PlatformScreenWidgetLogs.screenDidLoad:
-      engineLogger!.d(
-          "PlatformScreenWidget: screenDidLoad issued ",
+    case ScreenWidgetLogs.screenDidLoad:
+      engineLogger!
+          .d("PlatformScreenWidget: screenDidLoad issued ", tag: Logger.dTag);
+      break;
+    case ScreenWidgetLogs.buildScaffold:
+      engineLogger!.d("PlatformScreenWidget: build scaffold initiated",
           tag: Logger.dTag);
       break;
   }
 }
 
-class PlatformScreenWidget extends StatefulWidget {
+class ScreenWidget extends StatefulWidget {
   final ScreenViewModel? viewModel;
   final BindingModel? bindingModel;
   final RuntimeStateEvaluator? expressionProvider;
@@ -46,7 +56,7 @@ class PlatformScreenWidget extends StatefulWidget {
   /// your screen form.
   final Map<String, dynamic>? routingData;
 
-  const PlatformScreenWidget({
+  const ScreenWidget({
     Key? key,
     this.viewModel,
     this.bindingModel,
@@ -57,15 +67,18 @@ class PlatformScreenWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _PlatformScreenWidgetState createState() =>
-      _PlatformScreenWidgetState(viewModel, bindingModel, expressionProvider);
+  _ScreenWidgetState createState() =>
+      _ScreenWidgetState(viewModel, bindingModel, expressionProvider);
 }
 
-class _PlatformScreenWidgetState extends ScreenWidgetState<PlatformScreenWidget>
-    with StyleMixin, LocalizationMixin {
-  _PlatformScreenWidgetState(ScreenViewModel? viewModel, BindingModel? bindings,
-      RuntimeStateEvaluator? expressionProvider)
-      : super(viewModel, bindings, expressionProvider);
+class _ScreenWidgetState extends State<ScreenWidget>
+    with StyleMixin, LocalizationMixin, EngineEvents {
+  final ScreenViewModel? viewModel;
+  final BindingModel? bindings;
+  final RuntimeStateEvaluator? expressionProvider;
+
+  _ScreenWidgetState(
+      this.viewModel, this.bindings, this.expressionProvider);
 
   @override
   void initState() {
@@ -98,14 +111,36 @@ class _PlatformScreenWidgetState extends ScreenWidgetState<PlatformScreenWidget>
         }
       }
 
-
+      // DEBUG LOG.
+      _log(ScreenWidgetLogs.screenDidLoad);
 
       screenDidLoad(widget.screen!.id);
     });
   }
 
   @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ScreenViewModel?>(
+          create: (_) => viewModel,
+        ),
+        ChangeNotifierProvider<BindingModel?>(
+          create: (_) => bindings,
+        ),
+        ChangeNotifierProvider<RuntimeStateEvaluator?>(
+          create: (_) => expressionProvider,
+        )
+      ],
+      child: buildScaffold(),
+    );
+  }
+
+  /// Main UI content build tree.
   Widget buildScaffold() {
+    // DEBUG LOG.
+    _log(ScreenWidgetLogs.buildScaffold);
+
     var appBarBackground = getStyle(Styles.background,
         styles:
             widget.screen!.appBar == null ? null : widget.screen!.appBar!.style,
@@ -228,7 +263,7 @@ class _PlatformScreenWidgetState extends ScreenWidgetState<PlatformScreenWidget>
     _removeUnsecureRoutingData();
 
     // DEBUG LOG.
-    _log(PlatformScreenWidgetLogs.navigateToScreen, route);
+    _log(ScreenWidgetLogs.navigateToScreen, route);
 
     Navigator.pushNamed(
       context,
