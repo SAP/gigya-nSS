@@ -96,41 +96,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       child: PlatformScaffold(
         backgroundColor: scaffoldBackground,
         //extendBodyBehindAppBar: true,
-        appBar: widget.screen!.appBar == null
-            ? null
-            : PlatformAppBar(
-                material: (_, __) => MaterialAppBarData(
-                    elevation: getStyle(Styles.elevation, styles: widget.screen!.appBar!.style),
-                ),
-                cupertino: (_,__) => CupertinoNavigationBarData(),
-                backgroundColor: appBarBackground,
-                title: Text(
-                  localizedStringFor(widget.screen!.appBar!.textKey) ?? '',
-                  style: TextStyle(
-                    color: getStyle(Styles.fontColor,
-                        styles: widget.screen!.appBar!.style,
-                        themeProperty: 'secondaryColor'),
-                    fontWeight: getStyle(Styles.fontWeight,
-                        styles: widget.screen!.appBar!.style),
-                  ),
-                ),
-                leading: kIsWeb
-                    ? null
-                    : Platform.isIOS
-                        ? Container(
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.close,
-                                color: getStyle(Styles.fontColor,
-                                    styles: widget.screen!.appBar!.style,
-                                    themeProperty: 'secondaryColor'),
-                              ),
-                              onPressed: () =>
-                                  Navigator.pushNamed(context, '_canceled'),
-                            ),
-                          )
-                        : null,
-              ),
+        appBar: _createAppBar(appBarBackground),
         body: Container(
           child: SafeArea(
             child: Stack(
@@ -159,6 +125,59 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         ),
       ),
     );
+  }
+
+  /// Create AppBar widget for given platform. If requried.
+  PlatformAppBar? _createAppBar(appBarBackground) {
+    if (widget.screen!.appBar == null) return null;
+    return PlatformAppBar(
+      material: (_, __) => MaterialAppBarData(
+        elevation:
+            getStyle(Styles.elevation, styles: widget.screen!.appBar!.style),
+      ),
+      cupertino: (_, __) => CupertinoNavigationBarData(),
+      backgroundColor: appBarBackground,
+      title: Text(
+        localizedStringFor(widget.screen!.appBar!.textKey) ?? '',
+        style: TextStyle(
+          color: getStyle(Styles.fontColor,
+              styles: widget.screen!.appBar!.style,
+              themeProperty: 'secondaryColor'),
+          fontWeight:
+              getStyle(Styles.fontWeight, styles: widget.screen!.appBar!.style),
+        ),
+      ),
+      leading: _createAppBarLeadingIcon(),
+    );
+  }
+
+  IconButton? _createAppBarLeadingIcon() {
+    final bool firstRouteInStack = !Navigator.of(context).canPop();
+    if (firstRouteInStack && Platform.isAndroid) return null;
+    return IconButton(
+      icon: Icon(
+        _getAppBarLeadingIconData(),
+        color: getStyle(Styles.fontColor,
+            styles: widget.screen!.appBar!.style,
+            themeProperty: 'secondaryColor'),
+      ),
+      onPressed: () {
+        if (firstRouteInStack) {
+          Navigator.pushNamed(context, '_canceled');
+        } else {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      },
+    );
+  }
+
+  IconData _getAppBarLeadingIconData() {
+    final bool firstRouteInStack = !Navigator.of(context).canPop();
+    if (firstRouteInStack && Platform.isIOS) {
+      return Icons.close;
+    }
+    if (Platform.isIOS) return Icons.chevron_left;
+    return Icons.arrow_back;
   }
 
   /// Register view model instance to a navigation steam controller.
@@ -194,7 +213,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   _navigateToScreen(route, event) {
     _removeUnsecureRoutingData();
 
-    Navigator.pushReplacementNamed(
+    Navigator.pushNamed(
       context,
       route,
       arguments: {
