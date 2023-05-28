@@ -11,10 +11,31 @@ import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/progress_indicator.dart';
 import 'package:gigya_native_screensets_engine/widgets/screen.dart';
 import 'package:provider/provider.dart';
 
-class MaterialScreenWidget extends StatefulWidget {
+/// Logger enums.
+enum PlatformScreenWidgetLogs { screenDidLoad, navigateToScreen }
+
+/// Debug logging.
+_log(PlatformScreenWidgetLogs log, [String? logData]) {
+  switch (log) {
+    case PlatformScreenWidgetLogs.navigateToScreen:
+      engineLogger!.d(
+          "PlatformScreenWidget: navigate to screen $logData",
+          tag: Logger.dTag);
+      break;
+    case PlatformScreenWidgetLogs.screenDidLoad:
+      engineLogger!.d(
+          "PlatformScreenWidget: screenDidLoad issued ",
+          tag: Logger.dTag);
+      break;
+  }
+}
+
+class PlatformScreenWidget extends StatefulWidget {
   final ScreenViewModel? viewModel;
   final BindingModel? bindingModel;
   final RuntimeStateEvaluator? expressionProvider;
@@ -25,7 +46,7 @@ class MaterialScreenWidget extends StatefulWidget {
   /// your screen form.
   final Map<String, dynamic>? routingData;
 
-  const MaterialScreenWidget({
+  const PlatformScreenWidget({
     Key? key,
     this.viewModel,
     this.bindingModel,
@@ -36,13 +57,13 @@ class MaterialScreenWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MaterialScreenWidgetState createState() =>
-      _MaterialScreenWidgetState(viewModel, bindingModel, expressionProvider);
+  _PlatformScreenWidgetState createState() =>
+      _PlatformScreenWidgetState(viewModel, bindingModel, expressionProvider);
 }
 
-class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
+class _PlatformScreenWidgetState extends ScreenWidgetState<PlatformScreenWidget>
     with StyleMixin, LocalizationMixin {
-  _MaterialScreenWidgetState(ScreenViewModel? viewModel, BindingModel? bindings,
+  _PlatformScreenWidgetState(ScreenViewModel? viewModel, BindingModel? bindings,
       RuntimeStateEvaluator? expressionProvider)
       : super(viewModel, bindings, expressionProvider);
 
@@ -76,6 +97,8 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
           _attachInitialScreenAction();
         }
       }
+
+
 
       screenDidLoad(widget.screen!.id);
     });
@@ -113,7 +136,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
                 Consumer<ScreenViewModel>(
                   builder: (context, vm, child) {
                     if (vm.isProgress()) {
-                      return MaterialScreenProgressWidget();
+                      return ScreenProgressWidget();
                     } else {
                       return Container();
                     }
@@ -127,7 +150,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     );
   }
 
-  /// Create AppBar widget for given platform. If requried.
+  /// Create AppBar widget for given platform. If required.
   PlatformAppBar? _createAppBar(appBarBackground) {
     if (widget.screen!.appBar == null) return null;
     return PlatformAppBar(
@@ -151,6 +174,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     );
   }
 
+  /// Create AppBar icon & state for the relevant platform.
   IconButton? _createAppBarLeadingIcon() {
     final bool firstRouteInStack = !Navigator.of(context).canPop();
     return IconButton(
@@ -203,6 +227,9 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   _navigateToScreen(route, event) {
     _removeUnsecureRoutingData();
 
+    // DEBUG LOG.
+    _log(PlatformScreenWidgetLogs.navigateToScreen, route);
+
     Navigator.pushNamed(
       context,
       route,
@@ -238,19 +265,16 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   void didRouteFrom() async {
     Map<String, dynamic> eventData =
         await routeFrom(viewModel!.id, viewModel!.pid, widget.routingData);
-    if (eventData != null) {
-      // Override current routing data if exists.
-      if (eventData['data'] != null) {
-        widget.routingData!.addAll(eventData['data'].cast<String, dynamic>());
-      }
-      // Merge routing data into available binding data.
-      bindings!.updateRoutingWith(widget.routingData!);
+    if (eventData['data'] != null) {
+      widget.routingData!.addAll(eventData['data'].cast<String, dynamic>());
+    }
+    // Merge routing data into available binding data.
+    bindings!.updateRoutingWith(widget.routingData!);
 
-      debugPrint('didRouteFrom: data = ${widget.routingData.toString()}');
+    debugPrint('didRouteFrom: data = ${widget.routingData.toString()}');
 
-      if (mounted) {
-        setState(() {});
-      }
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -258,7 +282,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   Future<String> willRouteTo(nid) async {
     Map<String, dynamic> eventData =
         await routeTo(viewModel!.id, nid, bindings!.savedBindingData);
-    if (eventData != null && eventData.isNotEmpty) {
+    if (eventData.isNotEmpty) {
       // Override current routing data if exists.
       widget.routingData!.addAll(eventData['data'].cast<String, dynamic>());
       // Merge routing data into available binding data.
@@ -279,24 +303,5 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     }
 
     return '';
-  }
-}
-
-/// Custom screen progress widget.
-/// Will be displayed on top of the screen stack when the screen state is in progress.
-class MaterialScreenProgressWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.4),
-      ),
-      child: Center(
-        //TODO: Allow theming of the progress indicator.
-        child: CircularProgressIndicator(),
-      ),
-    );
   }
 }

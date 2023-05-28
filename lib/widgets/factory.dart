@@ -154,7 +154,7 @@ class WidgetCreationFactory extends WidgetFactory {
       }
     }
 
-    return MaterialScreenWidget(
+    return PlatformScreenWidget(
       viewModel: viewModel,
       bindingModel: binding,
       routingData: routingData,

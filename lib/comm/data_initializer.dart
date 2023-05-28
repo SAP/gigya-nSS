@@ -7,7 +7,26 @@ import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
+/// Logger enums.
 enum DataInitializerLogs { markupFetch, mockMarkup, schemaFetch }
+
+/// Debug logging.
+_log(DataInitializerLogs log) {
+  switch (log) {
+    case DataInitializerLogs.schemaFetch:
+      engineLogger!.d(
+          "DataInitializer: requesting schema on ignition channel (schemaValidations)",
+          tag: Logger.dTag);
+      break;
+    case DataInitializerLogs.markupFetch:
+      engineLogger!.d("DataInitializer: requesting markup on ignition channel",
+          tag: Logger.dTag);
+      break;
+    case DataInitializerLogs.mockMarkup:
+      engineLogger!.d("DataInitializer: mock markup", tag: Logger.dTag);
+      break;
+  }
+}
 
 class DataInitializer {
   final NssConfig config = NssIoc().use(NssConfig);
@@ -86,20 +105,5 @@ class DataInitializer {
         .use(NssChannels)
         .ignitionChannel
         .invokeMethod<Map<dynamic, dynamic>>('load_schema');
-  }
-
-  /// Debug logging.
-  _log(DataInitializerLogs log) {
-    switch (log) {
-      case DataInitializerLogs.schemaFetch:
-        engineLogger!.d(
-            "startup widget: requesting schema on ignition channel (schemaValidations)",
-            tag: Logger.dTag);
-        break;
-      case DataInitializerLogs.markupFetch:
-        engineLogger!.d("startup widget: requesting markup on ignition channel",
-            tag: Logger.dTag);
-        break;
-    }
   }
 }
