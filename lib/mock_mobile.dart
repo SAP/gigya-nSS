@@ -6,8 +6,6 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/comm/data_initializer.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/ioc/ioc_mobile.dart';
-import 'package:gigya_native_screensets_engine/utils/assets.dart';
-import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
 
 import 'config.dart';

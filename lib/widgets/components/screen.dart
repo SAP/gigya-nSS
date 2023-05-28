@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:gigya_native_screensets_engine/comm/channels.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
@@ -77,8 +78,7 @@ class _ScreenWidgetState extends State<ScreenWidget>
   final BindingModel? bindings;
   final RuntimeStateEvaluator? expressionProvider;
 
-  _ScreenWidgetState(
-      this.viewModel, this.bindings, this.expressionProvider);
+  _ScreenWidgetState(this.viewModel, this.bindings, this.expressionProvider);
 
   @override
   void initState() {
@@ -223,7 +223,7 @@ class _ScreenWidgetState extends State<ScreenWidget>
         if (firstRouteInStack) {
           Navigator.pushNamed(context, '_canceled');
         } else {
-          Navigator.of(context).pop();
+          Navigator.pop(context);
         }
       },
     );
@@ -275,7 +275,9 @@ class _ScreenWidgetState extends State<ScreenWidget>
         'expressions': event.expressions,
         'screenShowIfMapping': event.screenShowIfMapping
       },
-    );
+    ).then((value) {
+      setState(() {});
+    });
   }
 
   /// Attach the relevant screen action.

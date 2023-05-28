@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/comm/channels.dart';
 
 
 class ScreenService {

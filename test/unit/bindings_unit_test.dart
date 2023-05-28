@@ -1,5 +1,5 @@
-import 'dart:async';
 
+import 'package:gigya_native_screensets_engine/comm/channels.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';

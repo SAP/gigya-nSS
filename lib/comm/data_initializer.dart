@@ -1,9 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:gigya_native_screensets_engine/comm/channels.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
-import 'package:gigya_native_screensets_engine/utils/assets.dart';
 import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
@@ -95,7 +96,7 @@ class DataInitializer {
   /// Fetch markup from example JSON asset.
   /// This is used for development & testing.
   Future<Map<dynamic, dynamic>> _getMockMarkup() async {
-    final String json = await AssetUtils.jsonFromAssets('assets/example.json');
+    final String json = await rootBundle.loadString('assets/example.json');
     return jsonDecode(json);
   }
 

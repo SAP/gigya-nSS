@@ -448,7 +448,6 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
         ));
   }
 
-
   setOption(String? newValue, BindingModel bindings) {
     if (widget.data!.disabled!) {
       return;
