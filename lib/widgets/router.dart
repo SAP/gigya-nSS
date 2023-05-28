@@ -198,22 +198,22 @@ class PlatformRouter extends Router {
     // Default route style is set to Material.
     if (!config!.isPlatformAware) {
       return MaterialPageRoute(
-          settings: settings, builder: (_) => NssIoc().use(destination));
+          settings: settings, builder: (_) => destination);
     }
 
     // Cupertino is forced by web mode state.
     if (_forceCupertino()) {
       return CupertinoPageRoute(
-          settings: settings, builder: (_) => NssIoc().use(destination));
+          settings: settings, builder: (_) => destination);
     }
 
     // Old school if else.
     if (PlatformHelper.isCupertino()) {
       return CupertinoPageRoute(
-          settings: settings, builder: (_) => NssIoc().use(destination));
+          settings: settings, builder: (_) => destination);
     } else if (PlatformHelper.isMaterial()) {
       return MaterialPageRoute(
-          settings: settings, builder: (_) => NssIoc().use(destination));
+          settings: settings, builder: (_) => destination);
     }
   }
 
