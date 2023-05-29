@@ -231,6 +231,8 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
                 controller: _textEditingController,
                 decoration: BoxDecoration(color: styleBackground(widget.data), backgroundBlendMode: BlendMode.color),
                 prefix: buildPrefix(),
+                placeholder:localizedStringFor(widget.data!.textKey),
+                placeholderStyle: styleText(widget.data),
               ),
               controller: _textEditingController,
               // Style enabled/disabled.
@@ -253,7 +255,6 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
                 Provider.of<RuntimeStateEvaluator>(context, listen: false).notifyChanged(widget.data!.bind, input);
               },
               validator: (input) {
-                debugPrint('input is :' + input!);
                 if(widget.data!.disabled! == true)
                   return null;
                 // Event injected error has priority in field validation.
@@ -263,7 +264,6 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
                     return null;
                   }
                 }
-                debugPrint(input);
                 // Field validation triggered.
                 return validateField(input, widget.data!.bind);
               },
@@ -295,14 +295,14 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(localizedStringFor(widget.data!.textKey)!,
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                    color: widget.data!.disabled!
-                                        ? color!.withOpacity(0.3)
-                                        : color,
-                                ),
-                              ),
+                              // Text(localizedStringFor(widget.data!.textKey)!,
+                              //     textAlign: TextAlign.right,
+                              //     style: TextStyle(
+                              //       color: widget.data!.disabled!
+                              //           ? color!.withOpacity(0.3)
+                              //           : color,
+                              //   ),
+                              // ),
                               SizedBox(width: 8),
                               //Text(_countryCodePick.flag!),
                               _showCountryIcons()! ? Text(_countryCodePick.flag!) : Container(),

@@ -165,12 +165,15 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                           ),
                         ),
                         cupertino: (_,__) => CupertinoTextFormFieldData(
+                          placeholder: localizedStringFor(widget.data!.textKey) ?? '',
+                          placeholderStyle: styleText(widget.data),
                           decoration: BoxDecoration(color:  getStyle(Styles.background, data: widget.data), backgroundBlendMode: BlendMode.color ),
-                          prefix: Text(localizedStringFor(widget.data!.textKey) ?? '', style: TextStyle(
-                            color: widget.data!.disabled!
-                                ? color!.withOpacity(0.3)
-                                : color,
-                          )),
+                          // prefix: Text(localizedStringFor(widget.data!.textKey) ?? '', style: TextStyle(
+                          //   color: widget.data!.disabled!
+                          //       ? color!.withOpacity(0.3)
+                          //       : color,
+                          // )
+                          // ),
                         ),
                         maxLines: 1,
                         textAlign:
@@ -283,8 +286,8 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
 
   /// Sets the initial value of the widget according to available data or default date.
   _setInitialBindingValue(BindingModel bindings) {
-    // Now is the fallback/default value.
-    _initialDate = DateTime.now();
+    // Either start first of day of start year or now
+    _initialDate = widget.data!.endYear! > DateTime.now().year && widget.data!.startYear! < DateTime.now().year ? DateTime.now() : getFirstDateFrom(widget.data!.startYear!);
 
     // Selection has been made. No need to rest the initial value on setState().
     if (_selectedDate != null) {
@@ -298,8 +301,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
     if (!bindings.bindingDataAvailable()) {
       debugPrint(
           'DatePicker (_setInitialBindingValue) - Binding data is not available yet');
-      _controller.text = parseDateValue(_initialDate, context);
-      _bindDateSelection(bindings);
+      _controller.text = localizedStringFor(widget.data!.textKey)!;
       return;
     }
 

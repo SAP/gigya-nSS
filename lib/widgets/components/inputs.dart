@@ -332,22 +332,13 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       color:  getStyle(Styles.background, data: widget.data),
                       backgroundBlendMode: BlendMode.color
                   ),
-                  prefix: Text(localizedStringFor(hintText) ?? "", style: TextStyle(
-                    color: widget.data!.disabled!
-                        ? color!.withOpacity(0.3)
-                        : color,
-                  )),
-                placeholder: '',
-                placeholderStyle: TextStyle(
-                  color: widget.data!.disabled!
-                      ? getStyle(Styles.placeholderColor,
-                      data: widget.data,
-                      themeProperty: 'disabledColor')
-                      .withOpacity(0.3)
-                      : getStyle(Styles.placeholderColor,
-                      data: widget.data, themeProperty: 'textColor')
-                      .withOpacity(0.5),
-                ),
+                  // prefix: Text(localizedStringFor(hintText) ?? "", style: TextStyle(
+                  //   color: widget.data!.disabled!
+                  //       ? color!.withOpacity(0.3)
+                  //       : color,
+                  // )),
+                placeholder: localizedStringFor(hintText) ?? '',
+                placeholderStyle: styleText(widget.data),
                 //padding: EdgeInsets.all(4) //EdgeInsets.symmetric(vertical: 4, horizontal: 4),
             ),
               textAlignVertical: TextAlignVertical.center,
@@ -362,12 +353,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
               controller: _textEditingController,
               textAlign: getStyle(Styles.textAlign, data: widget.data) ??
                   TextAlign.start,
-              style: TextStyle(
-                  color: widget.data!.disabled!
-                      ? color!.withOpacity(0.3)
-                      : color,
-                  fontSize: getStyle(Styles.fontSize, data: widget.data),
-                  fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
+              style: styleText(widget.data),
               validator: (input) {
                 if(widget.data!.disabled! == true)
                   return null;
@@ -543,22 +529,13 @@ class _TextInputWidgetState extends State<TextInputWidget>
                   ),),
                   cupertino: (_,__) => CupertinoTextFormFieldData(
                       decoration: BoxDecoration(color:  getStyle(Styles.background, data: widget.data), backgroundBlendMode: BlendMode.color ),
-                      prefix: Text(localizedStringFor(hintText) ?? "", style: TextStyle(
-                        color: widget.data!.disabled!
-                            ? color!.withOpacity(0.3)
-                            : color,
-                      )),
-                    placeholder: '',
-                    placeholderStyle: TextStyle(
-                      color: widget.data!.disabled!
-                          ? getStyle(Styles.placeholderColor,
-                          data: widget.data,
-                          themeProperty: 'disabledColor')
-                          .withOpacity(0.3)
-                          : getStyle(Styles.placeholderColor,
-                          data: widget.data, themeProperty: 'textColor')
-                          .withOpacity(0.5),
-                    ),
+                      // prefix: Text(localizedStringFor(hintText) ?? "", style: TextStyle(
+                      //   color: widget.data!.disabled!
+                      //       ? color!.withOpacity(0.3)
+                      //       : color,
+                      // )),
+                    placeholder: localizedStringFor(hintText) ?? '',
+                    placeholderStyle: styleText(widget.data),
                   ),
                   textAlignVertical: TextAlignVertical.center,
                   maxLines: _obscuredConfirmText

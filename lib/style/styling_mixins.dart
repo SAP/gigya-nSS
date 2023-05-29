@@ -68,7 +68,7 @@ mixin StyleMixin {
   /// Default style mapping.
   final Map<String, dynamic> defaultStyle = {
     'margin': 0,
-    'fontSize': 14,
+    'fontSize': 18,
     'fontColor': 'black',
     'fontWeight': 4,
     'background': 'white',
@@ -328,6 +328,19 @@ mixin StyleMixin {
       : getStyle(Styles.placeholderColor,
               data: data, themeProperty: 'textColor')
           .withOpacity(0.5);
+
+  TextStyle styleText(data) {
+    final Color? color = getStyle(Styles.fontColor,
+        data: data, themeProperty: 'textColor');
+
+    return TextStyle(
+      color: data!.disabled!
+          ? color!.withOpacity(0.3)
+          : color,
+      fontSize: getStyle(Styles.fontSize, data: data),
+      fontWeight: getStyle(Styles.fontWeight, data: data),
+    );
+  }
 
 //endregion
 }
