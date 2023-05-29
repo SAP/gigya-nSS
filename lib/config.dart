@@ -2,7 +2,7 @@ import 'package:gigya_native_screensets_engine/comm/moblie_channel.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 
 class NssConfig {
-  String version = '1.7.0';
+  String version = '1.7.1';
   bool? isMock = false;
   bool? isPlatformAware = false;
   Markup? markup;
