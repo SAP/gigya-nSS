@@ -106,6 +106,17 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                         enabled: false,
                         material: (_,__) => MaterialTextFormFieldData(
                           decoration: InputDecoration(
+                            hintText: localizedStringFor(widget.data!.textKey) ?? '',
+                            hintStyle: TextStyle(
+                              color: widget.data!.disabled!
+                                  ? getStyle(Styles.placeholderColor,
+                                  data: widget.data,
+                                  themeProperty: 'disabledColor')
+                                  .withOpacity(0.3)
+                                  : getStyle(Styles.placeholderColor,
+                                  data: widget.data, themeProperty: 'textColor')
+                                  .withOpacity(0.5),
+                            ),
                             filled: true,
                             isDense: true,
                             fillColor:
@@ -149,32 +160,27 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                                           width: borderSize,
                                         ),
                                       ),
-                            labelText: localizedStringFor(widget.data!.textKey),
-                            labelStyle: TextStyle(
-                                fontSize:
-                                    getStyle(Styles.fontSize, data: widget.data),
-                                color: widget.data!.disabled!
-                                    ? getThemeColor('disabledColor')
-                                        .withOpacity(0.3)
-                                    : getStyle(Styles.fontColor,
-                                        data: widget.data,
-                                        themeProperty: 'textColor'),
-                                fontWeight:
-                                    getStyle(Styles.fontWeight, data: widget.data)),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            // labelText: localizedStringFor(widget.data!.textKey),
+                            // labelStyle: TextStyle(
+                            //     fontSize:
+                            //         getStyle(Styles.fontSize, data: widget.data),
+                            //     color: widget.data!.disabled!
+                            //         ? getThemeColor('disabledColor')
+                            //             .withOpacity(0.3)
+                            //         : getStyle(Styles.fontColor,
+                            //             data: widget.data,
+                            //             themeProperty: 'textColor'),
+                            //     fontWeight:
+                            //         getStyle(Styles.fontWeight, data: widget.data)),
+                            //floatingLabelBehavior: FloatingLabelBehavior.always,
                           ),
                         ),
                         cupertino: (_,__) => CupertinoTextFormFieldData(
                           placeholder: localizedStringFor(widget.data!.textKey) ?? '',
                           placeholderStyle: styleText(widget.data),
                           decoration: BoxDecoration(color:  getStyle(Styles.background, data: widget.data), backgroundBlendMode: BlendMode.color ),
-                          // prefix: Text(localizedStringFor(widget.data!.textKey) ?? '', style: TextStyle(
-                          //   color: widget.data!.disabled!
-                          //       ? color!.withOpacity(0.3)
-                          //       : color,
-                          // )
-                          // ),
                         ),
+
                         maxLines: 1,
                         textAlign:
                             getStyle(Styles.textAlign, data: widget.data) ??
@@ -301,7 +307,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
     if (!bindings.bindingDataAvailable()) {
       debugPrint(
           'DatePicker (_setInitialBindingValue) - Binding data is not available yet');
-      _controller.text = localizedStringFor(widget.data!.textKey)!;
+      _controller.text = '';
       return;
     }
 
