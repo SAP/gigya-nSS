@@ -113,12 +113,12 @@ allprojects {
 Copy the following Android archive libraries into your application's /libs folder and add these references to your application's build.gradle file:
 ```gradle
 // Referencing the NSS native library (via Jitpack)
-implementation 'com.github.SAP.gigya-android-sdk:gigya-android-nss:nss-v1.4.3'
+implementation 'com.github.SAP.gigya-android-sdk:sdk-nss:nss-v1.7.0'
 ```
 ```gradle
 // Referencing the NSS engine.
-debugImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_debug:1.4.3'
-releaseImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_release:1.4.3'
+debugImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_debug:1.7.0'
+releaseImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_release:1.7.0'
 ```
 
 Finally, add the *NativeScreensetsActivity.class* reference to your application's *AndroidManifest.xml* file.
@@ -615,7 +615,9 @@ The following widgets supports "Store As Array":
 ## FIDO Authentication
 Native Screen-Sets support FIDO authentication using the FIDO button component.
 Please follow the relevant setup guidelines for your platform.
+
 [Android](https://sap.github.io/gigya-android-sdk/sdk-core/#fidowebauthn-authentication)
+
 [iOS](https://sap.github.io/gigya-swift-sdk/GigyaSwift/#fidowebauthn-authentication)
 
 ## Known Issues
