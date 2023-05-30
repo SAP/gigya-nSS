@@ -89,8 +89,8 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
         builder: (context, viewModel, bindings, child) {
       _dropdownItems.clear();
 
-      BindingValue bindingValue = getBindingText(widget.data!, bindings,
-          asArray: widget.data!.storeAsArray);
+      BindingValue bindingValue = getBindingText(widget.data!, bindings,asArray: widget.data!.storeAsArray);
+      cupertinoPickerController.text = bindingValue.value ?? '' ;
 
       // Check for binding error. Display on screen.
       if (bindingValueError(bindingValue)) {
@@ -129,8 +129,6 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
 
       var borderSize = getStyle(Styles.borderSize, data: widget.data);
       var borderRadius = getStyle(Styles.cornerRadius, data: widget.data);
-      var borderColor = getStyle(Styles.borderColor,
-          data: widget.data, themeProperty: 'disabledColor');
       final Color? color = getStyle(Styles.fontColor,
           data: widget.data, themeProperty: 'textColor');
 

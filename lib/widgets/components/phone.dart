@@ -28,7 +28,7 @@ class PhoneInputWidget extends StatefulWidget {
   _PhoneInputWidgetState createState() => _PhoneInputWidgetState();
 }
 
-class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMixin, StyleMixin, DecorationMixin, ValidationMixin, VisibilityStateMixin {
+class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMixin, StyleMixin, DecorationMixin, ValidationMixin, VisibilityStateMixin, BindingMixin {
   /// Memory allocation of available country codes objects.
   List<CountryCodePick>? _countryCodeList = [];
 
@@ -36,7 +36,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
   CountryCodePick _countryCodePick = CountryCodePick.fallback();
 
   /// Phone input text controller.
-  final TextEditingController _textEditingController = TextEditingController(text: '');
+  final TextEditingController _phoneNumberController = TextEditingController(text: '');
   String? eventInjectedError;
 
   /// Widget specific data that is parsed out of the generic [NssWidgetData] injection.
@@ -68,6 +68,8 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 _countryCodeList = snapshot.data;
+                setBindingValue(bindings);
+
                 // Need to set the default pick.
                 return _ccPhoneView(bindings);
               }
@@ -77,6 +79,24 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
         );
       },
     );
+  }
+
+  setBindingValue(BindingModel bindings){
+    BindingValue bindingValue = getBindingText(widget.data!, bindings,asArray: widget.data!.storeAsArray);
+
+    if(bindingValue.value != null) {
+      CountryCodePick? country = getPhonesCountryCode(bindingValue.value);
+
+      if (country != null) {
+        _countryCodePick = country;
+        String bindingPhone = bindingValue.value.replaceFirst(country.dialCode, '').trim();
+        _phoneNumberController.text = bindingPhone;
+      }
+    }
+  }
+
+  CountryCodePick? getPhonesCountryCode(String phoneNumber) {
+    return _countryCodeList?.firstWhere((country)=> phoneNumber.startsWith(country.dialCode as String));
   }
 
   /// Widget will be displayed while loading the country code list and initializing the data.
@@ -228,13 +248,13 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
               ),
               cupertino: (_, __) => CupertinoTextFormFieldData(
                 padding: EdgeInsets.all(4),
-                controller: _textEditingController,
+                controller: _phoneNumberController,
                 decoration: BoxDecoration(color: styleBackground(widget.data), backgroundBlendMode: BlendMode.color),
                 prefix: buildPrefix(),
                 placeholder:localizedStringFor(widget.data!.textKey),
                 placeholderStyle: styleText(widget.data),
               ),
-              controller: _textEditingController,
+              controller: _phoneNumberController,
               // Style enabled/disabled.
               enabled: !widget.data!.disabled!,
               // Style textAlign.
@@ -278,9 +298,6 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
   }
 
   GestureDetector buildPrefix() {
-    final color = getStyle(Styles.fontColor,
-        data: widget.data, themeProperty: 'textColor');
-
     return GestureDetector(
                         // Verify click.
                         onTap: widget.data!.disabled!
