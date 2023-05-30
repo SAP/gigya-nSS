@@ -137,7 +137,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget> with DecorationMixi
 
   CupertinoListTile buildCupertinoRadioListTile(NssOption option, BindingModel bindings, BuildContext context) {
     return CupertinoListTile(
-      padding: EdgeInsets.all(4),
+      padding: EdgeInsets.fromLTRB(4, 0, 0, 4),
         title: Text(
           localizedStringFor(option.textKey)!,
           textAlign: getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
@@ -148,22 +148,19 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget> with DecorationMixi
           ),
         ),
         leading:
-      Transform.scale(
-        scale:1.5,
-        child:CupertinoRadio<String>(
-          value: option.value ?? '',
-          groupValue: _groupValue,
-          activeColor: widget.data!.disabled! ? getThemeColor('disabledColor') : getThemeColor('enabledColor'),
-          onChanged: (String? value) {
-            setState(() {
-              setOption(value, bindings);
+      CupertinoRadio<String>(
+        value: option.value ?? '',
+        groupValue: _groupValue,
+        activeColor: widget.data!.disabled! ? getThemeColor('disabledColor') : getThemeColor('enabledColor'),
+        onChanged: (String? value) {
+          setState(() {
+            setOption(value, bindings);
 
-              // Track runtime data change.
-              Provider.of<RuntimeStateEvaluator>(context, listen: false).notifyChanged(widget.data!.bind, value);
-            });
-          },
-        )
-    )
+            // Track runtime data change.
+            Provider.of<RuntimeStateEvaluator>(context, listen: false).notifyChanged(widget.data!.bind, value);
+          });
+        },
+      )
     );
   }
 
