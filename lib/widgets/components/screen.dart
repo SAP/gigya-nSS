@@ -210,11 +210,13 @@ class _ScreenWidgetState extends State<ScreenWidget>
   }
 
   /// Create AppBar icon & state for the relevant platform.
-  IconButton? _createAppBarLeadingIcon() {
+  PlatformIconButton _createAppBarLeadingIcon() {
     final bool firstRouteInStack = !Navigator.of(context).canPop();
-    return IconButton(
+
+    return PlatformIconButton(
+      padding: EdgeInsets.zero,
       icon: Icon(
-        Platform.isIOS || kIsWeb ? Icons.chevron_left : Icons.arrow_back,
+        Platform.isIOS || kIsWeb ?  firstRouteInStack ? Icons.close : Icons.chevron_left : Icons.arrow_back,
         color: getStyle(Styles.fontColor,
             styles: widget.screen!.appBar!.style,
             themeProperty: 'secondaryColor'),

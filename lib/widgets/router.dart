@@ -196,7 +196,7 @@ class PlatformRouter extends Router {
     if (config == null) return;
 
     // Default route style is set to Material.
-    if (!config!.isPlatformAware) {
+    if (config!.isPlatformAware == false) {
       return MaterialPageRoute(
           settings: settings, builder: (_) => destination);
     }
@@ -228,7 +228,7 @@ class PlatformRouter extends Router {
 
   @override
   Route emptyRoute(RouteSettings settings) {
-    return _platformRoute(settings, Container());
+    return _platformRoute(settings, Container(decoration: BoxDecoration(color: Colors.transparent)));
   }
 
   @override
