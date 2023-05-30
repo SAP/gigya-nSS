@@ -95,7 +95,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Row (
-                            mainAxisSize: MainAxisSize.min,
+                            mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               SemanticsWrapperWidget(
@@ -232,7 +232,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
       width: 48,
       height: 24,
       child: Transform.scale(
-        scale: 0.8,
+        scale: 0.6,
         child: CupertinoSwitch(
           value: _currentValue ?? false,
           onChanged: (bool? val) {
