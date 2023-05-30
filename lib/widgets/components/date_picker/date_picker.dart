@@ -160,24 +160,11 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                                           width: borderSize,
                                         ),
                                       ),
-                            // labelText: localizedStringFor(widget.data!.textKey),
-                            // labelStyle: TextStyle(
-                            //     fontSize:
-                            //         getStyle(Styles.fontSize, data: widget.data),
-                            //     color: widget.data!.disabled!
-                            //         ? getThemeColor('disabledColor')
-                            //             .withOpacity(0.3)
-                            //         : getStyle(Styles.fontColor,
-                            //             data: widget.data,
-                            //             themeProperty: 'textColor'),
-                            //     fontWeight:
-                            //         getStyle(Styles.fontWeight, data: widget.data)),
-                            //floatingLabelBehavior: FloatingLabelBehavior.always,
                           ),
                         ),
                         cupertino: (_,__) => CupertinoTextFormFieldData(
                           placeholder: localizedStringFor(widget.data!.textKey) ?? '',
-                          placeholderStyle: styleText(widget.data),
+                          placeholderStyle: styleCupertinoPlaceholder(widget.data),
                           decoration: BoxDecoration(color:  getStyle(Styles.background, data: widget.data), backgroundBlendMode: BlendMode.color ),
                         ),
 

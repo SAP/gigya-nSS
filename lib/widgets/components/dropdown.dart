@@ -362,7 +362,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
    return CupertinoTextFormFieldRow(
      controller: cupertinoPickerController,
      placeholder:  localizedStringFor(_placeholder) ?? '',
-     placeholderStyle: styleText(widget.data) ,
+     placeholderStyle: styleCupertinoPlaceholder(widget.data) ,
         readOnly: true,
         enableInteractiveSelection: false,
         padding: EdgeInsets.fromLTRB(6, 0, 6, 0),

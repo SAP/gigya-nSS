@@ -330,17 +330,26 @@ mixin StyleMixin {
           .withOpacity(0.5);
 
   TextStyle styleText(data) {
-    final Color? color = getStyle(Styles.fontColor,
-        data: data, themeProperty: 'textColor');
+    final Color? color = getStyle(Styles.fontColor, data: data, themeProperty: 'textColor');
 
     return TextStyle(
       color: data!.disabled!
-          ? color!.withOpacity(0.3)
+          ? color!.withOpacity(0.2)
           : color,
       fontSize: getStyle(Styles.fontSize, data: data),
       fontWeight: getStyle(Styles.fontWeight, data: data),
     );
   }
 
+  TextStyle styleCupertinoPlaceholder(data) {
+
+    return TextStyle(
+      color: data!.disabled!
+          ? Colors.black12.withOpacity(0.2)
+          : Colors.black45,
+      fontSize: getStyle(Styles.fontSize, data: data),
+      fontWeight: getStyle(Styles.fontWeight, data: data),
+    );
+  }
 //endregion
 }
