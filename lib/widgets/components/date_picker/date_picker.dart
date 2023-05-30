@@ -93,7 +93,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                     onTap: () {
                       // Trigger picker.
                       if (!widget.data!.disabled!) {
-                        getPlatformStyle(context) == PlatformStyle.Material ?  _showMaterialPickerSelection(context) : _showCupertinoPickerSelection(context);
+                        isMaterial(context) ?  _showMaterialPickerSelection(context) : _showCupertinoPickerSelection(context);
                       }
                     },
                     child: Container(

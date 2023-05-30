@@ -145,7 +145,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                   data: widget.data,
                   child: IgnorePointer(
                     ignoring: widget.data!.disabled!,
-                    child: getPlatformStyle(context) == PlatformStyle.Material ?
+                    child: isMaterial(context) ?
                     buildDropdownButtonFormField(borderRadius, borderSize, color, bindings, context) :
                     buildCupertinoPicker(borderRadius, borderSize, color, bindings, context) ,
                   ),

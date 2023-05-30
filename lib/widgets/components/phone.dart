@@ -543,7 +543,7 @@ class _CountryPickerDialogWidgetState extends State<CountryPickerDialogWidget> w
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if(getPlatformStyle(context) == PlatformStyle.Material)
+          if(isMaterial(context))
             ...buildMaterialSearchBoxPicker(context)
           else
             ...buildCupertinoSearchBoxPicker(context)

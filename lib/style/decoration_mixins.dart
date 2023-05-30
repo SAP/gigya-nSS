@@ -63,27 +63,27 @@ mixin DecorationMixin {
     }
   }
 
-  PlatformStyle getPlatformStyle(context){
-    TargetPlatform? platform =  defaultTargetPlatform;
-    PlatformStyleData? styles = PlatformProvider.of(context)?.settings.platformStyle;
+  bool isMaterial(context){
+    return _getPlatformStyle(context) == PlatformStyle.Material;
+  }
 
+  PlatformStyle _getPlatformStyle(context){
+    TargetPlatform? devicePlatform =  defaultTargetPlatform;
+    PlatformStyleData? designStyle = PlatformProvider.of(context)?.settings.platformStyle;
 
-    debugPrint('****platform: $platform');
     PlatformStyle? result = PlatformStyle.Material;
-    switch(platform){
+    switch(devicePlatform){
       case TargetPlatform.android :
-        result = styles?.android;
+        result = designStyle?.android;
         break;
       case TargetPlatform.iOS :
-        result = styles?.ios;
+        result = designStyle?.ios;
         break;
       case TargetPlatform.windows:
-        result = styles?.windows;
+        result = designStyle?.windows;
         break;
       default:
-        result = styles?.android;
-
-
+        result = designStyle?.android;
     }
     return result ?? PlatformStyle.Material;
   }

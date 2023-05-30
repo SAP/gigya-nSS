@@ -90,7 +90,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget> with DecorationMixi
                         NssOption option = widget.data!.options![index];
                         return Theme(
                           data: Theme.of(context).copyWith(unselectedWidgetColor: widget.data!.disabled! ? getThemeColor('disabledColor') : getThemeColor('enabledColor'), disabledColor: widget.data!.disabled! ? getThemeColor('disabledColor') : getThemeColor('enabledColor')),
-                          child: getPlatformStyle(context) == PlatformStyle.Material ?
+                          child: isMaterial(context)  ?
                           buildMaterialRadioListTile(option, bindings, context) :
                           buildCupertinoRadioListTile(option, bindings, context)
                         );

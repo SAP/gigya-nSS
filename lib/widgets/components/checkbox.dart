@@ -107,7 +107,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                               ? getThemeColor('disabledColor')
                                                   .withOpacity(0.3)
                                               : getThemeColor('enabledColor')),
-                                  child: getPlatformStyle(context) == PlatformStyle.Material ? buildMaterialCheckBox(bindings) : buildCupertinoSwitch(bindings)
+                                  child: isMaterial(context) ? buildMaterialCheckBox(bindings) : buildCupertinoSwitch(bindings)
                                 ),
                               ),
                               SizedBox(
