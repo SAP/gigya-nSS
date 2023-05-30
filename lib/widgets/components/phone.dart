@@ -68,7 +68,9 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 _countryCodeList = snapshot.data;
-                setBindingValue(bindings);
+
+                if(_phoneNumberController.text.isEmpty)
+                  setBindingValue(bindings);
 
                 // Need to set the default pick.
                 return _ccPhoneView(bindings);

@@ -90,7 +90,9 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
       _dropdownItems.clear();
 
       BindingValue bindingValue = getBindingText(widget.data!, bindings,asArray: widget.data!.storeAsArray);
-      cupertinoPickerController.text = bindingValue.value ?? '' ;
+
+      if(cupertinoPickerController.text.isEmpty)
+        cupertinoPickerController.text = bindingValue.value ?? '' ;
 
       // Check for binding error. Display on screen.
       if (bindingValueError(bindingValue)) {
