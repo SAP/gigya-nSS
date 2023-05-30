@@ -312,14 +312,6 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Text(localizedStringFor(widget.data!.textKey)!,
-                              //     textAlign: TextAlign.right,
-                              //     style: TextStyle(
-                              //       color: widget.data!.disabled!
-                              //           ? color!.withOpacity(0.3)
-                              //           : color,
-                              //   ),
-                              // ),
                               SizedBox(width: 8),
                               //Text(_countryCodePick.flag!),
                               _showCountryIcons()! ? Text(_countryCodePick.flag!) : Container(),

@@ -332,14 +332,8 @@ class _TextInputWidgetState extends State<TextInputWidget>
                       color:  getStyle(Styles.background, data: widget.data),
                       backgroundBlendMode: BlendMode.color
                   ),
-                  // prefix: Text(localizedStringFor(hintText) ?? "", style: TextStyle(
-                  //   color: widget.data!.disabled!
-                  //       ? color!.withOpacity(0.3)
-                  //       : color,
-                  // )),
                 placeholder: localizedStringFor(hintText) ?? '',
                 placeholderStyle: styleText(widget.data),
-                //padding: EdgeInsets.all(4) //EdgeInsets.symmetric(vertical: 4, horizontal: 4),
             ),
               textAlignVertical: TextAlignVertical.center,
               maxLines: _obscuredText
@@ -528,12 +522,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
                     ),
                   ),),
                   cupertino: (_,__) => CupertinoTextFormFieldData(
-                      decoration: BoxDecoration(color:  getStyle(Styles.background, data: widget.data), backgroundBlendMode: BlendMode.color ),
-                      // prefix: Text(localizedStringFor(hintText) ?? "", style: TextStyle(
-                      //   color: widget.data!.disabled!
-                      //       ? color!.withOpacity(0.3)
-                      //       : color,
-                      // )),
+                    decoration: BoxDecoration(color:  getStyle(Styles.background, data: widget.data), backgroundBlendMode: BlendMode.color ),
                     placeholder: localizedStringFor(hintText) ?? '',
                     placeholderStyle: styleText(widget.data),
                   ),

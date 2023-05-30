@@ -363,23 +363,6 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
      controller: cupertinoPickerController,
      placeholder:  localizedStringFor(_placeholder) ?? '',
      placeholderStyle: styleText(widget.data) ,
-     // placeholderStyle: TextStyle(
-     //   color: widget.data!.disabled!
-     //       ? getStyle(Styles.placeholderColor,
-     //       data: widget.data,
-     //       themeProperty: 'disabledColor')
-     //       .withOpacity(0.3)
-     //       : getStyle(Styles.placeholderColor,
-     //       data: widget.data, themeProperty: 'textColor')
-     //       .withOpacity(0.5),
-     // ),
-
-        // prefix: Text(
-        //     localizedStringFor(widget.data!.placeholder) ?? '', style: TextStyle(
-        //     color: widget.data!.disabled!
-        //         ? color!.withOpacity(0.3)
-        //         : color,
-        // )),
         readOnly: true,
         enableInteractiveSelection: false,
         padding: EdgeInsets.fromLTRB(6, 0, 6, 0),
