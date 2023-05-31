@@ -389,6 +389,12 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
               cupertinoPickerController.text = _dropdownItems[index]!;
               cupertinoScrollController.dispose();
               cupertinoScrollController = FixedExtentScrollController(initialItem: index);
+
+              setOption(cupertinoPickerController.text, bindings);
+              // Track runtime data change.
+              Provider.of<RuntimeStateEvaluator>(context,
+                  listen: false)
+                  .notifyChanged(widget.data!.bind, cupertinoPickerController.text);
             });
 
           },
