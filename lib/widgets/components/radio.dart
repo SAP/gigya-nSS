@@ -138,13 +138,16 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget> with DecorationMixi
   CupertinoListTile buildCupertinoRadioListTile(NssOption option, BindingModel bindings, BuildContext context) {
     return CupertinoListTile(
       padding: EdgeInsets.fromLTRB(4, 0, 0, 4),
-        title: Text(
-          localizedStringFor(option.textKey)!,
-          textAlign: getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
-          style: TextStyle(
-            color: widget.data!.disabled! ? getThemeColor('disabledColor') : getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
-            fontSize: getStyle(Styles.fontSize, data: widget.data),
-            fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+        title: Container(
+          width: double.infinity,
+          child: Text(
+            localizedStringFor(option.textKey)!,
+            textAlign: getStyle(Styles.textAlign, data: widget.data),
+            style: TextStyle(
+              color: widget.data!.disabled! ? getThemeColor('disabledColor') : getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
+              fontSize: getStyle(Styles.fontSize, data: widget.data),
+              fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+            ),
           ),
         ),
         leading:
