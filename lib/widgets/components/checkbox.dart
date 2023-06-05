@@ -128,6 +128,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                             });
                                           },
                                     child: Container(
+                                      width: double.infinity,
                                       child: linkified
                                           ? linkify.linkify(widget.data,
                                               (link) {
@@ -143,8 +144,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                               displayText,
                                               textAlign: getStyle(
                                                       Styles.textAlign,
-                                                      data: widget.data) ??
-                                                  TextAlign.end,
+                                                      data: widget.data),
                                               style: TextStyle(
                                                   color: widget.data!.disabled!
                                                       ? getThemeColor(
