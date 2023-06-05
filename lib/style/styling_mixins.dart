@@ -291,7 +291,21 @@ mixin StyleMixin {
     NssTextAlign a = NssTextAlign.values.firstWhere(
         (f) => f.toString() == align,
         orElse: () => NssTextAlign.none);
-    return a.getValue;
+    return a.getValue ?? TextAlign.start;
+  }
+
+  convertToDirectionalAlignment(TextAlign align) {
+    switch (align) {
+      case TextAlign.start:
+        return AlignmentDirectional.centerStart;
+      case TextAlign.end:
+        return AlignmentDirectional.centerEnd;
+      case TextAlign.center:
+        return AlignmentDirectional.center;
+      default:
+        return AlignmentDirectional.centerStart;
+    // none
+    }
   }
 
   //region SIMPLIFIED STYLE GETTERS
@@ -334,7 +348,7 @@ mixin StyleMixin {
 
     return TextStyle(
       color: data!.disabled!
-          ? color!.withOpacity(0.2)
+          ? color!.withOpacity(0.1)
           : color,
       fontSize: getStyle(Styles.fontSize, data: data),
       fontWeight: getStyle(Styles.fontWeight, data: data),
@@ -345,7 +359,7 @@ mixin StyleMixin {
 
     return TextStyle(
       color: data!.disabled!
-          ? Colors.black12.withOpacity(0.2)
+          ? Colors.black12.withOpacity(0.1)
           : Colors.black45,
       fontSize: getStyle(Styles.fontSize, data: data),
       fontWeight: getStyle(Styles.fontWeight, data: data),
