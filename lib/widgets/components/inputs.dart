@@ -330,7 +330,6 @@ class _TextInputWidgetState extends State<TextInputWidget>
               cupertino: (_,__) => CupertinoTextFormFieldData(
                   decoration: BoxDecoration(
                       color:  getStyle(Styles.background, data: widget.data),
-                      backgroundBlendMode: BlendMode.color
                   ),
                 placeholder: localizedStringFor(hintText) ?? '',
                 placeholderStyle: styleCupertinoPlaceholder(widget.data),

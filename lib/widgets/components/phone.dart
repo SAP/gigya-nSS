@@ -144,8 +144,6 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
   ///
   /// Pressing on the cc view will open the selection and provide scroll selection & search options.
   Widget _ccPhoneView(bindings) {
-    final borderSize = styleBorderSize(widget.data);
-    final borderRadius = styleBorderRadius(widget.data);
 
     return Container(
       // Style opacity.
@@ -155,183 +153,270 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
           padding: getStyle(Styles.margin, data: widget.data),
           child: Opacity(
             opacity: getStyle(Styles.opacity, data: widget.data),
-            child: PlatformTextFormField(
-              material: (_, __) => MaterialTextFormFieldData(
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 14),
-                  isDense: true,
-                  filled: true,
-                  fillColor: styleBackground(widget.data),
-                  prefixIconConstraints: BoxConstraints(maxHeight: 26),
-                  prefixIcon: InkWell(
-                    // Verify click.
-                    onTap: widget.data!.disabled!
-                        ? null
-                        : allowCCTap()
-                            ? () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return _ccSelectionDialog();
-                                    });
-                              }
-                            : null,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 12.0, right: 8, top: 0, bottom: 0),
-                      child: Container(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _showCountryIcons()! ? Text(_countryCodePick.flag!) : Container(),
-                            SizedBox(width: 8),
-                            Text(
-                              _countryCodePick.dialCode!,
-                              style: TextStyle(
-                                  // Style font color
-                                  color: styleFontColor(widget.data, widget.data!.disabled),
-                                  // Style font size.
-                                  fontSize: getStyle(Styles.fontSize, data: widget.data),
-                                  // Style font weight.
-                                  fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  hintText: localizedStringFor(widget.data!.textKey),
-                  // Style placeholder/hint.
-                  hintStyle: TextStyle(
-                    color: stylePlaceholder(widget.data, widget.data!.disabled!),
-                  ),
-                  disabledBorder: borderRadius == 0
-                      ? UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: getThemeColor('disabledColor').withOpacity(0.3),
-                            width: borderSize + 2,
-                          ),
-                        )
-                      : OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-                          borderSide: BorderSide(
-                            color: getThemeColor('disabledColor').withOpacity(0.3),
-                            width: borderSize,
-                          ),
-                        ),
-                  errorBorder: borderRadius == 0
-                      ? UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: getThemeColor('errorColor'),
-                            width: borderSize + 2,
-                          ),
-                        )
-                      : OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-                          borderSide: BorderSide(
-                            color: getThemeColor('errorColor'),
-                            width: borderSize,
-                          ),
-                        ),
-                  focusedErrorBorder: borderRadius == 0
-                      ? UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: getThemeColor('errorColor'),
-                            width: borderSize + 2,
-                          ),
-                        )
-                      : OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-                          borderSide: BorderSide(
-                            color: getThemeColor('errorColor'),
-                            width: borderSize,
-                          ),
-                        ),
-                ),
-              ),
-              cupertino: (_, __) => CupertinoTextFormFieldData(
-                padding: EdgeInsets.all(4),
-                controller: _phoneNumberController,
-                decoration: BoxDecoration(color: styleBackground(widget.data), backgroundBlendMode: BlendMode.color),
-                prefix: buildPrefix(),
-                placeholder:localizedStringFor(widget.data!.textKey),
-                placeholderStyle: styleCupertinoPlaceholder(widget.data),
-              ),
-              controller: _phoneNumberController,
-              // Style enabled/disabled.
-              enabled: !widget.data!.disabled!,
-              // Style textAlign.
-              textAlign: styleTextAlign(widget.data),
-              style: TextStyle(
-                // Style font color.
-                color: styleFontColor(widget.data, widget.data!.disabled),
-                // Style font size.
-                fontSize: styleFontSize(widget.data),
-                // Style font weight.
-                fontWeight: styleFontWeight(widget.data),
-              ),
-              keyboardType: TextInputType.phone,
-              onChanged: (input) {
-                onValueSave(input, bindings);
-
-                // Track runtime data change.
-                Provider.of<RuntimeStateEvaluator>(context, listen: false).notifyChanged(widget.data!.bind, input);
-              },
-              validator: (input) {
-                if(widget.data!.disabled! == true)
-                  return null;
-                // Event injected error has priority in field validation.
-                if (eventInjectedError != null) {
-                  if (eventInjectedError!.isEmpty) {
-                    eventInjectedError = null;
-                    return null;
-                  }
-                }
-                // Field validation triggered.
-                return validateField(input, widget.data!.bind);
-              },
-              onSaved: (input) {
-                onValueSave(input, bindings);
-              },
-            ),
+            child: isMaterial(context) ? buildMaterialTextFormField(widget.data ,bindings) : buildCupertinoTextFormField(bindings),
           ),
         ),
       ),
     );
   }
 
-  GestureDetector buildPrefix() {
-    return GestureDetector(
-                        // Verify click.
-                        onTap: widget.data!.disabled!
-                            ? null
-                            : allowCCTap()
-                                ? () {
-                                    _showCupertinoDialog(context);
-                                  }
-                                : null,
-                        child: Container(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(width: 8),
-                              //Text(_countryCodePick.flag!),
-                              _showCountryIcons()! ? Text(_countryCodePick.flag!) : Container(),
-                              SizedBox(width: 8),
-                              Text(
-                                _countryCodePick.dialCode!,
-                                style: TextStyle(
-                                    // Style font color
-                                    color: styleFontColor(widget.data, widget.data!.disabled),
-                                    // Style font size.
-                                    fontSize: getStyle(Styles.fontSize, data: widget.data),
-                                    // Style font weight.
-                                    fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
-                              ),
-                            ],
+  PlatformTextFormField buildMaterialTextFormField(data, bindings) {
+    final borderSize = styleBorderSize(data);
+    final borderRadius = styleBorderRadius(data);
+
+    return PlatformTextFormField(
+            material: (_, __) => MaterialTextFormFieldData(
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+                isDense: true,
+                filled: true,
+                fillColor: styleBackground(widget.data),
+                prefixIconConstraints: BoxConstraints(maxHeight: 26),
+                prefixIcon: InkWell(
+                  // Verify click.
+                  onTap: widget.data!.disabled!
+                      ? null
+                      : allowCCTap()
+                          ? () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return _ccSelectionDialog();
+                                  });
+                            }
+                          : null,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 12.0, right: 8, top: 0, bottom: 0),
+                    child: Container(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _showCountryIcons()! ? Text(_countryCodePick.flag!) : Container(),
+                          SizedBox(width: 8),
+                          Text(
+                            _countryCodePick.dialCode!,
+                            style: TextStyle(
+                                // Style font color
+                                color: styleFontColor(widget.data, widget.data!.disabled),
+                                // Style font size.
+                                fontSize: getStyle(Styles.fontSize, data: widget.data),
+                                // Style font weight.
+                                fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
                           ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                hintText: localizedStringFor(widget.data!.textKey),
+                // Style placeholder/hint.
+                hintStyle: TextStyle(
+                  color: stylePlaceholder(widget.data, widget.data!.disabled!),
+                ),
+                disabledBorder: borderRadius == 0
+                    ? UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: getThemeColor('disabledColor').withOpacity(0.3),
+                          width: borderSize + 2,
                         ),
-                      );
+                      )
+                    : OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                        borderSide: BorderSide(
+                          color: getThemeColor('disabledColor').withOpacity(0.3),
+                          width: borderSize,
+                        ),
+                      ),
+                errorBorder: borderRadius == 0
+                    ? UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: getThemeColor('errorColor'),
+                          width: borderSize + 2,
+                        ),
+                      )
+                    : OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                        borderSide: BorderSide(
+                          color: getThemeColor('errorColor'),
+                          width: borderSize,
+                        ),
+                      ),
+                focusedErrorBorder: borderRadius == 0
+                    ? UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: getThemeColor('errorColor'),
+                          width: borderSize + 2,
+                        ),
+                      )
+                    : OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+                        borderSide: BorderSide(
+                          color: getThemeColor('errorColor'),
+                          width: borderSize,
+                        ),
+                      ),
+              ),
+            ),
+            controller: _phoneNumberController,
+            // Style enabled/disabled.
+            enabled: !widget.data!.disabled!,
+            // Style textAlign.
+            textAlign: styleTextAlign(widget.data),
+            style: TextStyle(
+              // Style font color.
+              color: styleFontColor(widget.data, widget.data!.disabled),
+              // Style font size.
+              fontSize: styleFontSize(widget.data),
+              // Style font weight.
+              fontWeight: styleFontWeight(widget.data),
+            ),
+            keyboardType: TextInputType.phone,
+            onChanged: (input) {
+              onValueSave(input, bindings);
+
+              // Track runtime data change.
+              Provider.of<RuntimeStateEvaluator>(context, listen: false).notifyChanged(widget.data!.bind, input);
+            },
+            validator: (input) {
+              if(widget.data!.disabled! == true)
+                return null;
+              // Event injected error has priority in field validation.
+              if (eventInjectedError != null) {
+                if (eventInjectedError!.isEmpty) {
+                  eventInjectedError = null;
+                  return null;
+                }
+              }
+              // Field validation triggered.
+              return validateField(input, widget.data!.bind);
+            },
+            onSaved: (input) {
+              onValueSave(input, bindings);
+            },
+          );
+  }
+
+  Widget buildCupertinoTextFormField(bindings) {
+      return Row(
+          crossAxisAlignment:CrossAxisAlignment.start,
+          //mainAxisAlignment: MainAxisAlignment.center,
+
+        children:[
+          Expanded(
+              child: buildPrefix(context)),
+
+          Expanded(
+            flex: 4,
+            child: CupertinoTextFormFieldRow(
+              padding: EdgeInsets.all(0),
+            controller: _phoneNumberController,
+            decoration: BoxDecoration(
+                color:  getStyle(Styles.background, data: widget.data),
+                backgroundBlendMode: BlendMode.src),
+
+            placeholder:localizedStringFor(widget.data!.textKey),
+            placeholderStyle: styleCupertinoPlaceholder(widget.data),
+            // Style enabled/disabled.
+            enabled: !widget.data!.disabled!,
+            // Style textAlign.
+            textAlign: styleTextAlign(widget.data),
+            style: TextStyle(
+              // Style font color.
+              color: styleFontColor(widget.data, widget.data!.disabled),
+              // Style font size.
+              fontSize: styleFontSize(widget.data),
+              // Style font weight.
+              fontWeight: styleFontWeight(widget.data),
+            ),
+            keyboardType: TextInputType.phone,
+            onChanged: (input) {
+              onValueSave(input, bindings);
+
+              // Track runtime data change.
+              Provider.of<RuntimeStateEvaluator>(context, listen: false).notifyChanged(widget.data!.bind, input);
+            },
+            validator: (input) {
+              if(widget.data!.disabled! == true)
+                return null;
+              // Event injected error has priority in field validation.
+              if (eventInjectedError != null) {
+                if (eventInjectedError!.isEmpty) {
+                  eventInjectedError = null;
+                  return null;
+                }
+              }
+              // Field validation triggered.
+              return validateField(input, widget.data!.bind);
+            },
+            onSaved: (input) {
+              onValueSave(input, bindings);
+            },
+        ),
+          )]
+      );
+  }
+
+
+
+  Widget buildPrefix(context) {
+    return CupertinoTextFormFieldRow(
+      padding: EdgeInsets.all(0),
+        decoration: BoxDecoration(
+            color: getStyle(Styles.background, data: widget.data),
+            backgroundBlendMode: BlendMode.src),
+      style: TextStyle(
+        // Style font color.
+        color: styleFontColor(widget.data, widget.data!.disabled),
+        // Style font size.
+        fontSize: styleFontSize(widget.data),
+        // Style font weight.
+        fontWeight: styleFontWeight(widget.data),
+      ),
+      controller: new  TextEditingController(text: _countryCodePick.dialCode!),
+        onTap:  () => _showCupertinoDialog(context),
+    );
+
+    // return Row(
+    //     crossAxisAlignment:CrossAxisAlignment.center,
+    //     children: [Container(
+    //       padding: EdgeInsets.all(0),
+    //       color: Colors.yellow,
+    //         child:
+    //     ]
+    // );
+    // return GestureDetector(
+    //                     // Verify click.
+    //                     onTap: widget.data!.disabled!
+    //                         ? null
+    //                         : allowCCTap()
+    //                             ? () {
+    //                                 _showCupertinoDialog(context);
+    //                               }
+    //                             : null,
+    //                     child: Container(
+    //                       color: Colors.yellow,
+    //                       child: Row(
+    //                         // mainAxisSize: MainAxisSize.min,
+    //                         // crossAxisAlignment: CrossAxisAlignment.center,
+    //                         children: [
+    //                           SizedBox(width: 8),
+    //                           //Text(_countryCodePick.flag!),
+    //                           _showCountryIcons()! ? Text(_countryCodePick.flag!) : Container(),
+    //                           SizedBox(width: 8),
+    //                           Text(
+    //                             _countryCodePick.dialCode!,
+    //                             style: TextStyle(
+    //                                 // Style font color
+    //                                 color: styleFontColor(widget.data, widget.data!.disabled),
+    //                                 // Style font size.
+    //                                 fontSize: getStyle(Styles.fontSize, data: widget.data),
+    //                                 // Style font weight.
+    //                                 fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
+    //                           ),
+    //                         ],
+    //                       ),
+    //                     ),
+    //                   );
   }
 
   void onValueSave(input, bindings) {

@@ -71,31 +71,31 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
     return Flexible(
       child: SemanticsWrapperWidget(
         accessibility: widget.data!.accessibility,
-        child: Padding(
-          padding: getStyle(Styles.margin, data: widget.data),
-          child: Consumer2<ScreenViewModel, BindingModel>(
-            builder: (context, viewModel, bindings, child) {
-              // Set initial binding value.
-              _setInitialBindingValue(bindings);
+        child: Consumer2<ScreenViewModel, BindingModel>(
+          builder: (context, viewModel, bindings, child) {
+            // Set initial binding value.
+            _setInitialBindingValue(bindings);
 
-              // Get general style fields for input view.
-              final Color? color = getStyle(Styles.fontColor,
-                  data: widget.data, themeProperty: 'textColor');
-              final borderSize = getStyle(Styles.borderSize, data: widget.data);
-              final borderRadius =
-                  getStyle(Styles.cornerRadius, data: widget.data);
+            // Get general style fields for input view.
+            final Color? color = getStyle(Styles.fontColor,
+                data: widget.data, themeProperty: 'textColor');
+            final borderSize = getStyle(Styles.borderSize, data: widget.data);
+            final borderRadius =
+                getStyle(Styles.cornerRadius, data: widget.data);
 
-              return Visibility(
-                visible: isVisible(viewModel, widget.data),
-                child: Opacity(
-                  opacity: getStyle(Styles.opacity, data: widget.data),
-                  child: GestureDetector(
-                    onTap: () {
-                      // Trigger picker.
-                      if (!widget.data!.disabled!) {
-                        isMaterial(context) ?  _showMaterialPickerSelection(context) : _showCupertinoPickerSelection(context);
-                      }
-                    },
+            return Visibility(
+              visible: isVisible(viewModel, widget.data),
+              child: Opacity(
+                opacity: getStyle(Styles.opacity, data: widget.data),
+                child: GestureDetector(
+                  onTap: () {
+                    // Trigger picker.
+                    if (!widget.data!.disabled!) {
+                      isMaterial(context) ?  _showMaterialPickerSelection(context) : _showCupertinoPickerSelection(context);
+                    }
+                  },
+                  child: Padding(
+                    padding: getStyle(Styles.margin, data: widget.data),
                     child: Container(
 
                       foregroundDecoration: BoxDecoration(
@@ -165,7 +165,10 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                         cupertino: (_,__) => CupertinoTextFormFieldData(
                           placeholder: localizedStringFor(widget.data!.textKey) ?? '',
                           placeholderStyle: styleCupertinoPlaceholder(widget.data),
-                          decoration: BoxDecoration(color:  getStyle(Styles.background, data: widget.data), backgroundBlendMode: BlendMode.color ),
+                          decoration: BoxDecoration(
+                              color: Colors.pink,//getStyle(Styles.background, data: widget.data),
+                              backgroundBlendMode: BlendMode.src
+                          ),
                         ),
 
                         maxLines: 1,
@@ -193,9 +196,9 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                     ),
                   ),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
