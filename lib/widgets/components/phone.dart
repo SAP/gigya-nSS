@@ -160,103 +160,101 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
     );
   }
 
-  PlatformTextFormField buildMaterialTextFormField(data, bindings) {
+  TextFormField buildMaterialTextFormField(data, bindings) {
     final borderSize = styleBorderSize(data);
     final borderRadius = styleBorderRadius(data);
 
-    return PlatformTextFormField(
-            material: (_, __) => MaterialTextFormFieldData(
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 14),
-                isDense: true,
-                filled: true,
-                fillColor: styleBackground(widget.data),
-                prefixIconConstraints: BoxConstraints(maxHeight: 26),
-                prefixIcon: InkWell(
-                  // Verify click.
-                  onTap: widget.data!.disabled!
-                      ? null
-                      : allowCCTap()
-                          ? () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return _ccSelectionDialog();
-                                  });
-                            }
-                          : null,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 12.0, right: 8, top: 0, bottom: 0),
-                    child: Container(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _showCountryIcons()! ? Text(_countryCodePick.flag!) : Container(),
-                          SizedBox(width: 8),
-                          Text(
-                            _countryCodePick.dialCode!,
-                            style: TextStyle(
-                                // Style font color
-                                color: styleFontColor(widget.data, widget.data!.disabled),
-                                // Style font size.
-                                fontSize: getStyle(Styles.fontSize, data: widget.data),
-                                // Style font weight.
-                                fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
-                          ),
-                        ],
-                      ),
-                    ),
+    return TextFormField(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+        isDense: true,
+        filled: true,
+        fillColor: styleBackground(widget.data),
+        prefixIconConstraints: BoxConstraints(maxHeight: 26),
+        prefixIcon: InkWell(
+          // Verify click.
+          onTap: widget.data!.disabled!
+              ? null
+              : allowCCTap()
+              ? () {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return _ccSelectionDialog();
+                });
+          }
+              : null,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 12.0, right: 8, top: 0, bottom: 0),
+            child: Container(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _showCountryIcons()! ? Text(_countryCodePick.flag!) : Container(),
+                  SizedBox(width: 8),
+                  Text(
+                    _countryCodePick.dialCode!,
+                    style: TextStyle(
+                      // Style font color
+                        color: styleFontColor(widget.data, widget.data!.disabled),
+                        // Style font size.
+                        fontSize: getStyle(Styles.fontSize, data: widget.data),
+                        // Style font weight.
+                        fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
                   ),
-                ),
-                hintText: localizedStringFor(widget.data!.textKey),
-                // Style placeholder/hint.
-                hintStyle: TextStyle(
-                  color: stylePlaceholder(widget.data, widget.data!.disabled!),
-                ),
-                disabledBorder: borderRadius == 0
-                    ? UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: getThemeColor('disabledColor').withOpacity(0.3),
-                          width: borderSize + 2,
-                        ),
-                      )
-                    : OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-                        borderSide: BorderSide(
-                          color: getThemeColor('disabledColor').withOpacity(0.3),
-                          width: borderSize,
-                        ),
-                      ),
-                errorBorder: borderRadius == 0
-                    ? UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: getThemeColor('errorColor'),
-                          width: borderSize + 2,
-                        ),
-                      )
-                    : OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-                        borderSide: BorderSide(
-                          color: getThemeColor('errorColor'),
-                          width: borderSize,
-                        ),
-                      ),
-                focusedErrorBorder: borderRadius == 0
-                    ? UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: getThemeColor('errorColor'),
-                          width: borderSize + 2,
-                        ),
-                      )
-                    : OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-                        borderSide: BorderSide(
-                          color: getThemeColor('errorColor'),
-                          width: borderSize,
-                        ),
-                      ),
+                ],
               ),
             ),
+          ),
+        ),
+        hintText: localizedStringFor(widget.data!.textKey),
+        // Style placeholder/hint.
+        hintStyle: TextStyle(
+          color: stylePlaceholder(widget.data, widget.data!.disabled!),
+        ),
+        disabledBorder: borderRadius == 0
+            ? UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: getThemeColor('disabledColor').withOpacity(0.3),
+            width: borderSize + 2,
+          ),
+        )
+            : OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+          borderSide: BorderSide(
+            color: getThemeColor('disabledColor').withOpacity(0.3),
+            width: borderSize,
+          ),
+        ),
+        errorBorder: borderRadius == 0
+            ? UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: getThemeColor('errorColor'),
+            width: borderSize + 2,
+          ),
+        )
+            : OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+          borderSide: BorderSide(
+            color: getThemeColor('errorColor'),
+            width: borderSize,
+          ),
+        ),
+        focusedErrorBorder: borderRadius == 0
+            ? UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: getThemeColor('errorColor'),
+            width: borderSize + 2,
+          ),
+        )
+            : OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+          borderSide: BorderSide(
+            color: getThemeColor('errorColor'),
+            width: borderSize,
+          ),
+        ),
+      ),
             controller: _phoneNumberController,
             // Style enabled/disabled.
             enabled: !widget.data!.disabled!,
@@ -372,51 +370,11 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
         // Style font weight.
         fontWeight: styleFontWeight(widget.data),
       ),
+      readOnly: true,
+      enableInteractiveSelection: false,
       controller: new  TextEditingController(text: _countryCodePick.dialCode!),
         onTap:  () => _showCupertinoDialog(context),
     );
-
-    // return Row(
-    //     crossAxisAlignment:CrossAxisAlignment.center,
-    //     children: [Container(
-    //       padding: EdgeInsets.all(0),
-    //       color: Colors.yellow,
-    //         child:
-    //     ]
-    // );
-    // return GestureDetector(
-    //                     // Verify click.
-    //                     onTap: widget.data!.disabled!
-    //                         ? null
-    //                         : allowCCTap()
-    //                             ? () {
-    //                                 _showCupertinoDialog(context);
-    //                               }
-    //                             : null,
-    //                     child: Container(
-    //                       color: Colors.yellow,
-    //                       child: Row(
-    //                         // mainAxisSize: MainAxisSize.min,
-    //                         // crossAxisAlignment: CrossAxisAlignment.center,
-    //                         children: [
-    //                           SizedBox(width: 8),
-    //                           //Text(_countryCodePick.flag!),
-    //                           _showCountryIcons()! ? Text(_countryCodePick.flag!) : Container(),
-    //                           SizedBox(width: 8),
-    //                           Text(
-    //                             _countryCodePick.dialCode!,
-    //                             style: TextStyle(
-    //                                 // Style font color
-    //                                 color: styleFontColor(widget.data, widget.data!.disabled),
-    //                                 // Style font size.
-    //                                 fontSize: getStyle(Styles.fontSize, data: widget.data),
-    //                                 // Style font weight.
-    //                                 fontWeight: getStyle(Styles.fontWeight, data: widget.data)),
-    //                           ),
-    //                         ],
-    //                       ),
-    //                     ),
-    //                   );
   }
 
   void onValueSave(input, bindings) {

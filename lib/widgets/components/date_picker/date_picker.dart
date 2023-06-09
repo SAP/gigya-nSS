@@ -87,112 +87,110 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
               visible: isVisible(viewModel, widget.data),
               child: Opacity(
                 opacity: getStyle(Styles.opacity, data: widget.data),
-                child: GestureDetector(
-                  onTap: () {
-                    // Trigger picker.
-                    if (!widget.data!.disabled!) {
-                      isMaterial(context) ?  _showMaterialPickerSelection(context) : _showCupertinoPickerSelection(context);
-                    }
-                  },
-                  child: Padding(
-                    padding: getStyle(Styles.margin, data: widget.data),
-                    child: Container(
+                child: Padding(
+                  padding: getStyle(Styles.margin, data: widget.data),
+                  child: Container(
 
-                      foregroundDecoration: BoxDecoration(
-                          color: Colors.transparent),
-                      child: PlatformTextFormField(
-                        enableInteractiveSelection: false,
-                        controller: _controller,
-                        enabled: false,
-                        material: (_,__) => MaterialTextFormFieldData(
-                          decoration: InputDecoration(
-                            hintText: localizedStringFor(widget.data!.textKey) ?? '',
-                            hintStyle: TextStyle(
-                              color: widget.data!.disabled!
-                                  ? getStyle(Styles.placeholderColor,
-                                  data: widget.data,
-                                  themeProperty: 'disabledColor')
-                                  .withOpacity(0.3)
-                                  : getStyle(Styles.placeholderColor,
-                                  data: widget.data, themeProperty: 'textColor')
-                                  .withOpacity(0.5),
-                            ),
-                            filled: true,
-                            isDense: true,
-                            fillColor:
-                                getStyle(Styles.background, data: widget.data),
-                            disabledBorder: !widget.data!.disabled!
-                                ? borderRadius == 0
-                                    ? UnderlineInputBorder(
-                                        borderRadius: BorderRadius.zero,
-                                        borderSide: BorderSide(
-                                          color: getStyle(Styles.borderColor,
-                                              data: widget.data,
-                                              themeProperty: "disabledColor"),
-                                          width: borderSize,
-                                        ),
-                                      )
-                                    : OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(borderRadius)),
-                                        borderSide: BorderSide(
-                                          color: getStyle(Styles.borderColor,
-                                              data: widget.data,
-                                              themeProperty: "disabledColor"),
-                                          width: borderSize,
-                                        ),
-                                      )
-                                : borderRadius == 0
-                                    ? UnderlineInputBorder(
-                                        borderRadius: BorderRadius.zero,
-                                        borderSide: BorderSide(
-                                          color: getThemeColor('disabledColor')
-                                              .withOpacity(0.3),
-                                          width: borderSize + 2,
-                                        ),
-                                      )
-                                    : OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(borderRadius)),
-                                        borderSide: BorderSide(
-                                          color: getThemeColor('disabledColor')
-                                              .withOpacity(0.3),
-                                          width: borderSize,
-                                        ),
-                                      ),
-                          ),
-                        ),
-                        cupertino: (_,__) => CupertinoTextFormFieldData(
-                          placeholder: localizedStringFor(widget.data!.textKey) ?? '',
-                          placeholderStyle: styleCupertinoPlaceholder(widget.data),
-                          decoration: BoxDecoration(
-                              color: Colors.pink,//getStyle(Styles.background, data: widget.data),
-                              backgroundBlendMode: BlendMode.src
-                          ),
-                        ),
-
-                        maxLines: 1,
-                        textAlign:
-                            getStyle(Styles.textAlign, data: widget.data) ??
-                                TextAlign.start,
-                        style: TextStyle(
+                    foregroundDecoration: BoxDecoration(
+                        color: Colors.transparent),
+                    child: PlatformTextFormField(
+                      onTap: () {
+                        // Trigger picker.
+                        if (!widget.data!.disabled!) {
+                          isMaterial(context) ?  _showMaterialPickerSelection(context) : _showCupertinoPickerSelection(context);
+                        }
+                      } ,
+                      readOnly: true,
+                      enableInteractiveSelection: false,
+                      controller: _controller,
+                      material: (_,__) => MaterialTextFormFieldData(
+                        decoration: InputDecoration(
+                          hintText: localizedStringFor(widget.data!.textKey) ?? '',
+                          hintStyle: TextStyle(
                             color: widget.data!.disabled!
-                                ? color!.withOpacity(0.3)
-                                : color,
-                            fontSize:
-                                getStyle(Styles.fontSize, data: widget.data),
-                            fontWeight:
-                                getStyle(Styles.fontWeight, data: widget.data)),
-                        onSaved: (value) {
-                          if (value!.trim().isEmpty || _selectedDate == null) {
-                            return;
-                          }
-                          debugPrint('onSaved with value:$value');
-
-                          // Date picker does not currently support "parseAs" & "saveAs" property.
-                          _bindDateSelection(bindings);
-                        },
+                                ? getStyle(Styles.placeholderColor,
+                                data: widget.data,
+                                themeProperty: 'disabledColor')
+                                .withOpacity(0.3)
+                                : getStyle(Styles.placeholderColor,
+                                data: widget.data, themeProperty: 'textColor')
+                                .withOpacity(0.5),
+                          ),
+                          filled: true,
+                          isDense: true,
+                          fillColor:
+                              getStyle(Styles.background, data: widget.data),
+                          disabledBorder: !widget.data!.disabled!
+                              ? borderRadius == 0
+                                  ? UnderlineInputBorder(
+                                      borderRadius: BorderRadius.zero,
+                                      borderSide: BorderSide(
+                                        color: getStyle(Styles.borderColor,
+                                            data: widget.data,
+                                            themeProperty: "disabledColor"),
+                                        width: borderSize,
+                                      ),
+                                    )
+                                  : OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(borderRadius)),
+                                      borderSide: BorderSide(
+                                        color: getStyle(Styles.borderColor,
+                                            data: widget.data,
+                                            themeProperty: "disabledColor"),
+                                        width: borderSize,
+                                      ),
+                                    )
+                              : borderRadius == 0
+                                  ? UnderlineInputBorder(
+                                      borderRadius: BorderRadius.zero,
+                                      borderSide: BorderSide(
+                                        color: getThemeColor('disabledColor')
+                                            .withOpacity(0.3),
+                                        width: borderSize + 2,
+                                      ),
+                                    )
+                                  : OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(borderRadius)),
+                                      borderSide: BorderSide(
+                                        color: getThemeColor('disabledColor')
+                                            .withOpacity(0.3),
+                                        width: borderSize,
+                                      ),
+                                    ),
+                        ),
                       ),
+                      cupertino: (_,__) => CupertinoTextFormFieldData(
+                        placeholder: localizedStringFor(widget.data!.textKey) ?? '',
+                        placeholderStyle: styleCupertinoPlaceholder(widget.data),
+                        decoration: BoxDecoration(
+                            color: getStyle(Styles.background, data: widget.data),
+                            backgroundBlendMode: BlendMode.src
+                        ),
+                      ),
+
+                      maxLines: 1,
+                      textAlign:
+                          getStyle(Styles.textAlign, data: widget.data) ??
+                              TextAlign.start,
+                      style: TextStyle(
+                          color: widget.data!.disabled!
+                              ? color!.withOpacity(0.3)
+                              : color,
+                          fontSize:
+                              getStyle(Styles.fontSize, data: widget.data),
+                          fontWeight:
+                              getStyle(Styles.fontWeight, data: widget.data)),
+                      onSaved: (value) {
+                        if (value!.trim().isEmpty || _selectedDate == null) {
+                          return;
+                        }
+                        debugPrint('onSaved with value:$value');
+
+                        // Date picker does not currently support "parseAs" & "saveAs" property.
+                        _bindDateSelection(bindings);
+                      },
                     ),
                   ),
                 ),
