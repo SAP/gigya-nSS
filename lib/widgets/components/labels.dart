@@ -83,30 +83,31 @@ class _LabelWidgetState extends State<LabelWidget>
                   opacity: getStyle(Styles.opacity, data: widget.data),
                   child: Container(
                     color: getStyle(Styles.background, data: widget.data),
-                    child: linkified
-                        ? linkify.linkify(widget.data, (link) {
-                            viewModel.linkifyTap(link!);
-                          },
-                            // link color
-                            getStyle(Styles.linkColor,
-                                    data: widget.data,
-                                    themeProperty: 'linkColor') ??
-                                getColor('blue'))
-                        : PlatformText(
-                            text!,
-                            textAlign:
-                                getStyle(Styles.textAlign, data: widget.data) ??
-                                    TextAlign.start,
-                            style: TextStyle(
-                              fontSize:
-                                  getStyle(Styles.fontSize, data: widget.data),
-                              color: getStyle(Styles.fontColor,
-                                  data: widget.data,
-                                  themeProperty: 'textColor'),
-                              fontWeight: getStyle(Styles.fontWeight,
-                                  data: widget.data),
-                            ),
-                          ),
+                    child: Align(
+                      alignment: convertToDirectionalAlignment(getStyle(Styles.textAlign, data: widget.data)),
+                      child: linkified
+                          ? linkify.linkify(widget.data, (link) {
+                        viewModel.linkifyTap(link!);
+                      },
+                          // link color
+                          getStyle(Styles.linkColor,
+                              data: widget.data,
+                              themeProperty: 'linkColor') ??
+                              getColor('blue'))
+                          : PlatformText(
+                        text!,
+                        style: TextStyle(
+
+                          fontSize:
+                          getStyle(Styles.fontSize, data: widget.data),
+                          color: getStyle(Styles.fontColor,
+                              data: widget.data,
+                              themeProperty: 'textColor'),
+                          fontWeight: getStyle(Styles.fontWeight,
+                              data: widget.data),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
