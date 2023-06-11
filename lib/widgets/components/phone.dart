@@ -415,7 +415,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
       readOnly: true,
       enableInteractiveSelection: false,
       controller: new  TextEditingController(text: _countryCodePick.dialCode!),
-        onTap:  () => _showCupertinoDialog(context),
+        onTap:  () => (widget.data!.disabled!) ? null  : _showCupertinoDialog(context),
     );
   }
 
