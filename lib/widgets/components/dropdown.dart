@@ -143,15 +143,10 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
             child: Padding(
               padding: getStyle(Styles.margin, data: widget.data),
               child: Container(
-                child: NssCustomSizeWidget(
-                  data: widget.data,
-                  child: IgnorePointer(
-                    ignoring: widget.data!.disabled!,
-                    child: isMaterial(context) ?
-                    buildDropdownButtonFormField(borderRadius, borderSize, color, bindings, context) :
-                    buildCupertinoPicker(borderRadius, borderSize, color, bindings, context) ,
-                  ),
-                ),
+                padding: EdgeInsets.zero,
+                child: isMaterial(context) ?
+                buildDropdownButtonFormField(borderRadius, borderSize, color, bindings, context) :
+                buildCupertinoPicker(borderRadius, borderSize, color, bindings, context),
               ),
             ),
           ),
@@ -363,6 +358,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
 
   CupertinoTextFormFieldRow buildCupertinoPicker(borderRadius, borderSize, Color? color, BindingModel bindings, BuildContext context) {
    return CupertinoTextFormFieldRow(
+       padding: EdgeInsets.zero,
      decoration: BoxDecoration(
        color: getStyle(Styles.background, data: widget.data),
      ),
@@ -371,7 +367,6 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
      placeholderStyle: styleCupertinoPlaceholder(widget.data) ,
         readOnly: true,
         enableInteractiveSelection: false,
-        padding: EdgeInsets.fromLTRB(6, 0, 6, 0),
      textAlign: getStyle(Styles.textAlign, data: widget.data) ??
          TextAlign.start,
         style: TextStyle(

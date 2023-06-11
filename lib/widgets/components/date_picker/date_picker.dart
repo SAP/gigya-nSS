@@ -213,6 +213,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                         ),
                       ),
                       cupertino: (_,__) => CupertinoTextFormFieldData(
+                        padding: EdgeInsets.zero,
                         placeholder: localizedStringFor(widget.data!.textKey) ?? '',
                         placeholderStyle: styleCupertinoPlaceholder(widget.data),
                         decoration: BoxDecoration(
