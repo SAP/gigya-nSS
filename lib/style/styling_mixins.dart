@@ -74,7 +74,7 @@ mixin StyleMixin {
     'background': 'white',
     'elevation': 0,
     'opacity': 1.0,
-    'borderColor': '0x8A000000',
+    'borderColor': 'transparent',
     'borderSize': 0,
     'cornerRadius': 0,
     'linkColor': 'blue',
