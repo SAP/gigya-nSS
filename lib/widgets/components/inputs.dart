@@ -329,7 +329,8 @@ class _TextInputWidgetState extends State<TextInputWidget>
               )),
               cupertino: (_,__) => CupertinoTextFormFieldData(
                   decoration: BoxDecoration(
-                      color:  getStyle(Styles.background, data: widget.data),
+                      color: getStyle(Styles.background, data: widget.data),
+                      backgroundBlendMode: widget.data!.disabled! ? BlendMode.color : BlendMode.src
                   ),
                 placeholder: localizedStringFor(hintText) ?? '',
                 placeholderStyle: styleCupertinoPlaceholder(widget.data),
@@ -521,7 +522,8 @@ class _TextInputWidgetState extends State<TextInputWidget>
                     ),
                   ),),
                   cupertino: (_,__) => CupertinoTextFormFieldData(
-                    decoration: BoxDecoration(color:  getStyle(Styles.background, data: widget.data), backgroundBlendMode: BlendMode.color ),
+                    decoration: BoxDecoration(color:  getStyle(Styles.background, data: widget.data),
+                        backgroundBlendMode: widget.data!.disabled! ? BlendMode.color : BlendMode.src),
                     placeholder: localizedStringFor(hintText) ?? '',
                     placeholderStyle: styleCupertinoPlaceholder(widget.data),
                   ),

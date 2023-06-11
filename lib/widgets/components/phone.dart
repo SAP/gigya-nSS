@@ -352,7 +352,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
             controller: _phoneNumberController,
             decoration: BoxDecoration(
                 color:  getStyle(Styles.background, data: widget.data),
-                backgroundBlendMode: BlendMode.src),
+                backgroundBlendMode: widget.data!.disabled! ? BlendMode.color : BlendMode.src),
 
             placeholder:localizedStringFor(widget.data!.textKey),
             placeholderStyle: styleCupertinoPlaceholder(widget.data),
@@ -403,7 +403,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with LocalizationMi
       padding: EdgeInsets.all(0),
         decoration: BoxDecoration(
             color: getStyle(Styles.background, data: widget.data),
-            backgroundBlendMode: BlendMode.src),
+            backgroundBlendMode: widget.data!.disabled! ? BlendMode.color : BlendMode.src),
       style: TextStyle(
         // Style font color.
         color: styleFontColor(widget.data, widget.data!.disabled),
