@@ -55,6 +55,10 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
   @override
   void initState() {
     super.initState();
+
+    // Initialize validators.
+    initValidators(widget.data!);
+
     _datePickerStyle = widget.data!.datePickerStyle;
 
     registerVisibilityNotifier(context, widget.data, () {
@@ -117,48 +121,95 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                                 .withOpacity(0.5),
                           ),
                           filled: true,
-                          isDense: true,
+                          //isDense: true,
                           fillColor:
                               getStyle(Styles.background, data: widget.data),
-                          disabledBorder: !widget.data!.disabled!
-                              ? borderRadius == 0
-                                  ? UnderlineInputBorder(
-                                      borderRadius: BorderRadius.zero,
-                                      borderSide: BorderSide(
-                                        color: getStyle(Styles.borderColor,
-                                            data: widget.data,
-                                            themeProperty: "disabledColor"),
-                                        width: borderSize,
-                                      ),
-                                    )
-                                  : OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(borderRadius)),
-                                      borderSide: BorderSide(
-                                        color: getStyle(Styles.borderColor,
-                                            data: widget.data,
-                                            themeProperty: "disabledColor"),
-                                        width: borderSize,
-                                      ),
-                                    )
-                              : borderRadius == 0
-                                  ? UnderlineInputBorder(
-                                      borderRadius: BorderRadius.zero,
-                                      borderSide: BorderSide(
-                                        color: getThemeColor('disabledColor')
-                                            .withOpacity(0.3),
-                                        width: borderSize + 2,
-                                      ),
-                                    )
-                                  : OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(borderRadius)),
-                                      borderSide: BorderSide(
-                                        color: getThemeColor('disabledColor')
-                                            .withOpacity(0.3),
-                                        width: borderSize,
-                                      ),
-                                    ),
+                          disabledBorder: borderRadius == 0
+                              ? UnderlineInputBorder(
+                            borderRadius: BorderRadius.zero,
+                            borderSide: BorderSide(
+                              color: getThemeColor('disabledColor')
+                                  .withOpacity(0.3),
+                              width: borderSize + 2,
+                            ),
+                          )
+                              : OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(borderRadius)),
+                            borderSide: BorderSide(
+                              color: getThemeColor('disabledColor')
+                                  .withOpacity(0.3),
+                              width: borderSize,
+                            ),
+                          ),
+                          errorBorder: borderRadius == 0
+                              ? UnderlineInputBorder(
+                            borderRadius: BorderRadius.zero,
+                            borderSide: BorderSide(
+                              color: getThemeColor('errorColor'),
+                              width: borderSize + 2,
+                            ),
+                          )
+                              : OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(borderRadius)),
+                            borderSide: BorderSide(
+                              color: getThemeColor('errorColor'),
+                              width: borderSize,
+                            ),
+                          ),
+                          focusedErrorBorder: borderRadius == 0
+                              ? UnderlineInputBorder(
+                            borderRadius: BorderRadius.zero,
+                            borderSide: BorderSide(
+                              color: getThemeColor('errorColor'),
+                              width: borderSize + 2,
+                            ),
+                          )
+                              : OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(borderRadius)),
+                            borderSide: BorderSide(
+                              color: getThemeColor('errorColor'),
+                              width: borderSize,
+                            ),
+                          ),
+                          focusedBorder: borderRadius == 0
+                              ? UnderlineInputBorder(
+                            borderRadius: BorderRadius.zero,
+                            borderSide: BorderSide(
+                              color: getThemeColor('enabledColor'),
+                              width: borderSize + 2,
+                            ),
+                          )
+                              : OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(borderRadius)),
+                            borderSide: BorderSide(
+                              color: getThemeColor('enabledColor'),
+                              width: borderSize,
+                            ),
+                          ),
+                          enabledBorder: borderRadius == 0
+                              ? UnderlineInputBorder(
+                            borderRadius: BorderRadius.zero,
+                            borderSide: BorderSide(
+                              color: getStyle(Styles.borderColor,
+                                  data: widget.data,
+                                  themeProperty: "disabledColor"),
+                              width: borderSize,
+                            ),
+                          )
+                              : OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(borderRadius)),
+                            borderSide: BorderSide(
+                              color: getStyle(Styles.borderColor,
+                                  data: widget.data,
+                                  themeProperty: "disabledColor"),
+                              width: borderSize,
+                            ),
+                          ),
                         ),
                       ),
                       cupertino: (_,__) => CupertinoTextFormFieldData(
@@ -190,6 +241,22 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
 
                         // Date picker does not currently support "parseAs" & "saveAs" property.
                         _bindDateSelection(bindings);
+                      },
+                      validator: (input) {
+                        if(widget.data!.disabled! == true)
+                          return null;
+                        // Event injected error has priority in field validation.
+                        // if (eventInjectedError != null) {
+                        //   if (eventInjectedError!.isEmpty) {
+                        //     eventInjectedError = null;
+                        //     return null;
+                        //   }
+                        // }
+                        // Field validation triggered.
+                        var vali = validateField(input, widget.data!.bind);
+                        debugPrint('validator is:' + vali!);
+
+                        return vali;
                       },
                     ),
                   ),

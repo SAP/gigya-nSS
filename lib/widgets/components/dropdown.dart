@@ -188,90 +188,90 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                       ),
                       disabledBorder: borderRadius == 0
                           ? UnderlineInputBorder(
-                              borderRadius: BorderRadius.zero,
-                              borderSide: BorderSide(
-                                color: getThemeColor('disabledColor')
-                                    .withOpacity(0.3),
-                                width: borderSize + 2,
-                              ),
-                            )
+                        borderRadius: BorderRadius.zero,
+                        borderSide: BorderSide(
+                          color: getThemeColor('disabledColor')
+                              .withOpacity(0.3),
+                          width: borderSize + 2,
+                        ),
+                      )
                           : OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(borderRadius)),
-                              borderSide: BorderSide(
-                                color: getThemeColor('disabledColor')
-                                    .withOpacity(0.3),
-                                width: borderSize,
-                              ),
-                            ),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(borderRadius)),
+                        borderSide: BorderSide(
+                          color: getThemeColor('disabledColor')
+                              .withOpacity(0.3),
+                          width: borderSize,
+                        ),
+                      ),
                       errorBorder: borderRadius == 0
                           ? UnderlineInputBorder(
-                              borderRadius: BorderRadius.zero,
-                              borderSide: BorderSide(
-                                color: getThemeColor('errorColor'),
-                                width: borderSize + 2,
-                              ),
-                            )
+                        borderRadius: BorderRadius.zero,
+                        borderSide: BorderSide(
+                          color: getThemeColor('errorColor'),
+                          width: borderSize + 2,
+                        ),
+                      )
                           : OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(borderRadius)),
-                              borderSide: BorderSide(
-                                color: getThemeColor('errorColor'),
-                                width: borderSize,
-                              ),
-                            ),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(borderRadius)),
+                        borderSide: BorderSide(
+                          color: getThemeColor('errorColor'),
+                          width: borderSize,
+                        ),
+                      ),
                       focusedErrorBorder: borderRadius == 0
                           ? UnderlineInputBorder(
-                              borderRadius: BorderRadius.zero,
-                              borderSide: BorderSide(
-                                color: getThemeColor('errorColor'),
-                                width: borderSize + 2,
-                              ),
-                            )
+                        borderRadius: BorderRadius.zero,
+                        borderSide: BorderSide(
+                          color: getThemeColor('errorColor'),
+                          width: borderSize + 2,
+                        ),
+                      )
                           : OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(borderRadius)),
-                              borderSide: BorderSide(
-                                color: getThemeColor('errorColor'),
-                                width: borderSize,
-                              ),
-                            ),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(borderRadius)),
+                        borderSide: BorderSide(
+                          color: getThemeColor('errorColor'),
+                          width: borderSize,
+                        ),
+                      ),
                       focusedBorder: borderRadius == 0
                           ? UnderlineInputBorder(
-                              borderRadius: BorderRadius.zero,
-                              borderSide: BorderSide(
-                                color: getThemeColor('enabledColor'),
-                                width: borderSize + 2,
-                              ),
-                            )
+                        borderRadius: BorderRadius.zero,
+                        borderSide: BorderSide(
+                          color: getThemeColor('enabledColor'),
+                          width: borderSize + 2,
+                        ),
+                      )
                           : OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(borderRadius)),
-                              borderSide: BorderSide(
-                                color: getThemeColor('enabledColor'),
-                                width: borderSize,
-                              ),
-                            ),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(borderRadius)),
+                        borderSide: BorderSide(
+                          color: getThemeColor('enabledColor'),
+                          width: borderSize,
+                        ),
+                      ),
                       enabledBorder: borderRadius == 0
                           ? UnderlineInputBorder(
-                              borderRadius: BorderRadius.zero,
-                              borderSide: BorderSide(
-                                color: getStyle(Styles.borderColor,
-                                    data: widget.data,
-                                    themeProperty: "disabledColor"),
-                                width: borderSize,
-                              ),
-                            )
+                        borderRadius: BorderRadius.zero,
+                        borderSide: BorderSide(
+                          color: getStyle(Styles.borderColor,
+                              data: widget.data,
+                              themeProperty: "disabledColor"),
+                          width: borderSize,
+                        ),
+                      )
                           : OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(borderRadius)),
-                              borderSide: BorderSide(
-                                color: getStyle(Styles.borderColor,
-                                    data: widget.data,
-                                    themeProperty: "disabledColor"),
-                                width: borderSize,
-                              ),
-                            ),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(borderRadius)),
+                        borderSide: BorderSide(
+                          color: getStyle(Styles.borderColor,
+                              data: widget.data,
+                              themeProperty: "disabledColor"),
+                          width: borderSize,
+                        ),
+                      ),
                     ),
                     isExpanded: true,
                     alignment: convertToDirectionalAlignment(getStyle(Styles.textAlign, data: widget.data)) ,
