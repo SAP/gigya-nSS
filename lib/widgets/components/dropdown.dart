@@ -377,7 +377,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
          getStyle(Styles.fontSize, data: widget.data),
          fontWeight:
          getStyle(Styles.fontWeight, data: widget.data)),
-      onTap: () => _showDialog(
+      onTap: () => (widget.data!.disabled!) ? null : _showDialog(
         CupertinoPicker(
           scrollController: cupertinoScrollController,
           magnification: 1.22,
