@@ -87,7 +87,7 @@ abstract class Router {
 
   /// Evaluate dismissal route indication with canceled event.
   bool shouldCancel(String nextRoute) {
-    return nextRoute == '_canceled';
+    return nextRoute == '_cancel';
   }
 
   /// Match the correct [Screen] instance to the [nextRoute] property.
@@ -117,7 +117,7 @@ abstract class Router {
           '\nPlease verify markup and make sure your route exists and is written correctly.');
     }
     if (shouldCancel(nextRoute)) {
-      return dismissEngine(settings, '_canceled');
+      return dismissEngine(settings, '_cancel');
     }
     if (shouldDismiss(nextRoute)) {
       return dismissEngine(settings, '_dismiss');
@@ -166,7 +166,7 @@ class RouteEvaluator {
     return RoutingAllowed.none;
   }
 
-  static List<String> engineRoutes = ['_canceled', '_dismiss'];
+  static List<String> engineRoutes = ['_cancel', '_dismiss'];
 
   /// Validate requested route. Only saved engine routes and provided screen names are valid.
   static bool validatedRoute(String route) {

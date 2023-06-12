@@ -41,7 +41,7 @@ void main() {
       NssIoc().register(NssConfig, (ioc) => config);
       String testRoute = '_dismiss';
       expect(RouteEvaluator.validatedRoute(testRoute), true);
-      testRoute = '_canceled';
+      testRoute = '_cancel';
       expect(RouteEvaluator.validatedRoute(testRoute), true);
       testRoute = 'login';
       expect(RouteEvaluator.validatedRoute(testRoute), true);

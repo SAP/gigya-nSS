@@ -26,7 +26,12 @@ extension ScreenChannelActionExt on ScreenChannelAction {
 }
 
 /// Logger enums.
-enum ScreenWidgetLogs { screenDidLoad, navigateToScreen, buildScaffold }
+enum ScreenWidgetLogs {
+  screenDidLoad,
+  navigateToScreen,
+  buildScaffold,
+  lastInStack
+}
 
 /// Debug logging.
 _log(ScreenWidgetLogs log, [String? logData]) {
@@ -42,6 +47,9 @@ _log(ScreenWidgetLogs log, [String? logData]) {
     case ScreenWidgetLogs.buildScaffold:
       engineLogger!.d("PlatformScreenWidget: build scaffold initiated",
           tag: Logger.dTag);
+      break;
+    case ScreenWidgetLogs.lastInStack:
+      engineLogger!.d("Last in stack!");
       break;
   }
 }
@@ -211,19 +219,27 @@ class _ScreenWidgetState extends State<ScreenWidget>
 
   /// Create AppBar icon & state for the relevant platform.
   PlatformIconButton _createAppBarLeadingIcon() {
-    final bool firstRouteInStack = !Navigator.of(context).canPop();
+    bool? firstRouteInStack = ModalRoute.of(context)?.isFirst;
+    if (firstRouteInStack == null) {
+      firstRouteInStack = false;
+    }
 
     return PlatformIconButton(
       padding: EdgeInsets.zero,
       icon: Icon(
-        Platform.isIOS || kIsWeb ?  firstRouteInStack ? Icons.close : Icons.chevron_left : Icons.arrow_back,
+        Platform.isIOS || kIsWeb
+            ? firstRouteInStack
+                ? Icons.close
+                : Icons.chevron_left
+            : Icons.arrow_back,
         color: getStyle(Styles.fontColor,
             styles: widget.screen!.appBar!.style,
             themeProperty: 'secondaryColor'),
       ),
       onPressed: () {
-        if (firstRouteInStack) {
-          Navigator.pushNamed(context, '_canceled');
+        _log(ScreenWidgetLogs.lastInStack);
+        if (firstRouteInStack!) {
+          Navigator.pushNamed(context, '_cancel');
         } else {
           Navigator.pop(context);
         }
