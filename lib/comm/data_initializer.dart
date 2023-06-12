@@ -8,33 +8,13 @@ import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
-/// Logger enums.
-enum DataInitializerLogs { markupFetch, mockMarkup, schemaFetch }
 
-/// Debug logging.
-_log(DataInitializerLogs log) {
-  switch (log) {
-    case DataInitializerLogs.schemaFetch:
-      engineLogger!.d(
-          "DataInitializer: requesting schema on ignition channel (schemaValidations)",
-          tag: Logger.dTag);
-      break;
-    case DataInitializerLogs.markupFetch:
-      engineLogger!.d("DataInitializer: requesting markup on ignition channel",
-          tag: Logger.dTag);
-      break;
-    case DataInitializerLogs.mockMarkup:
-      engineLogger!.d("DataInitializer: mock markup", tag: Logger.dTag);
-      break;
-  }
-}
-
-class DataInitializer {
+class DataInitializer with Logging {
   final NssConfig config = NssIoc().use(NssConfig);
 
   Future<void> getRequiredMockDataForEngineInitialization() async {
     // DEBUG LOG.
-    _log(DataInitializerLogs.mockMarkup);
+    log('requesting MOCK markup on ignition channel');
 
     // Fetch markup.
     var markupData = await _getMockMarkup();
@@ -50,7 +30,7 @@ class DataInitializer {
 
   Future<void> getRequiredDataForEngineInitialization() async {
     // DEBUG LOG.
-    _log(DataInitializerLogs.markupFetch);
+    log('requesting markup on ignition channel');
 
     // Fetch markup.
     var markupData = await _getMarkup(config.version);
@@ -63,7 +43,7 @@ class DataInitializer {
     // Fetch schema and set in config if required.
     if (schemaRequired(markup, config)) {
       // DEBUG LOG.
-      _log(DataInitializerLogs.schemaFetch);
+      log('requesting schema on ignition channel (schemaValidations)');
 
       var rawSchema = await _getSchema();
       var newSchema = {

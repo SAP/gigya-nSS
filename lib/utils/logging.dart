@@ -12,6 +12,7 @@ class Logger {
 
   // General tag for debug logging.
   static String dTag = "NSS_DEBUG";
+  static String eTag = "NSS_ERROR";
 
   Logger(this.config, this.channels);
 
@@ -45,4 +46,16 @@ class Logger {
 }
 
 /// Global logger instance.
-Logger? engineLogger = NssIoc().use(Logger);
+Logger engineLogger = NssIoc().use(Logger);
+
+mixin Logging {
+
+  log(message) {
+    engineLogger.d('$runtimeType: $message', tag: Logger.dTag);
+  }
+
+  errorLog(message) {
+    engineLogger.e('$runtimeType: $message', tag: Logger.eTag);
+  }
+
+}

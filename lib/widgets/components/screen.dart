@@ -25,35 +25,6 @@ extension ScreenChannelActionExt on ScreenChannelAction {
   }
 }
 
-/// Logger enums.
-enum ScreenWidgetLogs {
-  screenDidLoad,
-  navigateToScreen,
-  buildScaffold,
-  lastInStack
-}
-
-/// Debug logging.
-_log(ScreenWidgetLogs log, [String? logData]) {
-  switch (log) {
-    case ScreenWidgetLogs.navigateToScreen:
-      engineLogger!.d("PlatformScreenWidget: navigate to screen $logData",
-          tag: Logger.dTag);
-      break;
-    case ScreenWidgetLogs.screenDidLoad:
-      engineLogger!
-          .d("PlatformScreenWidget: screenDidLoad issued ", tag: Logger.dTag);
-      break;
-    case ScreenWidgetLogs.buildScaffold:
-      engineLogger!.d("PlatformScreenWidget: build scaffold initiated",
-          tag: Logger.dTag);
-      break;
-    case ScreenWidgetLogs.lastInStack:
-      engineLogger!.d("Last in stack!");
-      break;
-  }
-}
-
 class ScreenWidget extends StatefulWidget {
   final ScreenViewModel? viewModel;
   final BindingModel? bindingModel;
@@ -81,7 +52,7 @@ class ScreenWidget extends StatefulWidget {
 }
 
 class _ScreenWidgetState extends State<ScreenWidget>
-    with StyleMixin, LocalizationMixin, EngineEvents {
+    with StyleMixin, LocalizationMixin, EngineEvents, Logging {
   final ScreenViewModel? viewModel;
   final BindingModel? bindings;
   final RuntimeStateEvaluator? expressionProvider;
@@ -120,7 +91,7 @@ class _ScreenWidgetState extends State<ScreenWidget>
       }
 
       // DEBUG LOG.
-      _log(ScreenWidgetLogs.screenDidLoad);
+      log('ScreenDidLoad for ${widget.screen!.id}');
 
       screenDidLoad(widget.screen!.id);
     });
@@ -147,7 +118,7 @@ class _ScreenWidgetState extends State<ScreenWidget>
   /// Main UI content build tree.
   Widget buildScaffold() {
     // DEBUG LOG.
-    _log(ScreenWidgetLogs.buildScaffold);
+    log('Build scaffold called for screen');
 
     var appBarBackground = getStyle(Styles.background,
         styles:
@@ -237,8 +208,8 @@ class _ScreenWidgetState extends State<ScreenWidget>
             themeProperty: 'secondaryColor'),
       ),
       onPressed: () {
-        _log(ScreenWidgetLogs.lastInStack);
         if (firstRouteInStack!) {
+          log('Last screen in stack. _cancel route initiated');
           Navigator.pushNamed(context, '_cancel');
         } else {
           Navigator.pop(context);
@@ -281,7 +252,7 @@ class _ScreenWidgetState extends State<ScreenWidget>
     _removeUnsecureRoutingData();
 
     // DEBUG LOG.
-    _log(ScreenWidgetLogs.navigateToScreen, route);
+    log('Navigate to screen: $route');
 
     Navigator.pushNamed(
       context,
