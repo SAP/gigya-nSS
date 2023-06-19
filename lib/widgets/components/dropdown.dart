@@ -91,6 +91,9 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
 
       BindingValue bindingValue = getBindingText(widget.data!, bindings,asArray: widget.data!.storeAsArray);
 
+      if(bindingValue.value != null )
+        cupertinoScrollController = FixedExtentScrollController(initialItem: indexFromValue(bindingValue.value));
+
       if(cupertinoPickerController.text.isEmpty)
         cupertinoPickerController.text = bindingValue.value ?? '' ;
 
