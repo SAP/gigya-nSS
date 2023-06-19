@@ -96,8 +96,8 @@ class _LabelWidgetState extends State<LabelWidget>
                               getColor('blue'))
                           : PlatformText(
                         text!,
+                        textAlign: getStyle(Styles.textAlign, data: widget.data),
                         style: TextStyle(
-
                           fontSize:
                           getStyle(Styles.fontSize, data: widget.data),
                           color: getStyle(Styles.fontColor,
