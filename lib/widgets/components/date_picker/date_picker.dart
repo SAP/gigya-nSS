@@ -246,18 +246,9 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                       validator: (input) {
                         if(widget.data!.disabled! == true)
                           return null;
-                        // Event injected error has priority in field validation.
-                        // if (eventInjectedError != null) {
-                        //   if (eventInjectedError!.isEmpty) {
-                        //     eventInjectedError = null;
-                        //     return null;
-                        //   }
-                        // }
-                        // Field validation triggered.
-                        var vali = validateField(input, widget.data!.bind);
-                        debugPrint('validator is:' + vali!);
 
-                        return vali;
+                        // Field validation triggered.
+                        return validateField(input, widget.data!.bind);
                       },
                     ),
                   ),
