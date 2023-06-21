@@ -118,7 +118,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
                     ? null
                     : Platform.isIOS
                         ? Container(
-                            child: IconButton(
+                            child: PlatformIconButton(
                               icon: Icon(
                                 Icons.close,
                                 color: getStyle(Styles.fontColor,

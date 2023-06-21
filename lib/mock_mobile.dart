@@ -21,7 +21,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     super.initState();
@@ -30,21 +29,27 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder (
-      future: fetchMarkupAndSchema(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done)
-          return createApp();
-        else
-          return Container();
-      }
-    );}
-
+    return FutureBuilder(
+        future: fetchMarkupAndSchema(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done)
+            return createApp();
+          else
+            return Container();
+        });
+  }
 
   Widget createApp() {
     return PlatformProvider(
-      settings: PlatformSettingsData
-        (platformStyle: PlatformStyleData(android: showCupertino() ? PlatformStyle.Cupertino : PlatformStyle.Material)),
+      settings: PlatformSettingsData(
+        platformStyle: PlatformStyleData(
+            ios: showCupertino()
+                ? PlatformStyle.Cupertino
+                : PlatformStyle.Material,
+            android: showCupertino()
+                ? PlatformStyle.Cupertino
+                : PlatformStyle.Material),
+      ),
       builder: (context) => PlatformApp(
         localizationsDelegates: <LocalizationsDelegate<dynamic>>[
           DefaultMaterialLocalizations.delegate,
@@ -67,6 +72,7 @@ class _MyAppState extends State<MyApp> {
     // Add default localization values that are needed (can be overridden by client).
     ErrorUtils().addDefaultStringValues(config.markup!.localization!);
   }
+
   /// Fetch markup from example JSON asset.
   /// This is used for development & testing.
   Future<Map<dynamic, dynamic>> _markupFromMock() async {
@@ -74,8 +80,9 @@ class _MyAppState extends State<MyApp> {
     return jsonDecode(json);
   }
 
-  bool showCupertino(){
+  bool showCupertino() {
     final NssConfig config = NssIoc().use(NssConfig);
-    return config.markup?.platformAware == true && config.markup?.platformAwareMode?.toLowerCase() == 'cupertino';
+    return config.markup?.platformAware == true &&
+        config.markup?.platformAwareMode?.toLowerCase() == 'cupertino';
   }
 }
