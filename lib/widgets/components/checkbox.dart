@@ -95,7 +95,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Row (
-                            mainAxisSize: MainAxisSize.max,
+                            mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               SemanticsWrapperWidget(
@@ -128,7 +128,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                             });
                                           },
                                     child: Container(
-                                      width: double.infinity,
+                                      // width: double.infinity,
                                       child: linkified
                                           ? linkify.linkify(widget.data,
                                               (link) {
