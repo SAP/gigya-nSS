@@ -323,7 +323,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                             .notifyChanged(widget.data!.bind, newValue);
                       });
                     },
-                    items: _dropdownItems
+                    items: widget.data!.disabled! == true ? null : _dropdownItems
                         .map<DropdownMenuItem<String>>((String? value) {
                       TextAlign align =
                           getStyle(Styles.textAlign, data: widget.data) ??
