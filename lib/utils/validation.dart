@@ -115,7 +115,9 @@ mixin ValidationMixin {
 
   /// Initialize input validators.
   initValidators(NssWidgetData data) {
-    initSchemaValidators(data.bind);
+    if (data.bind is String?) {
+      initSchemaValidators(data.bind);
+    }
     initMarkupValidators(data.validations!);
   }
 
