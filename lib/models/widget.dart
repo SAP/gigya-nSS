@@ -2,7 +2,7 @@ import 'package:gigya_native_screensets_engine/models/accessibility.dart';
 import 'package:gigya_native_screensets_engine/models/option.dart';
 import 'package:gigya_native_screensets_engine/models/styles.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/social.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'widget.g.dart';

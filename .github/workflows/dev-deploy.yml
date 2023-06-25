@@ -59,7 +59,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: '3.0.4'
+          flutter-version: '3.10.0'
 
       - name: Configuration
         run: |

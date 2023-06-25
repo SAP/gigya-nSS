@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/models/option.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
@@ -25,17 +27,8 @@ class RadioGroupWidget extends StatefulWidget {
   _RadioGroupWidgetState createState() => _RadioGroupWidgetState();
 }
 
-class _RadioGroupWidgetState extends State<RadioGroupWidget>
-    with
-        DecorationMixin,
-        BindingMixin,
-        StyleMixin,
-        LocalizationMixin,
-        ValidationMixin,
-        VisibilityStateMixin,
-        ErrorMixin {
+class _RadioGroupWidgetState extends State<RadioGroupWidget> with DecorationMixin, BindingMixin, StyleMixin, LocalizationMixin, ValidationMixin, VisibilityStateMixin, ErrorMixin {
   String? _groupValue;
-  String? _defaultValue;
 
   @override
   void initState() {
@@ -50,15 +43,12 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ScreenViewModel, BindingModel>(
-        builder: (context, viewModel, bindings, child) {
-      BindingValue bindingValue = getBindingText(widget.data!, bindings,
-          asArray: widget.data!.storeAsArray);
+    return Consumer2<ScreenViewModel, BindingModel>(builder: (context, viewModel, bindings, child) {
+      BindingValue bindingValue = getBindingText(widget.data!, bindings, asArray: widget.data!.storeAsArray);
 
       // Check for binding error. Display on screen.
       if (bindingValueError(bindingValue)) {
-        return bindingValueErrorDisplay(widget.data!.bind,
-            errorText: bindingValue.errorText);
+        return bindingValueErrorDisplay(widget.data!.bind, errorText: bindingValue.errorText);
       }
 
       _groupValue = bindingValue.value ?? "";
@@ -72,8 +62,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
 
       if (_groupValue != null && bindingValue.value == null) {
         setOption(_groupValue, bindings);
-        debugPrint(
-            'No binding value for radio -> default value will be displayed');
+        debugPrint('No binding value for radio -> default value will be displayed');
       }
 
       return SemanticsWrapperWidget(
@@ -82,8 +71,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
           visible: isVisible(viewModel, widget.data),
           child: Theme(
             data: Theme.of(context).copyWith(
-              unselectedWidgetColor: getStyle(Styles.fontColor,
-                  data: widget.data, themeProperty: 'textColor'),
+              unselectedWidgetColor: getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
               disabledColor: getThemeColor('disabledColor'),
             ),
             child: Opacity(
@@ -101,49 +89,10 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
                       itemBuilder: (BuildContext lvbContext, int index) {
                         NssOption option = widget.data!.options![index];
                         return Theme(
-                          data: Theme.of(context).copyWith(
-                              unselectedWidgetColor: widget.data!.disabled!
-                                  ? getThemeColor('disabledColor')
-                                  : getThemeColor('enabledColor'),
-                              disabledColor: widget.data!.disabled!
-                                  ? getThemeColor('disabledColor')
-                                  : getThemeColor('enabledColor')),
-                          child: RadioListTile<String?>(
-                            controlAffinity: ListTileControlAffinity.leading,
-                            value: option.value,
-                            title: Text(
-                              localizedStringFor(option.textKey)!,
-                              textAlign: getStyle(Styles.textAlign,
-                                      data: widget.data) ??
-                                  TextAlign.start,
-                              style: TextStyle(
-                                color: widget.data!.disabled!
-                                    ? getThemeColor('disabledColor')
-                                    : getStyle(Styles.fontColor,
-                                        data: widget.data,
-                                        themeProperty: 'textColor'),
-                                fontSize: getStyle(Styles.fontSize,
-                                    data: widget.data),
-                                fontWeight: getStyle(Styles.fontWeight,
-                                    data: widget.data),
-                              ),
-                            ),
-                            groupValue: _groupValue,
-                            activeColor: widget.data!.disabled!
-                                ? getThemeColor('disabledColor')
-                                : getThemeColor('enabledColor'),
-                            // TODO: need to change the getter from theme.
-                            onChanged: (String? value) {
-                              setState(() {
-                                setOption(value, bindings);
-
-                                // Track runtime data change.
-                                Provider.of<RuntimeStateEvaluator>(context,
-                                        listen: false)
-                                    .notifyChanged(widget.data!.bind, value);
-                              });
-                            },
-                          ),
+                          data: Theme.of(context).copyWith(unselectedWidgetColor: widget.data!.disabled! ? getThemeColor('disabledColor') : getThemeColor('enabledColor'), disabledColor: widget.data!.disabled! ? getThemeColor('disabledColor') : getThemeColor('enabledColor')),
+                          child: isMaterial(context)  ?
+                          buildMaterialRadioListTile(option, bindings, context) :
+                          buildCupertinoRadioListTile(option, bindings, context)
                         );
                       },
                     ),
@@ -155,6 +104,67 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
         ),
       );
     });
+  }
+
+  RadioListTile<String?> buildMaterialRadioListTile(NssOption option, BindingModel bindings, BuildContext context) {
+    return RadioListTile<String?>(
+      contentPadding: EdgeInsets.zero,
+      dense: true,
+      controlAffinity: ListTileControlAffinity.leading,
+      value: option.value,
+      title: Text(
+        localizedStringFor(option.textKey)!,
+        textAlign: getStyle(Styles.textAlign, data: widget.data) ?? TextAlign.start,
+        style: TextStyle(
+          color: widget.data!.disabled! ? getThemeColor('disabledColor') : getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
+          fontSize: getStyle(Styles.fontSize, data: widget.data),
+          fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+        ),
+      ),
+      groupValue: _groupValue,
+      activeColor: widget.data!.disabled! ? getThemeColor('disabledColor') : getThemeColor('enabledColor'),
+      // TODO: need to change the getter from theme.
+      onChanged: (String? value) {
+        setState(() {
+          setOption(value, bindings);
+
+          // Track runtime data change.
+          Provider.of<RuntimeStateEvaluator>(context, listen: false).notifyChanged(widget.data!.bind, value);
+        });
+      },
+    );
+  }
+
+  CupertinoListTile buildCupertinoRadioListTile(NssOption option, BindingModel bindings, BuildContext context) {
+    return CupertinoListTile(
+      padding: EdgeInsets.fromLTRB(4, 0, 0, 4),
+        title: Container(
+          width: double.infinity,
+          child: Text(
+            localizedStringFor(option.textKey)!,
+            textAlign: getStyle(Styles.textAlign, data: widget.data),
+            style: TextStyle(
+              color: widget.data!.disabled! ? getThemeColor('disabledColor') : getStyle(Styles.fontColor, data: widget.data, themeProperty: 'textColor'),
+              fontSize: getStyle(Styles.fontSize, data: widget.data),
+              fontWeight: getStyle(Styles.fontWeight, data: widget.data),
+            ),
+          ),
+        ),
+        leading:
+      CupertinoRadio<String>(
+        value: option.value ?? '',
+        groupValue: _groupValue,
+        activeColor: widget.data!.disabled! ? getThemeColor('disabledColor') : getThemeColor('enabledColor'),
+        onChanged: (String? value) {
+          setState(() {
+            setOption(value, bindings);
+
+            // Track runtime data change.
+            Provider.of<RuntimeStateEvaluator>(context, listen: false).notifyChanged(widget.data!.bind, value);
+          });
+        },
+      )
+    );
   }
 
   setOption(String? value, BindingModel bindings) {
@@ -171,8 +181,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
       if (parsed == null) {
         engineLogger!.e('parseAs field is not compatible with provided input');
       }
-       bindings.save<String?>(widget.data!.bind, parsed,
-            saveAs: widget.data!.sendAs);
+      bindings.save<String?>(widget.data!.bind, parsed, saveAs: widget.data!.sendAs);
       return;
     }
     // If parseAs field is not available try to parse according to schema.
@@ -180,7 +189,6 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget>
     if (parsed == null) {
       engineLogger!.e('Schema type is not compatible with provided input');
     }
-    bindings.save<String?>(widget.data!.bind, parsed,
-        saveAs: widget.data!.sendAs);
+    bindings.save<String?>(widget.data!.bind, parsed, saveAs: widget.data!.sendAs);
   }
 }

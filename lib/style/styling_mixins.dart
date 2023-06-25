@@ -5,7 +5,7 @@ import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/image.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/image.dart';
 
 /// Supported styles enum.
 enum Styles {
@@ -68,7 +68,7 @@ mixin StyleMixin {
   /// Default style mapping.
   final Map<String, dynamic> defaultStyle = {
     'margin': 0,
-    'fontSize': 14,
+    'fontSize': 18,
     'fontColor': 'black',
     'fontWeight': 4,
     'background': 'white',
@@ -291,7 +291,21 @@ mixin StyleMixin {
     NssTextAlign a = NssTextAlign.values.firstWhere(
         (f) => f.toString() == align,
         orElse: () => NssTextAlign.none);
-    return a.getValue;
+    return a.getValue ?? TextAlign.start;
+  }
+
+  convertToDirectionalAlignment(TextAlign align) {
+    switch (align) {
+      case TextAlign.start:
+        return AlignmentDirectional.centerStart;
+      case TextAlign.end:
+        return AlignmentDirectional.centerEnd;
+      case TextAlign.center:
+        return AlignmentDirectional.center;
+      default:
+        return AlignmentDirectional.centerStart;
+    // none
+    }
   }
 
   //region SIMPLIFIED STYLE GETTERS
@@ -329,5 +343,27 @@ mixin StyleMixin {
               data: data, themeProperty: 'textColor')
           .withOpacity(0.5);
 
+  TextStyle styleText(data) {
+    final Color? color = getStyle(Styles.fontColor, data: data, themeProperty: 'textColor');
+
+    return TextStyle(
+      color: data!.disabled!
+          ? color!.withOpacity(0.1)
+          : color,
+      fontSize: getStyle(Styles.fontSize, data: data),
+      fontWeight: getStyle(Styles.fontWeight, data: data),
+    );
+  }
+
+  TextStyle styleCupertinoPlaceholder(data) {
+
+    return TextStyle(
+      color: data!.disabled!
+          ? Colors.black12.withOpacity(0.1)
+          : Colors.black45,
+      fontSize: getStyle(Styles.fontSize, data: data),
+      fontWeight: getStyle(Styles.fontWeight, data: data),
+    );
+  }
 //endregion
 }

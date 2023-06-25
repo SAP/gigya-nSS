@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/models/styles.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
@@ -10,8 +11,8 @@ import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/utils/validation.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/date_picker/date_picker_style.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/date_picker/date_picker_utils.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/date_picker/date_picker_style.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/date_picker/date_picker_utils.dart';
 import 'package:provider/provider.dart';
 
 /// Date picker selection widget.
@@ -54,6 +55,10 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
   @override
   void initState() {
     super.initState();
+
+    // Initialize validators.
+    initValidators(widget.data!);
+
     _datePickerStyle = widget.data!.datePickerStyle;
 
     registerVisibilityNotifier(context, widget.data, () {
@@ -70,93 +75,154 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
     return Flexible(
       child: SemanticsWrapperWidget(
         accessibility: widget.data!.accessibility,
-        child: Padding(
-          padding: getStyle(Styles.margin, data: widget.data),
-          child: Consumer2<ScreenViewModel, BindingModel>(
-            builder: (context, viewModel, bindings, child) {
-              // Set initial binding value.
-              _setInitialBindingValue(bindings);
+        child: Consumer2<ScreenViewModel, BindingModel>(
+          builder: (context, viewModel, bindings, child) {
+            // Set initial binding value.
+            _setInitialBindingValue(bindings);
 
-              // Get general style fields for input view.
-              final Color? color = getStyle(Styles.fontColor,
-                  data: widget.data, themeProperty: 'textColor');
-              final borderSize = getStyle(Styles.borderSize, data: widget.data);
-              final borderRadius =
-                  getStyle(Styles.cornerRadius, data: widget.data);
+            // Get general style fields for input view.
+            final Color? color = getStyle(Styles.fontColor,
+                data: widget.data, themeProperty: 'textColor');
+            final borderSize = getStyle(Styles.borderSize, data: widget.data);
+            final borderRadius =
+                getStyle(Styles.cornerRadius, data: widget.data);
 
-              return Visibility(
-                visible: isVisible(viewModel, widget.data),
-                child: Opacity(
-                  opacity: getStyle(Styles.opacity, data: widget.data),
-                  child: InkWell(
-                    onTap: () {
-                      // Trigger picker.
-                      if (!widget.data!.disabled!) {
-                        _showPickerSelection(context);
-                      }
-                    },
-                    child: TextFormField(
+            return Visibility(
+              visible: isVisible(viewModel, widget.data),
+              child: Opacity(
+                opacity: getStyle(Styles.opacity, data: widget.data),
+                child: Padding(
+                  padding: getStyle(Styles.margin, data: widget.data),
+                  child: Container(
+
+                    foregroundDecoration: BoxDecoration(
+                        color: Colors.transparent),
+                    child: PlatformTextFormField(
+                      onTap: () {
+                        // Trigger picker.
+                        if (!widget.data!.disabled!) {
+                          isMaterial(context) ?  _showMaterialPickerSelection(context) : _showCupertinoPickerSelection(context);
+                        }
+                      } ,
+                      readOnly: true,
+                      enableInteractiveSelection: false,
                       controller: _controller,
-                      decoration: InputDecoration(
-                        filled: true,
-                        isDense: true,
-                        fillColor:
-                            getStyle(Styles.background, data: widget.data),
-                        disabledBorder: !widget.data!.disabled!
-                            ? borderRadius == 0
-                                ? UnderlineInputBorder(
-                                    borderRadius: BorderRadius.zero,
-                                    borderSide: BorderSide(
-                                      color: getStyle(Styles.borderColor,
-                                          data: widget.data,
-                                          themeProperty: "disabledColor"),
-                                      width: borderSize,
-                                    ),
-                                  )
-                                : OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(borderRadius)),
-                                    borderSide: BorderSide(
-                                      color: getStyle(Styles.borderColor,
-                                          data: widget.data,
-                                          themeProperty: "disabledColor"),
-                                      width: borderSize,
-                                    ),
-                                  )
-                            : borderRadius == 0
-                                ? UnderlineInputBorder(
-                                    borderRadius: BorderRadius.zero,
-                                    borderSide: BorderSide(
-                                      color: getThemeColor('disabledColor')
-                                          .withOpacity(0.3),
-                                      width: borderSize + 2,
-                                    ),
-                                  )
-                                : OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(borderRadius)),
-                                    borderSide: BorderSide(
-                                      color: getThemeColor('disabledColor')
-                                          .withOpacity(0.3),
-                                      width: borderSize,
-                                    ),
-                                  ),
-                        labelText: localizedStringFor(widget.data!.textKey),
-                        labelStyle: TextStyle(
-                            fontSize:
-                                getStyle(Styles.fontSize, data: widget.data),
+                      material: (_,__) => MaterialTextFormFieldData(
+                        decoration: InputDecoration(
+                          hintText: localizedStringFor(widget.data!.textKey) ?? '',
+                          hintStyle: TextStyle(
                             color: widget.data!.disabled!
-                                ? getThemeColor('disabledColor')
-                                    .withOpacity(0.3)
-                                : getStyle(Styles.fontColor,
-                                    data: widget.data,
-                                    themeProperty: 'textColor'),
-                            fontWeight:
-                                getStyle(Styles.fontWeight, data: widget.data)),
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                                ? getStyle(Styles.placeholderColor,
+                                data: widget.data,
+                                themeProperty: 'disabledColor')
+                                .withOpacity(0.3)
+                                : getStyle(Styles.placeholderColor,
+                                data: widget.data, themeProperty: 'textColor')
+                                .withOpacity(0.5),
+                          ),
+                          filled: true,
+                          //isDense: true,
+                          fillColor:
+                              getStyle(Styles.background, data: widget.data),
+                          disabledBorder: borderRadius == 0
+                              ? UnderlineInputBorder(
+                            borderRadius: BorderRadius.zero,
+                            borderSide: BorderSide(
+                              color: getThemeColor('disabledColor')
+                                  .withOpacity(0.3),
+                              width: borderSize + 2,
+                            ),
+                          )
+                              : OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(borderRadius)),
+                            borderSide: BorderSide(
+                              color: getThemeColor('disabledColor')
+                                  .withOpacity(0.3),
+                              width: borderSize,
+                            ),
+                          ),
+                          errorBorder: borderRadius == 0
+                              ? UnderlineInputBorder(
+                            borderRadius: BorderRadius.zero,
+                            borderSide: BorderSide(
+                              color: getThemeColor('errorColor'),
+                              width: borderSize + 2,
+                            ),
+                          )
+                              : OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(borderRadius)),
+                            borderSide: BorderSide(
+                              color: getThemeColor('errorColor'),
+                              width: borderSize,
+                            ),
+                          ),
+                          focusedErrorBorder: borderRadius == 0
+                              ? UnderlineInputBorder(
+                            borderRadius: BorderRadius.zero,
+                            borderSide: BorderSide(
+                              color: getThemeColor('errorColor'),
+                              width: borderSize + 2,
+                            ),
+                          )
+                              : OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(borderRadius)),
+                            borderSide: BorderSide(
+                              color: getThemeColor('errorColor'),
+                              width: borderSize,
+                            ),
+                          ),
+                          focusedBorder: borderRadius == 0
+                              ? UnderlineInputBorder(
+                            borderRadius: BorderRadius.zero,
+                            borderSide: BorderSide(
+                              color: getThemeColor('enabledColor'),
+                              width: borderSize + 2,
+                            ),
+                          )
+                              : OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(borderRadius)),
+                            borderSide: BorderSide(
+                              color: getThemeColor('enabledColor'),
+                              width: borderSize,
+                            ),
+                          ),
+                          enabledBorder: borderRadius == 0
+                              ? UnderlineInputBorder(
+                            borderRadius: BorderRadius.zero,
+                            borderSide: BorderSide(
+                              color: getStyle(Styles.borderColor,
+                                  data: widget.data,
+                                  themeProperty: "disabledColor"),
+                              width: borderSize,
+                            ),
+                          )
+                              : OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(borderRadius)),
+                            borderSide: BorderSide(
+                              color: getStyle(Styles.borderColor,
+                                  data: widget.data,
+                                  themeProperty: "disabledColor"),
+                              width: borderSize,
+                            ),
+                          ),
+                        ),
                       ),
+                      cupertino: (_,__) => CupertinoTextFormFieldData(
+                        padding: EdgeInsets.zero,
+                        placeholder: localizedStringFor(widget.data!.textKey) ?? '',
+                        placeholderStyle: styleCupertinoPlaceholder(widget.data),
+                        decoration: BoxDecoration(
+                            color: getStyle(Styles.background, data: widget.data),
+                            backgroundBlendMode: BlendMode.src
+                        ),
+                      ),
+
                       maxLines: 1,
-                      enabled: false,
                       textAlign:
                           getStyle(Styles.textAlign, data: widget.data) ??
                               TextAlign.start,
@@ -177,23 +243,30 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                         // Date picker does not currently support "parseAs" & "saveAs" property.
                         _bindDateSelection(bindings);
                       },
+                      validator: (input) {
+                        if(widget.data!.disabled! == true)
+                          return null;
+
+                        // Field validation triggered.
+                        return validateField(input, widget.data!.bind);
+                      },
                     ),
                   ),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
   /// Initiate the date picker when date text is tapped.
-  _showPickerSelection(BuildContext context) async {
+  _showMaterialPickerSelection(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       fieldLabelText:
-          localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
+      localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
       helpText: localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
       initialDate: _selectedDate != null ? _selectedDate! : _initialDate!,
       // Refer step 1
@@ -233,6 +306,28 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
       });
   }
 
+
+  _showCupertinoPickerSelection(BuildContext context) async {
+    final DateTime? picked = await showPlatformDatePicker(
+      context: context,
+      initialDate: _selectedDate != null ? _selectedDate! : _initialDate!,
+      // Refer step 1
+      firstDate: getFirstDateFrom(widget.data!.startYear),
+      lastDate: getLastDateFrom(widget.data!.endYear!),
+      cupertino: (_, __) => CupertinoDatePickerData(
+        firstDate: getFirstDateFrom(widget.data!.startYear),
+        lastDate: getLastDateFrom(widget.data!.endYear!),
+        initialDate: _selectedDate != null ? _selectedDate! : _initialDate!,
+      ),
+    );
+    if (picked != null && picked != _selectedDate)
+      setState(() {
+        // Update selected value.
+        _selectedDate = picked;
+        _controller.text = parseDateValue(_selectedDate, context);
+      });
+  }
+
   /// Set the date picker selection mode: calendar or input are available.
   DatePickerEntryMode _pickerEntryMode() {
     if (widget.inputType == 'input') {
@@ -244,8 +339,8 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
 
   /// Sets the initial value of the widget according to available data or default date.
   _setInitialBindingValue(BindingModel bindings) {
-    // Now is the fallback/default value.
-    _initialDate = DateTime.now();
+    // Either start first of day of start year or now
+    _initialDate = widget.data!.endYear! > DateTime.now().year && widget.data!.startYear! < DateTime.now().year ? DateTime.now() : getFirstDateFrom(widget.data!.startYear!);
 
     // Selection has been made. No need to rest the initial value on setState().
     if (_selectedDate != null) {
@@ -259,8 +354,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
     if (!bindings.bindingDataAvailable()) {
       debugPrint(
           'DatePicker (_setInitialBindingValue) - Binding data is not available yet');
-      _controller.text = parseDateValue(_initialDate, context);
-      _bindDateSelection(bindings);
+      _controller.text = '';
       return;
     }
 

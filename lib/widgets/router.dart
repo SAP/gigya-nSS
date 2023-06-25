@@ -7,7 +7,7 @@ import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/startup.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/errors.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/errors.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 abstract class Router {

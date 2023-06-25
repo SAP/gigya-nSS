@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
@@ -82,17 +84,17 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
               ),
               child: Opacity(
                 opacity: getStyle(Styles.opacity, data: widget.data),
-                child: Container(
-                  color: getStyle(Styles.background, data: widget.data),
-                  child: Padding(
-                    padding: getStyle(Styles.margin, data: widget.data),
+                child: Padding(
+                  padding: getStyle(Styles.margin, data: widget.data),
+                  child: Container(
+                    color: getStyle(Styles.background, data: widget.data),
                     child: NssCustomSizeWidget(
                       data: widget.data,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Row(
+                          Row (
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
@@ -105,37 +107,11 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                               ? getThemeColor('disabledColor')
                                                   .withOpacity(0.3)
                                               : getThemeColor('enabledColor')),
-                                  child: Checkbox(
-                                    tristate: false,
-                                    activeColor: widget.data!.disabled!
-                                        ? getThemeColor('disabledColor')
-                                            .withOpacity(0.3)
-                                        : getThemeColor('enabledColor'),
-                                    checkColor: widget.data!.disabled!
-                                        ? getThemeColor('disabledColor')
-                                            .withOpacity(0.3)
-                                        : getThemeColor('secondaryColor'),
-                                    value: _currentValue,
-                                    onChanged: (bool? val) {
-                                      if (widget.data!.disabled!) {
-                                        return null;
-                                      }
-                                      setState(() {
-                                        bindings.save<bool?>(
-                                            widget.data!.bind, val,
-                                            saveAs: widget.data!.sendAs,
-                                            asArray: widget.data!.storeAsArray);
-
-                                        // Track runtime data change.
-                                        Provider.of<RuntimeStateEvaluator>(
-                                                context,
-                                                listen: false)
-                                            .notifyChanged(
-                                                widget.data!.bind, val);
-                                      });
-                                    },
-                                  ),
+                                  child: isMaterial(context) ? buildMaterialCheckBox(bindings) : buildCupertinoSwitch(bindings)
                                 ),
+                              ),
+                              SizedBox(
+                                width: 5,
                               ),
                               Flexible(
                                 child: GestureDetector(
@@ -152,6 +128,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                             });
                                           },
                                     child: Container(
+                                      // width: double.infinity,
                                       child: linkified
                                           ? linkify.linkify(widget.data,
                                               (link) {
@@ -167,8 +144,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                               displayText,
                                               textAlign: getStyle(
                                                       Styles.textAlign,
-                                                      data: widget.data) ??
-                                                  TextAlign.start,
+                                                      data: widget.data),
                                               style: TextStyle(
                                                   color: widget.data!.disabled!
                                                       ? getThemeColor(
@@ -211,6 +187,83 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
           );
         });
       },
+    );
+  }
+
+  Widget buildMaterialCheckBox(bindings){
+    return SizedBox(
+      height: 24.0,
+      width: 24.0,
+      child: Checkbox(
+        tristate: false,
+        activeColor: widget.data!.disabled!
+            ? getThemeColor('disabledColor')
+            .withOpacity(0.3)
+            : getThemeColor('enabledColor'),
+        checkColor: widget.data!.disabled!
+            ? getThemeColor('disabledColor')
+            .withOpacity(0.3)
+            : getThemeColor('secondaryColor'),
+        value: _currentValue,
+        onChanged: (bool? val) {
+          if (widget.data!.disabled!) {
+            return null;
+          }
+          setState(() {
+            bindings.save<bool?>(
+                widget.data!.bind, val,
+                saveAs: widget.data!.sendAs,
+                asArray: widget.data!.storeAsArray);
+
+            // Track runtime data change.
+            Provider.of<RuntimeStateEvaluator>(
+                context,
+                listen: false)
+                .notifyChanged(
+                widget.data!.bind, val);
+          });
+        },
+      ),
+    );
+  }
+
+  Widget buildCupertinoSwitch(bindings){
+    return SizedBox(
+      width: 48,
+      height: 24,
+      child: Transform.scale(
+        scale: 0.6,
+        child: CupertinoSwitch(
+          value: _currentValue ?? false,
+          onChanged: (bool? val) {
+            if (widget.data!.disabled!) {
+              return null;
+            }
+            setState(() {
+              bindings.save<bool?>(
+                  widget.data!.bind, val,
+                  saveAs: widget.data!.sendAs,
+                  asArray: widget.data!.storeAsArray);
+
+              // Track runtime data change.
+              Provider.of<RuntimeStateEvaluator>(
+                  context,
+                  listen: false)
+                  .notifyChanged(
+                  widget.data!.bind, val);
+            });
+          },
+          activeColor: widget.data!.disabled!
+              ? getThemeColor('disabledColor')
+              .withOpacity(0.3)
+              : getThemeColor('enabledColor'),
+          trackColor: widget.data!.disabled!
+              ? getThemeColor('disabledColor')
+              .withOpacity(0.3)
+              : Colors.grey,
+            //thumbColor: Colors.pink
+        ),
+      ),
     );
   }
 }

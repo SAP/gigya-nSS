@@ -31,7 +31,7 @@ class WebContainer {
         .register(ApiService, (ioc) => ApiService(ioc.use(NssChannels)))
         .register(ScreenService, (ioc) => ScreenService(ioc.use(NssChannels)))
         .register(ScreenViewModel, (ioc) => ScreenViewModel(ioc.use(ApiService), ioc.use(ScreenService)))
-        .register(StartupWidget, (ioc) => StartupWidget(config: ioc.use(NssConfig), channels: ioc.use(NssChannels)),
+        .register(StartupWidget, (ioc) => StartupWidget(),
             singleton: true);
   }
 }

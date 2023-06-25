@@ -13,7 +13,7 @@ import 'package:gigya_native_screensets_engine/utils/linkify.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/widgets/events.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
-import 'package:gigya_native_screensets_engine/widgets/material/social.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/social.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:gigya_native_screensets_engine/services/api_service.dart';
 import 'package:gigya_native_screensets_engine/services/screen_service.dart';

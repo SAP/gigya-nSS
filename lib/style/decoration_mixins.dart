@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
@@ -60,6 +61,31 @@ mixin DecorationMixin {
       default:
         return CrossAxisAlignment.center;
     }
+  }
+
+  bool isMaterial(context){
+    return _getPlatformStyle(context) == PlatformStyle.Material;
+  }
+
+  PlatformStyle _getPlatformStyle(context){
+    TargetPlatform? devicePlatform =  defaultTargetPlatform;
+    PlatformStyleData? designStyle = PlatformProvider.of(context)?.settings.platformStyle;
+
+    PlatformStyle? result = PlatformStyle.Material;
+    switch(devicePlatform){
+      case TargetPlatform.android :
+        result = designStyle?.android;
+        break;
+      case TargetPlatform.iOS :
+        result = designStyle?.ios;
+        break;
+      case TargetPlatform.windows:
+        result = designStyle?.windows;
+        break;
+      default:
+        result = designStyle?.android;
+    }
+    return result ?? PlatformStyle.Material;
   }
 }
 

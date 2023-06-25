@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
@@ -9,7 +10,6 @@ import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/accessibility.dart';
 import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
-import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:provider/provider.dart';
 
 import '../../utils/logging.dart';
@@ -72,36 +72,22 @@ class _SubmitWidgetState extends State<SubmitWidget>
                     opacity: getStyle(Styles.opacity, data: widget.data),
                     child: ButtonTheme(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              color: widget.data!.disabled!
-                                  ? getThemeColor('disabledColor')
-                                      .withOpacity(0.3)
-                                  : getStyle(Styles.borderColor,
-                                      data: widget.data),
-                              width: getStyle(Styles.borderSize,
-                                      data: widget.data) ??
-                                  0,
-                            ),
+                      child: PlatformElevatedButton(
+                        color: widget.data!.disabled!
+                            ? getThemeColor('disabledColor').withOpacity(0.7)
+                            : getStyle(Styles.background,
+                            data: widget.data, themeProperty: 'primaryColor'),
+                        //color: Colors.black54,
+                        padding: EdgeInsets.all(2),
+                        cupertino: (_, __) => CupertinoElevatedButtonData(
+
                             borderRadius: BorderRadius.circular(
                               getStyle(Styles.cornerRadius, data: widget.data),
                             ),
-                          ),
-                          primary: widget.data!.disabled!
-                              ? getThemeColor('disabledColor').withOpacity(0.3)
-                              : getStyle(Styles.background,
-                                  data: widget.data,
-                                  themeProperty: 'primaryColor'),
-                          elevation: getElevationStyleProperty(),
+                          disabledColor: getThemeColor('disabledColor').withOpacity(0.7),
+                            pressedOpacity: 0.8
                         ),
-                        // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        // elevation: getElevationStyleProperty(),
-                        // hoverElevation: isFlat() ? 0 : null,
-                        // disabledElevation: isFlat() ? 0 : null,
-                        // focusElevation: isFlat() ? 0 : null,
-                        // highlightElevation: isFlat() ? 0 : null,
+                        material: (_, __) => MaterialElevatedButtonData(style: buildButtonStyle()),
                         child: Align(
                           widthFactor: 1,
                           alignment: textAlign.toAlignment(widget.data!.type),
@@ -155,11 +141,36 @@ class _SubmitWidgetState extends State<SubmitWidget>
     );
   }
 
+  ButtonStyle buildButtonStyle() {
+    return ElevatedButton.styleFrom(
+    shape: RoundedRectangleBorder(
+      side: BorderSide(
+        color: widget.data!.disabled!
+            ? getThemeColor('disabledColor')
+            .withOpacity(0.3)
+            : getStyle(Styles.borderColor,
+            data: widget.data),
+        width: getStyle(Styles.borderSize,
+            data: widget.data) ??
+            0,
+      ),
+      borderRadius: BorderRadius.circular(
+        getStyle(Styles.cornerRadius, data: widget.data),
+      ),
+    ),
+    backgroundColor: widget.data!.disabled!
+        ? getThemeColor('disabledColor').withOpacity(0.3)
+        : getStyle(Styles.background,
+        data: widget.data,  themeProperty: 'primaryColor'),
+    elevation: getElevationStyleProperty(),
+  );
+  }
+
   /// Set the elevation property of the button.
   /// Default will be set to 0.
   dynamic getElevationStyleProperty() {
-    if (widget.data!.disabled!) return 0;
-    return getStyle(Styles.elevation, data: widget.data) ?? 0;
+    if (widget.data!.disabled!) return null;
+    return getStyle(Styles.elevation, data: widget.data) ?? null;
   }
 
   dynamic isFlat() => getElevationStyleProperty() == 0;
@@ -236,7 +247,7 @@ class _ButtonWidgetState extends State<ButtonWidget>
                                     data: widget.data),
                               ),
                             ),
-                            primary: widget.data!.disabled!
+                            backgroundColor: widget.data!.disabled!
                                 ? getThemeColor('disabledColor')
                                     .withOpacity(0.3)
                                 : getStyle(Styles.background,
@@ -244,12 +255,6 @@ class _ButtonWidgetState extends State<ButtonWidget>
                                     themeProperty: 'primaryColor'),
                             elevation: getElevationStyleProperty(),
                           ),
-                          // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          // elevation: getElevationStyleProperty(),
-                          // hoverElevation: isFlat() ? 0 : null,
-                          // disabledElevation: isFlat() ? 0 : null,
-                          // focusElevation: isFlat() ? 0 : null,
-                          // highlightElevation: isFlat() ? 0 : null,
                           child: Align(
                             widthFactor: 1,
                             alignment: textAlign.toAlignment(widget.data!.type),

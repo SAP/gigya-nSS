@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
@@ -92,14 +93,16 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
 
     return Directionality(
       textDirection: isRTL(),
-      child: Scaffold(
+      child: PlatformScaffold(
         backgroundColor: scaffoldBackground,
-        extendBodyBehindAppBar: true,
+        //extendBodyBehindAppBar: true,
         appBar: widget.screen!.appBar == null
             ? null
-            : AppBar(
-                elevation: getStyle(Styles.elevation,
-                    styles: widget.screen!.appBar!.style),
+            : PlatformAppBar(
+                material: (_, __) => MaterialAppBarData(
+                    elevation: getStyle(Styles.elevation, styles: widget.screen!.appBar!.style),
+                ),
+                cupertino: (_,__) => CupertinoNavigationBarData(),
                 backgroundColor: appBarBackground,
                 title: Text(
                   localizedStringFor(widget.screen!.appBar!.textKey) ?? '',
@@ -115,7 +118,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
                     ? null
                     : Platform.isIOS
                         ? Container(
-                            child: IconButton(
+                            child: PlatformIconButton(
                               icon: Icon(
                                 Icons.close,
                                 color: getStyle(Styles.fontColor,
