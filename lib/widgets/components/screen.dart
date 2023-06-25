@@ -265,6 +265,8 @@ class _ScreenWidgetState extends State<ScreenWidget>
         'screenShowIfMapping': event.screenShowIfMapping
       },
     ).then((value) {
+      // Recall to attach the correct screen action.
+      _attachInitialScreenAction();
       setState(() {});
     });
   }
