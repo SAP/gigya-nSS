@@ -94,31 +94,34 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                 child: Padding(
                   padding: getStyle(Styles.margin, data: widget.data),
                   child: Container(
-
-                    foregroundDecoration: BoxDecoration(
-                        color: Colors.transparent),
+                    foregroundDecoration:
+                        BoxDecoration(color: Colors.transparent),
                     child: PlatformTextFormField(
                       onTap: () {
                         // Trigger picker.
                         if (!widget.data!.disabled!) {
-                          isMaterial(context) ?  _showMaterialPickerSelection(context) : _showCupertinoPickerSelection(context);
+                          isMaterial(context)
+                              ? _showMaterialPickerSelection(context)
+                              : _showCupertinoPickerSelection(context);
                         }
-                      } ,
+                      },
                       readOnly: true,
                       enableInteractiveSelection: false,
                       controller: _controller,
-                      material: (_,__) => MaterialTextFormFieldData(
+                      material: (_, __) => MaterialTextFormFieldData(
                         decoration: InputDecoration(
-                          hintText: localizedStringFor(widget.data!.textKey) ?? '',
+                          hintText:
+                              localizedStringFor(widget.data!.textKey) ?? '',
                           hintStyle: TextStyle(
                             color: widget.data!.disabled!
                                 ? getStyle(Styles.placeholderColor,
-                                data: widget.data,
-                                themeProperty: 'disabledColor')
-                                .withOpacity(0.3)
+                                        data: widget.data,
+                                        themeProperty: 'disabledColor')
+                                    .withOpacity(0.3)
                                 : getStyle(Styles.placeholderColor,
-                                data: widget.data, themeProperty: 'textColor')
-                                .withOpacity(0.5),
+                                        data: widget.data,
+                                        themeProperty: 'textColor')
+                                    .withOpacity(0.5),
                           ),
                           filled: true,
                           //isDense: true,
@@ -126,102 +129,103 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                               getStyle(Styles.background, data: widget.data),
                           disabledBorder: borderRadius == 0
                               ? UnderlineInputBorder(
-                            borderRadius: BorderRadius.zero,
-                            borderSide: BorderSide(
-                              color: getThemeColor('disabledColor')
-                                  .withOpacity(0.3),
-                              width: borderSize + 2,
-                            ),
-                          )
+                                  borderRadius: BorderRadius.zero,
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('disabledColor')
+                                        .withOpacity(0.3),
+                                    width: borderSize + 2,
+                                  ),
+                                )
                               : OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(borderRadius)),
-                            borderSide: BorderSide(
-                              color: getThemeColor('disabledColor')
-                                  .withOpacity(0.3),
-                              width: borderSize,
-                            ),
-                          ),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(borderRadius)),
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('disabledColor')
+                                        .withOpacity(0.3),
+                                    width: borderSize,
+                                  ),
+                                ),
                           errorBorder: borderRadius == 0
                               ? UnderlineInputBorder(
-                            borderRadius: BorderRadius.zero,
-                            borderSide: BorderSide(
-                              color: getThemeColor('errorColor'),
-                              width: borderSize + 2,
-                            ),
-                          )
+                                  borderRadius: BorderRadius.zero,
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('errorColor'),
+                                    width: borderSize + 2,
+                                  ),
+                                )
                               : OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(borderRadius)),
-                            borderSide: BorderSide(
-                              color: getThemeColor('errorColor'),
-                              width: borderSize,
-                            ),
-                          ),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(borderRadius)),
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('errorColor'),
+                                    width: borderSize,
+                                  ),
+                                ),
                           focusedErrorBorder: borderRadius == 0
                               ? UnderlineInputBorder(
-                            borderRadius: BorderRadius.zero,
-                            borderSide: BorderSide(
-                              color: getThemeColor('errorColor'),
-                              width: borderSize + 2,
-                            ),
-                          )
+                                  borderRadius: BorderRadius.zero,
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('errorColor'),
+                                    width: borderSize + 2,
+                                  ),
+                                )
                               : OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(borderRadius)),
-                            borderSide: BorderSide(
-                              color: getThemeColor('errorColor'),
-                              width: borderSize,
-                            ),
-                          ),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(borderRadius)),
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('errorColor'),
+                                    width: borderSize,
+                                  ),
+                                ),
                           focusedBorder: borderRadius == 0
                               ? UnderlineInputBorder(
-                            borderRadius: BorderRadius.zero,
-                            borderSide: BorderSide(
-                              color: getThemeColor('enabledColor'),
-                              width: borderSize + 2,
-                            ),
-                          )
+                                  borderRadius: BorderRadius.zero,
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('enabledColor'),
+                                    width: borderSize + 2,
+                                  ),
+                                )
                               : OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(borderRadius)),
-                            borderSide: BorderSide(
-                              color: getThemeColor('enabledColor'),
-                              width: borderSize,
-                            ),
-                          ),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(borderRadius)),
+                                  borderSide: BorderSide(
+                                    color: getThemeColor('enabledColor'),
+                                    width: borderSize,
+                                  ),
+                                ),
                           enabledBorder: borderRadius == 0
                               ? UnderlineInputBorder(
-                            borderRadius: BorderRadius.zero,
-                            borderSide: BorderSide(
-                              color: getStyle(Styles.borderColor,
-                                  data: widget.data,
-                                  themeProperty: "disabledColor"),
-                              width: borderSize,
-                            ),
-                          )
+                                  borderRadius: BorderRadius.zero,
+                                  borderSide: BorderSide(
+                                    color: getStyle(Styles.borderColor,
+                                        data: widget.data,
+                                        themeProperty: "disabledColor"),
+                                    width: borderSize,
+                                  ),
+                                )
                               : OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(borderRadius)),
-                            borderSide: BorderSide(
-                              color: getStyle(Styles.borderColor,
-                                  data: widget.data,
-                                  themeProperty: "disabledColor"),
-                              width: borderSize,
-                            ),
-                          ),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(borderRadius)),
+                                  borderSide: BorderSide(
+                                    color: getStyle(Styles.borderColor,
+                                        data: widget.data,
+                                        themeProperty: "disabledColor"),
+                                    width: borderSize,
+                                  ),
+                                ),
                         ),
                       ),
-                      cupertino: (_,__) => CupertinoTextFormFieldData(
+                      cupertino: (_, __) => CupertinoTextFormFieldData(
                         padding: EdgeInsets.zero,
-                        placeholder: localizedStringFor(widget.data!.textKey) ?? '',
-                        placeholderStyle: styleCupertinoPlaceholder(widget.data),
+                        placeholder:
+                            localizedStringFor(widget.data!.textKey) ?? '',
+                        placeholderStyle:
+                            styleCupertinoPlaceholder(widget.data),
                         decoration: BoxDecoration(
-                            color: getStyle(Styles.background, data: widget.data),
-                            backgroundBlendMode: BlendMode.src
-                        ),
+                            color:
+                                getStyle(Styles.background, data: widget.data),
+                            backgroundBlendMode: BlendMode.src),
                       ),
-
                       maxLines: 1,
                       textAlign:
                           getStyle(Styles.textAlign, data: widget.data) ??
@@ -244,11 +248,13 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                         _bindDateSelection(bindings);
                       },
                       validator: (input) {
-                        if(widget.data!.disabled! == true)
-                          return null;
+                        if (widget.data!.disabled! == true) return null;
 
                         // Field validation triggered.
-                        return validateField(input, widget.data!.bind);
+                        if (widget.data!.bind is String?) {
+                          return validateField(input, widget.data!.bind);
+                        } else
+                          return null;
                       },
                     ),
                   ),
@@ -266,7 +272,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
     final DateTime? picked = await showDatePicker(
       context: context,
       fieldLabelText:
-      localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
+          localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
       helpText: localizedStringFor(_datePickerStyle!.labelText) ?? 'Enter Date',
       initialDate: _selectedDate != null ? _selectedDate! : _initialDate!,
       // Refer step 1
@@ -306,7 +312,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
       });
   }
 
-
   _showCupertinoPickerSelection(BuildContext context) async {
     final DateTime? picked = await showPlatformDatePicker(
       context: context,
@@ -340,7 +345,10 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
   /// Sets the initial value of the widget according to available data or default date.
   _setInitialBindingValue(BindingModel bindings) {
     // Either start first of day of start year or now
-    _initialDate = widget.data!.endYear! > DateTime.now().year && widget.data!.startYear! < DateTime.now().year ? DateTime.now() : getFirstDateFrom(widget.data!.startYear!);
+    _initialDate = widget.data!.endYear! > DateTime.now().year &&
+            widget.data!.startYear! < DateTime.now().year
+        ? DateTime.now()
+        : getFirstDateFrom(widget.data!.startYear!);
 
     // Selection has been made. No need to rest the initial value on setState().
     if (_selectedDate != null) {
@@ -423,7 +431,8 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
       _selectedDate = _initialDate;
     }
 
-    engineLogger!.d('DatePickerWidget: _bindDateSelection with ${_selectedDate?.toIso8601String()}');
+    engineLogger!.d(
+        'DatePickerWidget: _bindDateSelection with ${_selectedDate?.toIso8601String()}');
 
     if (bindings.isObjectTypeBinding(widget.data!.bind)) {
       // Parse binding object.
