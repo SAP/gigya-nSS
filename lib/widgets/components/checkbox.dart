@@ -130,7 +130,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                       child: linkified
                                           ? linkify.linkify(widget.data,
                                               (link) {
-                                              viewModel.linkifyTap(link!);
+                                              viewModel.linkifyLinkOrRoute(link!);
                                             },
                                               // link color
                                               getStyle(Styles.linkColor,

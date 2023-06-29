@@ -209,7 +209,7 @@ class ScreenViewModel
 
   /// Label widget initiated link action.
   /// Validate option available are URL/route.
-  void linkifyTap(String link) async {
+  void linkifyLinkOrRoute(String link) async {
     engineLogger!.d('link tap: $link');
 
     // Linkify browser link.
@@ -458,7 +458,7 @@ class ScreenViewModel
     // Keeping track of showIf mapping.
     screenShowIfMapping.addAll(expressionMap);
 
-    engineLogger!.d("showifMapping: ${screenShowIfMapping}");
+    engineLogger.d("showIfMapping: $screenShowIfMapping");
 
     return expressionMap;
   }

@@ -15,6 +15,7 @@ import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/widgets/components/progress_indicator.dart';
 import 'package:gigya_native_screensets_engine/widgets/events.dart';
+import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:provider/provider.dart';
 
 enum ScreenChannelAction { flow, submit }
@@ -128,35 +129,46 @@ class _ScreenWidgetState extends State<ScreenWidget>
         getStyle(Styles.background, styles: widget.screen!.style) ??
             Colors.white;
 
-    return Directionality(
-      textDirection: isRTL(),
-      child: PlatformScaffold(
-        backgroundColor: scaffoldBackground,
-        //extendBodyBehindAppBar: true,
-        appBar: _createAppBar(appBarBackground),
-        body: Container(
-          child: SafeArea(
-            child: Stack(
-              children: <Widget>[
-                SingleChildScrollView(
-                  child: Form(
-                    key: widget.viewModel!.formKey,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: widget.content,
+    return WillPopScope(
+      onWillPop: () async {
+        log('WillPopScope called');
+        bool? firstRouteInStack = ModalRoute.of(context)?.isFirst;
+        if (firstRouteInStack == null) {
+          firstRouteInStack = false;
+        }
+        _handleBackOrDismiss(firstRouteInStack);
+        return false;
+      },
+      child: Directionality(
+        textDirection: isRTL(),
+        child: PlatformScaffold(
+          backgroundColor: scaffoldBackground,
+          //extendBodyBehindAppBar: true,
+          appBar: _createAppBar(appBarBackground),
+          body: Container(
+            child: SafeArea(
+              child: Stack(
+                children: <Widget>[
+                  SingleChildScrollView(
+                    child: Form(
+                      key: widget.viewModel!.formKey,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: widget.content,
+                      ),
                     ),
                   ),
-                ),
-                Consumer<ScreenViewModel>(
-                  builder: (context, vm, child) {
-                    if (vm.isProgress()) {
-                      return ScreenProgressWidget();
-                    } else {
-                      return Container();
-                    }
-                  },
-                )
-              ],
+                  Consumer<ScreenViewModel>(
+                    builder: (context, vm, child) {
+                      if (vm.isProgress()) {
+                        return ScreenProgressWidget();
+                      } else {
+                        return Container();
+                      }
+                    },
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -208,14 +220,24 @@ class _ScreenWidgetState extends State<ScreenWidget>
             themeProperty: 'secondaryColor'),
       ),
       onPressed: () {
-        if (firstRouteInStack!) {
-          log('Last screen in stack. _cancel route initiated');
-          Navigator.pushNamed(context, '_cancel');
-        } else {
-          Navigator.pop(context);
-        }
+        _handleBackOrDismiss(firstRouteInStack);
       },
     );
+  }
+
+  _handleBackOrDismiss(firstRouteInStack) {
+    if (firstRouteInStack!) {
+      log('Last screen in stack. _cancel route initiated');
+      Navigator.pushNamed(context, '_cancel');
+    } else {
+      // Handle custom back route if available.
+      String? backRoute = widget.screen!.routes?['onBack'];
+      if (backRoute != null) {
+        viewModel?.linkifyLinkOrRoute(backRoute);
+      } else {
+        Navigator.pop(context);
+      }
+    }
   }
 
   /// Register view model instance to a navigation steam controller.
@@ -227,17 +249,23 @@ class _ScreenWidgetState extends State<ScreenWidget>
         return;
       }
 
-      // Trigger "routeTo" event to determine routing override.
-      String routingOverride = await willRouteTo(event.route);
-
-      // Merge bindings & routing data to avoid data loss between screens.
-      widget.routingData!.addAll(bindings!.savedBindingData);
-
-      // Apply navigation.
-      final String route =
-          routingOverride.isNotEmpty ? routingOverride : event.route;
+      String route = await _evaluateRoute(event);
       _navigateToScreen(route, event);
     });
+  }
+
+  /// Evaluate route prior to navigation.
+  Future<String> _evaluateRoute(NavigationEvent event) async {
+    // Trigger "routeTo" event to determine routing override.
+    String routingOverride = await willRouteTo(event.route);
+
+    // Merge bindings & routing data to avoid data loss between screens.
+    widget.routingData!.addAll(bindings!.savedBindingData);
+
+    // Apply navigation.
+    final String route =
+        routingOverride.isNotEmpty ? routingOverride : event.route;
+    return route;
   }
 
   /// Remove all sensitive data from the widget routing data before screen transitions.

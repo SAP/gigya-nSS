@@ -110,7 +110,7 @@ abstract class Router {
     var nextRoute = getNextRoute(settings.name);
 
     if (nextRoute == null) {
-      engineLogger!.e('Failed to parse routing for name: ${settings.name}');
+      engineLogger.e('Failed to parse routing for name: ${settings.name}');
       return getErrorRoute(
           settings,
           'Failed to parse desired route: ${settings.name}.'

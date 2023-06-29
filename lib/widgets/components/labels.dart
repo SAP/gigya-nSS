@@ -85,7 +85,7 @@ class _LabelWidgetState extends State<LabelWidget>
                     color: getStyle(Styles.background, data: widget.data),
                     child: linkified
                         ? linkify.linkify(widget.data, (link) {
-                            viewModel.linkifyTap(link!);
+                            viewModel.linkifyLinkOrRoute(link!);
                           },
                             // link color
                             getStyle(Styles.linkColor,
