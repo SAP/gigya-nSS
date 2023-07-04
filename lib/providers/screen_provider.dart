@@ -43,10 +43,7 @@ class ScreenViewModel
 
   Map<dynamic, dynamic>? expressions = {};
 
-  ScreenViewModel(
-      this.apiService,
-      this.screenService
-  );
+  ScreenViewModel(this.apiService, this.screenService);
 
   /// Previous screen unique identifier.
   String pid = '';
@@ -160,7 +157,8 @@ class ScreenViewModel
     var validated = formKey.currentState!.validate();
     if (validated) {
       engineLogger!.d('Form validations success - submission requested.');
-      engineLogger!.d('submitScreenForm - submission: ${submission.toString()}');
+      engineLogger!
+          .d('submitScreenForm - submission: ${submission.toString()}');
 
       // Request form save state. This will update the binding map with the required data for submission.
       formKey.currentState!.save();
@@ -168,8 +166,8 @@ class ScreenViewModel
       // Handle engine submit event.
       Map<String, dynamic> eventData = await beforeSubmit(id, submission);
       if (eventData.isNotEmpty) {
-
-        engineLogger!.d('submitScreenForm - eventData (not empty): ${eventData.toString()}');
+        engineLogger!.d(
+            'submitScreenForm - eventData (not empty): ${eventData.toString()}');
 
         if (eventData.containsKey('error')) {
           String error = eventData['error'];
@@ -185,7 +183,8 @@ class ScreenViewModel
         // Overwrite submission data if exists.
         Map<String, dynamic> submissionData =
             eventData['data'].cast<String, dynamic>();
-        engineLogger!.d('submitScreenForm - overwrite submission data from event (not empty): ${submissionData.toString()}');
+        engineLogger!.d(
+            'submitScreenForm - overwrite submission data from event (not empty): ${submissionData.toString()}');
         if (submissionData.isNotEmpty) submission = submissionData;
       }
 
@@ -248,7 +247,8 @@ class ScreenViewModel
     if (isMock!) return;
     setProgress();
 
-    engineLogger!.d('sendApi (api channel) - method: $method, params: ${parameters.toString()}');
+    engineLogger!.d(
+        'sendApi (api channel) - method: $method, params: ${parameters.toString()}');
 
     apiService!.send(method, parameters).then(
       (result) async {
@@ -258,32 +258,37 @@ class ScreenViewModel
         final Map<String, dynamic> actionData =
             await initiateNextAction('onSuccess');
         // Get routing data.
-        Map<String, dynamic>? screenData = {};
-        Map<String, dynamic>? expressionData = {};
+        Map<String, dynamic> screenData = {};
+        Map<String, dynamic> expressionData = {};
         if (actionData.isNotEmpty) {
-          screenData = actionData['data'].cast<String, dynamic>();
-          expressionData = actionData['expressions'].cast<String, dynamic>();
+          if (actionData['data'] != null) {
+            screenData = actionData['data'].cast<String, dynamic>();
+          }
+          if (actionData['expressions'] != null) {
+            expressionData = actionData['expressions'].cast<String, dynamic>();
+          }
         }
 
-        if (result.data?['data']?.cast<String, dynamic>() != null) {
-          screenData?.addAll(result.data?['data']?.cast<String, dynamic>());
+        if (result.data?['data'] != null) {
+          screenData.addAll(result.data?['data']?.cast<String, dynamic>());
         }
-        if (result.data?['expressions']?.cast<String, dynamic>() != null) {
-          expressionData?.addAll(result.data?['expressions']?.cast<String, dynamic>());
+        if (result.data?['expressions'] != null) {
+          expressionData
+              .addAll(result.data?['expressions']?.cast<String, dynamic>());
         }
 
         setIdle();
 
         engineLogger!.d('screenData : $screenData');
         // Trigger navigation.
-        var event =  NavigationEvent('$id/onSuccess', screenData, expressionData);
+        var event =
+            NavigationEvent('$id/onSuccess', screenData, expressionData);
         if (actionData['screenShowIfMapping'] != null) {
           event.screenShowIfMapping =
               actionData['screenShowIfMapping'].cast<String, dynamic>();
         }
 
-        navigationStream.sink
-            .add(event);
+        navigationStream.sink.add(event);
       },
     ).catchError(
       (error) async {
@@ -300,8 +305,13 @@ class ScreenViewModel
           Map<String, dynamic>? screenData = {};
           Map<String, dynamic>? expressionData = {};
           if (actionData.isNotEmpty) {
-            screenData = actionData['data'].cast<String, dynamic>();
-            expressionData = actionData['expressions'].cast<String, dynamic>();
+            if (actionData['data'] != null) {
+              screenData = actionData['data'].cast<String, dynamic>();
+            }
+            if (actionData['expressions'] != null) {
+              expressionData =
+                  actionData['expressions'].cast<String, dynamic>();
+            }
           }
 
           setIdle();
@@ -332,11 +342,11 @@ class ScreenViewModel
     }
 
     var event = NavigationEvent('$id/onSuccess', screenData, expressionData);
-    event.screenShowIfMapping = actionData['screenShowIfMapping'].cast<String, dynamic>();
+    event.screenShowIfMapping =
+        actionData['screenShowIfMapping'].cast<String, dynamic>();
 
     // Trigger navigation.
-    navigationStream.sink
-        .add(event);
+    navigationStream.sink.add(event);
   }
 
   Future<Map<String, dynamic>> anonSendApi(
