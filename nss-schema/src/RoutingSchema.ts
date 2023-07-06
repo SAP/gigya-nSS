@@ -3,7 +3,7 @@ import ScreenId from "./dynEnums/ScreenId";
 
 export const routeSegment = 'routes';
 
-const Interruptions = ['onPendingRegistration', 'onPendingEmailVerification', 'onLoginIdentifierExists', 'onError'];
+const Interruptions = ['onPendingRegistration', 'onPendingEmailVerification', 'onLoginIdentifierExists', 'onError', 'onBack'];
 const Success = 'onSuccess';
 const RouteEvents = Interruptions.concat([Success]);
 
