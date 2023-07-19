@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/comm/channels.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
@@ -70,6 +71,7 @@ class _ScreenWidgetState extends State<ScreenWidget>
     didRouteFrom();
 
     _registerNavigationStream();
+    _registerNativeBackHandlerStream();
 
     // On first render issue "screenDidLoad" event.
     // If this is the first screen being rendered, a "ready_for_display" event will be triggered to allow
@@ -129,46 +131,35 @@ class _ScreenWidgetState extends State<ScreenWidget>
         getStyle(Styles.background, styles: widget.screen!.style) ??
             Colors.white;
 
-    return WillPopScope(
-      onWillPop: () async {
-        log('WillPopScope called');
-        bool? firstRouteInStack = ModalRoute.of(context)?.isFirst;
-        if (firstRouteInStack == null) {
-          firstRouteInStack = false;
-        }
-        _handleBackOrDismiss(firstRouteInStack);
-        return false;
-      },
-      child: Directionality(
-        textDirection: isRTL(),
-        child: PlatformScaffold(
-          backgroundColor: scaffoldBackground,
-          //extendBodyBehindAppBar: true,
-          appBar: _createAppBar(appBarBackground),
-          body: Container(
-            child: SafeArea(
-              child: Stack(
-                children: <Widget>[
-                  SingleChildScrollView(
-                    child: Form(
-                      key: widget.viewModel!.formKey,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        child: widget.content,
-                      ),
+    return Directionality(
+      textDirection: isRTL(),
+      child: PlatformScaffold(
+        backgroundColor: scaffoldBackground,
+        //extendBodyBehindAppBar: true,
+        appBar: _createAppBar(appBarBackground),
+        body: Container(
+          child: SafeArea(
+            child: Stack(
+              children: <Widget>[
+                SingleChildScrollView(
+                  child: Form(
+                    key: widget.viewModel!.formKey,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: widget.content,
                     ),
                   ),
-                  Consumer<ScreenViewModel>(
-                    builder: (context, vm, child) {
-                      if (vm.isProgress()) {
-                        return ScreenProgressWidget();
-                      } else {
-                        return Container();
-                      }
-                    },
-                  )
-                ],
-              ),
+                ),
+                Consumer<ScreenViewModel>(
+                  builder: (context, vm, child) {
+                    if (vm.isProgress()) {
+                      return ScreenProgressWidget();
+                    } else {
+                      return Container();
+                    }
+                  },
+                )
+              ],
             ),
           ),
         ),
@@ -254,6 +245,17 @@ class _ScreenWidgetState extends State<ScreenWidget>
     });
   }
 
+  _registerNativeBackHandlerStream() {
+    viewModel?.nativeBackEventChannel.receiveBroadcastStream().listen((event) {
+      log("Native back event fired");
+      bool? firstRouteInStack = ModalRoute.of(context)?.isFirst;
+      if (firstRouteInStack == null) {
+        firstRouteInStack = false;
+      }
+      _handleBackOrDismiss(firstRouteInStack);
+    });
+  }
+
   /// Evaluate route prior to navigation.
   Future<String> _evaluateRoute(NavigationEvent event) async {
     // Trigger "routeTo" event to determine routing override.
@@ -295,6 +297,7 @@ class _ScreenWidgetState extends State<ScreenWidget>
     ).then((value) {
       // Recall to attach the correct screen action.
       _attachInitialScreenAction();
+      _registerNativeBackHandlerStream();
       setState(() {});
     });
   }
