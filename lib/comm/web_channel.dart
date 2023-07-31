@@ -5,10 +5,10 @@ import 'dart:html';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:gigya_native_screensets_engine/utils/logging.dart';
+import 'package:gigya_native_screensets_engine/comm/channels.dart';
 
 import '../config.dart';
-import 'moblie_channel.dart';
+import 'mobile_channel.dart';
 
 class WebChannels extends NssChannels {
   WebChannels()

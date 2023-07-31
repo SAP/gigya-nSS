@@ -61,6 +61,11 @@ class ScreenViewModel
   final StreamController<NavigationEvent> navigationStream =
       StreamController<NavigationEvent>();
 
+  /// Custom event channel that is required to handle native back button interfacing.
+  /// Add to App feature does not work with WillPopScope widget. Flutter issue.
+  final EventChannel nativeBackEventChannel =
+      EventChannel('nativeBackEventStream');
+
   @override
   void dispose() {
     // Close screen event stream to avoid leaks.
@@ -209,7 +214,7 @@ class ScreenViewModel
 
   /// Label widget initiated link action.
   /// Validate option available are URL/route.
-  void linkifyTap(String link) async {
+  void linkifyLinkOrRoute(String link) async {
     engineLogger!.d('link tap: $link');
 
     // Linkify browser link.
@@ -462,7 +467,7 @@ class ScreenViewModel
     // Keeping track of showIf mapping.
     screenShowIfMapping.addAll(expressionMap);
 
-    engineLogger!.d("showifMapping: ${screenShowIfMapping}");
+    engineLogger.d("showIfMapping: $screenShowIfMapping");
 
     return expressionMap;
   }

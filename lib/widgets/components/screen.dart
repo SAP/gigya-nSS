@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:gigya_native_screensets_engine/comm/channels.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
@@ -11,10 +13,21 @@ import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
-import 'package:gigya_native_screensets_engine/widgets/screen.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
+import 'package:gigya_native_screensets_engine/widgets/components/progress_indicator.dart';
+import 'package:gigya_native_screensets_engine/widgets/events.dart';
+import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:provider/provider.dart';
 
-class MaterialScreenWidget extends StatefulWidget {
+enum ScreenChannelAction { flow, submit }
+
+extension ScreenChannelActionExt on ScreenChannelAction {
+  String get action {
+    return describeEnum(this);
+  }
+}
+
+class ScreenWidget extends StatefulWidget {
   final ScreenViewModel? viewModel;
   final BindingModel? bindingModel;
   final RuntimeStateEvaluator? expressionProvider;
@@ -25,7 +38,7 @@ class MaterialScreenWidget extends StatefulWidget {
   /// your screen form.
   final Map<String, dynamic>? routingData;
 
-  const MaterialScreenWidget({
+  const ScreenWidget({
     Key? key,
     this.viewModel,
     this.bindingModel,
@@ -36,15 +49,17 @@ class MaterialScreenWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MaterialScreenWidgetState createState() =>
-      _MaterialScreenWidgetState(viewModel, bindingModel, expressionProvider);
+  _ScreenWidgetState createState() =>
+      _ScreenWidgetState(viewModel, bindingModel, expressionProvider);
 }
 
-class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
-    with StyleMixin, LocalizationMixin {
-  _MaterialScreenWidgetState(ScreenViewModel? viewModel, BindingModel? bindings,
-      RuntimeStateEvaluator? expressionProvider)
-      : super(viewModel, bindings, expressionProvider);
+class _ScreenWidgetState extends State<ScreenWidget>
+    with StyleMixin, LocalizationMixin, EngineEvents, Logging {
+  final ScreenViewModel? viewModel;
+  final BindingModel? bindings;
+  final RuntimeStateEvaluator? expressionProvider;
+
+  _ScreenWidgetState(this.viewModel, this.bindings, this.expressionProvider);
 
   @override
   void initState() {
@@ -56,6 +71,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     didRouteFrom();
 
     _registerNavigationStream();
+    _registerNativeBackHandlerStream();
 
     // On first render issue "screenDidLoad" event.
     // If this is the first screen being rendered, a "ready_for_display" event will be triggered to allow
@@ -77,12 +93,36 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         }
       }
 
+      // DEBUG LOG.
+      log('ScreenDidLoad for ${widget.screen!.id}');
+
       screenDidLoad(widget.screen!.id);
     });
   }
 
   @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ScreenViewModel?>(
+          create: (_) => viewModel,
+        ),
+        ChangeNotifierProvider<BindingModel?>(
+          create: (_) => bindings,
+        ),
+        ChangeNotifierProvider<RuntimeStateEvaluator?>(
+          create: (_) => expressionProvider,
+        )
+      ],
+      child: buildScaffold(),
+    );
+  }
+
+  /// Main UI content build tree.
   Widget buildScaffold() {
+    // DEBUG LOG.
+    log('Build scaffold called for screen');
+
     var appBarBackground = getStyle(Styles.background,
         styles:
             widget.screen!.appBar == null ? null : widget.screen!.appBar!.style,
@@ -96,41 +136,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
       child: PlatformScaffold(
         backgroundColor: scaffoldBackground,
         //extendBodyBehindAppBar: true,
-        appBar: widget.screen!.appBar == null
-            ? null
-            : PlatformAppBar(
-                material: (_, __) => MaterialAppBarData(
-                    elevation: getStyle(Styles.elevation, styles: widget.screen!.appBar!.style),
-                ),
-                cupertino: (_,__) => CupertinoNavigationBarData(),
-                backgroundColor: appBarBackground,
-                title: Text(
-                  localizedStringFor(widget.screen!.appBar!.textKey) ?? '',
-                  style: TextStyle(
-                    color: getStyle(Styles.fontColor,
-                        styles: widget.screen!.appBar!.style,
-                        themeProperty: 'secondaryColor'),
-                    fontWeight: getStyle(Styles.fontWeight,
-                        styles: widget.screen!.appBar!.style),
-                  ),
-                ),
-                leading: kIsWeb
-                    ? null
-                    : Platform.isIOS
-                        ? Container(
-                            child: PlatformIconButton(
-                              icon: Icon(
-                                Icons.close,
-                                color: getStyle(Styles.fontColor,
-                                    styles: widget.screen!.appBar!.style,
-                                    themeProperty: 'secondaryColor'),
-                              ),
-                              onPressed: () =>
-                                  Navigator.pushNamed(context, '_canceled'),
-                            ),
-                          )
-                        : null,
-              ),
+        appBar: _createAppBar(appBarBackground),
         body: Container(
           child: SafeArea(
             child: Stack(
@@ -147,7 +153,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
                 Consumer<ScreenViewModel>(
                   builder: (context, vm, child) {
                     if (vm.isProgress()) {
-                      return MaterialScreenProgressWidget();
+                      return ScreenProgressWidget();
                     } else {
                       return Container();
                     }
@@ -161,6 +167,70 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     );
   }
 
+  /// Create AppBar widget for given platform. If required.
+  PlatformAppBar? _createAppBar(appBarBackground) {
+    if (widget.screen!.appBar == null) return null;
+    return PlatformAppBar(
+      material: (_, __) => MaterialAppBarData(
+        elevation:
+            getStyle(Styles.elevation, styles: widget.screen!.appBar!.style),
+      ),
+      cupertino: (_, __) => CupertinoNavigationBarData(),
+      backgroundColor: appBarBackground,
+      title: Text(
+        localizedStringFor(widget.screen!.appBar!.textKey) ?? '',
+        style: TextStyle(
+          color: getStyle(Styles.fontColor,
+              styles: widget.screen!.appBar!.style,
+              themeProperty: 'secondaryColor'),
+          fontWeight:
+              getStyle(Styles.fontWeight, styles: widget.screen!.appBar!.style),
+        ),
+      ),
+      leading: _createAppBarLeadingIcon(),
+    );
+  }
+
+  /// Create AppBar icon & state for the relevant platform.
+  PlatformIconButton _createAppBarLeadingIcon() {
+    bool? firstRouteInStack = ModalRoute.of(context)?.isFirst;
+    if (firstRouteInStack == null) {
+      firstRouteInStack = false;
+    }
+
+    return PlatformIconButton(
+      padding: EdgeInsets.zero,
+      icon: Icon(
+        Platform.isIOS || kIsWeb
+            ? firstRouteInStack
+                ? Icons.close
+                : Icons.chevron_left
+            : Icons.arrow_back,
+        color: getStyle(Styles.fontColor,
+            styles: widget.screen!.appBar!.style,
+            themeProperty: 'secondaryColor'),
+      ),
+      onPressed: () {
+        _handleBackOrDismiss(firstRouteInStack);
+      },
+    );
+  }
+
+  _handleBackOrDismiss(firstRouteInStack) {
+    if (firstRouteInStack!) {
+      log('Last screen in stack. _cancel route initiated');
+      Navigator.pushNamed(context, '_cancel');
+    } else {
+      // Handle custom back route if available.
+      String? backRoute = widget.screen!.routes?['onBack'];
+      if (backRoute != null) {
+        viewModel?.linkifyLinkOrRoute(backRoute);
+      } else {
+        Navigator.pop(context);
+      }
+    }
+  }
+
   /// Register view model instance to a navigation steam controller.
   /// Only the current context contains the main Navigator instance. Therefore we must communicate back to the
   /// screen widget in order to perform navigation actions.
@@ -170,17 +240,34 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         return;
       }
 
-      // Trigger "routeTo" event to determine routing override.
-      String routingOverride = await willRouteTo(event.route);
-
-      // Merge bindings & routing data to avoid data loss between screens.
-      widget.routingData!.addAll(bindings!.savedBindingData);
-
-      // Apply navigation.
-      final String route =
-          routingOverride.isNotEmpty ? routingOverride : event.route;
+      String route = await _evaluateRoute(event);
       _navigateToScreen(route, event);
     });
+  }
+
+  _registerNativeBackHandlerStream() {
+    viewModel?.nativeBackEventChannel.receiveBroadcastStream().listen((event) {
+      log("Native back event fired");
+      bool? firstRouteInStack = ModalRoute.of(context)?.isFirst;
+      if (firstRouteInStack == null) {
+        firstRouteInStack = false;
+      }
+      _handleBackOrDismiss(firstRouteInStack);
+    });
+  }
+
+  /// Evaluate route prior to navigation.
+  Future<String> _evaluateRoute(NavigationEvent event) async {
+    // Trigger "routeTo" event to determine routing override.
+    String routingOverride = await willRouteTo(event.route);
+
+    // Merge bindings & routing data to avoid data loss between screens.
+    widget.routingData!.addAll(bindings!.savedBindingData);
+
+    // Apply navigation.
+    final String route =
+        routingOverride.isNotEmpty ? routingOverride : event.route;
+    return route;
   }
 
   /// Remove all sensitive data from the widget routing data before screen transitions.
@@ -194,7 +281,10 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   _navigateToScreen(route, event) {
     _removeUnsecureRoutingData();
 
-    Navigator.pushReplacementNamed(
+    // DEBUG LOG.
+    log('Navigate to screen: $route');
+
+    Navigator.pushNamed(
       context,
       route,
       arguments: {
@@ -204,7 +294,12 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
         'expressions': event.expressions,
         'screenShowIfMapping': event.screenShowIfMapping
       },
-    );
+    ).then((value) {
+      // Recall to attach the correct screen action.
+      _attachInitialScreenAction();
+      _registerNativeBackHandlerStream();
+      setState(() {});
+    });
   }
 
   /// Attach the relevant screen action.
@@ -229,19 +324,16 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   void didRouteFrom() async {
     Map<String, dynamic> eventData =
         await routeFrom(viewModel!.id, viewModel!.pid, widget.routingData);
-    if (eventData != null) {
-      // Override current routing data if exists.
-      if (eventData['data'] != null) {
-        widget.routingData!.addAll(eventData['data'].cast<String, dynamic>());
-      }
-      // Merge routing data into available binding data.
-      bindings!.updateRoutingWith(widget.routingData!);
+    if (eventData['data'] != null) {
+      widget.routingData!.addAll(eventData['data'].cast<String, dynamic>());
+    }
+    // Merge routing data into available binding data.
+    bindings!.updateRoutingWith(widget.routingData!);
 
-      debugPrint('didRouteFrom: data = ${widget.routingData.toString()}');
+    debugPrint('didRouteFrom: data = ${widget.routingData.toString()}');
 
-      if (mounted) {
-        setState(() {});
-      }
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -249,7 +341,7 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
   Future<String> willRouteTo(nid) async {
     Map<String, dynamic> eventData =
         await routeTo(viewModel!.id, nid, bindings!.savedBindingData);
-    if (eventData != null && eventData.isNotEmpty) {
+    if (eventData.isNotEmpty) {
       // Override current routing data if exists.
       widget.routingData!.addAll(eventData['data'].cast<String, dynamic>());
       // Merge routing data into available binding data.
@@ -270,24 +362,5 @@ class _MaterialScreenWidgetState extends ScreenWidgetState<MaterialScreenWidget>
     }
 
     return '';
-  }
-}
-
-/// Custom screen progress widget.
-/// Will be displayed on top of the screen stack when the screen state is in progress.
-class MaterialScreenProgressWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.4),
-      ),
-      child: Center(
-        //TODO: Allow theming of the progress indicator.
-        child: CircularProgressIndicator(),
-      ),
-    );
   }
 }

@@ -1,10 +1,12 @@
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/comm/channels.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
-import 'package:gigya_native_screensets_engine/startup.dart';
+import 'package:gigya_native_screensets_engine/utils/platform_helper.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/widgets/components/errors.dart';
@@ -16,7 +18,7 @@ abstract class Router {
 
   Router(this.config, this.channels);
 
-  Route startupRoute(RouteSettings settings);
+  Route initialRoute(RouteSettings settings);
 
   Route getErrorRoute(RouteSettings settings, String message);
 
@@ -85,7 +87,7 @@ abstract class Router {
 
   /// Evaluate dismissal route indication with canceled event.
   bool shouldCancel(String nextRoute) {
-    return nextRoute == '_canceled';
+    return nextRoute == '_cancel';
   }
 
   /// Match the correct [Screen] instance to the [nextRoute] property.
@@ -98,20 +100,24 @@ abstract class Router {
   }
 
   /// Dynamic route generator.
+  /// This is the main route generation method that is responsible for creating the
+  /// correct route per settings.
   Route<dynamic> generateRoute(RouteSettings settings) {
     if (settings.name == '/') {
-      return startupRoute(settings);
+      return initialRoute(settings);
     }
 
     var nextRoute = getNextRoute(settings.name);
 
     if (nextRoute == null) {
-      engineLogger!.e('Failed to parse routing for name: ${settings.name}');
-      return getErrorRoute(settings, 'Failed to parse desired route: ${settings.name}.'
+      engineLogger.e('Failed to parse routing for name: ${settings.name}');
+      return getErrorRoute(
+          settings,
+          'Failed to parse desired route: ${settings.name}.'
           '\nPlease verify markup and make sure your route exists and is written correctly.');
     }
     if (shouldCancel(nextRoute)) {
-      return dismissEngine(settings, '_canceled');
+      return dismissEngine(settings, '_cancel');
     }
     if (shouldDismiss(nextRoute)) {
       return dismissEngine(settings, '_dismiss');
@@ -119,7 +125,8 @@ abstract class Router {
 
     Screen? nextScreenObj = nextScreen(nextRoute);
     if (nextScreenObj == null) {
-      return getErrorRoute(settings, 'Screen not found.\nPlease verify markup.');
+      return getErrorRoute(
+          settings, 'Screen not found.\nPlease verify markup.');
     }
 
     return screenRoute(settings, nextScreenObj);
@@ -135,7 +142,13 @@ class RoutingEvent {
   RoutingEvent(this.route, this.pid);
 }
 
-enum RoutingAllowed { none, onPendingRegistration, onPendingEmailVerification, onLoginIdentifierExists }
+/// Allowed routing events.
+enum RoutingAllowed {
+  none,
+  onPendingRegistration,
+  onPendingEmailVerification,
+  onLoginIdentifierExists
+}
 
 /// Route evaluator class is responsible for specific routing flows.
 /// These flows are generally intended for recoverable errors.
@@ -153,7 +166,7 @@ class RouteEvaluator {
     return RoutingAllowed.none;
   }
 
-  static List<String> engineRoutes = ['_canceled', '_dismiss'];
+  static List<String> engineRoutes = ['_cancel', '_dismiss'];
 
   /// Validate requested route. Only saved engine routes and provided screen names are valid.
   static bool validatedRoute(String route) {
@@ -166,68 +179,70 @@ class RouteEvaluator {
   }
 }
 
-class MaterialRouter extends Router {
+class PlatformRouter extends Router {
   final NssConfig? config;
   final NssChannels? channels;
-  final MaterialWidgetFactory? widgetFactory;
+  final WidgetCreationFactory? widgetFactory;
 
-  MaterialRouter(this.config, this.channels, this.widgetFactory) : super(config, channels);
+  PlatformRouter(this.config, this.channels, this.widgetFactory)
+      : super(config, channels);
+
+  bool _forceCupertino() {
+    return config?.markup?.platformAware == true &&
+        config?.markup?.platformAwareMode?.toLowerCase() == 'cupertino';
+  }
+
+  _platformRoute(RouteSettings settings, Widget destination) {
+    if (config == null) return;
+
+    // Default route style is set to Material.
+    if (config!.isPlatformAware == false) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => destination);
+    }
+
+    // Cupertino is forced by web mode state.
+    if (_forceCupertino()) {
+      return CupertinoPageRoute(
+          settings: settings, builder: (_) => destination);
+    }
+
+    // Old school if else.
+    if (PlatformHelper.isCupertino()) {
+      return CupertinoPageRoute(
+          settings: settings, builder: (_) => destination);
+    } else if (PlatformHelper.isMaterial()) {
+      return MaterialPageRoute(
+          settings: settings, builder: (_) => destination);
+    }
+  }
 
   @override
-  Route startupRoute(RouteSettings settings) {
-    return MaterialPageRoute(settings: settings, builder: (_) => NssIoc().use(StartupWidget));
+  Route initialRoute(RouteSettings settings) {
+    var nextRoute = getNextRoute(config?.markup!.routing!.initial);
+    Screen initial = nextScreen(nextRoute)!;
+    WidgetCreationFactory factory = NssIoc().use(WidgetCreationFactory);
+    Widget screen = factory.buildScreen(initial, {});
+    return _platformRoute(settings, screen);
   }
 
   @override
   Route emptyRoute(RouteSettings settings) {
-    return MaterialPageRoute(settings: settings, builder: (_) => Container());
+    return _platformRoute(settings, Container(decoration: BoxDecoration(color: Colors.transparent)));
   }
 
   @override
   Route getErrorRoute(RouteSettings settings, String errorMessage) {
-    return MaterialPageRoute(
-      settings: settings,
-      builder: (_) => MaterialScreenRenderErrorWidget(errorMessage: errorMessage),
-    );
+    return _platformRoute(
+        settings, MaterialScreenRenderErrorWidget(errorMessage: errorMessage));
   }
 
   @override
   Route screenRoute(RouteSettings settings, Screen screen) {
-    return MaterialPageRoute(
-      settings: settings,
-      builder: (_) => widgetFactory!.buildScreen(screen, settings.arguments as Map<String, dynamic>?),
-    );
+    return _platformRoute(
+        settings,
+        widgetFactory!
+            .buildScreen(screen, settings.arguments as Map<String, dynamic>?));
   }
 }
 
-class CupertinoRouter extends Router {
-  final NssConfig? config;
-  final NssChannels? channels;
-  final CupertinoWidgetFactory? widgetFactory;
-
-  CupertinoRouter(this.config, this.channels, this.widgetFactory) : super(config, channels);
-
-  @override
-  Route startupRoute(RouteSettings settings) {
-    // TODO: implement startupRoute
-    throw UnimplementedError();
-  }
-
-  @override
-  Route emptyRoute(RouteSettings settings) {
-    // TODO: implement emptyRoute
-    throw UnimplementedError();
-  }
-
-  @override
-  Route getErrorRoute(RouteSettings settings, String message) {
-    // TODO: implement getErrorRoute
-    throw UnimplementedError();
-  }
-
-  @override
-  Route screenRoute(RouteSettings settings, Screen screen) {
-    // TODO: implement screenRoute
-    throw UnimplementedError();
-  }
-}

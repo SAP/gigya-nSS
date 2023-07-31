@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
-import 'package:gigya_native_screensets_engine/models/appbar.dart' as nssAppbar;
 import 'package:gigya_native_screensets_engine/models/screen.dart';
-import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 import 'package:gigya_native_screensets_engine/widgets/router.dart';
-import 'package:gigya_native_screensets_engine/models/appbar.dart' as nssAppbar;
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -30,7 +26,7 @@ void main() {
     var channel = MockMethodChannel();
 
     // Test instance.
-    var router = MaterialRouter(config, channels, factory);
+    var router = PlatformRouter(config, channels, factory);
 
     var nextRoute;
 
@@ -45,7 +41,7 @@ void main() {
       NssIoc().register(NssConfig, (ioc) => config);
       String testRoute = '_dismiss';
       expect(RouteEvaluator.validatedRoute(testRoute), true);
-      testRoute = '_canceled';
+      testRoute = '_cancel';
       expect(RouteEvaluator.validatedRoute(testRoute), true);
       testRoute = 'login';
       expect(RouteEvaluator.validatedRoute(testRoute), true);
