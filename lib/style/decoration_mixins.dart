@@ -67,6 +67,11 @@ mixin DecorationMixin {
     return _getPlatformStyle(context) == PlatformStyle.Material;
   }
 
+  bool isIOS(context) {
+    TargetPlatform? devicePlatform =  defaultTargetPlatform;
+    return devicePlatform ==  TargetPlatform.iOS;
+  }
+
   PlatformStyle _getPlatformStyle(context){
     TargetPlatform? devicePlatform =  defaultTargetPlatform;
     PlatformStyleData? designStyle = PlatformProvider.of(context)?.settings.platformStyle;

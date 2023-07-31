@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/comm/channels.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
@@ -11,12 +10,12 @@ import 'package:gigya_native_screensets_engine/models/screen.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/runtime_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
+import 'package:gigya_native_screensets_engine/style/decoration_mixins.dart';
 import 'package:gigya_native_screensets_engine/style/styling_mixins.dart';
 import 'package:gigya_native_screensets_engine/utils/localization.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
 import 'package:gigya_native_screensets_engine/widgets/components/progress_indicator.dart';
 import 'package:gigya_native_screensets_engine/widgets/events.dart';
-import 'package:gigya_native_screensets_engine/widgets/router.dart';
 import 'package:provider/provider.dart';
 
 enum ScreenChannelAction { flow, submit }
@@ -54,7 +53,7 @@ class ScreenWidget extends StatefulWidget {
 }
 
 class _ScreenWidgetState extends State<ScreenWidget>
-    with StyleMixin, LocalizationMixin, EngineEvents, Logging {
+    with StyleMixin, LocalizationMixin, EngineEvents, Logging, DecorationMixin {
   final ScreenViewModel? viewModel;
   final BindingModel? bindings;
   final RuntimeStateEvaluator? expressionProvider;
@@ -201,7 +200,7 @@ class _ScreenWidgetState extends State<ScreenWidget>
     return PlatformIconButton(
       padding: EdgeInsets.zero,
       icon: Icon(
-        Platform.isIOS || kIsWeb
+        isIOS(context) || kIsWeb
             ? firstRouteInStack
                 ? Icons.close
                 : Icons.chevron_left
@@ -246,14 +245,19 @@ class _ScreenWidgetState extends State<ScreenWidget>
   }
 
   _registerNativeBackHandlerStream() {
-    viewModel?.nativeBackEventChannel.receiveBroadcastStream().listen((event) {
-      log("Native back event fired");
-      bool? firstRouteInStack = ModalRoute.of(context)?.isFirst;
-      if (firstRouteInStack == null) {
-        firstRouteInStack = false;
-      }
-      _handleBackOrDismiss(firstRouteInStack);
-    });
+    if (!kIsWeb) {
+      viewModel?.nativeBackEventChannel.receiveBroadcastStream().listen((
+          event) {
+        log("Native back event fired");
+        bool? firstRouteInStack = ModalRoute
+            .of(context)
+            ?.isFirst;
+        if (firstRouteInStack == null) {
+          firstRouteInStack = false;
+        }
+        _handleBackOrDismiss(firstRouteInStack);
+      });
+    }
   }
 
   /// Evaluate route prior to navigation.
