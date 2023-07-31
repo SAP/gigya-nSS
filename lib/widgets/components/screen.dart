@@ -212,6 +212,9 @@ class _ScreenWidgetState extends State<ScreenWidget>
       firstRouteInStack = false;
     }
     return PlatformIconButton(
+      onPressed: () {
+        _handleBackOrDismiss(firstRouteInStack);
+      },
       padding: EdgeInsets.zero,
       icon: Icon(
         firstRouteInStack ? Icons.close : Icons.chevron_left,
@@ -223,7 +226,14 @@ class _ScreenWidgetState extends State<ScreenWidget>
   }
 
   PlatformIconButton _getMaterialBackIcon() {
+    bool? firstRouteInStack = ModalRoute.of(context)?.isFirst;
+    if (firstRouteInStack == null) {
+      firstRouteInStack = false;
+    }
     return PlatformIconButton(
+      onPressed: () {
+        _handleBackOrDismiss(firstRouteInStack);
+      },
       padding: EdgeInsets.zero,
       icon: Icon(
         Icons.arrow_back,
