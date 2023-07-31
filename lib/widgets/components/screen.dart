@@ -192,26 +192,45 @@ class _ScreenWidgetState extends State<ScreenWidget>
 
   /// Create AppBar icon & state for the relevant platform.
   PlatformIconButton _createAppBarLeadingIcon() {
+    if (kIsWeb) {
+      // Defined by platform style.
+      if (isMaterial(context)) {
+        return _getMaterialBackIcon();
+      } else
+        return _getCupertinoBackIcon();
+    } else if (isIOS(context)) {
+      // Strict for iOS
+      return _getCupertinoBackIcon();
+    } else {
+      return _getMaterialBackIcon();
+    }
+  }
+
+  PlatformIconButton _getCupertinoBackIcon() {
     bool? firstRouteInStack = ModalRoute.of(context)?.isFirst;
     if (firstRouteInStack == null) {
       firstRouteInStack = false;
     }
-
     return PlatformIconButton(
       padding: EdgeInsets.zero,
       icon: Icon(
-        isIOS(context) || kIsWeb
-            ? firstRouteInStack
-                ? Icons.close
-                : Icons.chevron_left
-            : Icons.arrow_back,
+        firstRouteInStack ? Icons.close : Icons.chevron_left,
         color: getStyle(Styles.fontColor,
             styles: widget.screen!.appBar!.style,
             themeProperty: 'secondaryColor'),
       ),
-      onPressed: () {
-        _handleBackOrDismiss(firstRouteInStack);
-      },
+    );
+  }
+
+  PlatformIconButton _getMaterialBackIcon() {
+    return PlatformIconButton(
+      padding: EdgeInsets.zero,
+      icon: Icon(
+        Icons.arrow_back,
+        color: getStyle(Styles.fontColor,
+            styles: widget.screen!.appBar!.style,
+            themeProperty: 'secondaryColor'),
+      ),
     );
   }
 
@@ -246,12 +265,11 @@ class _ScreenWidgetState extends State<ScreenWidget>
 
   _registerNativeBackHandlerStream() {
     if (!kIsWeb) {
-      viewModel?.nativeBackEventChannel.receiveBroadcastStream().listen((
-          event) {
+      viewModel?.nativeBackEventChannel
+          .receiveBroadcastStream()
+          .listen((event) {
         log("Native back event fired");
-        bool? firstRouteInStack = ModalRoute
-            .of(context)
-            ?.isFirst;
+        bool? firstRouteInStack = ModalRoute.of(context)?.isFirst;
         if (firstRouteInStack == null) {
           firstRouteInStack = false;
         }
