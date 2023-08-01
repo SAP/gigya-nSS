@@ -1,5 +1,5 @@
 mixin ErrorWidgetMixin {
-  final String screenInitialRouteRM = 'Initial route missmatch.'
+  final String screenInitialRouteRM = 'Initial route mismatch.'
       '\nMarkup does not contain requested route.';
 
   final String screenNoChildrenRM = 'Screen must contain children.'

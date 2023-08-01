@@ -2,7 +2,7 @@ import 'dart:async';
 
 
 import 'package:flutter/services.dart';
-import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/comm/channels.dart';
 
 class MobileChannels extends NssChannels {
   MobileChannels()

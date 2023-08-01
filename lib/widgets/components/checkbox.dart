@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
@@ -132,7 +131,7 @@ class _CheckboxWidgetState extends State<CheckboxWidget>
                                       child: linkified
                                           ? linkify.linkify(widget.data,
                                               (link) {
-                                              viewModel.linkifyTap(link!);
+                                              viewModel.linkifyLinkOrRoute(link!);
                                             },
                                               // link color
                                               getStyle(Styles.linkColor,

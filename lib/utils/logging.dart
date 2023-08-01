@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:gigya_native_screensets_engine/comm/channels.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 
@@ -11,11 +12,13 @@ class Logger {
 
   // General tag for debug logging.
   static String dTag = "NSS_DEBUG";
+  static String eTag = "NSS_ERROR";
 
   Logger(this.config, this.channels);
 
   /// Trigger a native debug log.
   d(String message, {String tag = 'NssEngine DEBUG'}) {
+    debugPrint(message);
     if (config!.isMock!) {
       return;
     }
@@ -29,7 +32,7 @@ class Logger {
 
   /// Trigger a native error log.
   e(String message, {String tag = 'NssEngine ERROR'}) {
-    debugPrint('Engine error for logger: $message');
+    debugPrint("error: $message");
     if (config!.isMock!) {
       return;
     }
@@ -43,4 +46,16 @@ class Logger {
 }
 
 /// Global logger instance.
-Logger? engineLogger = NssIoc().use(Logger);
+Logger engineLogger = NssIoc().use(Logger);
+
+mixin Logging {
+
+  log(message) {
+    engineLogger.d('$runtimeType: $message', tag: Logger.dTag);
+  }
+
+  errorLog(message) {
+    engineLogger.e('$runtimeType: $message', tag: Logger.eTag);
+  }
+
+}

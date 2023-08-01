@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gigya_native_screensets_engine/comm/channels.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
@@ -40,7 +41,7 @@ class MockConfig extends Mock implements NssConfig {}
 
 class MockChannels extends Mock implements NssChannels {}
 
-class MockMaterialWidgetFactory extends Mock implements MaterialWidgetFactory {}
+class MockMaterialWidgetFactory extends Mock implements WidgetCreationFactory {}
 
 class MockApiChannel extends Mock implements MethodChannel {}
 

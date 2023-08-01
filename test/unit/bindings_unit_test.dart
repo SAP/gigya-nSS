@@ -1,5 +1,5 @@
-import 'dart:async';
 
+import 'package:gigya_native_screensets_engine/comm/channels.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
@@ -38,7 +38,7 @@ void main() {
 
   group('BindingMixin: ', () {
     final mixin = UseBindingMixin();
-    var config = NssConfig(isMock: true);
+    var config = NssConfig(isMock: true, isPlatformAware: false);
     var markup = MockMarkup();
     config.markup = markup;
     when(markup.useSchemaValidations).thenReturn(true);

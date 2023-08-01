@@ -215,6 +215,11 @@ An object map of the Native Screen-Sets screen IDs to their screen component.
 
 ## [Styling](https://github.com/SAP/gigya-nSS/blob/main/docs/STYLING.md)
 
+## Screen navigation
+
+As of version 1.9.0, Native screen sets navigation will change according to mobile navigation standards (Android & iOS).
+Screen transition will stack up to allow seamless back navigation using the ActionBar widget.
+
 ## Input validations
 
 All input components support these two validation options:
@@ -252,7 +257,6 @@ The NSS engine is written in Dart. Dart regular expressions have the same syntax
 See ecma-international.org/ecma-262/9.0/#sec-regexp-regular-expression-objects for the specification of JavaScript regular
 expressions.
 ```
-
 
 ## Schema validations
 

@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:gigya_native_screensets_engine/comm/moblie_channel.dart';
-import 'package:gigya_native_screensets_engine/config.dart';
+import 'package:gigya_native_screensets_engine/comm/channels.dart';
+import 'package:gigya_native_screensets_engine/comm/mobile_channel.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
@@ -20,7 +20,8 @@ enum ImageSource { web, asset }
 
 typedef ErrorCallback();
 
-abstract class ImageWidgetState<T extends StatefulWidget> extends State<T> with DecorationMixin, BindingMixin, StyleMixin {
+abstract class ImageWidgetState<T extends StatefulWidget> extends State<T>
+    with DecorationMixin, BindingMixin, StyleMixin {
   ImageProvider imageProvider = MemoryImage(kTransparentImage);
 
   /// Fetch the image according to provided specs.
