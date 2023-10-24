@@ -8,5 +8,9 @@ class NssConfig {
   Markup? markup;
   Map<dynamic, dynamic>? schema;
 
+  // Specific style related data holders.
+  Map<dynamic, dynamic> styleLibrary = {};
+  Map<dynamic, dynamic> styleLibraryDefaults = {};
+
   NssConfig({this.isMock, required this.isPlatformAware, this.markup});
 }

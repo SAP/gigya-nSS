@@ -252,12 +252,12 @@ class ScreenViewModel
     if (isMock!) return;
     setProgress();
 
-    engineLogger!.d(
-        'sendApi (api channel) - method: $method, params: ${parameters.toString()}');
+    // engineLogger!.d(
+    //     'sendApi (api channel) - method: $method, params: ${parameters.toString()}');
 
     apiService!.send(method, parameters).then(
       (result) async {
-        engineLogger!.d('Api request success: ${result.data.toString()}');
+        engineLogger.d('Api request success: ${result.data.toString()}');
 
         // Initiate next action.
         final Map<String, dynamic> actionData =
@@ -361,14 +361,14 @@ class ScreenViewModel
 
     return await apiService!.send(method, parameters).then(
       (result) async {
-        engineLogger!.d('Api request success: ${result.data.toString()}');
+        engineLogger.d('Api request success: ${result.data.toString()}');
 
         // Initiate next action.
         // Get routing data.
 
         setIdle();
 
-        engineLogger!.d('response data: $result.data');
+        engineLogger.d('response data: $result.data');
         return result.data ?? {} as Map<String, dynamic>;
       },
     ).catchError((error) async {
