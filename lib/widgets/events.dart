@@ -91,7 +91,6 @@ mixin EngineEvents {
     if (isMock!) {
       return {};
     }
-    engineLogger!.d('fieldDidChange from $sid with $binding and value from $from to $to');
     var eventData =
         await eventChannel!.invokeMethod<Map<dynamic, dynamic>>(EventIdentifier.fieldDidChange.name, {
       'sid': sid,

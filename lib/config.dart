@@ -1,7 +1,7 @@
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 
 class NssConfig {
-  String version = '1.9.0';
+  String version = '1.9.1';
   bool? isMock = false;
   bool isPlatformAware = false;
   String? platformAwareMode = 'material';
