@@ -113,7 +113,7 @@ class _TextInputWidgetState extends State<TextInputWidget>
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('Input widget with bind: ${widget.data!.bind} build initiated');
+    engineLogger.d('Input widget with bind: ${widget.data!.bind} build initiated');
     return Consumer2<ScreenViewModel, BindingModel>(
       builder: (context, viewModel, bindings, child) {
         BindingValue bindingValue = getBindingText(widget.data!, bindings,

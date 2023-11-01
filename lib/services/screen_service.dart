@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:gigya_native_screensets_engine/comm/channels.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 
 class ScreenService {
@@ -36,7 +37,7 @@ class ScreenService {
         'url': link,
       },
     ).catchError((error) {
-      debugPrint('Link error returned from native');
+      engineLogger.d('Link error returned from native');
     });
   }
 
@@ -50,7 +51,7 @@ class ScreenService {
         'data': data,
       },
     ).catchError((error) {
-      debugPrint('Link error returned from native');
+      engineLogger.d('Link error returned from native');
       return 'false';
     });
     return eval;

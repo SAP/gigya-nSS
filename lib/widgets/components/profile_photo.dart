@@ -35,7 +35,7 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
     provider.addListener(
       () {
         var imageURL = provider.getValue('profile.photoURL');
-        debugPrint('notify changes with imageURL = $imageURL');
+        engineLogger.d('notify changes with imageURL = $imageURL');
         getImage(imageURL, widget.data.defaultPlaceholder);
       },
     );
@@ -104,7 +104,7 @@ class _ProfilePhotoWidgetState extends ImageWidgetState<ProfilePhotoWidget>
   /// On selection data will be set in the profile but not published.
   /// Binary data is also needed in order to display the updated image.
   void _onProfileImageTap() async {
-    debugPrint('_onProfileImageTap');
+    engineLogger.d('_onProfileImageTap');
     final NssChannel channel = NssIoc().use(NssChannels).dataChannel;
     var data = await channel.invokeMethod<dynamic>('pick_image', {
       'text': widget.data.textKey

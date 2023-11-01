@@ -62,7 +62,7 @@ class _RadioGroupWidgetState extends State<RadioGroupWidget> with DecorationMixi
 
       if (_groupValue != null && bindingValue.value == null) {
         setOption(_groupValue, bindings);
-        debugPrint('No binding value for radio -> default value will be displayed');
+        engineLogger.d('No binding value for radio -> default value will be displayed');
       }
 
       return SemanticsWrapperWidget(

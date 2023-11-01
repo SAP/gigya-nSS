@@ -206,7 +206,7 @@ class ScreenViewModel
   /// Trigger native social login flow with selected [provider].
   void socialLogin(NssSocialProvider? provider) {
     if (isMock!) {
-      debugPrint('Requested social login with ${provider.name}');
+      engineLogger.d('Requested social login with ${provider.name}');
       return;
     }
     sendApi(ScreenAction.socialLogin.name, {'provider': provider.name});
@@ -215,12 +215,12 @@ class ScreenViewModel
   /// Label widget initiated link action.
   /// Validate option available are URL/route.
   void linkifyLinkOrRoute(String link) async {
-    engineLogger!.d('link tap: $link');
+    engineLogger.d('link tap: $link');
 
     // Linkify browser link.
     if (Linkify.isValidUrl(link)) {
       if (isMock!) return;
-      engineLogger!.d('URL link validated : $link');
+      engineLogger.d('URL link validated : $link');
       screenService!.linkToBrowser(link);
       return;
     }

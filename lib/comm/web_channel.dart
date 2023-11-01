@@ -6,6 +6,7 @@ import 'dart:html';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:gigya_native_screensets_engine/comm/channels.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 import '../config.dart';
 import 'mobile_channel.dart';
@@ -37,7 +38,6 @@ class NssWebMethodChannel extends NssChannel {
     window.parent!.postMessage(encoded, '*');
     MessageEvent msg = await window.onMessage.firstWhere((element) {
       var json = jsonDecode(element.data).cast<String, dynamic>();
-      debugPrint(json['method']);
       if (json['method'] == null) {
         return true;
       } else {
@@ -62,7 +62,7 @@ class NssWebMethodChannel extends NssChannel {
     window.parent!.postMessage(encoded, '*');
     MessageEvent msg = await window.onMessage.firstWhere((element) {
       var json = jsonDecode(element.data).cast<String, dynamic>();
-      debugPrint(json['method']);
+      engineLogger.d('${json['method']}');
       if (json['method'] == null) {
         return true;
       } else {

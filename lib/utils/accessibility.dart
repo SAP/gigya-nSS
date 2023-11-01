@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:gigya_native_screensets_engine/models/accessibility.dart';
+import 'package:gigya_native_screensets_engine/utils/logging.dart';
 
 class SemanticsWrapperWidget extends StatelessWidget {
   final Accessibility? accessibility;
@@ -11,7 +12,7 @@ class SemanticsWrapperWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (accessibility == null) return child!;
     if (accessibility!.label!.isNotEmpty) {
-      debugPrint(accessibility!.label);
+      engineLogger.d('${accessibility!.label}');
     }
     return Semantics(
       label: accessibility!.label!.isNotEmpty ? accessibility!.label : null,

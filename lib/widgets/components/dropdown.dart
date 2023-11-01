@@ -128,7 +128,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
         _value = index == -1
             ? widget.data!.options![0].value
             : widget.data!.options![index].value;
-        debugPrint(
+        engineLogger.d(
             'Binding value available for dropdown and will be displayed');
       }
 
@@ -316,7 +316,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                             ? null
                             : widget.data!.options![index].value;
 
-                        debugPrint("onchange value:$_value");
+                        engineLogger.d('onchange value:$_value');
                         // Track runtime data change.
                         Provider.of<RuntimeStateEvaluator>(context,
                                 listen: false)

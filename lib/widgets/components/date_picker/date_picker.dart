@@ -70,7 +70,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(
+    engineLogger.d(
         'DatePicker widget with bind: ${widget.data!.bind} build initiated');
     return Flexible(
       child: SemanticsWrapperWidget(
@@ -238,7 +238,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
                         if (value!.trim().isEmpty || _selectedDate == null) {
                           return;
                         }
-                        debugPrint('onSaved with value:$value');
+                        engineLogger.d('onSaved with value:$value');
 
                         // Date picker does not currently support "parseAs" & "saveAs" property.
                         _bindDateSelection(bindings);
@@ -344,7 +344,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
 
     // Selection has been made. No need to rest the initial value on setState().
     if (_selectedDate != null) {
-      debugPrint('DatePicker (_setInitialBindingValue) - Selection available');
+      engineLogger.d('DatePicker (_setInitialBindingValue) - Selection available');
       _controller.text = parseDateValue(_selectedDate, context);
       _bindDateSelection(bindings);
       return;
@@ -352,26 +352,26 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
 
     // Binding data is not available no need for data parsing.
     if (!bindings.bindingDataAvailable()) {
-      debugPrint(
+      engineLogger.d(
           'DatePicker (_setInitialBindingValue) - Binding data is not available yet');
       _controller.text = '';
       return;
     }
 
-    debugPrint(
+    engineLogger.d(
         'DatePicker (_setInitialBindingValue) - Binding data is available');
 
     if (bindings.isStringTypeBinding(widget.data!.bind)) {
-      debugPrint('DatePicker (_setInitialBindingValue) - String binding');
+      engineLogger.d('DatePicker (_setInitialBindingValue) - String binding');
 
       String? bindingValue = bindings.getValue(widget.data!.bind);
-      debugPrint(
+      engineLogger.d(
           'DatePicker (_setInitialBindingValue) - initial binding value = $bindingValue');
       if (bindingValue != null) {
         _initialDate = fromIso8601Value(bindingValue);
       }
     } else if (bindings.isObjectTypeBinding(widget.data!.bind)) {
-      debugPrint('DatePicker (_setInitialBindingValue) - Object binding');
+      engineLogger.d('DatePicker (_setInitialBindingValue) - Object binding');
 
       if (widget.data!.bind['type'] == 'date') {
         // Map binding object to obtain necessary keys.
@@ -429,7 +429,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
       // Parse binding object.
       DatePickerBinding objectBinding =
           DatePickerBinding.fromJson(widget.data!.bind);
-      debugPrint(objectBinding.toString());
+      engineLogger.d(objectBinding.toString());
       if (objectBinding.type == 'date') {
         if (objectBinding.day.isNotEmpty) {
           bindings.save(objectBinding.day, _selectedDate!.day);
