@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
-import 'package:gigya_native_screensets_engine/utils/extensions.dart';
 import 'package:gigya_native_screensets_engine/widgets/components/image.dart';
+import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 
+//region ENUMS
 /// Supported styles enum.
 enum Styles {
   margin,
@@ -62,24 +63,23 @@ extension NssMainAlign on TextAlign {
   }
 }
 
+//endregion
+
 mixin StyleMixin {
   final NssConfig? config = NssIoc().use(NssConfig);
 
   /// Default style mapping.
-  final Map<String, dynamic> defaultStyle = {
-    'margin': 0,
-    'fontSize': 18,
-    'fontColor': 'black',
-    'fontWeight': 4,
-    'background': 'white',
-    'elevation': 0,
-    'opacity': 1.0,
-    'borderColor': 'transparent',
-    'borderSize': 0,
-    'cornerRadius': 0,
-    'linkColor': 'blue',
-    'placeholderColor': 'black'
-  };
+  Map<String, dynamic> defaultStyles = {};
+
+  Map<String, dynamic> getDefaultStyles() {
+    if (defaultStyles.isEmpty) {
+      // Populate default styles map from config styles.
+      if (config!.styleLibrary.isNotEmpty) {
+        defaultStyles = config!.styleLibrary["_defaults"]["general"]["style"];
+      }
+    }
+    return defaultStyles;
+  }
 
   /// Default theme mapping.
   final Map<String, dynamic> defaultTheme = {
@@ -91,6 +91,79 @@ mixin StyleMixin {
     'errorColor': 'red',
   };
 
+  /// Check if the requesting widget contains old "customTheme" property.
+  /// This is only viable via the markup code and is considered deprecated.
+  /// However, if still present in the code it will take priority (backward compatibility).
+  dynamic _widgetDataContainsDeprecatedThemedStyle(
+      NssWidgetData? data, Styles style) {
+    if (data == null) return null;
+    if (config!.markup!.customThemes == null) return null;
+    String customTheme = data.theme ?? '';
+    if (config!.markup!.customThemes!.containsKey(customTheme)) {
+      var value = getStyleValue(style,
+          config!.markup!.customThemes![customTheme].cast<String, dynamic>());
+      return value;
+    }
+    return null;
+  }
+
+  /// Check if the requesting widget contains a custom theme that is related to the
+  /// style library json data.
+  dynamic _widgetDataContainsThemedStyle(NssWidgetData? data, Styles style) {
+    if (data == null) return null;
+    if (config!.styleLibrary.isEmpty) return null;
+    String customTheme = data.theme ?? '';
+    if (customTheme.isEmpty) return null;
+    final String? widgetIdentifier = getWidgetIdentifier(data);
+    if (widgetIdentifier == null) return null;
+    if (config!.styleLibrary.containsKey(widgetIdentifier)) {
+      final Map<dynamic, dynamic> widgetStyleMap =
+          config!.styleLibrary[widgetIdentifier];
+      if (widgetStyleMap.containsKey(customTheme)) {
+        final Map<dynamic, dynamic> styleMap = widgetStyleMap[customTheme];
+        var value = styleMap["style"][style.name];
+        return value;
+      }
+    }
+    return null;
+  }
+
+  /// Check if the requesting widget contains specific style properties via the markup code.
+  /// If so, it will take priority and override style library settings.
+  dynamic _widgetDataContainsSpecificStyleProperties(
+      NssWidgetData? data, Styles style) {
+    if (data == null) return null;
+    if (data.style == null) return null;
+    if (data.style!.isNotEmpty) {
+      var dataStyles = data.style;
+      var value = getStyleValue(style, dataStyles);
+      return value;
+    }
+    return null;
+  }
+
+  bool isTextStyleInput(NssWidgetType type) {
+    switch (type) {
+      case NssWidgetType.emailInput:
+      case NssWidgetType.passwordInput:
+      case NssWidgetType.textInput:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  String? getWidgetIdentifier(NssWidgetData? data) {
+    String? widgetIdentifier;
+    NssWidgetType? type = data?.type;
+    if (type == null) return null;
+    if (isTextStyleInput(type)) {
+      type = NssWidgetType.textInput;
+    }
+    widgetIdentifier = type.name;
+    return widgetIdentifier;
+  }
+
   /// Get the relevant style value.
   dynamic getStyle(
     Styles style, {
@@ -99,31 +172,49 @@ mixin StyleMixin {
     String? themeProperty,
   }) {
     var value;
-    var dataStyles = data != null ? data.style : styles;
-    if (data != null) {
-      // Check for custom theme first.
-      String customTheme = data.theme ?? '';
-      if (customTheme.isAvailable() &&
-          config!.markup!.theme != null &&
-          config!.markup!.customThemes != null &&
-          config!.markup!.customThemes!.containsKey(customTheme)) {
-        if (config!.markup!.customThemes![customTheme]
-            .containsKey(style.name)) {
-          value = getStyleValue(
-              style,
-              config!.markup!.customThemes![customTheme]
-                  .cast<String, dynamic>());
-        }
-      }
+
+    // Handle deprecated markup theme
+    value = _widgetDataContainsDeprecatedThemedStyle(data, style);
+    if (value != null) {
+      return _generateStyleData(style, value);
     }
-    if (value == null) {
-      // Custom theme not applied. Apply style value or default themed value.
-      value = getStyleValue(style, dataStyles);
-      if (themeProperty != null) {
-        value = themeIsNeeded(style, dataStyles, themeProperty) ?? value;
+
+    // Handle style library themed style.
+    value = _widgetDataContainsThemedStyle(data, style);
+    if (value != null) {
+      return _generateStyleData(style, value);
+    }
+
+    // Widget contains specific style attribute. Use it.
+    value = _widgetDataContainsSpecificStyleProperties(data, style);
+    if (value != null) {
+      return _generateStyleData(style, value);
+    }
+
+    // Use default (fetched from style library defaults map).
+    final String? widgetIdentifier = getWidgetIdentifier(data);
+    if (widgetIdentifier != null) {
+      value =
+          config!.styleLibraryDefaults[widgetIdentifier]['style']?[style.name];
+      if (value != null) {
+        return _generateStyleData(style, value);
       }
     }
 
+    // No data may be available. Use themed property.
+    if (themeProperty != null) {
+      value = themeIsNeeded(style, data?.style, themeProperty) ?? value;
+      return _generateStyleData(style, value);
+    }
+
+    // When all else fails we have a style requested with no data.
+    // Apply default style properties.
+    value = getDefaultStyles()[style.name];
+    return _generateStyleData(style, value);
+  }
+
+  /// Generate style given requested value.
+  dynamic _generateStyleData(Styles style, value) {
     switch (style) {
       case Styles.margin:
         return getPadding(value);
@@ -152,13 +243,19 @@ mixin StyleMixin {
     }
   }
 
+//region STYLE LOGIC GETTERS
+
   /// Get the relevant style value from provided [styles] markup parsed map.
   getStyleValue(Styles style, Map<String, dynamic>? styles) {
-    if (styles == null) styles = defaultStyle;
-    return styles[style.name] ?? defaultStyle[style.name];
+    if (styles == null) styles = getDefaultStyles();
+    return styles[style.name] ?? getDefaultStyles()[style.name];
   }
 
-  /// Check if to apply a specific theme.
+  getDefaultStylesValue() {}
+
+  getFallbackStyleValue() {}
+
+  /// Check if to apply a specific theme.a
   themeIsNeeded(Styles style, Map<String, dynamic>? styles, String key) {
     if (styles == null) styles = {};
     if (styles[style.name] == null && config!.markup!.theme != null) {
@@ -304,11 +401,13 @@ mixin StyleMixin {
         return AlignmentDirectional.center;
       default:
         return AlignmentDirectional.centerStart;
-    // none
+      // none
     }
   }
 
-  //region SIMPLIFIED STYLE GETTERS
+//endregion
+
+//region SIMPLIFIED STYLE GETTERS
 
   dynamic styleBackground(data) => getStyle(Styles.background, data: data);
 
@@ -344,23 +443,19 @@ mixin StyleMixin {
           .withOpacity(0.5);
 
   TextStyle styleText(data) {
-    final Color? color = getStyle(Styles.fontColor, data: data, themeProperty: 'textColor');
+    final Color? color =
+        getStyle(Styles.fontColor, data: data, themeProperty: 'textColor');
 
     return TextStyle(
-      color: data!.disabled!
-          ? color!.withOpacity(0.1)
-          : color,
+      color: data!.disabled! ? color!.withOpacity(0.1) : color,
       fontSize: getStyle(Styles.fontSize, data: data),
       fontWeight: getStyle(Styles.fontWeight, data: data),
     );
   }
 
   TextStyle styleCupertinoPlaceholder(data) {
-
     return TextStyle(
-      color: data!.disabled!
-          ? Colors.black12.withOpacity(0.1)
-          : Colors.black45,
+      color: data!.disabled! ? Colors.black12.withOpacity(0.1) : Colors.black45,
       fontSize: getStyle(Styles.fontSize, data: data),
       fontWeight: getStyle(Styles.fontWeight, data: data),
     );

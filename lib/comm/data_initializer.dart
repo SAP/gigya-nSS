@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:gigya_native_screensets_engine/comm/channels.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
@@ -7,7 +8,6 @@ import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/markup.dart';
 import 'package:gigya_native_screensets_engine/utils/error.dart';
 import 'package:gigya_native_screensets_engine/utils/logging.dart';
-
 
 class DataInitializer with Logging {
   final NssConfig config = NssIoc().use(NssConfig);
@@ -19,6 +19,11 @@ class DataInitializer with Logging {
     // Fetch markup.
     var markupData = await _getMockMarkup();
     final Markup markup = Markup.fromJson(markupData.cast<String, dynamic>());
+
+    // Fetch styles.
+    var stylesDataMap = await _getMockStyles();
+    config.styleLibrary = stylesDataMap;
+    _populateStyleLibraryDefaults();
 
     // Bind markup to config & set awareness mode.
     config.markup = markup;
@@ -35,6 +40,11 @@ class DataInitializer with Logging {
     // Fetch markup.
     var markupData = await _getMarkup(config.version);
     final Markup markup = Markup.fromJson(markupData.cast<String, dynamic>());
+
+    // Fetch styles.
+    var stylesDataMap = await _getStyles(config.version);
+    config.styleLibrary = stylesDataMap;
+    _populateStyleLibraryDefaults();
 
     // Bind markup to config & set awareness mode.
     config.markup = markup;
@@ -73,10 +83,25 @@ class DataInitializer with Logging {
         .invokeMethod<Map<dynamic, dynamic>>('ignition', {'version': version});
   }
 
+  Future<Map<dynamic, dynamic>> _getStyles(version) async {
+    return NssIoc()
+        .use(NssChannels)
+        .ignitionChannel
+        .invokeMethod<Map<dynamic, dynamic>>(
+            'ignition_styles', {'version': version});
+  }
+
   /// Fetch markup from example JSON asset.
   /// This is used for development & testing.
   Future<Map<dynamic, dynamic>> _getMockMarkup() async {
     final String json = await rootBundle.loadString('assets/example.json');
+    return jsonDecode(json);
+  }
+
+  /// Fetch styles from example JSON asset.
+  /// This is used for development & testing.
+  Future<Map<dynamic, dynamic>> _getMockStyles() async {
+    final String json = await rootBundle.loadString('assets/styles.json');
     return jsonDecode(json);
   }
 
@@ -86,5 +111,20 @@ class DataInitializer with Logging {
         .use(NssChannels)
         .ignitionChannel
         .invokeMethod<Map<dynamic, dynamic>>('load_schema');
+  }
+
+  /// Populate default style library components.
+  _populateStyleLibraryDefaults() {
+    config.styleLibrary.forEach((widgetIdentifier, widgetStyleMap) {
+      if (widgetStyleMap != null) {
+        (widgetStyleMap as Map).forEach((key, value) {
+          Map data = value["data"];
+          final bool isDefault = data["default"];
+          if (isDefault) {
+            config.styleLibraryDefaults[widgetIdentifier] = value;
+          }
+        });
+      }
+    });
   }
 }
