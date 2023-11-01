@@ -362,8 +362,6 @@ class _ScreenWidgetState extends State<ScreenWidget>
     // Merge routing data into available binding data.
     bindings!.updateRoutingWith(widget.routingData!);
 
-    debugPrint('didRouteFrom: data = ${widget.routingData.toString()}');
-
     if (mounted) {
       setState(() {});
     }
@@ -382,8 +380,6 @@ class _ScreenWidgetState extends State<ScreenWidget>
       // Fetch sid override if exists.
       String sid = eventData['sid'] ?? '';
 
-      debugPrint(
-          'willRouteTo: sid = $sid, data = ${widget.routingData.toString()}');
       // Update routing override
 
       if (mounted) {

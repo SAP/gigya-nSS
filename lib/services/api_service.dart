@@ -17,7 +17,7 @@ class ApiService {
       result.data = dataMap;
       return result;
     }).catchError((dynamic error) {
-      engineLogger!.d('Invocation error with: ${error.message}');
+      engineLogger.d('Invocation error with: ${error.message}');
       return throw ApiBaseResult.platformException(error);
     }).timeout(Duration(seconds: configTimeout(method)), onTimeout: () {
       return ApiBaseResult.timedOut();

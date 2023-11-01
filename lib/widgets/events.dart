@@ -29,7 +29,7 @@ mixin EngineEvents {
     if (isMock!) {
       return;
     }
-    engineLogger!.d('Screen did load for $sid');
+    engineLogger.d('Screen did load for $sid');
     eventChannel!.invokeMethod<void>('screenDidLoad', {'sid': sid});
   }
 
@@ -39,7 +39,7 @@ mixin EngineEvents {
     if (isMock!) {
       return {};
     }
-    engineLogger!.d('Screen route from $pid with ${routingData.toString()}');
+    engineLogger.d('Screen route from $pid with ${routingData.toString()}');
     var eventData =
         await eventChannel!.invokeMethod<Map<dynamic, dynamic>>(EventIdentifier.routeFrom.name, {
       'sid': sid,
@@ -57,7 +57,7 @@ mixin EngineEvents {
     if (isMock!) {
       return {};
     }
-    engineLogger!.d('Screen route to $nid with ${routingData.toString()}');
+    engineLogger.d('Screen route to $nid with ${routingData.toString()}');
     var eventData =
         await eventChannel!.invokeMethod<Map<dynamic, dynamic>>(EventIdentifier.routeTo.name, {
       'sid': sid,
@@ -75,7 +75,7 @@ mixin EngineEvents {
     if (isMock!) {
       return {};
     }
-    engineLogger!.d('Submission with submission data ${submission.toString()}');
+    engineLogger.d('Submission with submission data ${submission.toString()}');
     var eventData = await eventChannel!.invokeMethod<Map<dynamic, dynamic>>(
         EventIdentifier.submit.name, {
       'sid': sid,
