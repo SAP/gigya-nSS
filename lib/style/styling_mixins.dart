@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gigya_native_screensets_engine/config.dart';
 import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
+import 'package:gigya_native_screensets_engine/utils/debug.dart';
 import 'package:gigya_native_screensets_engine/widgets/components/image.dart';
 import 'package:gigya_native_screensets_engine/widgets/factory.dart';
 
@@ -75,7 +76,8 @@ mixin StyleMixin {
     if (defaultStyles.isEmpty) {
       // Populate default styles map from config styles.
       if (config!.styleLibrary.isNotEmpty) {
-        defaultStyles = (config!.styleLibrary["_defaults"]["general"]["style"]).cast<String, dynamic>();
+        defaultStyles = (config!.styleLibrary["_defaults"]["general"]["style"])
+            .cast<String, dynamic>();
       }
     }
     // Need to be casted.
@@ -143,6 +145,16 @@ mixin StyleMixin {
     return null;
   }
 
+  bool isButtonStyleInput(NssWidgetType type) {
+    switch (type) {
+      case NssWidgetType.submit:
+      case NssWidgetType.button:
+        return true;
+      default:
+        return false;
+    }
+  }
+
   bool isTextStyleInput(NssWidgetType type) {
     switch (type) {
       case NssWidgetType.emailInput:
@@ -158,6 +170,9 @@ mixin StyleMixin {
     String? widgetIdentifier;
     NssWidgetType? type = data?.type;
     if (type == null) return null;
+    if (isButtonStyleInput(type)) {
+      type = NssWidgetType.button;
+    }
     if (isTextStyleInput(type)) {
       type = NssWidgetType.textInput;
     }
@@ -205,7 +220,9 @@ mixin StyleMixin {
     // No data may be available. Use themed property.
     if (themeProperty != null) {
       value = themeIsNeeded(style, data?.style, themeProperty) ?? value;
-      return _generateStyleData(style, value);
+      if (value != null) {
+        return _generateStyleData(style, value);
+      }
     }
 
     // When all else fails we have a style requested with no data.
