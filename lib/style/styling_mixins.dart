@@ -75,9 +75,10 @@ mixin StyleMixin {
     if (defaultStyles.isEmpty) {
       // Populate default styles map from config styles.
       if (config!.styleLibrary.isNotEmpty) {
-        defaultStyles = config!.styleLibrary["_defaults"]["general"]["style"];
+        defaultStyles = (config!.styleLibrary["_defaults"]["general"]["style"]).cast<String, dynamic>();
       }
     }
+    // Need to be casted.
     return defaultStyles;
   }
 
