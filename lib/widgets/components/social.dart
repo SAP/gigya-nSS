@@ -109,7 +109,6 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
                 : localizedStringFor(widget.data!.textKey)!;
 
             var background = getStyle(Styles.background, data: widget.data);
-
             if (widget.data!.style![Styles.background.name] == null) {
               background = widget.data!.provider.getColor();
             }
@@ -130,6 +129,7 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
                   ),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
+                      backgroundColor: background,
                       elevation: getStyle(Styles.elevation, data: widget.data),
                       padding: const EdgeInsets.all(0)
                     ),
