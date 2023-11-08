@@ -37,19 +37,12 @@ class DataInitializer with Logging {
     // DEBUG LOG.
     log('requesting markup on ignition channel');
 
-    debugPrint('starting ignition');
-
     // Fetch markup.
     var markupData = await _getMarkup(config.version);
     final Markup markup = Markup.fromJson(markupData.cast<String, dynamic>());
-    debugPrint('got markup');
-    debugPrint(markup.toString());
 
     // Fetch styles.
     var stylesDataMap = await _getStyles(config.version);
-    debugPrint('got styles');
-    debugPrint(stylesDataMap.toString());
-    
     config.styleLibrary = stylesDataMap;
     _populateStyleLibraryDefaults();
 
@@ -101,7 +94,7 @@ class DataInitializer with Logging {
   /// Fetch markup from example JSON asset.
   /// This is used for development & testing.
   Future<Map<dynamic, dynamic>> _getMockMarkup() async {
-    final String json = await rootBundle.loadString('assets/example.json');
+    final String json = await rootBundle.loadString('assets/example_tests.json');
     return jsonDecode(json);
   }
 

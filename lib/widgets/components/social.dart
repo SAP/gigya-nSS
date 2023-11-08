@@ -108,10 +108,8 @@ class _SocialButtonWidgetState extends State<SocialButtonWidget>
                 ? 'Sign in with ${widget.data!.provider.name.inCaps}'
                 : localizedStringFor(widget.data!.textKey)!;
 
-            var background = getStyle(Styles.background, data: widget.data);
-            if (widget.data!.style![Styles.background.name] == null) {
-              background = widget.data!.provider.getColor();
-            }
+            // Social login button color is set according to provider guidelines.
+            var background = widget.data!.provider.getColor();
 
             TextAlign? textAlign = getStyle(Styles.textAlign, data: widget.data);
 
