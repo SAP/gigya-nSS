@@ -463,7 +463,9 @@ class _DatePickerWidgetState extends State<DatePickerWidget>
     } else {
       // Single bind field. Binding data will be saved as Iso8601 format.
       final String boundValue = toIso8601Value(_selectedDate!);
-      bindings.save(widget.data!.bind, boundValue);
+      if (widget.data!.bind != null) {
+        bindings.save(widget.data!.bind, boundValue);
+      }
     }
   }
 }

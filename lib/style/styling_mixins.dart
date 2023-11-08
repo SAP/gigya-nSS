@@ -139,6 +139,9 @@ mixin StyleMixin {
     if (data.style == null) return null;
     if (data.style!.isNotEmpty) {
       var dataStyles = data.style;
+      if (!dataStyles!.containsKey(style.name)) {
+        return null;
+      }
       var value = getStyleValue(style, dataStyles);
       return value;
     }
