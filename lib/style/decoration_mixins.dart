@@ -148,8 +148,8 @@ class NssCustomSizeWidget extends StatelessWidget {
         );
       case NssWidgetType.submit:
         return SizedBox(
-          width: double.infinity,
-          height: 48,
+          width: 300,
+          height: 40,
           child: child,
         );
       default:
