@@ -373,14 +373,25 @@ mixin StyleMixin {
   ///  - 'bold', 'thin' identifiers.
   ///  - number.
   getFontWeight(weight) {
-    if (weight is int) {
-      return FontWeight.values[weight - 1];
-    } else if (weight is String) {
-      switch (weight) {
-        case 'bold':
-          return FontWeight.bold;
-        case 'thin':
-          return FontWeight.w200;
+    if(weight == null) {
+      return FontWeight.w400;
+    }
+    else{
+      try{
+        int? val = int.tryParse(weight.toString());
+        if(val != null)
+          return FontWeight.values[val- 1];
+        else{
+          switch (weight) {
+            case 'bold':
+              return FontWeight.bold;
+            default:
+              return FontWeight.w400;
+          }
+        }
+      }
+      catch(e) {
+        return FontWeight.w400;
       }
     }
   }
