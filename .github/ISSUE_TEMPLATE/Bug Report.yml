@@ -65,6 +65,6 @@ body:
   - type: markdown
     id: note
     attributes:
-      value: **Note:**In some cases (usually when the issue falls under implementation), you will be required to open a [support ticket](link to SAP support) instead of a publicly viewable bug report. This to ensure that no sensitive information will be exposed publicly.
-
+      value: |
+        **Note:**In some cases (usually when the issue falls under implementation), you will be required to open a [support ticket](link to SAP support) instead of a publicly viewable bug report. This to ensure that no sensitive information will be exposed publicly.
 
