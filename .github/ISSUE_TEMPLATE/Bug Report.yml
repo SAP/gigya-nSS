@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        **For your security, please make sure you are not attaching any sensitive information such as API keys in your bug report.
+        **For your security, please make sure you are not attaching any sensitive information such as API keys in your bug report.**
 
   - type: checkboxes
     id: checklist
@@ -66,5 +66,5 @@ body:
     id: note
     attributes:
       value: |
-        **Note:**In some cases (usually when the issue falls under implementation), you will be required to open a [support ticket](link to SAP support) instead of a publicly viewable bug report. This to ensure that no sensitive information will be exposed publicly.
+        **Note:** In some cases (usually when the issue falls under implementation), you will be required to open a [support ticket](link to SAP support) instead of a publicly viewable bug report. This to ensure that no sensitive information will be exposed publicly.
 
