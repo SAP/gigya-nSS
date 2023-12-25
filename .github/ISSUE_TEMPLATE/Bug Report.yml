@@ -25,6 +25,10 @@ body:
     attributes:
       label: Description
       description: Provide a clear and concise description of the issue.
+      placeholder: |
+        1. Short description...
+        2. Expected behavior...
+        3. Actual behavior...
     validations:
       required: true
 
@@ -52,6 +56,7 @@ body:
     id: sdk-version
     attributes:
       label: SDK version
+      description: We recommend staying updated with the latest version.
     validations:
       required: true
 
@@ -66,5 +71,5 @@ body:
     id: note
     attributes:
       value: |
-        **Note:** In some cases (usually when the issue falls under implementation), you will be required to open a [support ticket](link to SAP support) instead of a publicly viewable bug report. This to ensure that no sensitive information will be exposed publicly.
+        **Note:** In some cases (usually when the issue falls under implementation), you will be required to open a [support ticket](link to SAP support) instead of a publicly viewable bug report. This is to ensure that no sensitive information will be exposed publicly.
 
