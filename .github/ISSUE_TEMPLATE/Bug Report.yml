@@ -71,5 +71,5 @@ body:
     id: note
     attributes:
       value: |
-        **Note:** In some cases (usually when the issue falls under implementation), you will be required to open a [support ticket](link to SAP support) instead of a publicly viewable bug report. This is to ensure that no sensitive information will be exposed publicly.
+        **Note:** In some cases (usually when the issue falls under implementation), you will be required to open a [support ticket](https://me.sap.com/notes/1296527) instead of a publicly viewable bug report. This is to ensure that no sensitive information will be exposed publicly.
 
