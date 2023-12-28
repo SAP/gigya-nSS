@@ -347,8 +347,13 @@ class ScreenViewModel
     }
 
     var event = NavigationEvent('$id/onSuccess', screenData, expressionData);
-    event.screenShowIfMapping =
-        actionData['screenShowIfMapping'].cast<String, dynamic>();
+
+    if(actionData['screenShowIfMapping'] == null){
+      event.screenShowIfMapping = {};
+    }else {
+      event.screenShowIfMapping =
+          actionData['screenShowIfMapping'].cast<String, dynamic>();
+    }
 
     // Trigger navigation.
     navigationStream.sink.add(event);
