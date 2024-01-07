@@ -57,7 +57,7 @@ class _ContainerWidgetState extends State<ContainerWidget> with StyleMixin, Deco
   }
 
   Widget containerContent() {
-    final background = getStyle(Styles.background, styles: widget.data!.style);
+    final background = getStyle(Styles.background, data: widget.data);
     final borderSize = getStyle(Styles.borderSize, data: widget.data);
     final borderRadius = getStyle(Styles.cornerRadius, data: widget.data);
     final borderColor = getStyle(Styles.borderColor, data: widget.data);

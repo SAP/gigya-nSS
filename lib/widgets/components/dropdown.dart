@@ -296,7 +296,7 @@ class _DropDownButtonWidgetState extends State<DropDownButtonWidget>
                       ),
                     ),
                     dropdownColor:
-                        getStyle(Styles.background, data: widget.data),
+                        Colors.white,
                     value: _dropdownDisplayValue,
                     icon: Icon(
                       Icons.arrow_drop_down,

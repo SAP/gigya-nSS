@@ -257,7 +257,7 @@ class ScreenViewModel
 
     apiService!.send(method, parameters).then(
       (result) async {
-        engineLogger!.d('Api request success: ${result.data.toString()}');
+        engineLogger.d('Api request success: ${result.data.toString()}');
 
         // Initiate next action.
         final Map<String, dynamic> actionData =
@@ -347,8 +347,13 @@ class ScreenViewModel
     }
 
     var event = NavigationEvent('$id/onSuccess', screenData, expressionData);
-    event.screenShowIfMapping =
-        actionData['screenShowIfMapping'].cast<String, dynamic>();
+
+    if(actionData['screenShowIfMapping'] == null){
+      event.screenShowIfMapping = {};
+    }else {
+      event.screenShowIfMapping =
+          actionData['screenShowIfMapping'].cast<String, dynamic>();
+    }
 
     // Trigger navigation.
     navigationStream.sink.add(event);
@@ -361,14 +366,14 @@ class ScreenViewModel
 
     return await apiService!.send(method, parameters).then(
       (result) async {
-        engineLogger!.d('Api request success: ${result.data.toString()}');
+        engineLogger.d('Api request success: ${result.data.toString()}');
 
         // Initiate next action.
         // Get routing data.
 
         setIdle();
 
-        engineLogger!.d('response data: $result.data');
+        engineLogger.d('response data: $result.data');
         return result.data ?? {} as Map<String, dynamic>;
       },
     ).catchError((error) async {
