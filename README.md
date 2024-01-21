@@ -43,30 +43,46 @@ Android devices running on ARM processors only (99% of devices).
 
 ### iOS - Swift
 
-The native screen-sets package is available via CocoaPods.
-In order to add the Gigya Native Screen-Sets library via CocoaPods to your project, you need to create a specific target per configuration (Debug / Release).
-Now add the following to you *pod* file:
-```
+The native screen-sets package is available via CocoaPods. In order to add
+the Gigya Native Screen-Sets library to your project via CocaPods, you need to create a specific target per configuration (Debug /
+Release).
+
+Add on of the following to your pod file, based on whether you
+want to run the Debug target (for development mode) or the Release
+target (for release mode):
+
+```swift
 // For Debug target:
 pod 'GigyaNss'
 // For Release target:
 pod 'GigyaNssRelease'
 ```
-So, your code should look similar to this:
-```
+Note: You should run only one of those two pods in your code. Thus,
+when you want to run the Debug target you should comment out the pod
+call for GigyaNssRelease, and when you want to run the Release target,
+should should comment out the pod call for GigyaNss.
+
+Thus, your code should look similar to this:
+
+```swift
+// For Debug target:
 target 'GigyaDemoApp-Debug' do
   pod 'Gigya'
   pod 'GigyaTfa'
   pod 'GigyaAuth'
   pod 'GigyaNss'
+//pod 'GigyaNssRelease' 
 end
+// For Release target:
 target 'GigyaDemoApp-Release' do
   pod 'Gigya'
   pod 'GigyaTfa'
   pod 'GigyaAuth'
+//pod 'GigyaNss'
   pod 'GigyaNssRelease'
 end
 ```
+
 Once you have completed the changes above, run the pod install command.
 
 Now add the following line to your AppDelegate.swift class.
