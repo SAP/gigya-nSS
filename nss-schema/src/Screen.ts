@@ -33,7 +33,6 @@ export default new SchemaEntity('Screen', mergeDeep({},
                 'register',
                 'setAccount',
                 'forgotPassword',
-                'setAccount',
                 'linkAccount',
                 'otp',
                 'none'
