@@ -34,8 +34,7 @@ export default new SchemaEntity('Screen', mergeDeep({},
                 'setAccount',
                 'forgotPassword',
                 'linkAccount',
-                'otp',
-                'none'
+                'otp'
             ],
             default: 'none'
         },
