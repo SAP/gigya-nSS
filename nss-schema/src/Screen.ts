@@ -18,10 +18,10 @@ export default new SchemaEntity('Screen', mergeDeep({},
                 enum: [
                     'login',
                     'register',
-                    'account update',
-                    'forgot password',
-                    'change password',
-                    'link account',
+                    'account-update',
+                    'forgot-password',
+                    'change-password',
+                    'link-account',
                     'otp',
                     'empty'
                 ],
@@ -35,7 +35,6 @@ export default new SchemaEntity('Screen', mergeDeep({},
                 'forgotPassword',
                 'linkAccount',
                 'otp',
-                'none'
             ],
             default: 'none'
         },
