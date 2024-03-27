@@ -35,8 +35,9 @@ export default new SchemaEntity('Screen', mergeDeep({},
                 'forgotPassword',
                 'linkAccount',
                 'otp',
+                'none'
             ],
-            default: 'login'
+            default: 'none'
         },
         routing: Routing.getRef(),
         appBar: mergeDeep({}, WithText, {
