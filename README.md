@@ -525,15 +525,15 @@ GigyaNss.getInstance()...
           }
           
           override fun routeFrom(screen: ScreenEventsModel) {
-              screen.`continue`()
+              screen.next()
           }
           
           override fun routeTo(screen: ScreenEventsModel) {
-              screen.`continue`()    
+              screen.next()    
           }
           
           override fun submit(screen: ScreenEventsModel) {
-              screen.`continue`()         
+              screen.next()         
           }
           
           override fun fieldDidChange(screen: ScreenEventsModel, field: FieldEventModel) {
@@ -542,7 +542,7 @@ GigyaNss.getInstance()...
                     // Do some kind of validation.
                   }
                   else -> {
-                     screen.`continue`()
+                     screen.next()
                   }
                }           
           }
@@ -590,13 +590,13 @@ GigyaNss.shared...
     You are able to inject an error message to the screen.
 
 **<u>Note</u>:**
-**When overriding the *fieldDidChange* event you are required to use the *screen* model's *continue* method.**
+**When overriding the *fieldDidChange* event you are required to use the *screen* model's *continue* method on iOS or *next method Android**
 
 **How to properly use NSS events:**
 When you override a specific event you are able to use the provided *screen* model in order to evaluate or mutate its current
 *data*. 
 
-In order for the flow to be completed, when overriding the event, you must call the *continue* method on the *screen* model.
+For the flow to be completed, when overriding the event, you must call the *continue* method on iOS or *next method Android on the *screen* model.
 This will ensure that the connection to the engine will hang as it awaits your result.
 Events such as *submit* and *fieldDidChange* also provide the option to inject an error to the screen using the *showError* method 
 of the *screen* model.
