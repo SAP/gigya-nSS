@@ -13,10 +13,6 @@ export default new SchemaEntity('SpecialField', {
         {
             type: 'string',
             pattern: '^#'
-        },
-        {
-            type: 'string',
-            pattern: '^conflictingAccount'
         }
     ]
 });
