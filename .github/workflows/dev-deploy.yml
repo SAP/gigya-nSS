@@ -34,7 +34,7 @@ jobs:
         run: npm run release
         
       - name: Upload math result for job 1
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: schema
           path: nss-schema/output/
