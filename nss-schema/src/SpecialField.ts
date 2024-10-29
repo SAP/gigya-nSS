@@ -8,12 +8,15 @@ export default new SchemaEntity('SpecialField', {
                 '#loginID',
                 '#email',
                 '#password',
-                'conflictingAccount.loginID'
             ]
         },
         {
             type: 'string',
             pattern: '^#'
+        },
+        {
+            type: 'string',
+            pattern: '^conflictingAccount'
         }
     ]
 });
