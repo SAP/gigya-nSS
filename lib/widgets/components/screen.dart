@@ -244,6 +244,8 @@ class _ScreenWidgetState extends State<ScreenWidget>
     );
   }
 
+  /// Handle back press/dismissal of screen.
+  /// Check back route or send cancel event if first in stack.
   _handleBackOrDismiss(firstRouteInStack) {
     if (firstRouteInStack!) {
       log('Last screen in stack. _cancel route initiated');
@@ -254,7 +256,10 @@ class _ScreenWidgetState extends State<ScreenWidget>
       if (backRoute != null) {
         viewModel?.linkifyLinkOrRoute(backRoute);
       } else {
-        Navigator.pop(context);
+        //TODO: Reload original markup to avoid expression overwrite?
+        Navigator.pop(context, {
+          // placeholder if we need to do something on back pop result.
+        });
       }
     }
   }
@@ -338,10 +343,13 @@ class _ScreenWidgetState extends State<ScreenWidget>
   /// This will result in the instantiation of the native controller action model which will handle all
   /// the native SDK logic.
   _attachInitialScreenAction() async {
+    // Map all screen expressions.
+    var screenExpressions = viewModel!.mapScreenExpressions(widget.screen!);
+
     var dataMap = await viewModel!.attachScreenAction(
       widget.screen!.action,
       widget.screen!.id,
-      viewModel!.mapScreenExpressions(widget.screen!),
+      screenExpressions,
     );
     // Merge routing data into injected screen data and update bindings.
     viewModel!.expressions = dataMap['expressions'];

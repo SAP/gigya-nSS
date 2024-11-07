@@ -27,6 +27,7 @@ class DataInitializer with Logging {
 
     // Bind markup to config & set awareness mode.
     config.markup = markup;
+    config.markupBackup = Markup.fromJson(markupData.cast<String, dynamic>());
     config.platformAwareMode = markup.platformAwareMode ?? 'material';
 
     //Add default localization values that are needed (can be overridden by client).
@@ -43,11 +44,15 @@ class DataInitializer with Logging {
 
     // Fetch styles.
     var stylesDataMap = await _getStyles(config.version);
+    if (stylesDataMap.isEmpty) {
+      stylesDataMap = await _getMockStyles();
+    }
     config.styleLibrary = stylesDataMap;
     _populateStyleLibraryDefaults();
 
     // Bind markup to config & set awareness mode.
     config.markup = markup;
+    config.markupBackup = Markup.fromJson(markupData.cast<String, dynamic>());
     config.platformAwareMode = markup.platformAwareMode ?? 'material';
 
     // Fetch schema and set in config if required.
@@ -94,7 +99,8 @@ class DataInitializer with Logging {
   /// Fetch markup from example JSON asset.
   /// This is used for development & testing.
   Future<Map<dynamic, dynamic>> _getMockMarkup() async {
-    final String json = await rootBundle.loadString('assets/example_tests.json');
+    final String json =
+        await rootBundle.loadString('assets/example_tests.json');
     return jsonDecode(json);
   }
 

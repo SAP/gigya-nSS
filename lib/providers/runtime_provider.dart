@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:gigya_native_screensets_engine/ioc/injector.dart';
 import 'package:gigya_native_screensets_engine/models/widget.dart';
 import 'package:gigya_native_screensets_engine/providers/binding_provider.dart';
 import 'package:gigya_native_screensets_engine/providers/screen_provider.dart';
@@ -19,32 +20,29 @@ mixin VisibilityStateMixin {
   void registerVisibilityNotifier(
       BuildContext context, NssWidgetData? data, VoidCallback callback) {
     // WidgetsBinding.instance.addPostFrameCallback((_) {
-      final RuntimeStateEvaluator runtimeProvider =
-          Provider.of<RuntimeStateEvaluator>(context, listen: false);
-      if (runtimeProvider == null) return;
+    final RuntimeStateEvaluator runtimeProvider =
+        Provider.of<RuntimeStateEvaluator>(context, listen: false);
 
-      if (data!.showIf != null) {
-        runtimeProvider.addListener(
-          () async {
-            engineLogger.d('Widget with bind "${data.bind}" notified to evaluate showIf state');
-            
-            // Request runtime evaluation of the showIf expression according to current
-            // Tracked changes and trigger a state change for this widget.
-            ScreenViewModel viewModel =
-                Provider.of<ScreenViewModel>(context, listen: false);
-            BindingModel binding =
-                Provider.of<BindingModel>(context, listen: false);
+    if (data!.showIf != null) {
+      runtimeProvider.addListener(
+        () async {
+          engineLogger.d(
+              'Widget with bind "${data.bind}" notified to evaluate showIf state');
 
-            if (viewModel == null ) return;
+          // Request runtime evaluation of the showIf expression according to current
+          // Tracked changes and trigger a state change for this widget.
+          ScreenViewModel viewModel = NssIoc().use(ScreenViewModel);
 
-            await viewModel.evaluateExpressionByDemand(
-                data, binding.savedBindingData);
+          BindingModel binding = NssIoc().use(BindingModel);
 
-            // Expression updated. Notify widget to set its state by demand.
-            callback.call();
-          },
-        );
-      }
+          await viewModel.evaluateExpressionByDemand(
+              data, binding.savedBindingData);
+
+          // Expression updated. Notify widget to set its state by demand.
+          callback.call();
+        },
+      );
+    }
     // });
   }
 }
