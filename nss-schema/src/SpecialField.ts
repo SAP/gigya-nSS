@@ -7,7 +7,8 @@ export default new SchemaEntity('SpecialField', {
             enum: [ // for editor auto-completion
                 '#loginID',
                 '#email',
-                '#password'
+                '#password',
+                'conflictingAccount.loginID'
             ]
         },
         {

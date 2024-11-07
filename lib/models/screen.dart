@@ -28,5 +28,8 @@ class Screen {
 
   factory Screen.fromJson(Map<String, dynamic> json) => _$ScreenFromJson(json);
 
+  factory Screen.mock() => Screen("mock", "login",  NssStack.vertical, NssAlignment.start, []);
+
   Map<String, dynamic> toJson() => _$ScreenToJson(this);
 }
+

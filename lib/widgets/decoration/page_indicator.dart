@@ -7,7 +7,7 @@ class PageIndicator extends AnimatedWidget {
   PageIndicator({
     required this.controller,
     this.itemCount,
-    this.color: Colors.white,
+    this.color = Colors.white,
   }) : super(listenable: controller);
 
   final PageController controller;

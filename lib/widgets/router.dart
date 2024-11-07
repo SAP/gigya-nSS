@@ -92,7 +92,10 @@ abstract class Router {
 
   /// Match the correct [Screen] instance to the [nextRoute] property.
   Screen? nextScreen(String? nextRoute) {
-    var screen = config!.markup!.screens![nextRoute!];
+    if (nextRoute == null) {
+      nextRoute  = "/";
+    }
+    var screen = config?.markup?.screens?[nextRoute];
     if (screen != null) {
       screen.id = nextRoute;
     }
@@ -219,8 +222,8 @@ class PlatformRouter extends Router {
 
   @override
   Route initialRoute(RouteSettings settings) {
-    var nextRoute = getNextRoute(config?.markup!.routing!.initial);
-    Screen initial = nextScreen(nextRoute)!;
+    var nextRoute = getNextRoute(config?.markup?.routing?.initial);
+    Screen initial = nextScreen(nextRoute) ?? Screen.mock();
     WidgetCreationFactory factory = NssIoc().use(WidgetCreationFactory);
     Widget screen = factory.buildScreen(initial, {});
     return _platformRoute(settings, screen);

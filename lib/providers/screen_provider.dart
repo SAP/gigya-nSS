@@ -348,9 +348,9 @@ class ScreenViewModel
 
     var event = NavigationEvent('$id/onSuccess', screenData, expressionData);
 
-    if(actionData['screenShowIfMapping'] == null){
+    if (actionData['screenShowIfMapping'] == null) {
       event.screenShowIfMapping = {};
-    }else {
+    } else {
       event.screenShowIfMapping =
           actionData['screenShowIfMapping'].cast<String, dynamic>();
     }
@@ -427,6 +427,9 @@ class ScreenViewModel
 
     // Map next screen expressions.
     final Screen nextScreen = markup.screens![nextScreenId]!;
+    if (nextScreen.id == null) {
+      nextScreen.id = nextScreenId;
+    }
     var nextScreenExpressions = mapScreenExpressions(nextScreen);
 
     engineLogger!.d(
@@ -445,6 +448,23 @@ class ScreenViewModel
   /// Map all screen expressions before sending it when attaching the next screen.
   Map<String, String?> mapScreenExpressions(Screen screen) {
     Map<String, String?> expressionMap = {};
+
+    // Get reference to markup backup object to restore original showIf fields.
+    NssConfig config = NssIoc().use(NssConfig);
+    Screen? restore = config.markupBackup?.screens?[screen.id];
+    if (restore == null) {
+      return expressionMap;
+    }
+
+    // Iterate backup markup screen and restore/overwrite actual widget showIf field.
+    // This task will allow back navigation to restore the original show if state of
+    // mutated expression ordering after it has evaluated and will force re-evaluation.
+    restore.children!.asMap().forEach((index, widget) {
+      if (widget.showIf != null) {
+        screen.children?.asMap()[index]?.showIf = widget.showIf;
+      }
+    });
+
     screen.children!.asMap().forEach((index, widget) {
       // Adding showIf expression.
       if (widget.showIf != null) {

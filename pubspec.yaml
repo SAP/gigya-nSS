@@ -15,10 +15,10 @@ description: Native screensets engine module.
 # This version is used _only_ for the Runner app, which is used if you just do
 # a `flutter run` or a `flutter make-host-app-editable`. It has no impact
 # on any other native host app that you embed your Flutter project into.
-version: 1.9.2
+version: 1.9.6
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: '>=3.1.0-0 <4.0.0'
 
 dependencies:
   flutter:
@@ -30,7 +30,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.4
   collection: ^1.15.0-nullsafety.4
-  flutter_platform_widgets: ^3.3.2
+  flutter_platform_widgets: ^7.0.1
 
 dev_dependencies:
   test:
