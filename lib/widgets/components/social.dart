@@ -68,6 +68,8 @@ extension NssSocialProviderEx on NssSocialProvider? {
         return Colors.black;
       case NssSocialProvider.linkedin:
         return Color(0xff007bb6);
+      case null:
+        return Colors.black;
     }
     return Colors.blue;
   }

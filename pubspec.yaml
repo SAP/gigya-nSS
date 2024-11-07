@@ -18,7 +18,7 @@ description: Native screensets engine module.
 version: 1.9.2
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: '>=3.1.0-0 <4.0.0'
 
 dependencies:
   flutter:
