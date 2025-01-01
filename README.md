@@ -25,19 +25,19 @@ To support Native Screen-Sets, 3 SAP Customer Data Cloud libraries need to be im
 
 ### iOS
 
-```
+
 SAP Customer Data Cloud iOS - Swift SDK v1.1 or above.
 Apple iOS version 11 or above.
 XCode version 11.4 or above.
-```
+
 ### Android
 
-```
+
 SAP Customer Data Cloud Android SDK v 4.1 or above.
 JAVA8 compatibility is required (update via the application's Gradle script).
 MinSDK version 19 or above.
-Android devices running on ARM processors only (99% of devices).
-```
+To check if a specific Architecture is supported, please see [Integrate a Flutter module into your Android project](https://docs.flutter.dev/add-to-app/android/project-setup).
+
 
 ## Download and Installation
 
