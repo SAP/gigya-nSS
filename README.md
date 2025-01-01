@@ -93,10 +93,11 @@ GigyaNss.shared.register(scheme: <YOUR_SCHEME>.self)
 
 ## Android
 
-```
-To avoid crashing non ARM devices. Please use the"isSupported()" method of the GigyaNss instance in order to determine if the
-device can support this feature. Use the web Screen-Sets as a fallback in either Android or iOS.
-```
+
+**The method "isSupported" is scheduled to be removed. It does not support all available architectures**
+To check if a specific Architecture is supported, please see [Integrate a Flutter module into your Android project](https://docs.flutter.dev/add-to-app/android/project-setup).
+
+
 The NSS engine requires your app to declare the following source compatibility in your application's build.gradle file:
 ```gradle
 android {
