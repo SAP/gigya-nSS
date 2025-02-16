@@ -164,6 +164,7 @@ class RouteEvaluator {
       case 206002:
         return RoutingAllowed.onPendingEmailVerification;
       case 403043:
+      case 409003:
         return RoutingAllowed.onLoginIdentifierExists;
     }
     return RoutingAllowed.none;
