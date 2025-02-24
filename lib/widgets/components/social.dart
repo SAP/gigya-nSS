@@ -444,7 +444,7 @@ class SocialEvaluator {
         if (loginProviders.isNotEmpty) {
           providers.clear();
           loginProviders.forEach((provider) {
-            if (provider != 'site') {
+            if (provider != 'site' && provider != 'emailOtp') {
               providers.add(NssSocialProvider.values.firstWhere(
                   (e) => e.toString() == 'NssSocialProvider.' + provider));
             }
