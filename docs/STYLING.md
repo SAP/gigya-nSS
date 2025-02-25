@@ -110,3 +110,5 @@ In order to apply these themes you will need to reference them to their specific
 
 *** Container components currently do not support custom themeing ***
 
+Note: "Theme" & "CustomTheme" tags are required when using file markups. They can remain empty if not used but cannot be removed from the JSON schema.
+
