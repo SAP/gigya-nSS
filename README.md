@@ -578,17 +578,21 @@ GigyaNss.shared...
 ```
 
 ### Available events:
-**screenDidLoad** - Screen finished it's first load and is fully rendered.
-**routeFrom** - Indicates the entry point of the current screen.
-    You are able to mutate the data passed in the *screen* model.
-**routeTo** - Indicates the expected route once screen submission is done.
-    You are able to mutate both the data passed in the *screen* model and the *nextRoute* if needed.
-**submit** - Exposes the submission data after the screen has been validated.
-    You are able to mutate the submission data passed in the *screen* model.
-    You are able to inject an error message to the screen.
-**fieldDidChange** - Event triggered when an input component has changed its data.
-    The field's identifier corresponds withe the **bind** property you have set in the markup.
-    You are able to inject an error message to the screen.
+**screenDidLoad** - Screen finished it's first load and is fully rendered.  
+
+**routeFrom** - Indicates the entry point of the current screen.  
+    You are able to mutate the data passed in the *screen* model.  
+    
+**routeTo** - Indicates the expected route once screen submission is done.  
+    You are able to mutate both the data passed in the *screen* model and the *nextRoute* if needed.  
+    
+**submit** - Exposes the submission data after the screen has been validated.  
+    You are able to mutate the submission data passed in the *screen* model.  
+    You are able to inject an error message to the screen.  
+    
+**fieldDidChange** - Event triggered when an input component has changed its data.  
+    The field's identifier corresponds withe the **bind** property you have set in the markup.  
+    You are able to inject an error message to the screen.  
 
 **<u>Note</u>:**
 **When overriding the *fieldDidChange* event you are required to use the *screen* model's *continue* method on iOS or *next method Android**
