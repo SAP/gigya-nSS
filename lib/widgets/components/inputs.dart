@@ -534,10 +534,11 @@ class _TextInputWidgetState extends State<TextInputWidget>
                   ),
                 ),
                 cupertino: (_, __) => CupertinoTextFormFieldData(
-
                   padding: EdgeInsets.zero,
                   decoration: BoxDecoration(
-                      color: getStyle(Styles.background, data: widget.data) ,
+                      color: (getStyle(Styles.background, data: widget.data) == Colors.transparent)
+                          ? Colors.white
+                          : getStyle(Styles.background, data: widget.data),
                       backgroundBlendMode: widget.data!.disabled!
                           ? BlendMode.color
                           : BlendMode.src),
