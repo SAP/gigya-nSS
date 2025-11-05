@@ -25,48 +25,64 @@ To support Native Screen-Sets, 3 SAP Customer Data Cloud libraries need to be im
 
 ### iOS
 
-```
+
 SAP Customer Data Cloud iOS - Swift SDK v1.1 or above.
 Apple iOS version 11 or above.
 XCode version 11.4 or above.
-```
+
 ### Android
 
-```
+
 SAP Customer Data Cloud Android SDK v 4.1 or above.
 JAVA8 compatibility is required (update via the application's Gradle script).
 MinSDK version 19 or above.
-Android devices running on ARM processors only (99% of devices).
-```
+To check if a specific Architecture is supported, please see [Integrate a Flutter module into your Android project](https://docs.flutter.dev/add-to-app/android/project-setup).
+
 
 ## Download and Installation
 
 ### iOS - Swift
 
-The native screen-sets package is available via CocoaPods.
-In order to add the Gigya Native Screen-Sets library via CocoaPods to your project, you need to create a specific target per configuration (Debug / Release).
-Now add the following to you *pod* file:
-```
+The native screen-sets package is available via CocoaPods. In order to add
+the Gigya Native Screen-Sets library to your project via CocaPods, you need to create a specific target per configuration (Debug /
+Release).
+
+Add on of the following to your pod file, based on whether you
+want to run the Debug target (for development mode) or the Release
+target (for release mode):
+
+```swift
 // For Debug target:
 pod 'GigyaNss'
 // For Release target:
 pod 'GigyaNssRelease'
 ```
-So, your code should look similar to this:
-```
+Note: You should run only one of those two pods in your code. Thus,
+when you want to run the Debug target you should comment out the pod
+call for GigyaNssRelease, and when you want to run the Release target,
+should should comment out the pod call for GigyaNss.
+
+Thus, your code should look similar to this:
+
+```swift
+// For Debug target:
 target 'GigyaDemoApp-Debug' do
   pod 'Gigya'
   pod 'GigyaTfa'
   pod 'GigyaAuth'
   pod 'GigyaNss'
+//pod 'GigyaNssRelease' 
 end
+// For Release target:
 target 'GigyaDemoApp-Release' do
   pod 'Gigya'
   pod 'GigyaTfa'
   pod 'GigyaAuth'
+//pod 'GigyaNss'
   pod 'GigyaNssRelease'
 end
 ```
+
 Once you have completed the changes above, run the pod install command.
 
 Now add the following line to your AppDelegate.swift class.
@@ -77,10 +93,11 @@ GigyaNss.shared.register(scheme: <YOUR_SCHEME>.self)
 
 ## Android
 
-```
-To avoid crashing non ARM devices. Please use the"isSupported()" method of the GigyaNss instance in order to determine if the
-device can support this feature. Use the web Screen-Sets as a fallback in either Android or iOS.
-```
+
+**The method "isSupported" is scheduled to be removed. It does not support all available architectures**
+To check if a specific Architecture is supported, please see [Integrate a Flutter module into your Android project](https://docs.flutter.dev/add-to-app/android/project-setup).
+
+
 The NSS engine requires your app to declare the following source compatibility in your application's build.gradle file:
 ```gradle
 android {
@@ -113,12 +130,12 @@ allprojects {
 Copy the following Android archive libraries into your application's /libs folder and add these references to your application's build.gradle file:
 ```gradle
 // Referencing the NSS native library (via Jitpack)
-implementation 'com.github.SAP.gigya-android-sdk:sdk-nss:nss-v1.7.0'
+implementation 'com.github.SAP.gigya-android-sdk:sdk-nss:nss-v1.9.8'
 ```
 ```gradle
 // Referencing the NSS engine.
-debugImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_debug:1.7.0'
-releaseImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_release:1.7.0'
+debugImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_debug:1.9.8'
+releaseImplementation 'com.gigya.gigyaNativeScreensetsEngine:flutter_release:1.9.8'
 ```
 
 Finally, add the *NativeScreensetsActivity.class* reference to your application's *AndroidManifest.xml* file.
@@ -509,15 +526,15 @@ GigyaNss.getInstance()...
           }
           
           override fun routeFrom(screen: ScreenEventsModel) {
-              screen.`continue`()
+              screen.next()
           }
           
           override fun routeTo(screen: ScreenEventsModel) {
-              screen.`continue`()    
+              screen.next()    
           }
           
           override fun submit(screen: ScreenEventsModel) {
-              screen.`continue`()         
+              screen.next()         
           }
           
           override fun fieldDidChange(screen: ScreenEventsModel, field: FieldEventModel) {
@@ -526,7 +543,7 @@ GigyaNss.getInstance()...
                     // Do some kind of validation.
                   }
                   else -> {
-                     screen.`continue`()
+                     screen.next()
                   }
                }           
           }
@@ -561,26 +578,30 @@ GigyaNss.shared...
 ```
 
 ### Available events:
-**screenDidLoad** - Screen finished it's first load and is fully rendered.
-**routeFrom** - Indicates the entry point of the current screen.
-    You are able to mutate the data passed in the *screen* model.
-**routeTo** - Indicates the expected route once screen submission is done.
-    You are able to mutate both the data passed in the *screen* model and the *nextRoute* if needed.
-**submit** - Exposes the submission data after the screen has been validated.
-    You are able to mutate the submission data passed in the *screen* model.
-    You are able to inject an error message to the screen.
-**fieldDidChange** - Event triggered when an input component has changed its data.
-    The field's identifier corresponds withe the **bind** property you have set in the markup.
-    You are able to inject an error message to the screen.
+**screenDidLoad** - Screen finished it's first load and is fully rendered.  
+
+**routeFrom** - Indicates the entry point of the current screen.  
+    You are able to mutate the data passed in the *screen* model.  
+    
+**routeTo** - Indicates the expected route once screen submission is done.  
+    You are able to mutate both the data passed in the *screen* model and the *nextRoute* if needed.  
+    
+**submit** - Exposes the submission data after the screen has been validated.  
+    You are able to mutate the submission data passed in the *screen* model.  
+    You are able to inject an error message to the screen.  
+    
+**fieldDidChange** - Event triggered when an input component has changed its data.  
+    The field's identifier corresponds withe the **bind** property you have set in the markup.  
+    You are able to inject an error message to the screen.  
 
 **<u>Note</u>:**
-**When overriding the *fieldDidChange* event you are required to use the *screen* model's *continue* method.**
+**When overriding the *fieldDidChange* event you are required to use the *screen* model's *continue* method on iOS or *next method Android**
 
 **How to properly use NSS events:**
 When you override a specific event you are able to use the provided *screen* model in order to evaluate or mutate its current
 *data*. 
 
-In order for the flow to be completed, when overriding the event, you must call the *continue* method on the *screen* model.
+For the flow to be completed, when overriding the event, you must call the *continue* method on iOS or *next method Android on the *screen* model.
 This will ensure that the connection to the engine will hang as it awaits your result.
 Events such as *submit* and *fieldDidChange* also provide the option to inject an error to the screen using the *showError* method 
 of the *screen* model.

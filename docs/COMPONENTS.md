@@ -17,9 +17,12 @@ The Native Screen-Sets JSON is made from components starting from a collection o
 A screen component is the root of every displayed screen. It is defined by a unique <screen id> and can perform actions and route to another screen.  
 The screen component is a container component. It may contain children components that stack to create the desired UI. See the container component for more information.
 
-| Markup Type | Special Parameters                                    | Supported Styles | Default theme property | Special Characteristics |  
-| ----------- | ----------------------------------------------------- | :--------------- | ---------------------- | ----------------------- |  
-| "screen-id" | appBar<br/>action<br/>routing<br/>showOnlyFields<br/> | background<br/>  | primaryColor<br/>      | None                    |  
+| Markup Type     | Special Parameters | Material Supported Styles | Cupertino Supported Styles | Default theme property | Special Characteristics |
+|-----------------|--------------------|---------------------------|----------------------------|------------------------|-------------------------|
+| "type":"screen" | appBar             | background                | background                 | primaryColor           | none                    |
+|                 | action             |                           |                            |                        |                         |
+|                 | routing            |                           |                            |                        |                         |
+|                 | showOnlyFields     |                           |                            |                        |                         |
 
 #### Action:
 
@@ -65,9 +68,19 @@ Available options:
 
 The submit button is directly linked with the provided screen action. It cannot be used for linking purposes
 
-| Markup Type     | Special Parameters       | Supported Styles                                             | Default theme property                                       | Special Characteristics                                      |  
-| --------------- | ------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |  
-| "type":"submit" | showIf<br/>disabled<br/> | size<br/>margin<br/>background<br/>opacity<br/>disabled<br/>fontSize<br/>fontColor<br/>fontWeight<br/>borderColor<br/>borderSize<br/>cornerRadius | <br/><br/>primaryColor<br/><br/><br/><br/>secondaryColor<br/><br/><br/><br/> | *Error* - once the adjacent submit request recieves an error, an under label will be displayed. The color of the error is defined in the main theme under "errorColor". The text is centered and cannot be styled. |  
+| Markup Type     | Special Parameters | Material Supported Styles | Cupertino Supported Styles | Default theme property | Special Characteristics                                                                                                                                                                                           |
+|-----------------|--------------------|---------------------------|----------------------------|------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| “type”:“submit” | showIf             | background                | background                 | primaryColor           | Error  - once the adjacent submit request recieves an error, an under label will be displayed. The color of the error is defined in the main theme under “errorColor”. The text is centered and cannot be styled. |
+|                 | disabled           | opacity                   | opacity                    | secondaryColor         |                                                                                                                                                                                                                   |
+|                 |                    | textAlign                 | textAlign                  |                        |                                                                                                                                                                                                                   |
+|                 |                    | margin                    | margin                     |                        |                                                                                                                                                                                                                   |
+|                 |                    | borderColor               | borderColor                |                        |                                                                                                                                                                                                                   |
+|                 |                    | borderSize                | borderSize                 |                        |                                                                                                                                                                                                                   |
+|                 |                    | cornerRadius              | cornerRadius               |                        |                                                                                                                                                                                                                   |
+|                 |                    | fontSize                  | fontSize                   |                        |                                                                                                                                                                                                                   |
+|                 |                    | fontColor                 | fontColor                  |                        |                                                                                                                                                                                                                   |
+|                 |                    | fontWeight                | fontWeight                 |                        |                                                                                                                                                                                                                   |
+|                 |                    | elevation                 |                            |                        |                                                                                                                                                                                                                   |
 
 ```json  
 {  
@@ -78,9 +91,14 @@ The submit button is directly linked with the provided screen action. It cannot 
 
 **<u>Usage</u>: Stack children components horizontally or verically**
 
-| Markup Type        | Special Parameters                  | Supported Styles                                             | Default theme property                                       | Special Characteristics                                      |  
-| ------------------ | ----------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |  
-| "type":"container" | stack<br/>alignment<br/>showIf<br/> | size<br/>margin<br/>background<br/>opacity<br/>disabled<br/>fontSize<br/>fontColor<br/>fontWeight<br/>borderColor<br/>borderSize<br/>cornerRadius | <br/><br/>primaryColor<br/><br/><br/><br/>secondaryColor<br/><br/><br/><br/> | Valid values for "stack" property are "horizontally" and "vertical". |  
+| Markup Type        | Special Parameters | Material Supported Styles | Cupertino Supported Styles | Default theme property | Special Characteristics                                              |
+|--------------------|--------------------|---------------------------|----------------------------|------------------------|----------------------------------------------------------------------|
+| “type”:“container” | showIf             | background                | background                 | primaryColor           | Valid values for “stack” property are “horizontally” and “vertical”. |
+|                    | stack              | opacity                   | opacity                    | secondaryColor         |                                                                      |
+|                    | alignment          | margin                    | margin                     |                        |                                                                      |
+|                    |                    | borderColor               | borderColor                |                        |                                                                      |
+|                    |                    | borderSize                | borderSize                 |                        |                                                                      |
+|                    |                    | cornerRadius              | cornerRadius               |                        |                                                                      |
 
 Alignment (optional) - Defines how the children components will align to each other within the directional stack.
 
@@ -101,9 +119,14 @@ Valid alignment values:
 
 **<u>Usage</u>: Simple text display with available linking action using standard linking format**
 
-| Markup Type    | Special Parameters       | Supported Styles                                             | Default theme property                                     | Special Characteristics                                      |  
-| -------------- | ------------------------ | :----------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------ |  
-| "type":"label" | showIf<br/>disabled<br/> | size<br/>margin<br/>background<br/>opacity<br/>fontSize<br/>fontColor<br/>fontWeight,<br/>textAlign<br/>linkColor | <br/><br/><br/><br/><br/>textColor<br/><br/><br/>linkColor | *Flexible* - will take as much space as needed according to content<br/>*Linkify* - support standart linking format. Linking is available for external webpages and internal routes. |  
+| Markup Type    | Special Parameters | Material Supported Styles | Cupertino Supported Styles | Default theme property | Special Characteristics                                                                                                                                                             |
+|----------------|--------------------|---------------------------|----------------------------|------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| “type”:“label” | showIf             | background                | background                 | textColor              | Flexible  - will take as much space as needed according to content<br/> Linkify  - support standart linking format. Linking is available for external webpages and internal routes. |
+|                | disabled           | textAlign                 | opacity                    | linkColor              |                                                                                                                                                                                     |
+|                |                    | opacity                   | margin                     |                        |                                                                                                                                                                                     |
+|                |                    | margin                    | borderColor                |                        |                                                                                                                                                                                     |
+|                |                    | fontSize                  | borderSize                 |                        |                                                                                                                                                                                     |
+|                |                    | fontWeight                | cornerRadius               |                        |                                                                                                                                                                                     |
 
 #### Linking format:
 
@@ -127,11 +150,20 @@ Valid alignment values:
 
 **<u>Usage</u>: Allows textual input and data binding**
 
-Text input can be cusomized for specific input types: **emailInput, passwordInput.**
+Text input can be customized for specific input types: **emailInput, passwordInput.**
 
-| Markup Type                                                  | Special Parameters       | Supported Styles                                             | Default theme property                                       | Special Characteristics                                      |  
-| ------------------------------------------------------------ | ------------------------ | :----------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |  
-| "type":"textInput<br/>"type":"emailInput<br/>"type":"passwordInput<br/> | showIf<br/>disabled<br/> | size<br/>margin<br/>background<br/>opacity<br/>fontSize<br/>fontColor<br/>fontWeight,<br/>textAlign<br/>borderColor<br/>borderSize<br/>cornerRadius<br/>placeholderColor | <br/><br/><br/><br/><br/>textColor<br/><br/><br/><br/><br/><br/>textColor(0.5 opacity) | *Flexible* - will take as much space as needed according to content. |  
+| Markup Type            | Special Parameters | Material Supported Styles | Cupertino Supported Styles | Default theme property | Special Characteristics                                             |
+|------------------------|--------------------|---------------------------|----------------------------|------------------------|---------------------------------------------------------------------|
+| "type":"textInput"     | showIf             | background                | background                 | textColor              | Flexible  - will take as much space as needed according to content. |
+| "type":"emailInput"    | disabled           | textAlign                 | textAlign                  |                        |                                                                     |
+| "type":"passwordInput" |                    | opacity                   | opacity                    |                        |                                                                     |
+|                        |                    | margin                    | margin                     |                        |                                                                     |
+|                        |                    | borderColor               | fontSize                   |                        |                                                                     |
+|                        |                    | borderSize                | fontWeight                 |                        |                                                                     |
+|                        |                    | cornerRadius              | fontColor                  |                        |                                                                     |
+|                        |                    | fontSize                  |                            |                        |                                                                     |
+|                        |                    | fontWeight                |                            |                        |                                                                     |
+|                        |                    | fontColor                 |                            |                        |                                                                     |
 
 ```json  
 {  
@@ -150,9 +182,17 @@ TextInput allows additional parameters to be added when using "passwordInput" to
 
 **<u>Usage</u>: Initiate provider specific social login flow**
 
-| Markup Type                | Special Parameters                                 | Supported Styles                                             | Default theme property                       | Special Characteristics |  
-| -------------------------- | -------------------------------------------------- | :----------------------------------------------------------- | -------------------------------------------- | ----------------------- |  
-| "type":"socialLoginButton" | showIf<br/>iconEnabled<br/>showIf<br/>iconURL<br/> | size<br/>margin<br/>background<br/>opacity<br/>fontSize<br/>fontColor<br/>fontWeight,<br/>borderColor<br/>borderSize<br/>cornerRadius<br/>textAlign<br/> | <br/><br/><br/><br/><br/>textColor<br/><br/> |                         |  
+| Markup Type                | Special Parameters | Material Supported Styles | Cupertino Supported Styles | Default theme property | Special Characteristics |
+|----------------------------|--------------------|---------------------------|----------------------------|------------------------|-------------------------|
+| “type”:“socialLoginButton” | showIf             | margin                    | margin                     | textColor              | none                    |
+|                            | iconEnabled        | opacity                   | opacity                    |                        |                         |
+|                            | iconURL            | fontSize                  | fontSize                   |                        |                         |
+|                            |                    | fontColor                 | fontColor                  |                        |                         |
+|                            |                    | fontWeight                | fontWeight                 |                        |                         |
+|                            |                    | borderColor               | borderColor                |                        |                         |
+|                            |                    | borderSize                | borderSize                 |                        |                         |
+|                            |                    | cornerRadius              | cornerRadius               |                        |                         |
+|                            |                    | textAlign                 | textAlign                  |                        |                         |
 
 ```json  
 {  
@@ -163,9 +203,17 @@ TextInput allows additional parameters to be added when using "passwordInput" to
 
 **<u>Usage</u>: Display multiple selection for social login providers**
 
-| Markup Type              | Special Parameters                                           | Supported Styles                                             | Default theme property                            | Special Characteristics                                      |  
-| ------------------------ | ------------------------------------------------------------ | :----------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------ |  
-| "type":"socialLoginGrid" | indicatorColor<br/>hideTitles<br/>columns<br/>rows<br/>providers<br/>showIf<br/>disabled<br/> | size<br/>margin<br/>background<br/>elevation<br/>opacity<br/>fontSize<br/>fontColor<br/>fontWeight<br/>cornerRadius<br/> | <br/><br/><br/><br/><br/><br/>textColor<br/><br/> | - Providers parameter supports and array of string elements.<br/>- Max available rows are currently sert to 2. |  
+| Markup Type              | Special Parameters | Material Supported Styles | Cupertino Supported Styles | Default theme property | Special Characteristics                                    |
+|--------------------------|--------------------|---------------------------|----------------------------|------------------------|------------------------------------------------------------|
+| “type”:“socialLoginGrid” | indicatorColor     | size                      | margin                     | textColor              | Providers parameter supports and array of string elements. |
+|                          | hideTitles         | margin                    | opacity                    |                        | Max available rows are currently sert to 2.                |
+|                          | columns            | background                | fontSize                   |                        |                                                            |
+|                          | rows               | opacity                   | fontColor                  |                        |                                                            |
+|                          | providers          | fontSize                  | fontWeight                 |                        |                                                            |
+|                          | showIf             | fontColor                 | borderColor                |                        |                                                            |
+|                          | disabled           | fontWeight                | borderSize                 |                        |                                                            |
+|                          |                    | cornerRadius              | cornerRadius               |                        |                                                            |
+|                          |                    | elevation                 | textAlign                  |                        |                                                            |
 
 NSS supports the following social providers:
 
@@ -180,9 +228,15 @@ NSS supports the following social providers:
 
 **<u>Usage</u>: display remote hosted image files or native internal assets**
 
-| Markup Type    | Special Parameters                            | Supported Styles                                             | Default theme property | Special Characteristics                                      |  
-| -------------- | --------------------------------------------- | :----------------------------------------------------------- | ---------------------- | ------------------------------------------------------------ |  
-| "type":"image" | url<br/>fallback<br/>showIf<br/>disabled<br/> | size<br/>margin<br/>background<br/>elevation<br/>opacity<br/>borderColor<br/>borderSize<br/>cornerRadius<br/> |                        | - When using the elevation property make sure you apply a background color to the image.<br/>- When using an internal image you are required to use the resource name only. No need for the file extension. |  
+| Markup Type    | Special Parameters | Material Supported Styles | Cupertino Supported Styles | Default theme property | Special Characteristics                                    |
+|----------------|--------------------|---------------------------|----------------------------|------------------------|------------------------------------------------------------|
+| "type":"image" | fallback           | background                | background                 | textColor              | Providers parameter supports and array of string elements. |
+|                | showIf             | opacity                   | opacity                    |                        | Max available rows are currently sert to 2.                |
+|                | disabled           | margin                    | margin                     |                        |                                                            |
+|                |                    | borderSize                | borderSize                 |                        |                                                            |
+|                |                    | borderColor               | borderColor                |                        |                                                            |
+|                |                    | cornerRadius              | cornerRadius               |                        |                                                            |
+|                |                    | elevation                 |                            |                        |                                                            |
 
 ```json  
 {  
@@ -193,9 +247,13 @@ NSS supports the following social providers:
 
 **<u>Usage</u>: display the users profile photo as linked in the "profile.photoURL" schema field**
 
-| Markup Type           | Special Parameters                                           | Supported Styles                                             | Default theme property | Special Characteristics                                      |  
-| --------------------- | ------------------------------------------------------------ | :----------------------------------------------------------- | ---------------------- | ------------------------------------------------------------ |  
-| "type":"profilePhoto" | url<br/>fallback<br/>allowUpload<br/>showIf<br/>disabled<br/> | size<br/>margin<br/>background<br/>elevation<br/>opacity<br/>borderColor<br/>borderSize<br/>cornerRadius<br/> |                        | - Supports same characteristics of the image componenet.<br/>- The *"allowUpload"* property will determine if the component will handle click events in order to provide image updating. |  
+| Markup Type           | Special Parameters | Material Supported Styles | Cupertino Supported Styles | Default theme property | Special Characteristics                                                                                                    |
+|-----------------------|--------------------|---------------------------|----------------------------|------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| "type":"profilePhoto" | fallback           | background                | background                 | textColor              | Supports the same characteristics of the image component.                                                                  |
+|                       | allowUpload        | margin                    | margin                     |                        | The *"allowUpload"* property will determine if the component will handle click events in order to provide image updating.  |
+|                       | disabled           | borderSize                | borderSize                 |                        |                                                                                                                            |
+|                       | showIf             | opacity                   | opacity                    |                        |                                                                                                                            |
+|                       |                    | elevation                 |                            |                        |                                                                                                                            |
 
 ```json  
 {  
@@ -206,10 +264,16 @@ NSS supports the following social providers:
 
 **<u>Usage</u>: Provide basic toggle state indication for data binding**
 
-| Markup Type       | Special Parameters       | Supported Styles                                             | Default theme property                                     | Special Characteristics                                      |  
-| ----------------- | ------------------------ | :----------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------ |  
-| "type":"checkbox" | showIf<br/>disabled<br/> | size<br/>margin<br/>background<br/>opacity<br/>fontSize<br/>fontColor<br/>fontWeight,<br/>textAlign<br/>linkColor | <br/><br/><br/><br/><br/>textColor<br/><br/><br/>linkColor | *Linkify* - support standart linking format. Linking is available for external webpages and internal routes. |  
-
+| Markup Type       | Special Parameters | Material Supported Styles | Cupertino Supported Styles | Default theme property | Special Characteristics                                                                                      |
+|-------------------|--------------------|---------------------------|----------------------------|------------------------|--------------------------------------------------------------------------------------------------------------|
+| "type":"checkbox" | showIf             | background                | background                 | textColor              | *Linkify* - support standard linking format. Linking is available for external webpages and internal routes. |
+|                   | disabled           | opacity                   | opacity                    | linkColor              |                                                                                                              |
+|                   |                    | textAlign                 | textAlign                  |                        |                                                                                                              |
+|                   |                    | margin                    | margin                     |                        |                                                                                                              |
+|                   |                    | fontSize                  | fontSize                   |                        |                                                                                                              |
+|                   |                    | fontWeight                | fontWeight                 |                        |                                                                                                              |
+|                   |                    | fontColor                 | fontColor                  |                        |                                                                                                              |
+                                                                                                      |
 ```json  
 {  
  "type": "checkbox", "bind": "data.terms", "textKey": "Accept terms"}  
@@ -219,9 +283,15 @@ NSS supports the following social providers:
 
 **<u>Usage</u>: displays multiple radio button for the user to choose from**
 
-| Markup Type    | Special Parameters                   | Supported Styles                                             | Default theme property                       | Special Characteristics                                      |  
-| -------------- | ------------------------------------ | :----------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------ |  
-| "type":"radio" | options<br/>showIf<br/>disabled<br/> | size<br/>margin<br/>background<br/>opacity<br/>fontSize<br/>fontColor<br/>fontWeight,<br/>textAlign | <br/><br/><br/><br/><br/>textColor<br/><br/> | - The options parameter contains an array of option objects (only one can be set as "default") - **see example**. |  
+| Markup Type    | Special Parameters | Material Supported Styles | Cupertino Supported Styles | Default theme property | Special Characteristics                                                                       |
+|----------------|--------------------|---------------------------|----------------------------|------------------------|-----------------------------------------------------------------------------------------------|
+| "type":"radio" | options            | background                | background                 | textColor              | The options parameter contains an array of option objects (only one can be set as "default"). |
+|                | showIf             | opacity                   | opacity                    |                        |                                                                                               |
+|                | disabled           | textAlign                 | textAlign                  |                        |                                                                                               |
+|                |                    | margin                    | margin                     |                        |                                                                                               |
+|                |                    | fontSize                  | fontSize                   |                        |                                                                                               |
+|                |                    | fontWeight                | fontWeight                 |                        |                                                                                               |
+|                |                    | fontColor                 | fontColor                  |                        |                                                                                               |
 
 ```json  
 {  
@@ -232,9 +302,16 @@ NSS supports the following social providers:
 
 **<u>Usage</u>: displays a drop-down list of options from which the user can choose from**
 
-| Markup Type       | Special Parameters                   | Supported Styles                                             | Default theme property                       | Special Characteristics                                      |  
-| ----------------- | ------------------------------------ | :----------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------ |  
-| "type":"dropdown" | options<br/>showIf<br/>disabled<br/> | size<br/>margin<br/>background<br/>opacity<br/>fontSize<br/>fontColor<br/>fontWeight,<br/>textAlign | <br/><br/><br/><br/><br/>textColor<br/><br/> | - The options parameter contains an array of option objects (only one can be set as "default") - **see example**. |  
+| Markup Type       | Special Parameters | Material Supported Styles | Cupertino Supported Styles | Default theme property | Special Characteristics                                                                       |
+|-------------------|--------------------|---------------------------|----------------------------|------------------------|-----------------------------------------------------------------------------------------------|
+| "type":"dropdown" | options            | background                | background                 | textColor              | The options parameter contains an array of option objects (only one can be set as "default"). |
+|                   | showIf             | opacity                   | opacity                    |                        |                                                                                               |
+|                   | disabled           | textAlign                 | textAlign                  |                        |                                                                                               |
+|                   |                    | margin                    | margin                     |                        |                                                                                               |
+|                   |                    | fontSize                  | fontSize                   |                        |                                                                                               |
+|                   |                    | fontWeight                | fontWeight                 |                        |                                                                                               |
+|                   |                    | fontColor                 | fontColor                  |                        |                                                                                               |
+|                   |                    | borderSize                |                            |                        |                                                                                               |
 
 ```json  
 {  
@@ -247,9 +324,18 @@ Dropdown and Radio components are interchangeable - their structure is exact and
 
 **<u>Usage</u>: Input field specifically for phone number which icludes a country code selection**
 
-| Markup Type         | Special Parameters                     | Supported Styles                                             | Default theme property                       | Special Characteristics |  
-| ------------------- | -------------------------------------- | :----------------------------------------------------------- | -------------------------------------------- | ----------------------- |  
-| "type":"phoneInput" | countries<br/>showIf<br/>disabled<br/> | size<br/>margin<br/>background<br/>opacity<br/>fontSize<br/>fontColor<br/>fontWeight,<br/>borderColor<br/>borderSize<br/>cornerRadius<br/> | <br/><br/><br/><br/><br/>textColor<br/><br/> |                         |  
+| Markup Type         | Special Parameters | Material Supported Styles | Cupertino Supported Styles | Default theme property | Special Characteristics |
+|---------------------|--------------------|---------------------------|----------------------------|------------------------|-------------------------|
+| "type":"phoneInput" | countries          | background                | background                 | textColor              | none                    |
+|                     | showIf             | opacity                   | opacity                    |                        |                         |
+|                     | disabled           | textAlign                 | textAlign                  |                        |                         |
+|                     |                    | margin                    | margin                     |                        |                         |
+|                     |                    | borderColor               | fontSize                   |                        |                         |
+|                     |                    | borderSize                | fontWeight                 |                        |                         |
+|                     |                    | cornerRadius              | fontColor                  |                        |                         |
+|                     |                    | fontSize                  |                            |                        |                         |
+|                     |                    | fontWeight                |                            |                        |                         |
+|                     |                    | fontColor                 |                            |                        |                         |
 
 ```json  
 {  
@@ -261,7 +347,7 @@ The countries object - Allows additional customization.
 
 * **defaultSelected** - Will define which country code will be selected by default. If not supplied, the device will choose the country code from the SIM card.
 * **showIcons** - Determine if flag icons will be displayed.
-* **Inclide** - Include only specific iso3166 country codes that will be displayed in the selection.
+* **includes** - Include only specific iso3166 country codes that will be displayed in the selection.
 * **exclude** - Exclude only specific iso3166 country codes from the entire list.
 
 ```json  
@@ -273,9 +359,21 @@ The countries object - Allows additional customization.
 ### Component Type: Date Picker
 **<u>Usage</u>: Use this widget for any date related field input**
 
-| Markup Type         | Special Parameters                     | Supported Styles                                             | Default theme property                       | Special Characteristics |  
-| ------------------- | -------------------------------------- | :----------------------------------------------------------- | -------------------------------------------- | ----------------------- |  
-| "type":"datePicker" | initialDisplay<br/>startYear<br/>endYear<br/>showIf<br/>datePickerStyle<br>disabled<br/> | size<br/>margin<br/>background<br/>opacity<br/>fontSize<br/>fontColor<br/>fontWeight,<br/>borderColor<br/>borderSize<br/>cornerRadius<br/> | <br/><br/><br/><br/><br/>textColor<br/><br/> | - The date picker can be displayed in "input" or "calendar" mode.<br>Use "intialDisplay" property to vary modes.                     | 
+| Markup Type         | Special Parameters | Material Supported Styles | Cupertino Supported Styles | Default theme property | Special Characteristics                                                                                        |
+|---------------------|--------------------|---------------------------|----------------------------|------------------------|----------------------------------------------------------------------------------------------------------------|
+| "type":"datePicker" | initialDisplay     | background                | background                 | textColor              | The date picker can be displayed in "input" or "calendar" mode.<br>Use "intialDisplay" property to vary modes. |
+|                     | startYear          | opacity                   | opacity                    |                        |                                                                                                                |
+|                     | endYear            | textAlign                 | textAlign                  |                        |                                                                                                                |
+|                     | showIf             | margin                    | margin                     |                        |                                                                                                                |
+|                     | datePickerStyle    | borderColor               | fontSize                   |                        |                                                                                                                |
+|                     |                    | borderSize                | fontWeight                 |                        |                                                                                                                |
+|                     |                    | cornerRadius              | fontColor                  |                        |                                                                                                                |
+|                     |                    | fontSize                  |                            |                        |                                                                                                                |
+|                     |                    | fontWeight                |                            |                        |                                                                                                                |
+|                     |                    | fontColor                 |                            |                        |                                                                                                                |
+|                     |                    | primaryColor              |                            |                        |                                                                                                                |
+|                     |                    | labelColor                |                            |                        |                                                                                                                |
+|                     |                    | labelText                 |                            |                        |                                                                                                                |
 
 ```json
  {      
@@ -315,9 +413,19 @@ Available customization options:
 ### Component Type: FIDO authentication button
 **<u>Usage</u>: Displays a FIDO authentication button in selected screens**
 
-| Markup Type         | Special Parameters                     | Supported Styles                                             | Default Theme Property                       | Special Characteristics |  
-| ------------------- | -------------------------------------- | :----------------------------------------------------------- | -------------------------------------------- | ----------------------- |  
-| "type":"button" | api<br/>showIf<br/>useRouting<br/> | Same as submit button |  | API property varies according to button state              | 
+| Markup Type     | Special Parameters | Material Supported Styles | Cupertino Supported Styles | Default theme property | Special Characteristics                       |
+|-----------------|--------------------|---------------------------|----------------------------|------------------------|-----------------------------------------------|
+| "type":"button" | showIf             | background                | background                 | none                   | API property varies according to button state |
+|                 | useRouting         | opacity                   | opacity                    |                        |                                               |
+|                 |                    | textAlign                 | textAlign                  |                        |                                               |
+|                 |                    | margin                    | margin                     |                        |                                               |
+|                 |                    | borderColor               | borderColor                |                        |                                               |
+|                 |                    | borderSize                | borderSize                 |                        |                                               |
+|                 |                    | cornerRadius              | cornerRadius               |                        |                                               |
+|                 |                    | fontSize                  | fontSize                   |                        |                                               |
+|                 |                    | fontWeight                | fontWeight                 |                        |                                               |
+|                 |                    | fontColor                 | fontColor                  |                        |                                               |
+|                 |                    | elevation                 |                            |                        |                                               |
 
 To begin implementing FIDO authentication, please follow the relevant platform setup:
 [Android](https://sap.github.io/gigya-android-sdk/sdk-core/#fidowebauthn-authentication)
@@ -331,8 +439,8 @@ The **FIDO authentication button** supports 3 different states using the "api" p
 In addition, the markup supports a specific setup for the "showIf" property that handles the widget visibility according to the application's FIDO state.
 Implementation example:
 When adding a FIDO revoke state button, the "showIf" property will automatically be set to:
-```json
-"showIf": "Gigya.webAuthn.isExists == true && Gigya.isLoggedIn == true && Gigya.webAuthn.isSupported == true",
+```
+"showIf" : "Gigya.webAuthn.isExists == true && Gigya.isLoggedIn == true && Gigya.webAuthn.isSupported == true",
 ```
 This setting indicates that the button is visible only if:
 1. Gigya.webAuthn.isExists == true -> The device has a valid FIDO passkey registered.
