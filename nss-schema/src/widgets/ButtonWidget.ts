@@ -17,6 +17,9 @@ export default new WidgetEntity('Button', mergeDeep({},
         api: {
             type: 'string'
         },
+        disabled: {
+            type: 'boolean'
+        },
         showIf: {
             type: 'string'
         },
