@@ -6,5 +6,5 @@ SPDX-PackageDownloadLocation = "https://github.com/SAP/gigya-nSS"
 [[annotations]]
 path = "**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = "2020 SAP SE or an SAP affiliate company and gigya-native-screensets-engine contributors"
+SPDX-FileCopyrightText = "2020-2026 SAP SE or an SAP affiliate company and gigya-native-screensets-engine contributors"
 SPDX-License-Identifier = "Apache-2.0"
